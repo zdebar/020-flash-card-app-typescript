@@ -1,0 +1,85 @@
+/* Theming Variables */
+:root {
+    /* Gaps */
+    --button-gap: 5px;
+
+    /* Borders */
+    --border-radius: 5px;
+    --border-primary: #00008B solid 2.5px;
+    --border-secondary: #00008B dashed 1px;
+
+    /* Colors */
+    --text-color: #00006A;
+}
+
+/* Basic Styling */
+body {
+    font-size: 16px;
+    font-family: 'Open Sans', sans-serif;
+    color: var(--text-color);  
+    min-width: 320px; 
+}
+
+/* Buttons */
+button {
+    transition: 0.3s ease-in-out;
+    box-shadow: 2px 2px 0px rgb(0, 0, 0, 0.3);
+}
+
+button:hover {
+    background-color: rgb(210, 210, 210);
+}
+
+button:active {
+    box-shadow: none;
+    border: 3px solid black;
+    background-color: white;
+}
+
+/* Utility classes */
+
+.p-1 {
+    padding: 10px;
+}
+
+.flex {
+    display: flex;
+    flex-direction: row;
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.justify-right {
+    justify-content: flex-end;
+}
+
+.align-center {
+    align-items: center;
+    text-align: center;
+}
+
+.gap-2 {
+    gap: 10px;
+}
+
+.grid {
+    display: grid; 
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--button-gap);
+}
+
+.border {
+    border: var(--border-secondary);
+    border-radius: var(--border-radius);
+}
