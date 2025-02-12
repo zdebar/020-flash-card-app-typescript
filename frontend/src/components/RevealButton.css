@@ -1,0 +1,9 @@
+.revealButton {
+  margin-top: var(--button-gap);
+  height: 50px;
+  border-radius: 0px 0px var(--border-radius) var(--border-radius);
+}
+
+.revealButton svg {
+  width: 25px;
+}

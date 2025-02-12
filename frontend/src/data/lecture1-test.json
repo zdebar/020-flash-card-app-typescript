@@ -1,0 +1,150 @@
+{
+  "id": 1,
+  "name": "Představování",
+  "blocks": [
+  {
+  "id": 1,
+  "name": "zájmena",
+  "words": [
+  {
+  "id": 1,
+  "src": "já",
+  "trg": "yo",
+  "prn": "jo"
+  },
+  {
+  "id": 2,
+  "src": "ty",
+  "trg": "tú",
+  "prn": "tu"
+  },
+  {
+  "id": 3,
+  "src": "on",
+  "trg": "él",
+  "prn": "el"
+  },
+  {
+  "id": 4,
+  "src": "ona",
+  "trg": "ella",
+  "prn": "eja"
+  },
+  {
+  "id": 5,
+  "src": "my (muži)",
+  "trg": "nosotros",
+  "prn": "nosotros"
+  },
+  {
+  "id": 6,
+  "src": "my (ženy)",
+  "trg": "nosotras",
+  "prn": "nosotras"
+  },
+  {
+  "id": 7,
+  "src": "vy (muži)",
+  "trg": "vosotros",
+  "prn": "vosotros"
+  },
+  {
+  "id": 8,
+  "src": "vy (ženy)",
+  "trg": "vosotras",
+  "prn": "vosotras"
+  },
+  {
+  "id": 9,
+  "src": "oni (muži)",
+  "trg": "ellos",
+  "prn": "ejos"
+  },
+  {
+  "id": 10,
+  "src": "ony (ženy)",
+  "trg": "ellas",
+  "prn": "ejas"
+  },
+  {
+  "id": 11,
+  "src": "nula",
+  "trg": "cero",
+  "prn": "thero"
+  }
+  ]
+  },
+  {
+  "id": 2,
+  "name": "čísla",
+  "words": [
+  {
+  "id": 11,
+  "src": "nula",
+  "trg": "cero",
+  "prn": "thero"
+  },
+  {
+  "id": 12,
+  "src": "jedna",
+  "trg": "uno",
+  "prn": "uno"
+  },
+  {
+  "id": 13,
+  "src": "dva",
+  "trg": "dos",
+  "prn": "dos"
+  },
+  {
+  "id": 14,
+  "src": "tři",
+  "trg": "tres",
+  "prn": "tres"
+  },
+  {
+  "id": 15,
+  "src": "čtyři",
+  "trg": "cuatro",
+  "prn": "kuatro"
+  },
+  {
+  "id": 16,
+  "src": "pět",
+  "trg": "cinco",
+  "prn": "thinko"
+  },
+  {
+  "id": 17,
+  "src": "šest",
+  "trg": "seis",
+  "prn": "sejs"
+  },
+  {
+  "id": 18,
+  "src": "sedm",
+  "trg": "siete",
+  "prn": "sjete"
+  },
+  {
+  "id": 19,
+  "src": "osm",
+  "trg": "ocho",
+  "prn": "ocho"
+  },
+  {
+  "id": 20,
+  "src": "devět",
+  "trg": "nueve",
+  "prn": "nuebe"
+  },
+  {
+  "id": 21,
+  "src": "deset",
+  "trg": "diez",
+  "prn": "djes"
+  }
+  ]
+  }
+  ]
+  }

@@ -1,0 +1,19 @@
+.choiceBar {
+  padding-top: var(--button-gap);
+}
+
+.choiceBar > button {
+  height: 50px;
+}
+
+.choiceBar svg {
+  width: 25px;
+}
+
+.repeatButton {
+  border-radius: 0px 0px 0px var(--border-radius);
+}
+
+.knownButton {
+  border-radius: 0px 0px var(--border-radius) 0px;
+}
