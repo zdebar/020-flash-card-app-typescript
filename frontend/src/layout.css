@@ -1,7 +1,9 @@
 /* Theming Variables */
 :root {
     /* Gaps */
-    --button-gap: 5px;
+    --gap-1: 5px;
+    --gap-2: 10px;
+    --gap-3: 15px;
 
     /* Borders */
     --border-radius: 5px;
@@ -10,13 +12,16 @@
 
     /* Colors */
     --text-color: #00006A;
+    --primary-color:#00006A;
+    --secondary-color:#00008B;
+    --background-color:white;
 }
 
 /* Basic Styling */
 body {
     font-size: 16px;
     font-family: 'Open Sans', sans-serif;
-    color: var(--text-color);  
+    color: var(--primary-color);  
     min-width: 320px; 
 }
 
@@ -33,15 +38,55 @@ button:hover {
 button:active {
     box-shadow: none;
     border: 3px solid black;
-    background-color: white;
+    background-color: var(--background-color);
 }
 
-/* Utility classes */
-
-.p-1 {
-    padding: 10px;
+/* Utilily classes - text */
+.text-small {
+    font-size: 0.8rem;
 }
 
+/* Utility classes - sizes */
+
+.w-10 {
+    width: 44px;
+}
+
+.h-10 {
+    height: 50px;
+}
+
+/* Utility classes - padding, margin, gap*/
+
+.p-2 {
+    padding: var(--gap-2);
+}
+
+.mt-auto {
+    margin-top: auto;
+}
+
+.mt-1 {
+    margin-top: var(--gap-1);
+}
+
+.mt-3 {
+    margin-top: var(--gap-3);
+}
+
+.mb-3 {
+    margin-bottom: var(--gap-3);
+}
+
+.gap-1 {
+    gap: var(--gap-1);
+}
+
+.gap-2 {
+    gap: var(--gap-2);
+}
+
+/* Utility classes - flexbox, grid */
 .flex {
     display: flex;
     flex-direction: row;
@@ -56,12 +101,16 @@ button:active {
     justify-content: center;
 }
 
+.justify-right {
+    justify-content: flex-end;
+}
+
 .justify-between {
     justify-content: space-between;
 }
 
-.justify-right {
-    justify-content: flex-end;
+.justify-evenly {
+    justify-content: space-evenly;
 }
 
 .align-center {
@@ -69,17 +118,29 @@ button:active {
     text-align: center;
 }
 
-.gap-2 {
-    gap: 10px;
-}
-
-.grid {
+.grid-2 {
     display: grid; 
     grid-template-columns: repeat(2, 1fr);
-    gap: var(--button-gap);
 }
 
+/* Utility classes - borders */
 .border {
     border: var(--border-secondary);
     border-radius: var(--border-radius);
 }
+
+.border-top {
+    border: var(--border-secondary);
+    border-radius: var(--border-radius) var(--border-radius) 0px 0px;
+}
+
+.border-left-bottom {
+    border: var(--border-secondary);
+    border-radius: 0px 0px 0px var(--border-radius);
+}
+
+.border-right-bottom {
+    border: var(--border-secondary);
+    border-radius: 0px 0px var(--border-radius) 0px;
+}
+

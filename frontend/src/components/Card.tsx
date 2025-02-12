@@ -16,28 +16,34 @@ interface CardProps {
 export default function Card({ words = [] }: CardProps): ReactNode {
   const [showTranslations, setShowTranslations] = useState<boolean>(false);
 
+  // ToDo - change to 
   if (!words || words.length === 0) {
     return (
       <div className="card flex-column justify-between">
-        <div className="note flex-column justify-between align-center border"></div>
+        <div className="flex-column justify-between align-center border-top"></div>
       </div>
     );
   }
 
   const handleReveal = (): void => {
     console.log("Reveal button clicked");
-    setShowTranslations(true); // Show translations when the button is clicked
+    setShowTranslations(true); // Show translations when the Reveal button is clicked
   };
 
   return (
     <div className="card flex-column justify-between">
-      <div className="note flex-column justify-between align-center border">
-        <p className="text__src flex-column justify-center">src</p>
-        {showTranslations && (
-          <>
-            <p className="text__trg flex-column justify-center">trg</p>
-            <p className="text__prn flex-column justify-center">prn</p>
-          </>
+      <div className="flex-column justify-between align-center border-top">
+        <p className="src flex-column justify-center h-10">src</p>
+        {showTranslations ? (
+          <div className='trg flex-column justify-evenly'>
+          <p >trg</p>
+          <p >prn</p>
+        </div>
+        ) : (
+          <div className='trg flex-column justify-evenly'>
+          <p ></p>
+          <p ></p>
+          </div>
         )}
       </div>
 

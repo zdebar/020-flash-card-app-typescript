@@ -1,5 +1,4 @@
 import { ReactElement } from "react";
-import "./Icon.css";
 
 interface BaseIconProps {
   style?: React.CSSProperties;
@@ -15,7 +14,7 @@ export default function Icon({ IconImage, style }: IconProps): ReactElement | nu
   }
 
   return (
-    <button className="icon flex justify-center align-center border">
+    <button className="flex justify-center align-center border w-10 h-10">
       <IconImage style={style} />
     </button>
   );
