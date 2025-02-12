@@ -1,15 +1,15 @@
+import { ReactNode } from "react";
+import Icon, { IconRepeat, IconKnown } from "./Icons/Icon";
 import "./ChoiceBar.css";
-import IconRepeat from './Icons/IconRepeat';
-import IconKnown from "./Icons/IconKnown";
 
-export default function ChoiceBar() {
+export default function ChoiceBar(): ReactNode {
   return (
     <div className="choiceBar grid">
       <button className="repeatButton flex justify-center align-center border">
-        <IconRepeat style={{ fill: "var(--text-color)"}}/>
+        <Icon IconImage={IconRepeat} style={{ width: "20px", fill: "var(--text-color)" }} />
       </button>
       <button className="knownButton flex justify-center align-center border">
-        <IconKnown style={{ fill: "var(--text-color)"}}/>
+        <Icon IconImage={IconKnown} style={{ width: "20px", fill: "var(--text-color)" }} />
       </button>
     </div>
   );

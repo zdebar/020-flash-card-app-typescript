@@ -1,9 +1,15 @@
 import { useEffect, useState } from "react";
 
+// Define types for the lecture object
+interface Lecture {
+  id: string;
+  name: string;
+}
+
 export default function Library() {
-  const [lectures, setLectures] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [lectures, setLectures] = useState<Lecture[]>([]); // Array of Lecture objects
+  const [loading, setLoading] = useState<boolean>(true); // boolean for loading state
+  const [error, setError] = useState<string | null>(null); // string or null for error state
 
   useEffect(() => {
     // Fetch or load local storage of lecture list
@@ -15,11 +21,11 @@ export default function Library() {
 
     const CACHE_EXPIRY_TIME = 24 * 60 * 60 * 1000; // 24 hours
 
-    function getCachedLectures () {
-      return JSON.parse(localStorage.getItem("lectures")) || [];
-    };
+    function getCachedLectures(): Lecture[] {
+      return JSON.parse(localStorage.getItem("lectures") || "[]");
+    }
 
-    function checkCachedLectureDate () {
+    function checkCachedLectureDate(): string | boolean | null {
       const cacheTimestamp = localStorage.getItem("lectures_timestamp");
       return (
         cacheTimestamp &&
@@ -34,11 +40,11 @@ export default function Library() {
           throw new Error(`Failed to fetch lectures: ${response.status}`);
         }
 
-        const data = await response.json();
+        const data: Lecture[] = await response.json(); 
         setLectures(data);
         localStorage.setItem("lectures", JSON.stringify(data));
         localStorage.setItem("lectures_timestamp", Date.now().toString());
-      } catch(err) {
+      } catch (err) {
         console.error("Error fetching lectures:", err);
 
         const cachedLectures = getCachedLectures();
@@ -50,7 +56,7 @@ export default function Library() {
       } finally {
         setLoading(false);
       }
-    }
+    };
 
     if (checkCachedLectureDate()) {
       setLectures(getCachedLectures());
@@ -58,7 +64,6 @@ export default function Library() {
     } else {
       fetchLectures();
     }
-
   }, []);
 
   if (loading) return <div>Loading...</div>;
