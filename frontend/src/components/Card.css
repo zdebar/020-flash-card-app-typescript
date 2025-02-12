@@ -5,7 +5,7 @@
   max-width: 500px;
 }
 
-@media (max-width: 767px) {
+@media (max-width: 640px) {
   .card {
     margin: 15px auto 0px;
   }
