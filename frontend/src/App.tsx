@@ -1,4 +1,3 @@
-import './App.css';
 import { Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -23,7 +22,7 @@ export default function App() {
   const data = jsonData as JsonData; // Typujeme jsonData jako JsonData
 
   return (
-    <div className="app">
+    <div className="app flex-column m-auto">
       <Header />
       <Routes>
         <Route path="/" element={<Card words={data.blocks[0]?.words} />} />

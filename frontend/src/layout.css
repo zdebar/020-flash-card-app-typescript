@@ -49,17 +49,21 @@ button:active {
 /* Utility classes - sizes */
 
 .w-10 {
-    width: 44px;
+    width: 44px; /*basic button size*/
 }
 
 .h-10 {
-    height: 50px;
+    height: 50px; /*basic button size*/
 }
 
 /* Utility classes - padding, margin, gap*/
 
 .p-2 {
     padding: var(--gap-2);
+}
+
+.m-auto {
+    margin: auto;
 }
 
 .mt-auto {
