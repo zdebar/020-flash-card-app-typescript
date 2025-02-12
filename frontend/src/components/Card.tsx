@@ -14,7 +14,7 @@ interface CardProps {
 }
 
 export default function Card({ words = [] }: CardProps): ReactNode {
-  const [showTranslations, setShowTranslations] = useState<boolean>(false);
+  const [showTranslations, setShowTranslations] = useState<boolean>(false); // showTranslation(true) when RevealButton is Clicked
 
   // ToDo - change to empty card or no card
   if (!words || words.length === 0) {
@@ -27,7 +27,7 @@ export default function Card({ words = [] }: CardProps): ReactNode {
 
   const handleReveal = (): void => {
     console.log("Reveal button clicked");
-    setShowTranslations(true); // Show translations when the Reveal button is clicked
+    setShowTranslations(true);
   };
 
   return (

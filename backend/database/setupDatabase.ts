@@ -8,18 +8,15 @@ const dbPath: string = path.resolve('../data/cz-esp-01.db');
 // Check if the database file exists
 fs.access(dbPath, fs.constants.F_OK, (err) => {
   if (err) {
-    // Database doesn't exist, proceed with setup
     console.log('Database does not exist, creating new database and schema...');
     setupDatabase();
   } else {
-    // Database already exists, skip setup
     console.log('Database already exists, skipping setup.');
   }
 });
 
 // Function to set up the database schema
 const setupDatabase = (): void => {
-  // Create a new SQLite database or open the existing one
   const db = new sqlite3.Database(dbPath, (err: Error | null) => {
     if (err) {
       console.error('Error opening database', err.message);
