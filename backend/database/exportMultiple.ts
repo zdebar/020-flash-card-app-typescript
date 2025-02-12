@@ -48,17 +48,17 @@ const exportTableToCSV = (
 // Export each table
 exportTableToCSV(
   'lectures',
-  '../data/lectures-export.csv',
+  '../data-tests/lectures-export.csv',
   'SELECT id, name FROM lectures'
 );
 exportTableToCSV(
   'blocks',
-  '../data/blocks-export.csv',
+  '../data-tests/blocks-export.csv',
   'SELECT id, name FROM blocks'
 );
 exportTableToCSV(
   'lecture_blocks',
-  '../data/lecture_blocks-export.csv',
+  '../data-tests/lecture_blocks-export.csv',
   'SELECT lecture_id, block_id FROM lecture_blocks'
 );
 

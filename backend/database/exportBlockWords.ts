@@ -31,7 +31,7 @@ const db = new sqlite3.Database(dbPath, (err: Error | null) => {
     const csv: string = Papa.unparse(rows);
 
     // Write the CSV data to a file
-    fs.writeFile('../data/block_words_export.csv', csv, (err: NodeJS.ErrnoException | null) => {
+    fs.writeFile('../data-tests/block_words_export.csv', csv, (err: NodeJS.ErrnoException | null) => {
       if (err) {
         console.error('Error writing CSV to file:', err.message);
       } else {

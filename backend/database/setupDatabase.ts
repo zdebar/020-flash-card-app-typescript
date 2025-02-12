@@ -79,9 +79,9 @@ const setupDatabase = (): void => {
       CREATE TABLE IF NOT EXISTS block_words (
         block_id INTEGER NOT NULL,
         word_id INTEGER NOT NULL,
-        PRIMARY KEY (block_id, word_id),
         FOREIGN KEY (block_id) REFERENCES blocks(id),
-        FOREIGN KEY (word_id) REFERENCES words(id)
+        FOREIGN KEY (word_id) REFERENCES words(id),
+        PRIMARY KEY (block_id, word_id)
       )
     `);
 
