@@ -1,6 +1,7 @@
+import { ReactNode } from "react";
 import "./Footer.css";
 
-export default function Footer() {
+export default function Footer(): ReactNode {
   const year = new Date().getFullYear();
 
   return (
@@ -9,3 +10,4 @@ export default function Footer() {
     </footer>
   );
 }
+
