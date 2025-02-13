@@ -1,4 +1,5 @@
 import fs from 'fs';
+import path from 'path';
 import Papa from 'papaparse';
 import sqlite3 from 'sqlite3';
 
@@ -7,14 +8,20 @@ interface Word {
   src: string;
   trg: string;
   prn: string;
+  type: string;
 }
 
 // Path to the database
-const dbPath: string = '../data/cz-esp-01.db';
+const dbPath: string = path.resolve(__dirname, '../data/cz-esp-01.db');
+const csvPath: string = path.resolve(__dirname, '../data/words.csv');
 
-// Check if the database file exists
+// Check paths
 if (!fs.existsSync(dbPath)) {
   console.error('Database does not exist. Stopping execution.');
+  process.exit(1);
+}
+if (!fs.existsSync(csvPath)) {
+  console.error('CSV file does not exist. Stopping execution.');
   process.exit(1);
 }
 
@@ -35,9 +42,9 @@ const readCSV = (filePath: string, callback: (data: Word[]) => void): void => {
     header: true,
     skipEmptyLines: true,
     complete: (result) => {
-      callback(result.data as Word[]); // Cast result data to Word[]
+      callback(result.data as Word[]);
     },
-    error: (err: { message: any; }) => {
+    error: (err: Error) => {
       console.error('Error parsing CSV:', err.message);
     },
   });
@@ -45,34 +52,41 @@ const readCSV = (filePath: string, callback: (data: Word[]) => void): void => {
 
 // Function to insert words into the database
 const insertWords = (data: Word[]): void => {
-  const stmt = db.prepare('INSERT INTO words (src, trg, prn) VALUES (?, ?, ?)');
+  db.serialize(() => {
+    db.run('BEGIN TRANSACTION'); // Start transaction
 
-  data.forEach((row) => {
-    stmt.run(row.src, row.trg, row.prn, (err: Error | null) => {
+    const stmt = db.prepare('INSERT INTO words (src, trg, prn, type) VALUES (?, ?, ?, ?)');
+
+    data.forEach((row) => {
+      stmt.run(row.src, row.trg, row.prn, row.type, (err: Error | null) => {
+        if (err) {
+          console.error('Error inserting word:', err.message);
+        }
+      });
+    });
+
+    stmt.finalize((err) => {
       if (err) {
-        console.error('Error inserting word:', err.message);
+        console.error('Error finalizing statement:', err.message);
+        db.run('ROLLBACK'); // Rollback transaction on error
+      } else {
+        console.log('Data inserted successfully.');
+        db.run('COMMIT'); // Commit transaction if everything is fine
       }
     });
-  });
-
-  // Finalize the statement after all insertions
-  stmt.finalize((err: Error | null) => {
-    if (err) {
-      console.error('Error finalizing statement:', err.message);
-    } else {
-      console.log('Statement finalized successfully');
-    }
   });
 };
 
 // Call to process CSV files
-readCSV('../data/words.csv', insertWords);
+readCSV(csvPath, insertWords);
 
 // Close the database connection after the operation
-db.close((err: Error | null) => {
-  if (err) {
-    console.error('Error closing database', err.message);
-  } else {
-    console.log('Database connection closed');
-  }
-});
+setTimeout(() => {
+  db.close((err: Error | null) => {
+    if (err) {
+      console.error('Error closing database', err.message);
+    } else {
+      console.log('Database connection closed');
+    }
+  });
+}, 5000);
