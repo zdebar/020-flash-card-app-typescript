@@ -1,32 +1,21 @@
 import sqlite3 from 'sqlite3';
-import path from 'path';
 
-// Cesty k databázím
-const mainDbPath = path.resolve(__dirname, '../data/cz-esp-01.db');  // Existující databáze
-const userDbPath = path.resolve(__dirname, '../data/user-cz-esp-01.db');  // Nová databáze pro uživatele
+// Utility function to setup a SQLite database connection
+export function setupDatabase(dbPath: string): sqlite3.Database {
+  const db = new sqlite3.Database(dbPath, (err: Error | null) => {
+    if (err) {
+      console.error(`Error opening database at ${dbPath}:`, err.message);
+      process.exit(1);
+    } else {
+      console.log(`Database connected successfully at ${dbPath}`);
+    }
+  });
 
-// Připojení k existující databázi cz-esp-01.db
-const mainDb = new sqlite3.Database(mainDbPath, (err: Error | null) => {
-  if (err) {
-    console.error('Error opening main database:', err.message);
-    process.exit(1);
-  } else {
-    console.log('Main database (cz-esp-01.db) connected successfully');
-  }
-});
+  return db;
+}
 
-// Vytvoření nové databáze user-cz-esp-01.db
-const userDb = new sqlite3.Database(userDbPath, (err: Error | null) => {
-  if (err) {
-    console.error('Error opening user database:', err.message);
-    process.exit(1);
-  } else {
-    console.log('User database (user-cz-esp-01.db) created or opened successfully');
-  }
-});
-
-// Funkce pro vytvoření tabulek v uživatelské databázi
-const createUserTables = (): void => {
+// Function to create user-related tables
+export function createUserTables(db: sqlite3.Database): void {
   const createUserWordsHistoryTable = `
     CREATE TABLE IF NOT EXISTS user_words_history (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -67,43 +56,30 @@ const createUserTables = (): void => {
     );
   `;
 
-  // Vytvoření tabulek pro uživatele
-  userDb.run(createUserWordsHistoryTable, (err) => {
-    if (err) {
-      console.error('Error creating user_words_history table:', err.message);
-    } else {
-      console.log('user_words_history table created or already exists');
-    }
+  // Create tables
+  db.run(createUserWordsHistoryTable, (err) => {
+    if (err) console.error('Error creating user_words_history table:', err.message);
+    else console.log('user_words_history table created or already exists');
   });
 
-  userDb.run(createUserWordsScoreTable, (err) => {
-    if (err) {
-      console.error('Error creating user_words_score table:', err.message);
-    } else {
-      console.log('user_words_score table created or already exists');
-    }
+  db.run(createUserWordsScoreTable, (err) => {
+    if (err) console.error('Error creating user_words_score table:', err.message);
+    else console.log('user_words_score table created or already exists');
   });
 
-  userDb.run(createUserSentencesHistoryTable, (err) => {
-    if (err) {
-      console.error('Error creating user_sentences_history table:', err.message);
-    } else {
-      console.log('user_sentences_history table created or already exists');
-    }
+  db.run(createUserSentencesHistoryTable, (err) => {
+    if (err) console.error('Error creating user_sentences_history table:', err.message);
+    else console.log('user_sentences_history table created or already exists');
   });
 
-  userDb.run(createUserSentencesScoreTable, (err) => {
-    if (err) {
-      console.error('Error creating user_sentences_score table:', err.message);
-    } else {
-      console.log('user_sentences_score table created or already exists');
-    }
+  db.run(createUserSentencesScoreTable, (err) => {
+    if (err) console.error('Error creating user_sentences_score table:', err.message);
+    else console.log('user_sentences_score table created or already exists');
   });
-};
+}
 
-// Funkce pro propojení obou databází pomocí FOREIGN KEY
-const createForeignKeyRelation = (): void => {
-  // Připojení k hlavní databázi
+// Function to enable foreign keys and attach databases
+export function setupForeignKeys(userDb: sqlite3.Database, mainDbPath: string): void {
   userDb.run(`ATTACH DATABASE ? AS mainDb`, [mainDbPath], (err: Error | null) => {
     if (err) {
       console.error('Error attaching main database to user database:', err.message);
@@ -111,34 +87,10 @@ const createForeignKeyRelation = (): void => {
     }
     console.log('Main database attached to user database');
 
-    // Povolení cizího klíče
+    // Enable foreign keys
     userDb.run('PRAGMA foreign_keys = ON;', (err) => {
-      if (err) {
-        console.error('Error enabling foreign keys in user database:', err.message);
-      } else {
-        console.log('Foreign keys enabled in user database');
-      }
+      if (err) console.error('Error enabling foreign keys in user database:', err.message);
+      else console.log('Foreign keys enabled in user database');
     });
   });
-};
-
-// Zavolání funkcí pro vytvoření tabulek a propojení databází
-createForeignKeyRelation();
-createUserTables();
-
-// Zavření databází
-mainDb.close((err: Error | null) => {
-  if (err) {
-    console.error('Error closing main database:', err.message);
-  } else {
-    console.log('Main database connection closed');
-  }
-});
-
-userDb.close((err: Error | null) => {
-  if (err) {
-    console.error('Error closing user database:', err.message);
-  } else {
-    console.log('User database connection closed');
-  }
-});
+}

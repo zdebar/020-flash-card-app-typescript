@@ -11,32 +11,33 @@ interface Word {
   type: string;
 }
 
-// Path to the database
-const dbPath: string = path.resolve(__dirname, '../data/cz-esp-01.db');
-const csvPath: string = path.resolve(__dirname, '../data/words.csv');
-
-// Check paths
-if (!fs.existsSync(dbPath)) {
-  console.error('Database does not exist. Stopping execution.');
-  process.exit(1);
-}
-if (!fs.existsSync(csvPath)) {
-  console.error('CSV file does not exist. Stopping execution.');
-  process.exit(1);
-}
-
-// Initialize DB
-const db = new sqlite3.Database(dbPath, (err: Error | null) => {
-  if (err) {
-    console.error('Error opening database:', err.message);
+// Check if paths are valid
+export function checkPaths(dbPath: string, csvPath: string): void {
+  if (!fs.existsSync(dbPath)) {
+    console.error('Database does not exist. Stopping execution.');
     process.exit(1);
-  } else {
-    console.log('Database connected successfully');
   }
-});
+  if (!fs.existsSync(csvPath)) {
+    console.error('CSV file does not exist. Stopping execution.');
+    process.exit(1);
+  }
+}
 
-// Function to read and parse CSV
-const readCSV = (filePath: string, callback: (data: Word[]) => void): void => {
+// Initialize Database Connection
+export function initializeDatabase(dbPath: string): sqlite3.Database {
+  const db = new sqlite3.Database(dbPath, (err: Error | null) => {
+    if (err) {
+      console.error('Error opening database:', err.message);
+      process.exit(1);
+    } else {
+      console.log('Database connected successfully');
+    }
+  });
+  return db;
+}
+
+// Read and parse CSV file
+export function readCSV(filePath: string, callback: (data: Word[]) => void): void {
   const file = fs.readFileSync(filePath, 'utf-8');
   Papa.parse(file, {
     header: true,
@@ -48,10 +49,10 @@ const readCSV = (filePath: string, callback: (data: Word[]) => void): void => {
       console.error('Error parsing CSV:', err.message);
     },
   });
-};
+}
 
-// Function to insert words into the database
-const insertWords = (data: Word[]): void => {
+// Insert words into the database
+export function insertWords(db: sqlite3.Database, data: Word[]): void {
   db.serialize(() => {
     db.run('BEGIN TRANSACTION'); // Start transaction
 
@@ -75,13 +76,10 @@ const insertWords = (data: Word[]): void => {
       }
     });
   });
-};
+}
 
-// Call to process CSV files
-readCSV(csvPath, insertWords);
-
-// Close the database connection after the operation
-setTimeout(() => {
+// Close database connection
+export function closeDatabase(db: sqlite3.Database): void {
   db.close((err: Error | null) => {
     if (err) {
       console.error('Error closing database', err.message);
@@ -89,4 +87,20 @@ setTimeout(() => {
       console.log('Database connection closed');
     }
   });
-}, 5000);
+}
+
+// Function to process the CSV and insert data
+export function processCSVAndInsertData(dbPath: string, csvPath: string): void {
+  checkPaths(dbPath, csvPath);
+
+  const db = initializeDatabase(dbPath);
+
+  readCSV(csvPath, (data: Word[]) => {
+    insertWords(db, data);
+  });
+
+  // Close the database connection after the operation
+  setTimeout(() => {
+    closeDatabase(db);
+  }, 5000);
+}

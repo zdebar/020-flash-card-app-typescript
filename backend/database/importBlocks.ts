@@ -9,51 +9,48 @@ interface Block {
   name: string;
 }
 
-// Path to the database
-const dbPath: string = path.resolve(__dirname, '../data/cz-esp-01.db');
-
-// Path to the CSV file
-const csvPath: string = path.resolve(__dirname, '../data/blocks.csv');
-
-// Check if the database file exists
-if (!fs.existsSync(dbPath)) {
-  console.error('Database does not exist. Stopping execution.');
-  process.exit(1);
-}
-
-// Check if the CSV file exists
-if (!fs.existsSync(csvPath)) {
-  console.error('CSV file does not exist. Stopping execution.');
-  process.exit(1);
-}
-
-// Initialize DB
-const db = new sqlite3.Database(dbPath, (err: Error | null) => {
-  if (err) {
-    console.error('Error opening database:', err.message);
+// Check if paths are valid
+export function checkPaths(dbPath: string, csvPath: string): void {
+  if (!fs.existsSync(dbPath)) {
+    console.error('Database does not exist. Stopping execution.');
     process.exit(1);
-  } else {
-    console.log('Database connected successfully');
   }
-});
+  if (!fs.existsSync(csvPath)) {
+    console.error('CSV file does not exist. Stopping execution.');
+    process.exit(1);
+  }
+}
 
-// Function to read and parse CSV
-const readCSV = (filePath: string, callback: (data: Block[]) => void): void => {
+// Initialize Database Connection
+export function initializeDatabase(dbPath: string): sqlite3.Database {
+  const db = new sqlite3.Database(dbPath, (err: Error | null) => {
+    if (err) {
+      console.error('Error opening database:', err.message);
+      process.exit(1);
+    } else {
+      console.log('Database connected successfully');
+    }
+  });
+  return db;
+}
+
+// Read and parse CSV file
+export function readCSV(filePath: string, callback: (data: Block[]) => void): void {
   const file = fs.readFileSync(filePath, 'utf-8');
   Papa.parse(file, {
     header: true,
     skipEmptyLines: true,
     complete: (result) => {
-      callback(result.data as Block[]); // Cast result data to Block[]
+      callback(result.data as Block[]);
     },
     error: (err: { message: any; }) => {
       console.error('Error parsing CSV:', err.message);
     },
   });
-};
+}
 
-// Function to insert blocks
-const insertBlocks = (data: Block[]): void => {
+// Insert blocks into the database
+export function insertBlocks(db: sqlite3.Database, data: Block[]): void {
   const stmt = db.prepare('INSERT INTO blocks (id, name) VALUES (?, ?)');
 
   data.forEach((row) => {
@@ -81,16 +78,31 @@ const insertBlocks = (data: Block[]): void => {
       console.log('Statement finalized successfully');
     }
   });
-};
+}
 
-// Call to process CSV files
-readCSV(csvPath, insertBlocks);
+// Close the database connection
+export function closeDatabase(db: sqlite3.Database): void {
+  db.close((err: Error | null) => {
+    if (err) {
+      console.error('Error closing database', err.message);
+    } else {
+      console.log('Database connection closed');
+    }
+  });
+}
 
-// Close the database connection after the operation
-db.close((err: Error | null) => {
-  if (err) {
-    console.error('Error closing database', err.message);
-  } else {
-    console.log('Database connection closed');
-  }
-});
+// Function to process the CSV and insert data
+export function processCSVAndInsertBlocks(dbPath: string, csvPath: string): void {
+  checkPaths(dbPath, csvPath);
+
+  const db = initializeDatabase(dbPath);
+
+  readCSV(csvPath, (data: Block[]) => {
+    insertBlocks(db, data);
+  });
+
+  // Close the database connection after the operation
+  setTimeout(() => {
+    closeDatabase(db);
+  }, 5000);
+}
