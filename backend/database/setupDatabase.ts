@@ -32,18 +32,8 @@ const setupDatabase = (): void => {
         id INTEGER PRIMARY KEY,
         src TEXT NOT NULL,
         trg TEXT NOT NULL,
-        prn TEXT NOT NULL
-      )
-    `);
-
-    // Create the history table
-    db.run(`
-      CREATE TABLE IF NOT EXISTS history (
-        id INTEGER PRIMARY KEY,
-        word_id INTEGER NOT NULL,
-        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        is_known INTEGER NOT NULL CHECK (is_known IN (0, 1)),
-        FOREIGN KEY (word_id) REFERENCES words(id)
+        prn TEXT NOT NULL,
+        type TEXT CHECK(type IN ('word', 'phrase', 'sentence')) DEFAULT 'word'
       )
     `);
 
@@ -85,15 +75,14 @@ const setupDatabase = (): void => {
       )
     `);
 
-    // Create the score table
+    // Create block_block linking table
     db.run(`
-      CREATE TABLE IF NOT EXISTS score (
-        id INTEGER PRIMARY KEY,
-        word_id INTEGER NOT NULL,
-        score INTEGER NOT NULL,
-        last TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (word_id) REFERENCES words(id),
-        CONSTRAINT unique_word_id UNIQUE (word_id)
+    CREATE TABLE IF NOT EXISTS block_blocks (
+      parent_block_id INTEGER NOT NULL,
+      child_block_id INTEGER NOT NULL,
+      FOREIGN KEY (parent_block_id) REFERENCES blocks(id) ON DELETE CASCADE,
+      FOREIGN KEY (child_block_id) REFERENCES blocks(id) ON DELETE CASCADE,
+      PRIMARY KEY (parent_block_id, child_block_id)
       )
     `);
   });
