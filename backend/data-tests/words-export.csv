@@ -1,0 +1,42 @@
+id,src,trg,prn,type
+1,já,yo,jo,word
+2,ty,tú,tu,word
+3,on,él,el,word
+4,ona,ella,eja,word
+5,my (muži),nosotros,nosotros,word
+6,my (ženy),nosotras,nosotras,word
+7,vy (muži),vosotros,vosotros,word
+8,vy (ženy),vosotras,vosotras,word
+9,oni (muži),ellos,ejos,word
+10,ony (ženy),ellas,ejasno,word
+11,nula,cero,thero,word
+12,jedna,uno,uno,word
+13,dva,dos,dos,word
+14,tři,tres,tres,word
+15,čtyři,cuatro,kuatro,word
+16,pět,cinco,thinko,word
+17,šest,seis,sejs,word
+18,sedm,siete,sjete,word
+19,osm,ocho,ocho,word
+20,devět,nueve,nuebe,word
+21,deset,diez,djes,word
+22,modrá,azul,asul,word
+23,zelená,verde,berde,word
+24,červená,rojo,roho,word
+25,žlutá,amarillo,amariho,word
+26,oranžová,naranja,naranha,word
+27,fialová,morado,morado,word
+28,růžová,rosa,rosa,word
+29,hnědá,marrón,mahron,word
+30,šedá,gris,gris,word
+31,černá,negro,negro,word
+32,otec,padre,padre,word
+33,matka,madre,madre,word
+34,bratr,hermano,ermano,word
+35,sestra,hermana,ermana,word
+36,dědeček,abuelo,abuehlo,word
+37,babička,abuela,abuehla,word
+38,syn,hijo,eeho,word
+39,dcera,hija,eeha,word
+40,strýc,tío,tio,word
+41,teta,tía,tia,word

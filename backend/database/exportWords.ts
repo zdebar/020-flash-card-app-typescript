@@ -13,10 +13,16 @@ interface Word {
 // Initialize DB
 const db = new sqlite3.Database('../data/cz-esp-01.db');
 
+// Check output path
+const dirPath = '../data';
+if (!fs.existsSync(dirPath)) {
+  fs.mkdirSync(dirPath, { recursive: true });
+}
+
 // Function to export words table to CSV
 const exportWordsToCSV = (): void => {
   // Query all data from the words table
-  db.all('SELECT id, src, trg, prn FROM words', (err: Error | null, rows: Word[]) => {
+  db.all('SELECT id, src, trg, prn, type FROM words', (err: Error | null, rows: Word[]) => {
     if (err) {
       console.error('Error fetching data from database:', err.message);
       return;
@@ -26,7 +32,7 @@ const exportWordsToCSV = (): void => {
     const csv: string = Papa.unparse(rows);
 
     // Write the CSV data to a file
-    fs.writeFile('../data/words-export.csv', csv, (err: NodeJS.ErrnoException | null) => {
+    fs.writeFile('../data-tests/words-export.csv', csv, (err: NodeJS.ErrnoException | null) => {
       if (err) {
         console.error('Error writing CSV to file:', err.message);
       } else {

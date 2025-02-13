@@ -4,16 +4,16 @@ import sqlite3 from 'sqlite3';
 import path from 'path';
 
 // Define a type for the CSV row data
-interface BlockWord {
-  block_id: number;
-  word_id: number;
+interface Lecture {
+  id: number;
+  name: string;
 }
 
 // Path to the database
 const dbPath: string = path.resolve(__dirname, '../data/cz-esp-01.db');
 
 // Path to the CSV file
-const csvPath: string = path.resolve(__dirname, '../data/block_words.csv');
+const csvPath: string = path.resolve(__dirname, '../data/lectures.csv');
 
 // Check if the database file exists
 if (!fs.existsSync(dbPath)) {
@@ -38,13 +38,13 @@ const db = new sqlite3.Database(dbPath, (err: Error | null) => {
 });
 
 // Function to read and parse CSV
-const readCSV = (filePath: string, callback: (data: BlockWord[]) => void): void => {
+const readCSV = (filePath: string, callback: (data: Lecture[]) => void): void => {
   const file = fs.readFileSync(filePath, 'utf-8');
   Papa.parse(file, {
     header: true,
     skipEmptyLines: true,
     complete: (result) => {
-      callback(result.data as BlockWord[]); // Cast result data to BlockWord[]
+      callback(result.data as Lecture[]); // Cast result data to Lecture[]
     },
     error: (err: { message: any; }) => {
       console.error('Error parsing CSV:', err.message);
@@ -52,25 +52,23 @@ const readCSV = (filePath: string, callback: (data: BlockWord[]) => void): void 
   });
 };
 
-// Function to insert block_words
-const insertBlockWords = (data: BlockWord[]): void => {
-  const stmt = db.prepare('INSERT INTO block_words (block_id, word_id) VALUES (?, ?)');
+// Function to insert lectures
+const insertLectures = (data: Lecture[]): void => {
+  const stmt = db.prepare('INSERT INTO lectures (id, name) VALUES (?, ?)');
 
   data.forEach((row) => {
-    const blockId: number = row.block_id;
-    const wordId: number = row.word_id;
+    const lectureId: number = row.id;
+    const lectureName: string = row.name;
 
-    // Insert data into the block_words table
-    stmt.run(blockId, wordId, (err: Error | null) => {
+    // Insert data into the lectures table
+    stmt.run(lectureId, lectureName, (err: Error | null) => {
       if (err) {
         console.error(
-          `Error inserting block_word: block_id = ${blockId}, word_id = ${wordId}:`,
+          `Error inserting lecture: id = ${lectureId}, name = ${lectureName}:`,
           err.message
         );
       } else {
-        console.log(
-          `Inserted block_word: block_id = ${blockId}, word_id = ${wordId}`
-        );
+        console.log(`Inserted lecture: id = ${lectureId}, name = ${lectureName}`);
       }
     });
   });
@@ -86,7 +84,7 @@ const insertBlockWords = (data: BlockWord[]): void => {
 };
 
 // Call to process CSV files
-readCSV(csvPath, insertBlockWords);
+readCSV(csvPath, insertLectures);
 
 // Close the database connection after the operation
 db.close((err: Error | null) => {
