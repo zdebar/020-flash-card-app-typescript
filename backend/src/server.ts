@@ -25,6 +25,7 @@ app.get('/user', (req: Request, res: Response) => {
 });
 
 // API Endpoints
+
 // Lectures lists
 app.get("/api/lectures", (req: Request, res: Response) => {
   db.all("SELECT id, name FROM lectures", (err: Error, rows: any[]) => {
@@ -72,18 +73,18 @@ app.get("/api/block/:blockId/words", (req: Request, res: Response) => {
   const { blockId } = req.params;
 
   db.all(
-      `SELECT words.id, words.src, words.trg, words.prn
-       FROM words
-       JOIN block_words ON words.id = block_words.word_id
-       WHERE block_words.block_id = ?`,
-      [blockId],
-      (err: Error, rows: any[]) => {
-          if (err) {
-            console.error("Error querying database:", err);
-            return res.status(500).json({ error: "Database query failed" });
-          }
-          res.json(rows);
+    `SELECT words.id, words.src, words.trg, words.prn, words.type
+     FROM words
+     JOIN block_words ON words.id = block_words.word_id
+     WHERE block_words.block_id = ?`,
+    [blockId],
+    (err: Error, rows: any[]) => {
+      if (err) {
+        console.error("Error querying database:", err);
+        return res.status(500).json({ error: "Database query failed" });
       }
+      res.json(rows);
+    }
   );
 });
 
@@ -114,14 +115,16 @@ app.get("/api/lecture/:lectureId", (req: Request, res: Response) => {
           return res.status(500).json({ error: "Database query failed" });
         }
 
+        // If no blocks found, return the lecture with an empty block list
+        if (blocks.length === 0) {
+          return res.json({ ...lecture, blocks: [] });
+        }
+
         // Fetch words for each block
         const blockIds = blocks.map(b => b.id);
-        if (blockIds.length === 0) {
-          return res.json({ ...lecture, blocks: [] }); // Return if no blocks
-      }
 
         db.all(
-          `SELECT words.id, words.src, words.trg, words.prn, block_words.block_id 
+          `SELECT words.id, words.src, words.trg, words.prn, words.type, block_words.block_id 
             FROM words 
             JOIN block_words ON words.id = block_words.word_id 
             WHERE block_words.block_id IN (${blockIds.map(() => "?").join(",")})`,
@@ -143,11 +146,12 @@ app.get("/api/lecture/:lectureId", (req: Request, res: Response) => {
                 id: word.id,
                 src: word.src,
                 trg: word.trg,
-                prn: word.prn
+                prn: word.prn,
+                type: word.type
               });
             });
 
-            // Convert block map back to array
+            // Convert block map back to array and return it
             const structuredBlocks = Object.values(blockMap);
 
             res.json({ ...lecture, blocks: structuredBlocks });
