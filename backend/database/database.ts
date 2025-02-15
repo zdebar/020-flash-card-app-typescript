@@ -115,7 +115,7 @@ export async function readCSV<T>(filePath: string): Promise<T[]> {
 // Function to insert words into the database
 export function insertWords(db: sqlite3.Database, data: Word[]): Promise<void> {
   return new Promise((resolve, reject) => {
-    const stmt = db.prepare('INSERT INTO words (src, trg, prn, type) VALUES (?, ?, ?, ?)');
+    const stmt = db.prepare('INSERT INTO words (id, src, trg, prn, type) VALUES (?, ?, ?, ?, ?)');
 
     db.serialize(() => {
       logger.debug('Starting database transaction for inserting words');
@@ -396,10 +396,10 @@ export async function setupDatabase(dbPath: string): Promise<void> {
 // Function to check and set up the database
 export async function checkAndSetupDatabase(dbPath: string): Promise<void> {
   try {
-    await checkDatabaseExists(dbPath);  // Assuming this function checks if the DB exists
-    logger.info('Database already exists, skipping setup.');  // Using logger instead of console.log
+    await checkDatabaseExists(dbPath);  
+    logger.info('Database already exists, skipping setup.'); 
   } catch (error) {
-    logger.error('Database does not exist, creating new database and schema...', error);  // Log error with the message
-    await setupDatabase(dbPath);  // Ensure to await the async setupDatabase
+    logger.error('Database does not exist, creating new database and schema...', error); 
+    await setupDatabase(dbPath); 
   }
 }
