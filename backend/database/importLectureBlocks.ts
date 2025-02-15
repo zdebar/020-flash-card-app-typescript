@@ -2,11 +2,7 @@ import fs from 'fs';
 import Papa from 'papaparse';
 import sqlite3 from 'sqlite3';
 
-// Define a type for the CSV row data
-interface LectureBlock {
-  lecture_id: number;
-  block_id: number;
-}
+
 
 // Check if paths are valid
 export function checkPaths(dbPath: string, csvPath: string): void {
