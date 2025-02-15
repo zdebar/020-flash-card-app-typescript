@@ -209,7 +209,6 @@ function executeTransaction<T>(
   });
 }
 
-
 export async function insertIntoTable<T>(
   db: sqlite3.Database,
   tableName: string,
@@ -232,7 +231,6 @@ export async function insertIntoTable<T>(
     throw new Error(`Error during insertIntoTable for ${tableName}: ${err instanceof Error ? err.message : 'Unknown error'}`);
   }
 }
-
 
 export async function insertFromCSV<T>(
   dbPath: string, 
