@@ -3,7 +3,7 @@ import path from 'path';
 import sqlite3 from 'sqlite3';
 
 // Import the functions to create tables and insert data
-import { setupDatabase } from './createDatabase';  // Adjust the path to your actual setupDatabase file
+import { setupDatabase } from './database';  // Adjust the path to your actual setupDatabase file
 import { insertWords } from './importWords';
 import { insertLectures } from './importLectures';
 import { insertBlocks } from './importBlocks';
