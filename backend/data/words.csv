@@ -1,42 +1,42 @@
-src,trg,prn
-já,yo,jo
-ty,tú,tu
-on,él,el
-ona,ella,eja
-my (muži),nosotros,nosotros
-my (ženy),nosotras,nosotras
-vy (muži),vosotros,vosotros
-vy (ženy),vosotras,vosotras
-oni (muži),ellos,ejos
-ony (ženy),ellas,ejasno
-nula,cero,thero
-jedna,uno,uno
-dva,dos,dos
-tři,tres,tres
-čtyři,cuatro,kuatro
-pět,cinco,thinko
-šest,seis,sejs
-sedm,siete,sjete
-osm,ocho,ocho
-devět,nueve,nuebe
-deset,diez,djes
-modrá,azul,asul
-zelená,verde,berde
-červená,rojo,roho
-žlutá,amarillo,amariho
-oranžová,naranja,naranha
-fialová,morado,morado
-růžová,rosa,rosa
-hnědá,marrón,mahron
-šedá,gris,gris
-černá,negro,negro
-otec,padre,padre
-matka,madre,madre
-bratr,hermano,ermano
-sestra,hermana,ermana
-dědeček,abuelo,abuehlo
-babička,abuela,abuehla
-syn,hijo,eeho
-dcera,hija,eeha
-strýc,tío,tio
-teta,tía,tia
+id,src,trg,prn
+1,já,yo,jo
+2,ty,tú,tu
+3,on,él,el
+4,ona,ella,eja
+5,my (muži),nosotros,nosotros
+6,my (ženy),nosotras,nosotras
+7,vy (muži),vosotros,vosotros
+8,vy (ženy),vosotras,vosotras
+9,oni (muži),ellos,ejos
+10,ony (ženy),ellas,ejasno
+11,nula,cero,thero
+12,jedna,uno,uno
+13,dva,dos,dos
+14,tři,tres,tres
+15,čtyři,cuatro,kuatro
+16,pět,cinco,thinko
+17,šest,seis,sejs
+18,sedm,siete,sjete
+19,osm,ocho,ocho
+20,devět,nueve,nuebe
+21,deset,diez,djes
+22,modrá,azul,asul
+23,zelená,verde,berde
+24,červená,rojo,roho
+25,žlutá,amarillo,amariho
+26,oranžová,naranja,naranha
+27,fialová,morado,morado
+28,růžová,rosa,rosa
+29,hnědá,marrón,mahron
+30,šedá,gris,gris
+31,černá,negro,negro
+32,otec,padre,padre
+33,matka,madre,madre
+34,bratr,hermano,ermano
+35,sestra,hermana,ermana
+36,dědeček,abuelo,abuehlo
+37,babička,abuela,abuehla
+38,syn,hijo,eeho
+39,dcera,hija,eeha
+40,strýc,tío,tio
+41,teta,tía,tia

@@ -242,3 +242,5 @@ export async function setupDatabase(dbPath: string): Promise<void> {
     throw new Error('Error during CSV import: ' + (err instanceof Error ? err.message : 'Unknown error'));
   }
 }
+
+setupDatabase("../data/cz-esp.db");
