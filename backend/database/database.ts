@@ -1,6 +1,6 @@
-import sqlite3, { ERROR } from 'sqlite3';
+import sqlite3 from 'sqlite3';
 import Papa from 'papaparse';
-import fs, { promises} from 'fs';
+import fs from 'fs';
 import winston from 'winston';
 
 const logger = winston.createLogger({
@@ -99,70 +99,101 @@ export async function readCSV<T>(filePath: string): Promise<T[]> {
   }
 }
 
-export async function createTables(db: sqlite3.Database): Promise<void> {
-  try {
-    await new Promise<void>((resolve, reject) => {
-      db.serialize(() => {
-        db.run(`CREATE TABLE IF NOT EXISTS words (
-          id INTEGER PRIMARY KEY,
-          src TEXT NOT NULL,
-          trg TEXT NOT NULL,
-          prn TEXT NOT NULL,
-          type TEXT CHECK(type IN ('word', 'phrase', 'sentence', 'grammar')) DEFAULT 'word'
-        )`, (err: Error | null) => {
-          if (err) reject(new Error('Error creating words table: ' + err.message));
-        });
-
-        db.run(`CREATE TABLE IF NOT EXISTS lectures (
-          id INTEGER PRIMARY KEY,
-          name TEXT NOT NULL
-        )`, (err: Error | null) => {
-          if (err) reject(new Error('Error creating lectures table: ' + err.message));
-        });
-
-        db.run(`CREATE TABLE IF NOT EXISTS blocks (
-          id INTEGER PRIMARY KEY,
-          name TEXT NOT NULL
-        )`, (err: Error | null) => {
-          if (err) reject(new Error('Error creating blocks table: ' + err.message));
-        });
-
-        db.run(`CREATE TABLE IF NOT EXISTS lecture_blocks (
-          lecture_id INTEGER,
-          block_id INTEGER,
-          FOREIGN KEY (lecture_id) REFERENCES lectures(id) ON DELETE CASCADE,
-          FOREIGN KEY (block_id) REFERENCES blocks(id) ON DELETE CASCADE,
-          PRIMARY KEY (lecture_id, block_id)
-        )`, (err: Error | null) => {
-          if (err) reject(new Error('Error creating lecture_blocks table: ' + err.message));
-        });
-
-        db.run(`CREATE TABLE IF NOT EXISTS block_words (
-          block_id INTEGER NOT NULL,
-          word_id INTEGER NOT NULL,
-          FOREIGN KEY (block_id) REFERENCES blocks(id),
-          FOREIGN KEY (word_id) REFERENCES words(id),
-          PRIMARY KEY (block_id, word_id)
-        )`, (err: Error | null) => {
-          if (err) reject(new Error('Error creating block_words table: ' + err.message));
-        });
-
-        db.run(`CREATE TABLE IF NOT EXISTS block_blocks (
-          parent_block_id INTEGER NOT NULL,
-          child_block_id INTEGER NOT NULL,
-          FOREIGN KEY (parent_block_id) REFERENCES blocks(id) ON DELETE CASCADE,
-          FOREIGN KEY (child_block_id) REFERENCES blocks(id) ON DELETE CASCADE,
-          PRIMARY KEY (parent_block_id, child_block_id)
-        )`, (err: Error | null) => {
-          if (err) reject(new Error('Error creating block_blocks table: ' + err.message));
-        });
-
+function createTable(db: sqlite3.Database, query: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    db.run(query, (err: Error | null) => {
+      if (err) {
+        reject(new Error(`Error creating table: ${err.message}`));
+      } else {
         resolve();
-      });
+      }
     });
+  });
+}
+
+export async function createTables(db: sqlite3.Database): Promise<void> {
+  const queries = [
+    `CREATE TABLE IF NOT EXISTS words (
+      id INTEGER PRIMARY KEY,
+      src TEXT NOT NULL,
+      trg TEXT NOT NULL,
+      prn TEXT NOT NULL,
+      type TEXT CHECK(type IN ('word', 'phrase', 'sentence', 'grammar')) DEFAULT 'word'
+    )`,
+    `CREATE TABLE IF NOT EXISTS lectures (
+      id INTEGER PRIMARY KEY,
+      name TEXT NOT NULL
+    )`,
+    `CREATE TABLE IF NOT EXISTS blocks (
+      id INTEGER PRIMARY KEY,
+      name TEXT NOT NULL
+    )`,
+    `CREATE TABLE IF NOT EXISTS lecture_blocks (
+      lecture_id INTEGER,
+      block_id INTEGER,
+      FOREIGN KEY (lecture_id) REFERENCES lectures(id) ON DELETE CASCADE,
+      FOREIGN KEY (block_id) REFERENCES blocks(id) ON DELETE CASCADE,
+      PRIMARY KEY (lecture_id, block_id)
+    )`,
+    `CREATE TABLE IF NOT EXISTS block_words (
+      block_id INTEGER NOT NULL,
+      word_id INTEGER NOT NULL,
+      FOREIGN KEY (block_id) REFERENCES blocks(id),
+      FOREIGN KEY (word_id) REFERENCES words(id),
+      PRIMARY KEY (block_id, word_id)
+    )`,
+    `CREATE TABLE IF NOT EXISTS block_blocks (
+      parent_block_id INTEGER NOT NULL,
+      child_block_id INTEGER NOT NULL,
+      FOREIGN KEY (parent_block_id) REFERENCES blocks(id) ON DELETE CASCADE,
+      FOREIGN KEY (child_block_id) REFERENCES blocks(id) ON DELETE CASCADE,
+      PRIMARY KEY (parent_block_id, child_block_id)
+    )`
+  ];
+
+  try {
+    for (const query of queries) {
+      await createTable(db, query);
+    }
   } catch (err) {
     throw new Error('Error creating tables: ' + (err instanceof Error ? err.message : 'Unknown error'));
   }
+}
+
+function executeTransaction<T>(
+  db: sqlite3.Database, 
+  data: T[], 
+  stmt: sqlite3.Statement, 
+  columns: string[], 
+  tableName: string
+): Promise<void> {
+  return new Promise((resolve, reject) => {
+    db.serialize(() => {
+      db.run('BEGIN TRANSACTION');
+
+      data.forEach((row) => {
+        const values = columns.map((col) => row[col as keyof T]);
+        stmt.run(...values, (err: Error | null) => {
+          if (err) {
+            db.run('ROLLBACK');
+            logger.error(`Error inserting into ${tableName}: ${JSON.stringify(row)} | ${err.message}`);
+            reject(err);  
+          }
+        });
+      });
+
+      stmt.finalize((err) => {
+        if (err) {
+          db.run('ROLLBACK');
+          logger.error('Error finalizing statement: ' + err.message);
+          reject(err);
+        } else {
+          db.run('COMMIT');
+          resolve();
+        }
+      });
+    });
+  });
 }
 
 export async function insertIntoTable<T>(
@@ -173,35 +204,8 @@ export async function insertIntoTable<T>(
 ): Promise<void> {
   try {
     const data = await readCSV<T>(filePath);  
-    return new Promise((resolve, reject) => {
-      const stmt = db.prepare(`INSERT INTO ${tableName} (${columns.join(', ')}) VALUES (${columns.map(() => '?').join(', ')})`);
-
-      db.serialize(() => {
-        db.run('BEGIN TRANSACTION');
-
-        data.forEach((row) => {
-          const values = columns.map((col) => row[col as keyof T]);
-          stmt.run(...values, (err: Error | null) => {
-            if (err) {
-              db.run('ROLLBACK');
-              logger.error(`Error inserting into ${tableName}: ${JSON.stringify(row)} | ${err.message}`);
-              reject(err);
-            }
-          });
-        });
-
-        stmt.finalize((err) => {
-          if (err) {
-            db.run('ROLLBACK');
-            logger.error('Error finalizing statement: ' + err.message);
-            reject();
-          } else {
-            db.run('COMMIT');
-            resolve();
-          }
-        });
-      });
-    });
+    const stmt = db.prepare(`INSERT INTO ${tableName} (${columns.join(', ')}) VALUES (${columns.map(() => '?').join(', ')})`);
+    await executeTransaction(db, data, stmt, columns, tableName);
   } catch (err: unknown) {
     throw new Error('Error during CSV import: ' + (err instanceof Error ? err.message : 'Unknown error'));
   }
