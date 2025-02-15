@@ -58,10 +58,10 @@ export function checkCSVFileExists(csvPath: string): boolean {
 }
 
 export function openDatabase(dbPath: string): Promise<sqlite3.Database> {
-  return new Promise<sqlite3.Database>((resolve) => {
+  return new Promise<sqlite3.Database>((resolve, reject) => {
     const db = new sqlite3.Database(dbPath, (err: Error | null) => {
       if (err) {
-        new Error(`Failed to connect to database: ${dbPath}`);
+        reject(new Error(`Failed to connect to database: ${dbPath}`));
       } else {
         resolve(db);
       }
@@ -95,7 +95,7 @@ export async function readCSV<T>(filePath: string): Promise<T[]> {
     return result.data;
 
   } catch (err: unknown) {
-    throw new Error('Error during CSV export: ' + (err instanceof Error ? err.message : 'Unknown error'));
+    throw new Error('Error during reading CSV: ' + (err instanceof Error ? err.message : 'Unknown error'));
   }
 }
 
@@ -161,55 +161,78 @@ export async function createTables(db: sqlite3.Database): Promise<void> {
 }
 
 function executeTransaction<T>(
-  db: sqlite3.Database, 
-  data: T[], 
-  stmt: sqlite3.Statement, 
-  columns: string[], 
+  db: sqlite3.Database,
+  data: T[],
+  stmt: sqlite3.Statement,
+  columns: string[],
   tableName: string
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     db.serialize(() => {
-      db.run('BEGIN TRANSACTION');
+      logger.debug(`Starting transaction for ${tableName}`);
+      db.run('BEGIN TRANSACTION', (err) => {
+        if (err) {
+          logger.error(`Failed to start transaction: ${err.message}`);
+          return reject(err);
+        }
 
-      data.forEach((row) => {
-        const values = columns.map((col) => row[col as keyof T]);
-        stmt.run(...values, (err: Error | null) => {
+        let hasError = false;
+        for (const row of data) {
+          const values = columns.map((col) => row[col as keyof T]);
+          stmt.run(values, (err: Error | null) => {
+            if (err) {
+              logger.error(`Error inserting into ${tableName}: ${JSON.stringify(row)} | ${err.message}`);
+              hasError = true;
+            }
+          });
+          if (hasError) break;
+        }
+
+        stmt.finalize((err) => {
           if (err) {
-            db.run('ROLLBACK');
-            logger.error(`Error inserting into ${tableName}: ${JSON.stringify(row)} | ${err.message}`);
-            reject(err);  
+            db.run('ROLLBACK', () => reject(err));
+            logger.error(`Error finalizing statement for ${tableName}: ${err.message}`);
+          } else {
+            db.run('COMMIT', (err) => {
+              if (err) {
+                logger.error(`Error committing transaction for ${tableName}: ${err.message}`);
+                db.run('ROLLBACK', () => reject(err));
+              } else {
+                logger.debug(`Transaction committed successfully for ${tableName}`);
+                resolve();
+              }
+            });
           }
         });
-      });
-
-      stmt.finalize((err) => {
-        if (err) {
-          db.run('ROLLBACK');
-          logger.error('Error finalizing statement: ' + err.message);
-          reject(err);
-        } else {
-          db.run('COMMIT');
-          resolve();
-        }
       });
     });
   });
 }
 
+
 export async function insertIntoTable<T>(
-  db: sqlite3.Database, 
-  tableName: string, 
-  columns: string[], 
+  db: sqlite3.Database,
+  tableName: string,
+  columns: string[],
   filePath: string
 ): Promise<void> {
   try {
-    const data = await readCSV<T>(filePath);  
+    logger.debug(`Reading CSV for table ${tableName}: ${filePath}`);
+    const data = await readCSV<T>(filePath);
+    
+    if (data.length === 0) {
+      logger.warn(`No data to insert for table ${tableName}`);
+      return;
+    }
+
     const stmt = db.prepare(`INSERT INTO ${tableName} (${columns.join(', ')}) VALUES (${columns.map(() => '?').join(', ')})`);
     await executeTransaction(db, data, stmt, columns, tableName);
   } catch (err: unknown) {
-    throw new Error('Error during CSV import: ' + (err instanceof Error ? err.message : 'Unknown error'));
+    logger.error(`Error during CSV import for ${tableName}: ${err instanceof Error ? err.message : 'Unknown error'}`);
+    throw new Error(`Error during insertIntoTable for ${tableName}: ${err instanceof Error ? err.message : 'Unknown error'}`);
   }
 }
+
 
 export async function insertFromCSV<T>(
   dbPath: string, 
@@ -228,18 +251,19 @@ export async function insertFromCSV<T>(
 }
 
 export async function setupDatabase(dbPath: string): Promise<void> {
+  const db = await openDatabase(dbPath);
   try {
-    const db = await openDatabase(dbPath);
     await createTables(db);
     await insertIntoTable<Word>( db, "words", ["id", "src", "trg", "prn", "type"], "../data/words.csv" );
     await insertIntoTable<Block>( db, "blocks", ["id", "name"], "../data/blocks.csv" );
-    await insertIntoTable<Lecture>( db, "lecture", ["id", "name"], "../data/lectures.csv" );
+    await insertIntoTable<Lecture>( db, "lectures", ["id", "name"], "../data/lectures.csv" );
     await insertIntoTable<LectureBlock>( db, "lecture_blocks", ["lecture_id", "block_id"], "../data/lecture_blocks.csv" );
     await insertIntoTable<BlockBlock>( db, "block_blocks", ["block_id", "block_id"], "../data/block_blocks.csv" );
     await insertIntoTable<BlockWord>( db, "block_words", ["block_id", "word_id"], "../data/block_words.csv" );
     await closeDatabase(db);
   } catch (err) {
-    throw new Error('Error during CSV import: ' + (err instanceof Error ? err.message : 'Unknown error'));
+    await closeDatabase(db);
+    throw new Error((err instanceof Error ? err.message : 'Unknown error'));
   }
 }
 
