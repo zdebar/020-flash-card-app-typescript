@@ -33,6 +33,11 @@ interface BlockWord {
   word_id: number;
 }
 
+interface BlockBlock {
+  block_id: number;
+  blockNested_id: number;
+}
+
 interface LectureBlock {
   lecture_id: number;
   block_id: number;
@@ -93,163 +98,6 @@ export async function readCSV<T>(filePath: string): Promise<T[]> {
     throw new Error('Error during CSV export: ' + (err instanceof Error ? err.message : 'Unknown error'));
   }
 }
-
-export function insertWords(db: sqlite3.Database, data: Word[]): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const stmt = db.prepare('INSERT INTO words (id, src, trg, prn, type) VALUES (?, ?, ?, ?, ?)');
-
-    db.serialize(() => {
-      db.run('BEGIN TRANSACTION');
-
-      data.forEach((row) => {
-        stmt.run(row.src, row.trg, row.prn, row.type, (err: Error | null) => {
-          if (err) {
-            db.run('ROLLBACK');
-            logger.error(`Error inserting word: ${row.src} | ${err.message}`);
-            reject(err);
-          }
-        });
-      });
-
-      stmt.finalize((err) => {
-        if (err) {  
-          db.run('ROLLBACK');        
-          logger.error('Error finalizing statement: ' + err.message);
-          reject();
-        } else {
-          db.run('COMMIT');
-          resolve();
-        }
-      });
-    });
-  });
-}
-
-export function insertBlocks(db: sqlite3.Database, data: Block[]): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const stmt = db.prepare('INSERT INTO blocks (id, name) VALUES (?, ?)');
-
-    db.serialize(() => {
-      db.run('BEGIN TRANSACTION');
-
-      data.forEach((row) => {
-        stmt.run(row.id, row.name, (err: Error | null) => {
-          if (err) {
-            db.run('ROLLBACK');
-            logger.error(`Error inserting block: id = ${row.id}, name = ${row.name}: ` + err.message);
-            reject(err); 
-          }
-        });
-      });
-
-      stmt.finalize((err: Error | null) => {
-        if (err) {
-          db.run('ROLLBACK'); 
-          logger.error('Error finalizing statement: ' + err.message);
-          reject(err);
-        } else {
-          db.run('COMMIT'); 
-          resolve();
-        }
-      });
-    });
-  });
-}
-
-export function insertLectures(db: sqlite3.Database, data: Lecture[]): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const stmt = db.prepare('INSERT INTO lectures (id, name) VALUES (?, ?)');
-
-    db.serialize(() => {
-      db.run('BEGIN TRANSACTION');
-
-      data.forEach((row) => {
-        stmt.run(row.id, row.name, (err: Error | null) => {
-          if (err) {
-            db.run('ROLLBACK');
-            logger.error(`Error inserting lecture: id = ${row.id}, name = ${row.name}: ` + err.message);
-            reject();
-          }
-        });
-      })
-
-      stmt.finalize((err: Error | null) => {
-        if (err) {
-          db.run('ROLLBACK'); 
-          logger.error('Error finalizing statement: ' + err.message);
-          reject(err);
-        } else {
-          db.run('COMMIT'); 
-          resolve();
-        }
-      });
-    });
-  });
-}
-
-export function insertLectureBlocks(db: sqlite3.Database, data: { lecture_id: number, block_id: number }[]): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const stmt = db.prepare('INSERT INTO lecture_blocks (lecture_id, block_id) VALUES (?, ?)');
-
-    db.serialize(() => {
-      db.run('BEGIN TRANSACTION');
-
-      data.forEach((row) => {
-        stmt.run(row.lecture_id, row.block_id, (err: Error | null) => {
-          if (err) {
-            db.run('ROLLBACK');
-            logger.error(`Error inserting lecture_block: lecture_id = ${row.lecture_id}, block_id = ${row.block_id} | ${err.message}`);
-            reject(err);
-          }
-        });
-      });
-
-      stmt.finalize((err) => {
-        if (err) {
-          db.run('ROLLBACK');
-          logger.error('Error finalizing statement: ' + err.message);
-          reject();
-        } else {
-          db.run('COMMIT');
-          resolve();
-        }
-      });
-    });
-  });
-}
-
-export function insertBlockWords(db: sqlite3.Database, data: { block_id: number, word_id: number }[]): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const stmt = db.prepare('INSERT INTO block_words (block_id, word_id) VALUES (?, ?)');
-
-    db.serialize(() => {
-      db.run('BEGIN TRANSACTION');
-
-      data.forEach((row) => {
-        stmt.run(row.block_id, row.word_id, (err: Error | null) => {
-          if (err) {
-            db.run('ROLLBACK');
-            logger.error(`Error inserting block_word: block_id = ${row.block_id}, word_id = ${row.word_id} | ${err.message}`);
-            reject(err);
-          }
-        });
-      });
-
-      stmt.finalize((err) => {
-        if (err) {
-          db.run('ROLLBACK');
-          logger.error('Error finalizing statement: ' + err.message);
-          reject();
-        } else {
-          db.run('COMMIT');
-          resolve();
-        }
-      });
-    });
-  });
-}
-
-
 
 export async function createTables(db: sqlite3.Database): Promise<void> {
   try {
@@ -317,24 +165,45 @@ export async function createTables(db: sqlite3.Database): Promise<void> {
   }
 }
 
-export async function exportWordsToCSV(db: sqlite3.Database, outputPath: string): Promise<void> {
-  try { 
-    const rows: Word[] = await new Promise((resolve, reject) => {
-      db.all('SELECT src, trg, prn, type FROM words', (err: Error | null, rows: Word[]) => {
-        if (err) {
-          logger.error(`Error fetching data from database: ` + err.message);
-          reject();
-        } else {
-          resolve(rows);
-        }
+export async function insertIntoTable<T>(
+  db: sqlite3.Database, 
+  tableName: string, 
+  columns: string[], 
+  filePath: string
+): Promise<void> {
+  try {
+    const data = await readCSV<T>(filePath);  
+    return new Promise((resolve, reject) => {
+      const stmt = db.prepare(`INSERT INTO ${tableName} (${columns.join(', ')}) VALUES (${columns.map(() => '?').join(', ')})`);
+
+      db.serialize(() => {
+        db.run('BEGIN TRANSACTION');
+
+        data.forEach((row) => {
+          const values = columns.map((col) => row[col as keyof T]);
+          stmt.run(...values, (err: Error | null) => {
+            if (err) {
+              db.run('ROLLBACK');
+              logger.error(`Error inserting into ${tableName}: ${JSON.stringify(row)} | ${err.message}`);
+              reject(err);
+            }
+          });
+        });
+
+        stmt.finalize((err) => {
+          if (err) {
+            db.run('ROLLBACK');
+            logger.error('Error finalizing statement: ' + err.message);
+            reject();
+          } else {
+            db.run('COMMIT');
+            resolve();
+          }
+        });
       });
     });
-
-    const csv: string = Papa.unparse(rows);
-    await fs.promises.writeFile(outputPath, csv);
-
   } catch (err: unknown) {
-    throw new Error('Error during CSV export: ' + (err instanceof Error ? err.message : 'Unknown error'));
+    throw new Error('Error during CSV import: ' + (err instanceof Error ? err.message : 'Unknown error'));
   }
 }
 
@@ -358,19 +227,14 @@ export async function setupDatabase(dbPath: string): Promise<void> {
   try {
     const db = await openDatabase(dbPath);
     await createTables(db);
+    await insertIntoTable<Word>( db, "words", ["id", "src", "trg", "prn", "type"], "../data/words.csv" );
+    await insertIntoTable<Block>( db, "blocks", ["id", "name"], "../data/blocks.csv" );
+    await insertIntoTable<Lecture>( db, "lecture", ["id", "name"], "../data/lectures.csv" );
+    await insertIntoTable<LectureBlock>( db, "lecture_blocks", ["lecture_id", "block_id"], "../data/lecture_blocks.csv" );
+    await insertIntoTable<BlockBlock>( db, "block_blocks", ["block_id", "block_id"], "../data/block_blocks.csv" );
+    await insertIntoTable<BlockWord>( db, "block_words", ["block_id", "word_id"], "../data/block_words.csv" );
     await closeDatabase(db);
   } catch (err) {
     throw new Error('Error during CSV import: ' + (err instanceof Error ? err.message : 'Unknown error'));
-  }
-}
-
-// Function to check and set up the database
-export async function importAll(dbPath: string): Promise<void> {
-  try {
-    await insertFromCSV<Word>(dbPath, '../data/words.csv', insertWords);
-    await insertFromCSV<Block>(dbPath, '../data/blocks.csv', insertBlocks);
-    await insertFromCSV<Lecture>(dbPath, '../data/lectures.csv', insertLectures);
-  } catch (err: unknown) {
-    throw new Error('Error during import: ' + (err instanceof Error ? err.message : 'Unknown error'));
   }
 }
