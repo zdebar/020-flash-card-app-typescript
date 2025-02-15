@@ -1,6 +1,15 @@
 import sqlite3, { ERROR } from 'sqlite3';
 import Papa from 'papaparse';
 import{ promises as fs } from 'fs';
+import winston from 'winston';
+
+// Create logger instance with different levels and transports
+const logger = winston.createLogger({
+  level: 'debug',
+  transports: [
+    new winston.transports.Console({ format: winston.format.simple() }),
+  ],
+});
 
 // Define types for CSV data
 interface Block {
@@ -21,12 +30,15 @@ interface Word {
   type: string;
 }
 
+
 // Function to check if the database exists
 export async function checkDatabaseExists(dbPath: string): Promise<boolean> {
   try {
     await fs.access(dbPath);
-    return true;
+    logger.debug(`Database found: ${dbPath}`);
+    return true;    
   } catch {
+    logger.debug(`Database not found: ${dbPath}`);
     return false;
   }
 }
@@ -35,22 +47,27 @@ export async function checkDatabaseExists(dbPath: string): Promise<boolean> {
 export async function checkCSVPath(csvPath: string): Promise<boolean> {
   try {
     await fs.access(csvPath);
+    logger.debug(`CSV file found: ${csvPath}`);
     return true;
   } catch {
+    logger.debug(`CSV file not found: ${csvPath}`);
     return false;
   }
 }
 
 // Function to open a connection to the database
-export function openDatabase(dbPath: string): sqlite3.Database {
-  const db = new sqlite3.Database(dbPath, (err: Error | null) => {
-    if (err) {
-      console.error('Error opening database', err.message);
-    } else {
-      console.log('Database connected successfully');
-    }
+export async function openDatabase(dbPath: string): Promise<sqlite3.Database | null> {
+  return new Promise((resolve, reject) => {
+    const db = new sqlite3.Database(dbPath, (err: Error | null) => {
+      if (err) {
+        logger.debug(`Failed to connect to database: ${dbPath}`);
+        reject(err); // Reject the promise if connection fails
+      } else {
+        logger.debug(`Established connection to database: ${dbPath}`);
+        resolve(db); // Resolve the promise with the db object if connection succeeds
+      }
+    });
   });
-  return db;
 }
 
 // Function to close the database connection
