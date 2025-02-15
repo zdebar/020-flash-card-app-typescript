@@ -1,6 +1,6 @@
 import sqlite3, { ERROR } from 'sqlite3';
 import Papa from 'papaparse';
-import fs from 'fs';
+import{ promises as fs } from 'fs';
 
 // Define types for CSV data
 interface Block {
@@ -14,6 +14,7 @@ interface Lecture {
 }
 
 interface Word {
+  id: number;
   src: string;
   trg: string;
   prn: string;
@@ -21,23 +22,22 @@ interface Word {
 }
 
 // Function to check if the database exists
-export function checkDatabaseExists(dbPath: string): Promise<boolean> {
-  return new Promise((resolve, reject) => {
-    fs.access(dbPath, fs.constants.F_OK, (err) => {
-      if (err) {
-        reject(new Error('Database does not exist'));
-      } else {
-        resolve(true);
-      }
-    });
-  });
+export async function checkDatabaseExists(dbPath: string): Promise<boolean> {
+  try {
+    await fs.access(dbPath);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 // Check if the CSV file path is valid
-export function checkCSVPath(csvPath: string): void {
-  if (!fs.existsSync(csvPath)) {
-    console.error('CSV file does not exist. Stopping execution.');
-    process.exit(1);
+export async function checkCSVPath(csvPath: string): Promise<boolean> {
+  try {
+    await fs.access(csvPath);
+    return true;
+  } catch {
+    return false;
   }
 }
 
@@ -174,7 +174,7 @@ export function createTables(db: sqlite3.Database): void {
       src TEXT NOT NULL,
       trg TEXT NOT NULL,
       prn TEXT NOT NULL,
-      type TEXT CHECK(type IN ('word', 'phrase', 'sentence')) DEFAULT 'word'
+      type TEXT CHECK(type IN ('word', 'phrase', 'sentence', 'grammar')) DEFAULT 'word'
     )`);
 
     db.run(`CREATE TABLE IF NOT EXISTS lectures (
