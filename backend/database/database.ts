@@ -1,14 +1,7 @@
 import sqlite3 from 'sqlite3';
 import Papa from 'papaparse';
 import fs from 'fs';
-import winston from 'winston';
-
-const logger = winston.createLogger({
-  level: 'debug',
-  transports: [
-    new winston.transports.Console({ format: winston.format.simple() }),
-  ],
-});
+import logger from '../src/logger';
 
 interface Block {
   id: number;
