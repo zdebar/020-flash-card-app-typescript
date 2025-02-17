@@ -2014,7 +2014,7 @@ protective       - 4 -	protective      1. ochranný 2. ochranný prostředek 3. 
 reaction       - 1 -	reaction      reakce
 protocol       - 3 -	protocol      1. protokol 2. pevně daný postup (pro léčbu, pokus ap.) 3. oficiální zápis/zoráva (i vědecká)
 pulse       - 6 -	pulse      1. tep, puls 2. pulzový, pulzační 3. tepat, bít, pulzovat 4. vytvářet impulsy 5. luštěninový 6. luskovina (semena)
-pump       - 7 -	"pump      1. pumpa, čerpadlo 2. (benzinové) čerpadlo 3. (na)pumpovat, (na/vy)čerpat 4. vypumpovat co (žaludek ap.) 5. tahat z koho co (informace) 6. čerpadlový 7. brokovnice - ""pumpa"" (slang.)"
+pump       - 7 -	pump      1. pumpa, čerpadlo 2. (benzinové) čerpadlo 3. (na)pumpovat, (na/vy)čerpat 4. vypumpovat co (žaludek ap.) 5. tahat z koho co (informace) 6. čerpadlový 7. brokovnice - ""pumpa"" (slang.)
 puzzle       - 3 -	puzzle      1. nejít do hlavy/na rozum, mást 2. rébus, hádanka, hlavolam 3. záhada
 quest       - 3 -	quest      1. hledání (dlouhé a těžké) 2. hledat 3. stopovat zvěř
 ranking       - 5 -	ranking      1. (o)hodnocení 2. stanovení sazeb 3. klasifikační třída 4. jmenovitý výkon (tech.) 5. vynadání komu
