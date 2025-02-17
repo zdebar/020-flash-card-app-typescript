@@ -1,6 +1,6 @@
 #separator:tab
 #html:false
-comic       - 3 -	comic      1. komický 2. komik 3. komiks
+comic     - 3 -	comic      1. komický 2. komik 3. komiks
 chemistry       - 3 -	chemistry      1. chemie 2. chemické pochody/složení/vlastnosti/procesy 3. vzájemná přitažlivost
 physics       - 2 -	physics      1. fyzika 2. fyzikální vlastnosti (programovaných objektů ve hře ap.)
 gonna       - 1 -	gonna      chystám se udělat
