@@ -3,6 +3,10 @@ from googletrans import Translator
 import re
 import pronouncing
 
+# TODO
+# 1. set to work words in smaller batches cca. 100 words
+# 2. set async to wait for reponses
+
 NUMBER_OF_WORDS = 200
 arpabet_to_ipa = {
     'AA1': 'ɑː', 'AH0': 'ə', 'AH1': 'ʌ', 'AO0': 'ɔː', 'AO1': 'ɔː', 'AW0': 'aʊ', 'AY0': 'aɪ',
@@ -30,7 +34,7 @@ def arpabet_to_ipa_conversion(arpabet_str):
         if word in arpabet_to_ipa:
             ipa_words.append(arpabet_to_ipa[word])
         else:
-            print(f"Neznámý foném: {word}")
+            print(f"Uknown phenom: {word}")
             ipa_words.append(word)
     return "/" + ''.join(ipa_words) + "/"
 
@@ -45,11 +49,11 @@ words = []
 with open('./ngram_freq.csv', 'r', encoding='utf-8') as f:
     reader = csv.reader(f)
     for row in reader:
-        if len(words) >= NUMBER_OF_WORDS:  # Zastavíme se, když máme dostatek slov
+        if len(words) >= NUMBER_OF_WORDS: 
             break
         if row: 
             word = clean_word(row[0].lower())
-            if len(word) > 1:  # Přeskakujeme jednopísmenná slova
+            if len(word) > 1: 
                 words.append(word)
 
 with open("CZ-EN.csv", "w", newline='', encoding='utf-8') as f:
