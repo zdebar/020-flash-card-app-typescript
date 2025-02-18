@@ -28,4 +28,5 @@ dist-ssr
 # Other
 test.js
 snipets/
-utils/ngram_freq.csv
+data/en-source/
+data/es-source/
