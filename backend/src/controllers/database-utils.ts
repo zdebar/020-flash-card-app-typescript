@@ -1,11 +1,6 @@
-import sqlite3 from 'sqlite3';
+import { db } from "../config/config";
 
-const db = new sqlite3.Database('../data/dictionary.db');
-const trainingWords = 100;
-const numberOfRepeats = 10;
-const scoreReset = 0;
-
-interface WordData {
+export interface WordData {
   word_id: number;
   src: string | null;
   trg: string | null;
@@ -14,7 +9,32 @@ interface WordData {
   next_at: Date | null;
 }
 
-export function getNewWordsForTraining (userID: number, numberOfNewWords: number, language: string): Promise<WordData[]> {
+export function countUserWords (userID: number, progressMin: number, progressMax: number, language: string): Promise<number> {
+  return new Promise((resolve, reject) => {
+    const query = `
+      SELECT COUNT(*) as count
+      FROM user_words 
+      JOIN words ON user_words.word_id = words.id
+      WHERE user_words.user_id = ?
+        AND user_words.progress BETWEEN ? AND ?
+        AND words.language = ?
+    `;
+
+    db.get(query, [userID, progressMin, progressMax, language ], (err, row) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve((row as { count: number })?.count || 0)
+      }
+    })
+  });
+}
+
+/**
+ * Returns words with lowest IDs, that are not in user_words.
+ */
+
+export function getNewWords (userID: number, numberOfNewWords: number, language: string): Promise<WordData[]> {
   return new Promise((resolve, reject) => {
     const query = `
       SELECT words.id AS word_id, words.src, words.trg, words.prn
@@ -45,28 +65,11 @@ export function getNewWordsForTraining (userID: number, numberOfNewWords: number
   });
 }
 
-export function getWordCountByProgressRangeAndLanguage (userID: number, progressMin: number, progressMax: number, language: string): Promise<number> {
-  return new Promise((resolve, reject) => {
-    const query = `
-      SELECT COUNT(*) as count
-      FROM user_words 
-      JOIN words ON user_words.word_id = words.id
-      WHERE user_words.user_id = ?
-        AND user_words.progress BETWEEN ? AND ?
-        AND words.language = ?
-    `;
+/**
+ * Returns words with next_at = older than now || null
+ */
 
-    db.get(query, [userID, progressMin, progressMax, language ], (err, row) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve((row as { count: number })?.count || 0)
-      }
-    })
-  });
-}
-
-export function getWordsByProgressAndLanguage (userID: number, progressMin: number, progressMax:number, language: string): Promise<WordData[]> {
+export function getUserWords (userID: number, progressMin: number, progressMax:number, language: string): Promise<WordData[]> {
   return new Promise((resolve, reject) => {
     const query = `
       SELECT words.id, words.src, words.trg, words.prn, user_words.progress, user_words.next_at
@@ -75,6 +78,7 @@ export function getWordsByProgressAndLanguage (userID: number, progressMin: numb
       WHERE user_words.user_id = ?
         AND user_words.progress BETWEEN ? AND ?
         AND words.language = ?
+        AND (user_words.next_at IS NULL OR user_words.next_at <= datetime('now'))
     `;
 
     db.all(query, [userID, progressMin, progressMax, language], (err, rows) => {
@@ -87,15 +91,11 @@ export function getWordsByProgressAndLanguage (userID: number, progressMin: numb
   });
 }
 
-export async function getWordsForTraining (userID: number, language: string): Promise<WordData[]> {
-  return await getWordsByProgressAndLanguage(userID, 0, 99, language);
-}
+/**
+ * By default progress = 0, next_at = null; Update table user_words
+ */
 
-export async function getWordsForRepetition (userID: number, language: string): Promise<WordData[]> {
-  return await getWordsByProgressAndLanguage(userID, 100, 199, language);
-}
-
-function addWordsToUserFromJSON(userID: number, wordsData: WordData[], progress: number = 0, next_at: Date | null = null): Promise<void> {
+export function addUserWords (userID: number, wordsData: WordData[], progress: number = 0, next_at: Date | null = null): Promise<void> {
   return new Promise((resolve, reject) => {
     const insertQuery = `
       INSERT INTO user_words (user_id, word_id, progress, next_at)
@@ -120,7 +120,11 @@ function addWordsToUserFromJSON(userID: number, wordsData: WordData[], progress:
   });
 }
 
-export function updateProgressAndDateInUserWords(userID: number, wordsData: WordData[]): Promise<void> {
+/**
+ * By default progress = 0, next_at = null; Update table user_words
+ */
+
+export function updateProgress (userID: number, wordsData: WordData[]): Promise<void> {
   return new Promise((resolve, reject) => {
     const updateQuery = `
       UPDATE user_words
@@ -145,4 +149,3 @@ export function updateProgressAndDateInUserWords(userID: number, wordsData: Word
       .catch((err) => reject(err));
   });
 }
-

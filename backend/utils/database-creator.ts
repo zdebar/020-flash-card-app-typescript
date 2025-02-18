@@ -1,7 +1,7 @@
 import sqlite3 from 'sqlite3';
 import Papa from 'papaparse';
 import fs from 'fs';
-import logger from '../src/logger';
+import logger from './logger';
 
 interface Block {
   id: number;

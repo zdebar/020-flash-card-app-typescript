@@ -2,6 +2,8 @@ import csv
 import re
 import pronouncing
 
+# For Converting TXT exported from ANKI Cards
+
 regex = r"(.*?)-\s+\d+\s+-\s+\w+\s+(?:\d+\.\s+)?(.*?)(?=\d|,|$)"
 arpabet_to_ipa = {
     'AA1': 'ɑː', 'AH0': 'ə', 'AH1': 'ʌ', 'AO0': 'ɔː', 'AO1': 'ɔː', 'AW0': 'aʊ', 'AY0': 'aɪ',
