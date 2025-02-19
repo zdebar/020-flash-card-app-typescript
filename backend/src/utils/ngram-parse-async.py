@@ -4,7 +4,7 @@ import csv
 import re
 import pronouncing
 
-NUMBER_OF_WORDS = 20000
+NUMBER_OF_WORDS = 100
 GOOGLE_TRANSLATE_URL = "https://translate.googleapis.com/translate_a/single"
 input_path = '../../data/en-source/ngram_freq.csv'
 
@@ -86,10 +86,11 @@ async def translate_word(session, word):
 
 async def process_word(session, idx, word):
     czech = await translate_word(session, word)
-    pronunciation = await get_pronunciation(word)
-    if pronunciation is not None:
-        pronunciation = arpabet_to_ipa_conversion(pronunciation)
-        return [idx, word, czech, pronunciation]
+    if czech != word:
+        pronunciation = await get_pronunciation(word)
+        if pronunciation is not None:
+            pronunciation = arpabet_to_ipa_conversion(pronunciation)
+            return [idx, czech, word, pronunciation]
     return None
 
 async def main():
@@ -111,9 +112,16 @@ async def main():
 
     with open("CZ-EN.csv", "w", newline='', encoding='utf-8') as f:
         writer = csv.writer(f)
-        writer.writerow(["id", "word", "translation", "pronunciation"])
         writer.writerows(results)
 
-    print("CSV successfully created.")
+    with open("EN.csv", "w", newline='', encoding='utf-8') as f:
+        writer = csv.writer(f)
+        for result in results:
+            writer.writerow(result[2:3])
+
+    with open("CZ.csv", "w", newline='', encoding='utf-8') as f:
+        writer = csv.writer(f)
+        for result in results:
+            writer.writerow(result[0:3])
 
 asyncio.run(main())
