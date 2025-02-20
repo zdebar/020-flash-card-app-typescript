@@ -4,14 +4,11 @@ import cors from 'cors';
 
 const app = express();
 const db = new sqlite3.Database("./data/cz-esp.db");
-
 const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors());
 app.use(express.json());
-
-
 
 // Routes
 app.get('/', (req: Request, res: Response) => {

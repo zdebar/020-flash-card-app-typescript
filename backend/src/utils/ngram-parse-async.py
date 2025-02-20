@@ -4,7 +4,7 @@ import csv
 import re
 import pronouncing
 
-NUMBER_OF_WORDS = 100
+NUMBER_OF_WORDS = 200
 GOOGLE_TRANSLATE_URL = "https://translate.googleapis.com/translate_a/single"
 input_path = '../../data/en-source/ngram_freq.csv'
 
