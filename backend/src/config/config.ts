@@ -1,23 +1,29 @@
 import sqlite3 from 'sqlite3';
+import path from 'path';
 
 // Database Config
-const dbPath = '../data/dictionary.db';
-
-// Learning Algorithm Config
-export const trainingWordCount = 100;
-export const trainingSessionCount = 10;
-export const defaultScore = 0;
-export const learningLanguage = "en";
+const dbPath = path.resolve(__dirname, '../data/dictionary.db');
 
 export const db = new sqlite3.Database(dbPath, (err) => {
   if (err) {
-    console.error('Error connection to database:', err.message);
+    console.error('Error connecting to database:', err.message);
+    process.exit(1); // Exit process if database connection fails
   } else {
-    console.log('Successfully created connection to database.');
+    console.log('Successfully connected to database.');
   }
 });
 
-// General Config
-export const baseProgress = 0;
-export const baseRepetionProgress = 100;
-export const overRepetionProgress = 200;
+// Learning Algorithm Config
+export const learningConfig = {
+  trainingWordCount: 100,
+  trainingSessionCount: 10,
+  defaultScore: 0,
+  learningLanguage: "en"
+};
+
+// General Progress Config
+export const progressConfig = {
+  baseProgress: 0,
+  baseRepetitionProgress: 100,
+  overRepetitionProgress: 200
+};

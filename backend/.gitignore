@@ -27,6 +27,7 @@ dist-ssr
 
 # Other
 test.js
+test.ts
 snipets/
 data/en-source/
 data/es-source/
