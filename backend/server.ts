@@ -1,4 +1,5 @@
 import express, { Request, Response } from 'express';
+import userRoutes from './src/routes/userRoutes';
 import cors from 'cors';
 
 const app = express();
@@ -20,6 +21,8 @@ app.get('/library', (req: Request, res: Response) => {
 app.get('/user', (req: Request, res: Response) => {
   res.send('User route');
 });
+
+app.use('/api', userRoutes);
 
 // Start server
 app.listen(PORT, () => {
