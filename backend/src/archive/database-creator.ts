@@ -1,7 +1,9 @@
 import sqlite3 from 'sqlite3';
 import Papa from 'papaparse';
 import fs from 'fs';
-import logger from './logger';
+import logger from '../utils/logger';
+
+// Old way for editing database. Now using DBeaver instead
 
 interface Block {
   id: number;

@@ -1,13 +1,10 @@
-import { db } from "../config/config";
+import { db } from "../config/appConfig";
+import logger from "../utils/logger";
+import { WordData } from "../types";
 
-export interface WordData {
-  word_id: number;
-  src: string | null;
-  trg: string | null;
-  prn: string | null;
-  progress: number;
-  next_at: Date | null;
-}
+/**
+ * Count user_words in a given score range. Both range values are inclusive.
+ */
 
 export function countUserWords (userID: number, progressMin: number, progressMax: number, language: string): Promise<number> {
   return new Promise((resolve, reject) => {
@@ -23,6 +20,7 @@ export function countUserWords (userID: number, progressMin: number, progressMax
     db.get(query, [userID, progressMin, progressMax, language ], (err, row) => {
       if (err) {
         reject(err);
+        logger.debug('Error in countUserWords function:', err.message);
       } else {
         resolve((row as { count: number })?.count || 0)
       }
@@ -52,6 +50,7 @@ export function getNewWords (userID: number, numberOfNewWords: number, language:
     db.all(query, [userID, numberOfNewWords, language], (err, rows) => {
       if (err) {
         reject(err)
+        logger.debug('Error in getNewWords function:', err.message);
       } else {
         const wordsWithProgress = rows.map((row: any) => ({
           ...row,
@@ -83,6 +82,7 @@ export function getUserWords (userID: number, progressMin: number, progressMax:n
 
     db.all(query, [userID, progressMin, progressMax, language], (err, rows) => {
       if (err) {
+        logger.debug('Error in getUserWords function:', err.message);
         reject(err);
       } else {
         resolve(rows as WordData[]);
@@ -106,6 +106,7 @@ export function addUserWords (userID: number, wordsData: WordData[], progress: n
       return new Promise((reject) => {
         db.run(insertQuery, [userID, word.word_id, progress, next_at], function(err) {
           if (err) {
+            logger.debug('Error in addUserWords function:', err.message);
             reject(err);
           } else {
             resolve();
@@ -136,6 +137,7 @@ export function updateProgress (userID: number, wordsData: WordData[]): Promise<
       return new Promise<void>((resolve, reject) => {
         db.run(updateQuery, [word.progress, word.next_at, userID, word.word_id], function(err) {
           if (err) {
+            logger.debug('Error in updateProgress function:', err.message);
             reject(err); 
           } else {
             resolve();
