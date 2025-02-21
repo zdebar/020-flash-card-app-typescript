@@ -6,6 +6,8 @@ from pathlib import Path
 import subprocess
 from typing import Optional, List
 
+# For parsing ngram_freq.cv with english frequency words
+
 # File paths and constants
 folder_path = Path(r"D:/Active/020-flash-card-app-typescript/backend/data/en-source")
 input_path = folder_path / "ngram_freq.csv"

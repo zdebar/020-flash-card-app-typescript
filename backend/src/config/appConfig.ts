@@ -15,8 +15,8 @@ export const db = new sqlite3.Database(dbPath, (err) => {
 });
 
 //Internal Settings
-export const scoreConfig = {
-  baseProgress: 0, // initial score for practice
-  baseRepetitionProgress: 100, // initial score for srs repetition
-  overRepetitionProgress: 200 // end score for repetition
+export const progressScoreConfig = {
+  baseProgressScore: 0, // initial progressScore for practice
+  baseRepetitionProgressScore: 100, // initial progressScore for srs repetition
+  endProgressScore: 200 // end progressScore for repetition
 };

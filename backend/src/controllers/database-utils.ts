@@ -32,35 +32,59 @@ export function countUserWords (userID: number, progressMin: number, progressMax
  * Returns words with lowest IDs, that are not in user_words.
  */
 
-export function getNewWords (userID: number, numberOfNewWords: number, language: string): Promise<WordData[]> {
+export function getNewWords(userID: number, numberOfNewWords: number, language: string): Promise<WordData[]> {
   return new Promise((resolve, reject) => {
-    const query = `
-      SELECT words.id AS word_id, words.src, words.trg, words.prn
-      FROM words
-      LEFT JOIN user_words ON words.id = user_words.word_id AND user_words.user_id = ?
-      WHERE user_words.word_id IS NULL
-        AND words.language = ?
-      ORDER BY words.id DESC
-      LIMIT ?
+    // First query: Get the highest frequency_order of the user's known words
+    const highestFrequencyOrderQuery = `
+      SELECT MAX(frequency_order) AS highest_order
+      FROM user_words
+      JOIN words ON user_words.word_id = words.id
+      WHERE user_words.user_id = ? AND words.language = ?
     `;
 
-    const progress: number = 0;
-    const next_at: Date | null = null;
+    // Define the type for the query result
+    interface HighestFrequencyOrderResult {
+      highest_order: number | null; // highest_order can be null if no records are found
+    }
 
-    db.all(query, [userID, numberOfNewWords, language], (err, rows) => {
+    // Query the database for the highest frequency_order for the user
+    db.get(highestFrequencyOrderQuery, [userID, language], (err, row: HighestFrequencyOrderResult) => {
       if (err) {
-        reject(err)
-        logger.debug('Error in getNewWords function:', err.message);
-      } else {
-        const wordsWithProgress = rows.map((row: any) => ({
-          ...row,
-          progress,
-          next_at
-        })) as WordData[];
-
-        resolve(wordsWithProgress)
+        logger.debug('Error in highestFrequencyOrderQuery:', err.message);
+        reject(err);        
       }
-    })
+
+      const highestFrequencyOrder = row ? row.highest_order ?? 0 : 0; 
+
+      // Second query: Get the next numberOfNewWords words with frequency_order higher than the highest known order
+      const query = `
+        SELECT words.id AS word_id, words.src, words.trg, words.prn
+        FROM words
+        WHERE words.language = ?
+          AND words.frequency_order > ?
+        ORDER BY words.frequency_order ASC
+        LIMIT ?
+      `;
+
+      const progress: number = 0;
+      const next_at: Date | null = null;
+
+      // Fetch the new words
+      db.all(query, [language, highestFrequencyOrder, numberOfNewWords], (err, rows) => {
+        if (err) {
+          reject(err);
+          logger.debug('Error in getNewWords function:', err.message);
+        } else {
+          const wordsWithProgress = rows.map((row: any) => ({
+            ...row,
+            progress,
+            next_at
+          })) as WordData[];
+
+          resolve(wordsWithProgress);
+        }
+      });
+    });
   });
 }
 

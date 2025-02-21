@@ -4,6 +4,8 @@ import os
 
 pytesseract.pytesseract.tesseract_cmd = r'D:\Program Files\Tesseract-OCR\tesseract.exe'
 
+# Converts img of page into parseable text
+
 input_directory = "../../data/es-source/"
 
 for filename in os.listdir(input_directory):

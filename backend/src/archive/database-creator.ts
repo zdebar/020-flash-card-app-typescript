@@ -4,6 +4,7 @@ import fs from 'fs';
 import logger from '../utils/logger';
 
 // Old way for editing database. Now using DBeaver instead
+// Insert into Table is already improved in databaseIntert.ts
 
 interface Block {
   id: number;
