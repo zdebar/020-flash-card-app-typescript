@@ -1,9 +1,7 @@
 import express, { Request, Response } from 'express';
-import sqlite3 from 'sqlite3';
 import cors from 'cors';
 
 const app = express();
-const db = new sqlite3.Database("./data/cz-esp.db");
 const PORT = process.env.PORT || 3000;
 
 // Middleware

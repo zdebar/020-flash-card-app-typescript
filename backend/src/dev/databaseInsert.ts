@@ -3,6 +3,7 @@ import Papa from 'papaparse';
 import fs from 'fs';
 import logger from '../utils/logger';
 import { WordData } from '../types';
+import { promisify } from 'util';
 
 const databasePath = "../../data/dictionary.db";
 const csvPath = "../../data/en-source/CZ-EN.csv";
