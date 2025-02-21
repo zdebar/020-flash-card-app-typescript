@@ -3,7 +3,8 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import Card from './components/Card';
 import User from './components/User';
-import Library from './components/Library';
+import History from './components/History';
+import Repetition from './components/Repetition';
 import jsonData from './data/lecture1-test.json';
 
 interface Word {
@@ -19,14 +20,15 @@ interface JsonData {
 }
 
 export default function App() {
-  const data = jsonData as JsonData; // Typujeme jsonData jako JsonData
+  const data = jsonData as JsonData;
 
   return (
     <div className="app flex-column m-auto">
       <Header />
       <Routes>
         <Route path="/" element={<Card words={data.blocks[0]?.words} />} />
-        <Route path="/library" element={<Library />} />
+        <Route path="/repetition" element={<Repetition />} />
+        <Route path="/history" element={<History />} />
         <Route path="/user" element={<User />} /> 
       </Routes>
       <Footer />

@@ -6,7 +6,7 @@ interface Lecture {
   name: string;
 }
 
-export default function Library() {
+export default function History() {
   const [lectures, setLectures] = useState<Lecture[]>([]); // Array of Lecture objects
   const [loading, setLoading] = useState<boolean>(true); // boolean for loading state
   const [error, setError] = useState<string | null>(null); // string or null for error state

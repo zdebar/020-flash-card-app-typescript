@@ -10,13 +10,3 @@
     margin: 15px auto 0px;
   }
 }
-
-.src {
-  border-bottom: var(--border-primary);
-  height: 75px;
-  width: 100%;
-}
-
-.trg {
-  height: 100px;
-}
