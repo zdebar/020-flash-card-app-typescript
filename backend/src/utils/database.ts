@@ -19,8 +19,9 @@ export function countUserWords (userID: number, progressMin: number, progressMax
 
     db.get(query, [userID, progressMin, progressMax, language ], (err, row) => {
       if (err) {
-        reject(err);
         logger.debug('Error in countUserWords function:', err.message);
+        reject(err);
+        
       } else {
         resolve((row as { count: number })?.count || 0)
       }
@@ -72,8 +73,8 @@ export function getNewWords(userID: number, numberOfNewWords: number, language: 
       // Fetch the new words
       db.all(query, [language, highestFrequencyOrder, numberOfNewWords], (err, rows) => {
         if (err) {
-          reject(err);
           logger.debug('Error in getNewWords function:', err.message);
+          reject(err);
         } else {
           const wordsWithProgress = rows.map((row: any) => ({
             ...row,
