@@ -57,7 +57,6 @@ def parse_file(file_path, output_csv):
         if match:
             english = match.group(1).strip()
             czech = match.group(2).strip()
-            # print(match.groups())
             pronunciation = arpabet_to_ipa_conversion(get_pronunciation(english))
             data.append([czech, english, pronunciation])
 

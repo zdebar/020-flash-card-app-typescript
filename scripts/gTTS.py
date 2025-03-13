@@ -3,10 +3,10 @@ import os
 from gtts import gTTS
 
 # Path to your CSV file
-CSV_FILE = "../../data/en-source/CZ-EN.csv"
+CSV_FILE = "../data/en-source/CZ-EN.csv"
 
 # Output folder for MP3 files
-OUTPUT_FOLDER = "../../data/en-source/audio-uk"
+OUTPUT_FOLDER = "../data/en-source/audio-uk"
 
 # Ensure output folder exists
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)

@@ -6,7 +6,7 @@ pytesseract.pytesseract.tesseract_cmd = r'D:\Program Files\Tesseract-OCR\tessera
 
 # Converts img of page into parseable text
 
-input_directory = "../../data/es-source/"
+input_directory = "../data/es-source/"
 
 for filename in os.listdir(input_directory):
     if filename.lower().endswith(('.jpg', '.jpeg', '.png')):
