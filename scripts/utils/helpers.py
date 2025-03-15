@@ -1,7 +1,6 @@
+import asyncio
 import subprocess
-import pronouncing
 import re
-from typing import List
 
 def clean_word(word: str) -> str:
     """
@@ -9,7 +8,7 @@ def clean_word(word: str) -> str:
     """
     return re.sub(r'[^a-zA-Z0-9]', '', word)
 
-def get_IPA_pronunciation(word: str, accent: str) -> str | None: # Should this be async?
+async def get_IPA_pronunciation(word: str, accent: str) -> str | None:
     """
     Gets IPA pronunciation of the word using espeak-ng. Works with espeak_ng installed in predefined location.
 
@@ -26,8 +25,13 @@ def get_IPA_pronunciation(word: str, accent: str) -> str | None: # Should this b
         str: IPA transcription
     """
     espeak_ng_path = r"C:/Program Files/eSpeak NG/espeak-ng.exe"
-    result = subprocess.run(
-        [espeak_ng_path, "-q", "--ipa", "-v", accent, word],
-        capture_output=True, text=True, encoding='utf-8'
+    result = await asyncio.create_subprocess_exec(
+        espeak_ng_path, "-q", "--ipa", "-v", accent, word,
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE
     )
-    return result.stdout.strip() if result.stdout else None
+    stdout, stderr = await result.communicate()
+    
+    # Decode the output and return
+    return stdout.decode('utf-8').strip() if stdout else None
+
