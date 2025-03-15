@@ -5,7 +5,20 @@ import pronouncing
 # For Converting TXT exported from ANKI Cards
 
 regex = r"(.*?)-\s+\d+\s+-\s+\w+\s+(?:\d+\.\s+)?(.*?)(?=\d|,|$)"
-arpabet_to_ipa = {
+
+
+
+def arpabet_to_ipa_conversion(arpabet: str) -> str:
+    """ 
+    Converts pronunciation from arpabet format to IPA format using in-function conversion table.
+
+    Args:
+        arpabet (str): ARPAbet phonetic transcription of a word or phrase.
+
+    Returns:
+        str: IPA transcription
+    """
+    arpabet_to_ipa = {
     'AA1': 'ɑː', 'AH0': 'ə', 'AH1': 'ʌ', 'AO0': 'ɔː', 'AO1': 'ɔː', 'AW0': 'aʊ', 'AY0': 'aɪ',
     'AE1': 'æ', 'AE0': 'ə', 'AY1': 'aɪ', 'B': 'b', 'CH': 'ʧ', 'D': 'd', 'DH': 'ð', 'EH0': 'ɛ', 'EH1': 'eɪ', 
     'ER0': 'ɜːr', 'ER1': 'ɜːr', 'EY0': 'eɪ', 'EY1': 'eɪ', 'F': 'f', 'G': 'g', 'HH': 'h', 'IH0': 'ɪ', 'IH1': 'ɪ', 
@@ -14,25 +27,34 @@ arpabet_to_ipa = {
     'UW0': 'uː', 'V': 'v', 'W': 'w', 'Y': 'j', 'Z': 'z', 'ZH': 'ʒ', 'IH2': 'ɪ', 'EH2': 'ɛ', 'AY2': 'aɪ', 'AY1': 'aɪ',
     'AA2': 'ɑː', 'EY2': 'eɪ', 'AA0': 'ɑː', 'AW1': 'aʊ', 'UW1': 'uː', 'OW2': 'əʊ', 'AE2': 'æ', 'IY2': 'iː', 
     'ER2': 'ɜːr', 'UH2': 'ʊ', 'AO2': 'ɔː', 'AH2': 'ə', 'UW2': 'uː', 'AW2': 'aʊ', "OY2": "ɔɪ"
-}
+    }
 
-
-def arpabet_to_ipa_conversion(arpabet_str):
-    if arpabet_str is None:
+    if not arpabet:
         return "N/A"
     
-    arpabet_words = arpabet_str.split()
+    arpabet_words = arpabet.split()
     ipa_words = []
+
     for word in arpabet_words:
         if word in arpabet_to_ipa:
             ipa_words.append(arpabet_to_ipa[word])
         else:
-            print(f"Neznámý foném: {word}")
+            print(f"Unknown phonem: {word}")
             ipa_words.append(word)
-    return "/" + ''.join(ipa_words) + "/"
+    return ''.join(ipa_words)
 
 
-def get_pronunciation(word):
+def get_english_pronunciation(word: str) -> str | None:
+    """
+    Returns the ARPAbet pronunciation for an English word using the `pronouncing` module.
+
+    Args:
+        word (str): The English word for which to retrieve the ARPAbet pronunciation.
+
+    Returns:
+        str | None: The ARPAbet pronunciation of the word if found, otherwise None.
+
+    """
     phones = pronouncing.phones_for_word(word)
     if phones:
         return phones[0]
@@ -41,8 +63,10 @@ def get_pronunciation(word):
     
 
 def parse_file(file_path, output_csv):
-    with open(file_path, 'r', encoding='utf-8') as file:
-        # lines = [file.readline() for _ in range(10)] 
+    """
+    Parse Anki Card File
+    """
+    with open(file_path, 'r', encoding='utf-8') as file: 
         lines = file.readlines()
 
     data = []
@@ -57,7 +81,7 @@ def parse_file(file_path, output_csv):
         if match:
             english = match.group(1).strip()
             czech = match.group(2).strip()
-            pronunciation = arpabet_to_ipa_conversion(get_pronunciation(english))
+            pronunciation = arpabet_to_ipa_conversion(get_english_pronunciation(english))
             data.append([czech, english, pronunciation])
 
     # Zápis do CSV souboru

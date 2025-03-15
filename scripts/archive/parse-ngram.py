@@ -14,7 +14,6 @@ input_path = folder_path / "ngram_freq.csv"
 output_path = folder_path / "CZ-EN.csv"
 
 NUMBER_OF_WORDS = 500
-GOOGLE_TRANSLATE_URL = "https://translate.googleapis.com/translate_a/single"
 ACCENT = "en-gb"  # en-gb for british, en-us for american
 
 def clean_word(word: str) -> str:
@@ -23,45 +22,68 @@ def clean_word(word: str) -> str:
     """
     return re.sub(r'[^a-zA-Z0-9]', '', word)
 
-async def get_pronunciation(word: str, accent: str = ACCENT) -> Optional[str]:
+async def get_IPA_pronunciation(word: str, accent: str) -> Optional[str]:
     """
-    Gets IPA pronunciation of the word using espeak-ng.
+    Gets IPA pronunciation of the word using espeak-ng. Works with espeak_ng installed in predefined location.
+
+    Args:
+        word (str): source word
+        accent (str): intended accent
+            "en-gb": british english
+            "en-us": us english
+            "fr": french
+            "de": german
+            "es": spanish
+
+    Returns:
+        str: IPA transcription
     """
     espeak_ng_path = r"C:/Program Files/eSpeak NG/espeak-ng.exe"
     result = subprocess.run(
         [espeak_ng_path, "-q", "--ipa", "-v", accent, word],
         capture_output=True, text=True, encoding='utf-8'
     )
-    return "/" + result.stdout.strip() + "/" if result.stdout else None
+    return result.stdout.strip() if result.stdout else None
 
-async def translate_word(session: aiohttp.ClientSession, word: str) -> Optional[str]:
+async def translate_word(session: aiohttp.ClientSession, word: str, source_language: str, target_language: str) -> str | None:
     """
-    Translates a word from English to Czech using Google Translate.
+    Translates a word from Source language to Target language using Google Translate.
+
+    Args:
+        language shortcuts according to Google Translate API
+            "en": english
+            "cs": czech
+
+    Returns:
+        str: if translation given
+        None: if not given
     """
     params = {
         "client": "gtx",
-        "sl": "en",
-        "tl": "cs",
+        "sl": source_language,
+        "tl": target_language,
         "dt": "t",
         "q": word
     }
+    GOOGLE_TRANSLATE_URL = "https://translate.googleapis.com/translate_a/single"
+
     try:
         async with session.get(GOOGLE_TRANSLATE_URL, params=params) as response:
             data = await response.json()
             return data[0][0][0].lower() if data else None
     except Exception as e:
         print(f"Error translating word '{word}': {e}")
-        return "N/A"
+        return None
 
-async def process_word(session: aiohttp.ClientSession, idx: int, word: str) -> Optional[List[str]]:
+async def process_word(session: aiohttp.ClientSession, idx: int, target: str, accent: str) -> List[str] | None:
     """
     Translates and gets the pronunciation of a word.
     """
-    czech = await translate_word(session, word)
-    pronunciation = await get_pronunciation(word)
-    if czech == "N/A" or pronunciation is None:
+    source = await translate_word(session, target, "en", "cs")
+    pronunciation = await get_IPA_pronunciation(target, accent)
+    if source == "N/A" or pronunciation is None:
         return None
-    return [idx, czech, word, pronunciation]
+    return [idx, source, target, pronunciation]
 
 async def main() -> None:
     """
@@ -78,7 +100,7 @@ async def main() -> None:
                 words.append(word)
 
     async with aiohttp.ClientSession() as session:
-        tasks = [process_word(session, idx, word) for idx, word in enumerate(words, start=1)]
+        tasks = [process_word(session, idx, word, ACCENT) for idx, word in enumerate(words, start=1)]
         results = await asyncio.gather(*tasks)
 
     # Filter out None results (in case of errors or missing data)
