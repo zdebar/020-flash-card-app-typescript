@@ -39,5 +39,4 @@
   image-to-text-conversion / extract text to csv from source jpg photography of textbook page
 
 ## German
-  extract src(cz), trg(de) from excel file, add prn (de) IPA and save to output csv file
-  gTTS / to download pronunciation mp3 file for individual words from source csv file
+  german.py / output csv file with - src, trg, prn, audio, order; creates 

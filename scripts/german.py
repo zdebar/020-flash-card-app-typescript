@@ -66,8 +66,8 @@ async def process_xlsx_to_csv(input_file: str, output_folder: str, audio_folder:
         df["audio"] = audio_files
 
         # Add 'order' column for each sheet
-        df["order"] = df.index + 1  # Add an 'order' column with row index starting at 1
-        final_df = df[["src", "trg", "prn", "audio", "order"]]
+        df["seq"] = df.index + 1  # Add an 'order' column with row index starting at 1
+        final_df = df[["src", "trg", "prn", "audio", "seq"]]
         
         # Save to CSV for each sheet with sheet name
         output_file = os.path.join(output_folder, f"{sheet_name}.csv")
