@@ -1,5 +1,5 @@
 # ARCHIVE
-  quick fix for sourcing english and spanish vocabulary, all these script needs reformatting
+  contains unchanged old scripts
 
 ## gTTs.py
   needs reformatting
@@ -20,6 +20,10 @@
   needs reformatting
   **Purpose**
     from frenquential vocabulary files create csv with source (cz), target (en), pronunciation (en)
+
+# REFORMAT
+  contains old script in process of reformating
+
 
 # GUIDE
 

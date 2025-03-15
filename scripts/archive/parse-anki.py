@@ -6,8 +6,6 @@ import pronouncing
 
 regex = r"(.*?)-\s+\d+\s+-\s+\w+\s+(?:\d+\.\s+)?(.*?)(?=\d|,|$)"
 
-
-
 def arpabet_to_ipa_conversion(arpabet: str) -> str:
     """ 
     Converts pronunciation from arpabet format to IPA format using in-function conversion table.
