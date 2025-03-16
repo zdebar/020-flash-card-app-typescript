@@ -4,7 +4,7 @@ import pronouncing
 from gtts import gTTS
 import os
 
-def clean_word(word: str) -> str:
+def removes_non_alpanumeric_chars(word: str) -> str:
     """
     Removes non-alphanumeric characters from the word.
     """
@@ -41,7 +41,7 @@ async def get_IPA_pronunciation(word: str, accent: str) -> str | None:
     
     return stdout.decode('utf-8').strip() if stdout else None
 
-def get_english_pronunciation(word: str) -> str | None:
+def get_english_arpabet_pronunciation(word: str) -> str | None:
     """
     Returns the ARPAbet pronunciation for an English word using the `pronouncing` module.
 
@@ -55,7 +55,7 @@ def get_english_pronunciation(word: str) -> str | None:
     phones = pronouncing.phones_for_word(word)
     return phones[0] if phones else None
 
-def arpabet_to_ipa_conversion(arpabet: str) -> str:
+def convert_arpabet_to_ipa(arpabet: str) -> str:
     """ 
     Converts pronunciation from arpabet format to IPA format using in-function conversion table.
 
@@ -90,12 +90,10 @@ def arpabet_to_ipa_conversion(arpabet: str) -> str:
             ipa_words.append(word)
     return ''.join(ipa_words)
 
-# Function to generate audio for words
 async def generate_audio_for_words(df, audio_folder, language):
     audio_files = []
     audio_tasks = []
     
-    # Clean the word for valid file names
     def clean_filename(filename: str) -> str:
         filename = filename.lower()
         filename = re.sub(r'[^\w\s]', '', filename)  # Remove special characters (keep alphanumeric and spaces)

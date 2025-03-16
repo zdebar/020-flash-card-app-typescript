@@ -28,7 +28,6 @@ def convert_images_to_text(input_directory: str, output_directory: str, lang: st
 
     print("Processing complete.")
 
-# This ensures that the script runs only when executed directly
 if __name__ == "__main__":
     input_directory = "../data/es-source/"
     output_directory = "../data/es-source/text_output"
