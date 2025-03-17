@@ -53,21 +53,22 @@ async def process_sheet(sheet_name, input_file, output_folder, audio_folder):
     await async_save_csv(final_df, output_file)
     print(f"Saved CSV for sheet '{sheet_name}'.")
 
-async def process_xlsx_to_csv(input_file: str, output_folder: str, audio_folder: str, start_sheet_index: int) -> None:
+async def process_xlsx_to_csv(input_file: str, output_folder: str, audio_folder: str, sheet_index_start: int, sheet_index_end: int) -> None:
     os.makedirs(output_folder, exist_ok=True)
     os.makedirs(audio_folder, exist_ok=True)
 
     xlsx = pd.ExcelFile(input_file)
  
-    sheet_names = xlsx.sheet_names[start_sheet_index:] 
+    sheet_names = xlsx.sheet_names[sheet_index_start:sheet_index_end] 
     tasks = [process_sheet(sheet_name, input_file, output_folder, audio_folder) for sheet_name in sheet_names]
     await asyncio.gather(*tasks)
 
     print("Processing complete.")
 
 if __name__ == "__main__":
-    input_file = '../data/de-source/German_Vocab.xlsx'
-    output_folder = '../data/de-source/csv_output'
-    audio_folder = '../data/de-source/audio-de'
-    start_sheet_index = 22
-    asyncio.run(process_xlsx_to_csv(input_file, output_folder, audio_folder, start_sheet_index))
+    input_file = os.path.abspath("data/de-source/German_Vocab.xlsx")
+    output_folder = os.path.abspath("data/de-source/csv_output")
+    audio_folder = os.path.abspath("data/de-source/audio-de")
+    sheet_index_start = 0
+    sheet_index_end = 1
+    asyncio.run(process_xlsx_to_csv(input_file, output_folder, audio_folder, sheet_index_start, sheet_index_end))
