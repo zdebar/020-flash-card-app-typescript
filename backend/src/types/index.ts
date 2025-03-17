@@ -3,6 +3,6 @@ export interface WordData {
   src: string | null;
   trg: string | null;
   prn: string | null;
-  progress: number;
+  progress: number | null;
   next_at: Date | null;
 }

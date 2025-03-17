@@ -14,14 +14,6 @@ app.get('/', (req: Request, res: Response) => {
   res.json({ id: "1", email: "test@email.com", name: "Test User"});
 });
 
-app.get('/library', (req: Request, res: Response) => {
-  res.send('Library route');
-});
-
-app.get('/user', (req: Request, res: Response) => {
-  res.send('User route');
-});
-
 app.use('/api', userRoutes);
 
 // Start server
