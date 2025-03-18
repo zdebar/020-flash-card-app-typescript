@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS words (
   trg TEXT NOT NULL,
   prn TEXT,
   language TEXT,
+  audio TEXT,
   seq INTEGER
 );
 
