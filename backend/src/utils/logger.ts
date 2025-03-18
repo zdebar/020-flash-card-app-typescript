@@ -35,3 +35,6 @@ const logger = winston.createLogger({
 });
 
 export default logger;
+
+// Logger usage example
+// logger.info(`User created with username: ${username}`);
