@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+import { User } from "../types/dataTypes";
 
-const SECRET_KEY = process.env.SECRET_KEY || "default_secret";
+const SECRET_KEY = process.env.SECRET_KEY
 
 export function authenticateToken (req: Request, res: Response, next: NextFunction) {
   const token = req.headers.authorization?.split(" ")[1];
@@ -10,7 +11,7 @@ export function authenticateToken (req: Request, res: Response, next: NextFuncti
 
   jwt.verify(token, SECRET_KEY, (err, user) => {
     if (err) return res.status(403).json({ error: "Invalid token" });
-    (req as any).user = user;
+    (req as any).user = user as User;
     next();
   });
 };

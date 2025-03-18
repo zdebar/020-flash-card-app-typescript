@@ -1,7 +1,5 @@
 import express, { request, Request, Response } from 'express';
 import cors from 'cors';
-import sqlite3 from 'sqlite3';
-import bcrypt from "bcryptjs"
 import authRoutes from "./src/routes/authRoutes";
 import { authenticateToken } from "./src/middlewares/authMiddleware";
 import db from "./src/config/database";

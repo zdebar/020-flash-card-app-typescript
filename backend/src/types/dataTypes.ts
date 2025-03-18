@@ -6,3 +6,11 @@ export interface WordData {
   progress: number | null;
   next_at: Date | null;
 }
+
+export interface User {
+  id: number;
+  username: string;
+  email: string;
+  password: string;
+  created_at: Date;
+}
