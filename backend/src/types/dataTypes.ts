@@ -1,10 +1,10 @@
 export interface WordData {
   word_id: number;
-  src: string | null;
-  trg: string | null;
+  src: string;
+  trg: string;
   prn: string | null;
+  audio: string | null;
   progress: number | null;
-  next_at: Date | null;
 }
 
 export interface User {

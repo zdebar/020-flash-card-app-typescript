@@ -26,3 +26,4 @@ export const authenticateToken: RequestHandler = async (req: Request, res: Respo
     return;
   }
 };
+

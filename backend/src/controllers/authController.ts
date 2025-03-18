@@ -8,7 +8,7 @@ import { User } from "../types/dataTypes";
 const SECRET_KEY = process.env.SECRET_KEY
 
 // Register a new user
-export const registerUser: RequestHandler = async (req: Request, res: Response): Promise<void> => {  
+export const registerUser: RequestHandler = async (req: Request, res: Response) => {  
   const { username, email, password } = req.body;
 
   if (!username || !email || !password) {
