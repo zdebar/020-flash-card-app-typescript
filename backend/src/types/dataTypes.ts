@@ -14,3 +14,6 @@ export interface User {
   password: string;
   created_at: Date;
 }
+
+export interface UserLogin extends Omit<User, 'password' | 'created_at'> {
+}

@@ -1,18 +1,28 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, RequestHandler } from "express";
 import jwt from "jsonwebtoken";
-import { User } from "../types/dataTypes";
 
 const SECRET_KEY = process.env.SECRET_KEY
 
-export function authenticateToken (req: Request, res: Response, next: NextFunction) {
+export const authenticateToken: RequestHandler = async (req: Request, res: Response, next) => {
   const token = req.headers.authorization?.split(" ")[1];
 
-  if (!token) return res.status(401).json({ error: "Unauthorized" });
+  if (!token) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
 
-  jwt.verify(token, SECRET_KEY, (err, user) => {
-    if (err) return res.status(403).json({ error: "Invalid token" });
-    (req as any).user = user as User;
+  try {
+    const user = await new Promise((resolve, reject) => {
+      jwt.verify(token, SECRET_KEY, (err, decoded) => {
+        if (err) reject(err);
+        resolve(decoded);
+      });
+    });
+
+    (req as any).user = user;
     next();
-  });
+  } catch (err) {
+    res.status(403).json({ error: "Invalid token" });
+    return;
+  }
 };
-

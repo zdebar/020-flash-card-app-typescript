@@ -8,15 +8,16 @@ import { User } from "../types/dataTypes";
 const SECRET_KEY = process.env.SECRET_KEY
 
 // Register a new user
-export const registerUser: RequestHandler = async (req: Request, res: Response) => {
+export const registerUser: RequestHandler = async (req: Request, res: Response): Promise<void> => {  
   const { username, email, password } = req.body;
 
   if (!username || !email || !password) {
-    return res.status(400).json({ error: "All fields are required." });
+    res.status(400).json({ error: "All fields are required." });
+    return; 
   }
 
   try {
-    const user = await new Promise<User | null>((resolve, reject) => {
+    const user: User | null = await new Promise<User | null>((resolve, reject) => {
       db.get("SELECT * FROM users WHERE username = ? OR email = ?", [username, email], (err, user: User | null) => {
         if (err) reject(err);
         resolve(user);
@@ -24,7 +25,8 @@ export const registerUser: RequestHandler = async (req: Request, res: Response) 
     });
 
     if (user) {
-      return res.status(400).json({ error: "Username or email already taken." });
+      res.status(400).json({ error: "Username or email already taken." });
+      return; 
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -36,21 +38,23 @@ export const registerUser: RequestHandler = async (req: Request, res: Response) 
       });
     });
 
-    // Send success response without returning a Response object
+    logger.info(`User registered successfully: ${username}`);
     res.status(201).json({ message: "User registered successfully!" });
-  } catch (error) {
-    logger.error("Error during user registration:", error);
-    return res.status(500).json({ error: "Internal server error" });
+  } catch (err) {
+    logger.error("Database error during user registration:", err);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
+
 // Login User
-export async function loginUser(req: Request, res: Response): Promise<Response> {
+export const loginUser: RequestHandler = async (req: Request, res: Response) => {
   const { username, email, password } = req.body;
 
   // Check for missing credentials
   if (!password || (!username && !email)) {
-    return res.status(400).json({ error: "Logging credentials incomplete." });
+    res.status(400).json({ error: "Logging credentials incomplete." });
+    return;
   }
 
   try {
@@ -66,13 +70,15 @@ export async function loginUser(req: Request, res: Response): Promise<Response> 
     });
 
     if (!user) {
-      return res.status(401).json({ error: "User doesn't exist." });
+      res.status(401).json({ error: "User doesn't exist." });
+      return;
     }
 
     // Compare passwords
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
-      return res.status(401).json({ error: "Invalid password" });
+      res.status(401).json({ error: "Invalid password" });
+      return;
     }
 
     // Create JWT token
@@ -85,6 +91,7 @@ export async function loginUser(req: Request, res: Response): Promise<Response> 
     res.json({ token });
   } catch (error) {
     logger.error("Error during user login:", error);
-    return res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Internal server error" });
+    return;
   }
 };
