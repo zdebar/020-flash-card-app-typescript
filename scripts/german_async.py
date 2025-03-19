@@ -70,5 +70,5 @@ if __name__ == "__main__":
     output_folder = os.path.abspath("data/de-source/csv_output")
     audio_folder = os.path.abspath("data/de-source/audio-de")
     sheet_index_start = 0
-    sheet_index_end = 1
+    sheet_index_end = 2
     asyncio.run(process_xlsx_to_csv(input_file, output_folder, audio_folder, sheet_index_start, sheet_index_end))
