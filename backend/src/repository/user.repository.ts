@@ -1,14 +1,14 @@
 import db from "../config/database.config";
-import { User, UserLogin, WordData } from "../types/dataTypes";
+import { User, UserLogin} from "../types/dataTypes";
 
 export async function findUserById(userId: number): Promise<UserLogin | null> {
   return new Promise<UserLogin | null>((resolve, reject) => {
     db.get(
       "SELECT id, username, email FROM users WHERE id = ?",
       [userId],
-      (err, user: UserLogin) => {
+      (err, user) => {
         if (err) return reject(err);
-        resolve(user ?? null);
+        resolve(user as UserLogin ?? null);
       }
     );
   });
@@ -16,18 +16,25 @@ export async function findUserById(userId: number): Promise<UserLogin | null> {
 
 export async function findUserByEmail(email: string): Promise<User | null> {
   return new Promise<User | null>((resolve, reject) => {
-    db.get("SELECT * FROM users WHERE email = ?", [email], (err, user: User | undefined) => { // fucken undefined here, should there be null also
+    db.get("SELECT * FROM users WHERE email = ?", [email], (err, user) => { 
       if (err) return reject(err);
-      resolve(user ?? null);
+      resolve(user as User ?? null);
     });
   });
 }
 
+/**
+ * Fetches a user from the database by their username.
+ * Returns null if no user is found.
+ * 
+ * @param username - The username of the user to find.
+ * @returns The user object if found, otherwise null.
+ */
 export async function findUserByUsername(username: string): Promise<User | null> {
   return new Promise<User | null>((resolve, reject) => {
-    db.get("SELECT * FROM users WHERE username = ?", [username], (err, user: User | undefined) => {
+    db.get("SELECT * FROM users WHERE username = ?", [username], (err, user) => {
       if (err) return reject(err);
-      resolve(user ?? null);
+      resolve(user as User ?? null);
     });
   });
 }
@@ -47,9 +54,6 @@ export async function insertUser (username: string, email: string, hashedPasswor
 
 /**
  * Helper function for running SELECT database queries
- * @param query 
- * @param params 
- * @returns 
  */
 export function queryDatabase<T>(query: string, params: any[]): Promise<T[]> {
   return new Promise<T[]>((resolve, reject) => {
@@ -64,10 +68,7 @@ export function queryDatabase<T>(query: string, params: any[]): Promise<T[]> {
 }
 
 /**
- * Helper function for running INSER, UPDATE, DELETE database queries
- * @param query 
- * @param params 
- * @returns 
+ * Helper function for running INSERT, UPDATE, DELETE database queries
  */
 export function executeQuery(query: string, params: any[]): Promise<void> {
   return new Promise((resolve, reject) => {
