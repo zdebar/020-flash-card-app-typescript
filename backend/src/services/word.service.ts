@@ -1,6 +1,4 @@
-import { Request, Response} from "express";
-import { UserLogin, WordData } from "../types/dataTypes";
-import { findUserById } from "../repository/user.repository";
+import { WordData } from "../types/dataTypes";
 import { queryDatabase, executeQuery } from "../repository/user.repository";
 import logger from "../utils/logger";
 import { config } from '../config/config';

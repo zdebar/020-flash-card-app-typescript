@@ -1,4 +1,4 @@
-import db from "../config/database";
+import db from "../config/database.config";
 import { User, UserLogin, WordData } from "../types/dataTypes";
 
 export async function findUserById(userId: number): Promise<UserLogin | null> {
@@ -45,6 +45,12 @@ export async function insertUser (username: string, email: string, hashedPasswor
   });
 };
 
+/**
+ * Helper function for running SELECT database queries
+ * @param query 
+ * @param params 
+ * @returns 
+ */
 export function queryDatabase<T>(query: string, params: any[]): Promise<T[]> {
   return new Promise<T[]>((resolve, reject) => {
     db.all(query, params, (err, rows: T[]) => {
@@ -57,6 +63,12 @@ export function queryDatabase<T>(query: string, params: any[]): Promise<T[]> {
   });
 }
 
+/**
+ * Helper function for running INSER, UPDATE, DELETE database queries
+ * @param query 
+ * @param params 
+ * @returns 
+ */
 export function executeQuery(query: string, params: any[]): Promise<void> {
   return new Promise((resolve, reject) => {
     db.run(query, params, function (err: Error) {

@@ -1,21 +1,35 @@
 import { Request, Response } from 'express';
 import { getUserWords, updateUserWords } from "../services/word.service"; 
 import logger from '../utils/logger';
+import { UserLogin } from '../types/dataTypes';
+import { findUserById } from '../repository/user.repository';
 
 /**
  * Controller for getting words for practice
  */
 export async function getUserWordsController(req: Request, res: Response): Promise<void> {
-  const userId = (req as any).user.id; 
-  const { language, block } = req.query; 
-  
+  // Get user ID from the authenticated user in the token
+  const userId = (req as any).user.id;
+
+  // Get 'language' and 'block' from query parameters
+  const { language, block } = req.query;
+
+  // Validate if both 'language' and 'block' are provided
   if (!language || !block) {
     res.status(400).json({ error: 'Language and block are required.' });
     return;
   }
 
+  // Make sure 'block' is a number
+  const blockNumber = Number(block);
+  if (isNaN(blockNumber) || blockNumber <= 0) {
+    res.status(400).json({ error: 'Invalid block number.' });
+    return;
+  }
+
   try {
-    const words = await getUserWords(Number(userId), language as string, Number(block));
+    // Fetch words for the user
+    const words = await getUserWords(Number(userId), language as string, blockNumber);
     res.status(200).json(words);
   } catch (error) {
     logger.error('Error fetching words for practice:', error);
@@ -43,3 +57,24 @@ export async function updateUserWordsController(req: Request, res: Response): Pr
     res.status(500).json({ error: 'Internal server error' });
   }
 }
+
+/**
+ * Finds user by ID, and res.json UserLogin (userID, username, email)
+ */
+export async function getUserProfileController(req: Request, res: Response): Promise<void> {
+  const userId = (req as any).user.id;
+
+  try {
+    const user: UserLogin = await findUserById(userId);
+    
+    if (!user) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+
+    res.json(user);
+  } catch (err) {
+    logger.error("Database error during authentication:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
