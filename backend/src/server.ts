@@ -1,8 +1,7 @@
 import express from 'express';
 import cors from 'cors';
-import authRoutes from "./routes/authRoutes";
-import { authenticateToken } from "./middlewares/authMiddleware";
-import { getUserProfile } from './controllers/databaseHandler';
+import authRoutes from "./routes/auth.routes";
+import userRouter from './routes/user.routes';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -15,7 +14,7 @@ app.use(express.json());
 app.use("/auth", authRoutes);
 
 // Protected Route
-app.get("/profile", authenticateToken, getUserProfile);
+app.use('/user', userRouter);
 
 // Start server
 app.listen(PORT, () => {

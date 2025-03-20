@@ -4,7 +4,7 @@ import path from "path";
 
 const dbPath = path.resolve(__dirname, "../database.sqlite");
 
-const db = new sqlite3.Database("./database.sqlite", (err) => {
+const db = new sqlite3.Database(dbPath, (err) => {
   if (err) {
     logger.error("Database connection failed:", err.message);
   } else {
