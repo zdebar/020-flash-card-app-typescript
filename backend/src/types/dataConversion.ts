@@ -1,4 +1,4 @@
-import { WordData } from "../types/dataTypes";
+import { WordData } from "./dataTypes";
 
 /**
  * Converts new words to full WordData format.

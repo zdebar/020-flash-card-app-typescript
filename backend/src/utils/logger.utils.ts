@@ -2,7 +2,7 @@ import winston from "winston";
 import path from "path";
 import fs from "fs";
 
-const loggerLevel: string = process.env.LOGGER_LEVEL || "info";
+const loggerLevel: string = process.env.LOGGER_LEVEL || "error";
 
 // silent     Logger Off
 // error	  0	Serious problems (e.g., database failure)
@@ -15,7 +15,8 @@ const loggerLevel: string = process.env.LOGGER_LEVEL || "info";
 
 // Log file paths
 const logDirectory = path.resolve("logs"); 
-const logFile = path.join(logDirectory, "app.log"); 
+const debugLogFile = path.join(logDirectory, "debug.log");
+const infoLogFile = path.join(logDirectory, "info.log"); 
 const errorLogFile = path.join(logDirectory, "error.log");
 
 if (!fs.existsSync(logDirectory)) {
@@ -29,8 +30,10 @@ const logger = winston.createLogger({
     winston.format.printf(({ timestamp, level, message }) => `[${timestamp}] ${level.toUpperCase()}: ${message}`)
   ),
   transports: [
-    new winston.transports.File({ filename: logFile, level: "info" }),
+    new winston.transports.File({ filename: debugLogFile, level: "debug" }),
+    new winston.transports.File({ filename: infoLogFile, level: "info" }),
     new winston.transports.File({ filename: errorLogFile, level: "error" }),
+
   ],
 });
 

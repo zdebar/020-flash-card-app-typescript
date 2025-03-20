@@ -1,4 +1,4 @@
-import logger from "../utils/logger";
+import logger from "../utils/logger.utils";
 import { hashPassword, comparePasswords, createToken } from "../utils/auth.utils";
 import { findUserByEmail, findUserByUsername, insertUser } from "../repository/user.repository";
 

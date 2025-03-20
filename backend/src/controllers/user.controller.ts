@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { getUserWords, updateUserWords } from "../services/word.service"; 
-import logger from '../utils/logger';
+import logger from '../utils/logger.utils';
 import { UserLogin } from '../types/dataTypes';
 import { findUserById } from '../repository/user.repository';
 

@@ -1,19 +1,19 @@
 import { WordData } from "../types/dataTypes";
-import { queryDatabase, executeQuery } from "../repository/user.repository";
-import logger from "../utils/logger";
+import { queryDatabase, executeQuery } from "../utils/db.utils";
 import { config } from '../config/config';
-import { mapNewWordsToWordData } from "../utils/dataConversion";
+import { mapNewWordsToWordData } from "../types/dataConversion";
 
 /**
- * Returns requested number of new words from table words. Unused words with lowest seq value. 
- * @param userId: identifies suer
+ * Returns requested number of unused new words with lowest seq values from table words.
+ * Unused means that are not present in table user_words. 
+ * @param userId: identifies user
  * @param language: language of extracted words
  * @param numWords: number of new words
- * @returns 
+ * @returns A promise with Array of WordData
  */
-async function getNewWords(userId: number, language: string, numWords: number): Promise<WordData[]> {
+export async function getNewWords(userId: number, language: string, numWords: number): Promise<WordData[]> {
   const query = `
-    SELECT w.id AS word_id, w.src, w.trg, w.prn, w.language, w.audio, w.seq
+    SELECT w.id AS word_id, w.src, w.trg, w.prn, w.language, w.audio
     FROM words w
     LEFT JOIN user_words uw ON w.id = uw.word_id AND uw.user_id = ?
     WHERE uw.word_id IS NULL AND w.language = ?
@@ -30,14 +30,13 @@ async function getNewWords(userId: number, language: string, numWords: number): 
 }
 
 /**
- * Returns already practiced words from table user_words up to maximum number of block size. With value next_at today or older.
- * @param db 
- * @param userId 
- * @param language 
- * @param block 
- * @returns 
+ * Returns already practiced words with current day or older from table user_words up to maximum number of block size.
+ * @param userId searched user ID
+ * @param language required words language
+ * @param block maximum block size
+ * @returns A Promise with array of WordData 
  */
-async function getWordsAlreadyPracticed(userId: number, language: string, block: number = config.block ): Promise<WordData[]> {
+export async function getWordsAlreadyPracticed(userId: number, language: string, block: number = config.block ): Promise<WordData[]> {
   const query = `
     SELECT w.id AS word_id, w.src, w.trg, w.prn, w.audio, uw.progress
     FROM user_words uw
@@ -45,8 +44,8 @@ async function getWordsAlreadyPracticed(userId: number, language: string, block:
     WHERE uw.user_id = ?
       AND w.language = ?
       AND uw.next_at IS NOT NULL
-      AND (uw.next_at <= CURRENT_DATE OR uw.next_at IS NULL)
-    ORDER BY uw.next_at ASC
+      AND uw.next_at <= CURRENT_DATE
+    ORDER BY uw.next_at ASC, uw.progress ASC
     LIMIT ?;
   `;
 
@@ -55,36 +54,32 @@ async function getWordsAlreadyPracticed(userId: number, language: string, block:
 }
 
 /**
- * Gets block amount of words for practice. First select already practiced words from table user_words, if amount less then block value, fills it up with new words from table words.
- * @param db 
- * @param userId 
- * @param language 
- * @param block 
- * @returns 
+ * Gets words for practice up to number block value. First select already practiced words from table user_words, if amount less then block value, fills it up with new words from table words.
+ * @param userId identifies user
+ * @param language language of extracted words
+ * @param block number of new words
+ * @returns A promise with Array of WordData if at least one word found, returns null if no words found. 
  */
-export function getUserWords(userId: number, language: string, block: number = config.block): Promise<WordData[]> {
-  return new Promise(async (resolve, reject) => {
-    try {
-      let words = await getWordsAlreadyPracticed(userId, language, block);
-      if (words.length < block) {
-        const remainingWordsCount = block - words.length;
-        const newWords = await getNewWords(userId, language, remainingWordsCount);
-        words = [...newWords, ...words];
-      }
-      resolve(words);
-    } catch (error) {
-      reject('Error fetching words for practice: ' + error);
+export async function getUserWords(userId: number, language: string, block: number = config.block): Promise<WordData[] | null> {
+  try {
+    let rows = await getWordsAlreadyPracticed(userId, language, block);
+    if (rows.length < block) {
+      const remainingWordsCount = block - rows.length;
+      const newWords = await getNewWords(userId, language, remainingWordsCount);
+      rows = [...newWords, ...rows];
     }
-  });
+    return rows.length > 0 ? rows : null;
+  } catch (error) {
+    throw new Error('Error fetching words for practice: ' + error);
+  }
 }
 
 /**
  * Update table user_words with updates progress and next_at.
- * @param db 
- * @param userId 
- * @param words 
- * @param SRS 
- * @returns 
+ * @param userId identifies user
+ * @param words Array of words
+ * @param SRS Array of integer numbers determining repetition algorithm
+ * @returns A void Promise
  */
 export async function updateUserWords(userId: number, words: WordData[], SRS: number[]): Promise<void> {
   const today = new Date();
@@ -113,5 +108,3 @@ export async function updateUserWords(userId: number, words: WordData[], SRS: nu
     throw new Error('Error updating user_words: ' + err.message);
   }
 }
-
-// why some function are async and some not

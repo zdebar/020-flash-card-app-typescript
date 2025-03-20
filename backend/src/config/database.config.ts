@@ -1,5 +1,5 @@
 import sqlite3 from "sqlite3";
-import logger from "../utils/logger";
+import logger from "../utils/logger.utils";
 import path from "path";
 
 const dbPath = path.resolve(__dirname, "../database.sqlite");
