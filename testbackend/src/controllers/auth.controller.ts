@@ -19,7 +19,7 @@ export function registerUserController(db: sqlite3.Database) {
     try {
       const message = await registerUserService(db, username, email, password);
       res.status(201).json({ message });
-    } catch (err) {
+    } catch (err: any) {
       res.status(400).json({ error: err.message });
     }
   };
@@ -42,7 +42,7 @@ export function loginUserController(db: sqlite3.Database) {
     try {
       const token = await loginUserService(db, email, password);
       res.json({ token });
-    } catch (err) {
+    } catch (err: any) {
       res.status(401).json({ error: err.message });
     }
   };

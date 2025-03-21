@@ -46,13 +46,13 @@
 
 ## Controllers
   auth.controller.ts
-    registerUser / make tests
-    loginUser / make tests
+    registerUser 
+    loginUser 
 
   user.controller.ts
-    getUserWordsController / make tests
-    updateUserWordsController / make tests
-    getUserProfileController / make tests
+    getUserWordsController 
+    updateUserWordsController 
+    getUserProfileController 
 
 ## Routes
   auth.routes.ts / check

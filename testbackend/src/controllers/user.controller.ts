@@ -28,8 +28,8 @@ export function getUserWordsController(db: sqlite3.Database) {
 
       const words = await getUserWords(db, Number(userId), language as string, blockNumber);
       res.status(200).json(words);
-    } catch (error) {
-      logger.error("Error fetching words for practice:", error);
+    } catch (err: any) {
+      logger.error("Error fetching words for practice:", err);
       res.status(500).json({ error: "Internal server error" });
     }
   };
@@ -52,8 +52,8 @@ export function updateUserWordsController(db: sqlite3.Database) {
 
       await updateUserWords(db, Number(userId), words, SRS);
       res.status(200).json({ message: "User words updated successfully." });
-    } catch (error) {
-      logger.error("Error updating user words:", error);
+    } catch (err: any) {
+      logger.error("Error updating user words:", err);
       res.status(500).json({ error: "Internal server error" });
     }
   };
@@ -75,7 +75,7 @@ export function getUserProfileController(db: sqlite3.Database) {
       }
 
       res.json(user);
-    } catch (err) {
+    } catch (err: any) {
       logger.error("Database error during authentication:", err);
       res.status(500).json({ error: "Internal server error" });
     }
