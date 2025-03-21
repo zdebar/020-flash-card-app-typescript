@@ -55,6 +55,6 @@
     getUserProfileController 
 
 ## Routes
-  auth.routes.ts / check
+  auth.routes.ts / repair tests
   user.routes.ts / check
 

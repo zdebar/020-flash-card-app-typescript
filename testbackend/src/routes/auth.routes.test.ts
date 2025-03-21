@@ -2,6 +2,14 @@ import { describe, it, expect, vi } from 'vitest';
 import request from 'supertest';
 import express from 'express';
 import { registerUserController, loginUserController } from '../controllers/auth.controller';
+
+
+vi.mock('../config/database.config', () => ({
+  ...vi.importActual('../config/database.config'),
+  query: vi.fn().mockResolvedValue([{ id: 1, username: 'testuser' }]), 
+  close: vi.fn(), 
+}));
+
 import db from '../config/database.config';
 
 // Create a mock Express app
@@ -11,12 +19,6 @@ app.use(express.json());
 // Mock routes
 app.post('/auth/register', registerUserController(db));
 app.post('/auth/login', loginUserController(db));
-
-// Mock database functions
-vi.mock('../config/database.config', () => ({
-  ...vi.importActual('../config/database.config'),
-  // Mock the database interactions here if necessary (e.g., DB methods used in controllers)
-}));
 
 describe('Authentication routes', () => {
   it('should register a new user successfully', async () => {
@@ -38,7 +40,6 @@ describe('Authentication routes', () => {
   });
 
   it('should log in an existing user and return a token', async () => {
-    // You can mock the successful response from the login service if needed
     const response = await request(app)
       .post('/auth/login')
       .send({ email: 'test@example.com', password: 'password123' });
