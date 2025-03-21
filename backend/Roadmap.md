@@ -11,10 +11,10 @@
     mapNewWordsToWordData
 
 ## Utils
-  auth.utils.ts / more tests
+  auth.utils.ts / so far not possible to run env variables in vscode tests
     hashPassword
     comparePasswords
-    createToken / should it accept User data type or UserLogin
+    createToken 
     verifyToken
 
   db.utils.ts / more tests
