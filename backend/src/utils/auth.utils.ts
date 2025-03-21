@@ -1,6 +1,9 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { User, UserLogin } from "../types/dataTypes";
+import { UserLogin } from "../types/dataTypes";
+
+const JWT_SECRET_KEY = process.env.JWT_SECRET;
+const expiresIn = process.env.JWT_EXPIRES_IN as jwt.SignOptions["expiresIn"];
 
 /**
  * Hashing password with 10 salt round of bcrypt
@@ -27,15 +30,12 @@ export function comparePasswords(password: string, hashedPassword: string): Prom
  * @param user 
  * @returns A string on success, error on fail. 
  */
-export function createToken(user: User): string {
+export function createToken(user: UserLogin): string {
   const payload: UserLogin = {
     id: user.id,
     username: user.username,
     email: user.email,
-  };
-
-  const JWT_SECRET_KEY = process.env.JWT_SECRET
-  const expiresIn = process.env.JWT_EXPIRES_IN as jwt.SignOptions["expiresIn"];
+  };  
 
   return jwt.sign(payload, JWT_SECRET_KEY, { expiresIn: expiresIn });
 }
@@ -47,8 +47,6 @@ export function createToken(user: User): string {
  */
 export function verifyToken(token: string): Promise<UserLogin> {
   return new Promise((resolve, reject) => {
-        const JWT_SECRET_KEY = process.env.JWT_SECRET
-
     jwt.verify(token, JWT_SECRET_KEY, (err, decoded) => {
       if (err) {
         reject(new Error("Invalid token"));
