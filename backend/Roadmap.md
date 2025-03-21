@@ -1,5 +1,9 @@
 # TODO
 
+## Config
+  config.ts
+  database.config.ts
+
 ## Types
   dataTypes.ts
     WordData
@@ -17,14 +21,14 @@
     createToken 
     verifyToken
 
-  db.utils.ts / more tests
+  db.utils.ts
     queryDatabase
     executeDatabase
 
   logger.utils.ts
 
 ## Repository
-  user.repository.ts / if I dont need full User, use only UserLogin
+  user.repository.ts
     findUserByID
     findUserByEmail
     findUserByUsername 

@@ -6,10 +6,8 @@ describe('Database User Functions', () => {
   let db: sqlite3.Database;
 
   beforeAll(async () => {
-    // Create an in-memory database
-    db = new sqlite3.Database(':memory:');
-    
-    // Set up the users table
+    db = new sqlite3.Database(':memory:');  
+
     await new Promise<void>((resolve, reject) => {
       db.run(
         `CREATE TABLE users (
@@ -28,21 +26,17 @@ describe('Database User Functions', () => {
   });
 
   afterAll(async () => {
-    // Clean up the database after tests are done
     await new Promise<void>((resolve, reject) => {
       db.run('DROP TABLE users', (err) => {
         if (err) reject(err);
         resolve();
       });
     });
-    db.close(); // Close the database connection
+    db.close();
   });
 
   it('should insert a new user and find them by ID', async () => {
-    // Insert a user
-    await insertUser(db, 'testuser', 'test@example.com', 'hashedPassword123');
-    
-    // Find the user by ID (should return the first inserted user)
+    await insertUser(db, 'testuser', 'test@example.com', 'hashedPassword123');    
     const user = await findUserById(db, 1);
     
     expect(user).toBeDefined();
@@ -51,10 +45,7 @@ describe('Database User Functions', () => {
   });
 
   it('should find a user by email', async () => {
-    // Insert a user
-    await insertUser(db, 'testuser2', 'test2@example.com', 'hashedPassword123');
-    
-    // Find the user by email
+    await insertUser(db, 'testuser2', 'test2@example.com', 'hashedPassword123');    
     const user = await findUserByEmail(db, 'test2@example.com');
     
     expect(user).toBeDefined();
@@ -63,10 +54,7 @@ describe('Database User Functions', () => {
   });
 
   it('should find a user by username', async () => {
-    // Insert a user
     await insertUser(db, 'testuser3', 'test3@example.com', 'hashedPassword123');
-    
-    // Find the user by username
     const user = await findUserByUsername(db, 'testuser3');
     
     expect(user).toBeDefined();
@@ -75,19 +63,16 @@ describe('Database User Functions', () => {
   });
 
   it('should return null when a user is not found by ID', async () => {
-    // Try to find a non-existent user by ID
-    const user = await findUserById(db, 999); // ID 999 does not exist
+    const user = await findUserById(db, 999); 
     expect(user).toBeNull();
   });
 
   it('should return null when a user is not found by email', async () => {
-    // Try to find a non-existent user by email
     const user = await findUserByEmail(db, 'nonexistent@example.com');
     expect(user).toBeNull();
   });
 
   it('should return null when a user is not found by username', async () => {
-    // Try to find a non-existent user by username
     const user = await findUserByUsername(db, 'nonexistentuser');
     expect(user).toBeNull();
   });

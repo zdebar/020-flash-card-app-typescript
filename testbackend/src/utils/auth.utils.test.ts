@@ -26,7 +26,6 @@ describe("JWT Token Creation & Verification", () => {
 
   it("should create a valid JWT token and verify it", async () => {
     const token = createToken(mockUser);
-    expect(token).toBeDefined();
     expect(typeof token).toBe("string");
 
     const decodedUser = await verifyToken(token);
