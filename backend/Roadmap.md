@@ -42,7 +42,7 @@
     updateUserWords 
 
 ## Middleware
-  auth.middleware.ts / more tests
+  auth.middleware.ts
 
 ## Controllers
   auth.controller.ts
