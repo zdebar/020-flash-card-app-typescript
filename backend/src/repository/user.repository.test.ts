@@ -1,100 +1,79 @@
-import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
-import { findUserById, findUserByEmail } from "./user.repository";
-import db from "../config/database.config";
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import sqlite3 from 'sqlite3';
+import { findUserById, findUserByEmail, findUserByUsername, insertUser } from './user.repository';
 
-vi.mock("../config/database.config", () => {
-  return {
-    default: {
-      get: vi.fn(),
-      all: vi.fn(),
-      run: vi.fn(),
-      close: vi.fn(),
-    },
-  };
-});
+describe('Database User Functions', () => {
+  let db: sqlite3.Database;
 
-describe("findUserByEmail", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeAll(async () => {
+    db = new sqlite3.Database(':memory:');  
 
-  it("should return a user when found in the database", async () => {
-    const mockUser = { id: 1, username: "testuser", email: "test@example.com", password: "password123", created_at: "2025-03-20" };
-    (db.get as Mock).mockImplementation((_query, _params, callback) => {
-      callback(null, mockUser);
+    await new Promise<void>((resolve, reject) => {
+      db.run(
+        `CREATE TABLE users (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          username TEXT NOT NULL,
+          email TEXT NOT NULL,
+          password TEXT NOT NULL,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )`,
+        (err) => {
+          if (err) reject(err);
+          resolve();
+        }
+      );
     });
-
-    const result = await findUserByEmail("test@example.com");
-    expect(result).toEqual(mockUser);
   });
 
-  it("should return null if the user is not found in SQLite", async () => {
-    (db.get as Mock).mockImplementation((_query, _params, callback) => {
-      callback(null, null); 
+  afterAll(async () => {
+    await new Promise<void>((resolve, reject) => {
+      db.run('DROP TABLE users', (err) => {
+        if (err) reject(err);
+        resolve();
+      });
     });
-
-    const result = await findUserByEmail("notfound@example.com");
-    expect(result).toBeNull();
+    db.close();
   });
 
-  it("should return null if the user is not found in PostgreSQL", async () => {
-    (db.get as Mock).mockImplementation((_query, _params, callback) => {
-      callback(null, undefined); 
-    });
-
-    const result = await findUserByEmail("notfound@example.com");
-    expect(result).toBeNull();
+  it('should insert a new user and find them by ID', async () => {
+    await insertUser(db, 'testuser', 'test@example.com', 'hashedPassword123');    
+    const user = await findUserById(db, 1);
+    
+    expect(user).toBeDefined();
+    expect(user?.username).toBe('testuser');
+    expect(user?.email).toBe('test@example.com');
   });
 
-  it("should reject when there is a database error", async () => {
-    const mockError = new Error("Database error");
-    (db.get as Mock).mockImplementation((_query, _params, callback) => {
-      callback(mockError, null);
-    });
-
-    await expect(findUserByEmail("test@example.com")).rejects.toThrow("Database error");
-  });
-});
-
-describe("findUserById", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
+  it('should find a user by email', async () => {
+    await insertUser(db, 'testuser2', 'test2@example.com', 'hashedPassword123');    
+    const user = await findUserByEmail(db, 'test2@example.com');
+    
+    expect(user).toBeDefined();
+    expect(user?.username).toBe('testuser2');
+    expect(user?.email).toBe('test2@example.com');
   });
 
-  it("should return a user when found in the database", async () => {
-    const mockUser = { id: 1, username: "testuser", email: "test@example.com" };
-    (db.get as Mock).mockImplementation((_query, _params, callback) => {
-      callback(null, mockUser);
-    });
-
-    const result = await findUserById(1);
-    expect(result).toEqual(mockUser);
+  it('should find a user by username', async () => {
+    await insertUser(db, 'testuser3', 'test3@example.com', 'hashedPassword123');
+    const user = await findUserByUsername(db, 'testuser3');
+    
+    expect(user).toBeDefined();
+    expect(user?.username).toBe('testuser3');
+    expect(user?.email).toBe('test3@example.com');
   });
 
-  it("should return null if the user is not found in SQLite", async () => {
-    (db.get as Mock).mockImplementation((_query, _params, callback) => {
-      callback(null, null); 
-    });
-
-    const result = await findUserById(999);
-    expect(result).toBeNull();
+  it('should return null when a user is not found by ID', async () => {
+    const user = await findUserById(db, 999); 
+    expect(user).toBeNull();
   });
 
-  it("should return null if the user is not found in PostgreSQL", async () => {
-    (db.get as Mock).mockImplementation((_query, _params, callback) => {
-      callback(null, undefined); 
-    });
-
-    const result = await findUserById(999);
-    expect(result).toBeNull();
+  it('should return null when a user is not found by email', async () => {
+    const user = await findUserByEmail(db, 'nonexistent@example.com');
+    expect(user).toBeNull();
   });
 
-  it("should reject when there is a database error", async () => {
-    const mockError = new Error("Database error");
-    (db.get as Mock).mockImplementation((_query, _params, callback) => {
-      callback(mockError, null);
-    });
-
-    await expect(findUserById(1)).rejects.toThrow("Database error");
+  it('should return null when a user is not found by username', async () => {
+    const user = await findUserByUsername(db, 'nonexistentuser');
+    expect(user).toBeNull();
   });
 });

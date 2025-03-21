@@ -1,9 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { UserLogin } from "../types/dataTypes";
-
-const JWT_SECRET_KEY = process.env.JWT_SECRET;
-const expiresIn = process.env.JWT_EXPIRES_IN as jwt.SignOptions["expiresIn"];
+import 'dotenv/config';
 
 /**
  * Hashing password with 10 salt round of bcrypt
@@ -37,6 +35,13 @@ export function createToken(user: UserLogin): string {
     email: user.email,
   };  
 
+  const JWT_SECRET_KEY = process.env.JWT_SECRET;
+  const expiresIn = process.env.JWT_EXPIRES_IN as jwt.SignOptions["expiresIn"];
+  
+  if (!JWT_SECRET_KEY) {
+    throw new Error("JWT_SECRET is missing in environment variables.");
+  }
+
   return jwt.sign(payload, JWT_SECRET_KEY, { expiresIn: expiresIn });
 }
 
@@ -47,6 +52,12 @@ export function createToken(user: UserLogin): string {
  */
 export function verifyToken(token: string): Promise<UserLogin> {
   return new Promise((resolve, reject) => {
+    const JWT_SECRET_KEY = process.env.JWT_SECRET;
+
+    if (!JWT_SECRET_KEY) {
+      throw new Error("JWT_SECRET is missing in environment variables.");
+    }
+
     jwt.verify(token, JWT_SECRET_KEY, (err, decoded) => {
       if (err) {
         reject(new Error("Invalid token"));

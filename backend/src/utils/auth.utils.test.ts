@@ -1,9 +1,7 @@
 import { hashPassword, comparePasswords, createToken, verifyToken } from "../utils/auth.utils";
 import { describe, it, expect } from "vitest";
 import { UserLogin } from "../types/dataTypes";
-import dotenv from "dotenv";
-
-dotenv.config(); // Load environment variables
+import 'dotenv/config';
 
 console.log('JWT_SECRET:', process.env.JWT_SECRET);
 console.log('JWT_EXPIRES_IN:', process.env.JWT_EXPIRES_IN);
@@ -28,7 +26,6 @@ describe("JWT Token Creation & Verification", () => {
 
   it("should create a valid JWT token and verify it", async () => {
     const token = createToken(mockUser);
-    expect(token).toBeDefined();
     expect(typeof token).toBe("string");
 
     const decodedUser = await verifyToken(token);

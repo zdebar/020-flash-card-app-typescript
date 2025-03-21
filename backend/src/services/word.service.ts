@@ -27,8 +27,8 @@ export async function getNewWords(db: sqlite3.Database, userId: number, language
   try {
     const rows = await queryDatabase<any>(db, query, [userId, language, numWords]);
     return mapNewWordsToWordData(rows);
-  } catch (error) {
-    throw new Error("Failed to get new words: " + error.message);
+  } catch (err: any) {
+    throw new Error("Failed to get new words: " + err.message);
   }
 }
 
@@ -74,8 +74,8 @@ export async function getUserWords(db: sqlite3.Database, userId: number, languag
       rows = [...newWords, ...rows];
     }
     return rows;
-  } catch (error) {
-    throw new Error('Error fetching words for practice: ' + error);
+  } catch (err: any) {
+    throw new Error('Error fetching words for practice: ' + err);
   }
 }
 
@@ -110,7 +110,7 @@ export async function updateUserWords(db: sqlite3.Database, userId: number, word
 
     await Promise.all(promises);
     return;
-  } catch (err) {
+  } catch (err: any) {
     throw new Error('Error updating user_words: ' + err.message);
   }
 }

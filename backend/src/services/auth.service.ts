@@ -31,7 +31,7 @@ export async function registerUserService(db: sqlite3.Database, username: string
     // Insert new user into the database
     await insertUser(db, username, email, hashedPassword);
     logger.info(`User registered successfully: ${username}`); 
-  } catch (err) {
+  } catch (err: any) {
     logger.error("Error during user registration:", err);
     throw new Error(err.message); 
   }
@@ -63,7 +63,7 @@ export async function loginUserService(db: sqlite3.Database, email: string, pass
     // Create JWT token
     const token = createToken(user);    
     return token;
-  } catch (err) {
+  } catch (err: any) {
     logger.error("Error during user login:", err);
     throw new Error(err.message); 
   }

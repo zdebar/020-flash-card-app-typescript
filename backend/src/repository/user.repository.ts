@@ -51,9 +51,9 @@ export async function findUserByEmail(db: sqlite3.Database, email: string): Prom
  * @returns A Promise, resolves to a `User` object containing `id`, `username`, `email`, `password`, `created_at` if found, or `null` if the user is not found.
  * @throws Will throw an error if the database query fails.
  */
-export async function findUserByUsername(db: sqlite3.Database, username: string): Promise<User | null> {
+export async function findUserByUsername(db: sqlite3.Database, username: string): Promise<UserLogin | null> {
   return new Promise<User | null>((resolve, reject) => {
-    db.get("SELECT * FROM users WHERE username = ?", [username], (err, user) => {
+    db.get("SELECT id, username, email FROM users WHERE username = ?", [username], (err, user) => {
       if (err) {
         logger.error(`Error querying user by username: ${err.message}`);
         reject(err);
