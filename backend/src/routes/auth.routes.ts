@@ -1,9 +1,10 @@
 import express from "express";
-import { registerUser, loginUser } from "../controllers/auth.controller";
+import { registerUserController, loginUserController } from "../controllers/auth.controller";
+import db from "../config/database.config";
 
 const authRoutes = express.Router();
 
-authRoutes.post("/register", registerUser);
-authRoutes.post("/login", loginUser);
+authRoutes.post("/register", registerUserController(db));
+authRoutes.post("/login", loginUserController(db));
 
 export default authRoutes;

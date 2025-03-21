@@ -3,78 +3,86 @@ import { getUserWords, updateUserWords } from "../services/word.service";
 import logger from '../utils/logger.utils';
 import { UserLogin } from '../types/dataTypes';
 import { findUserById } from '../repository/user.repository';
+import sqlite3 from 'sqlite3';
 
 /**
- * Controller for getting words for practice
+ * Controller for getting words for practice. 
+ * @param db searched database
  */
-export async function getUserWordsController(req: Request, res: Response): Promise<void> {
-  // Get user ID from the authenticated user in the token
-  const userId = (req as any).user.id;
+export function getUserWordsController(db: sqlite3.Database) {
+  return async (req: Request, res: Response): Promise<void> => {
+    try {
+      // Get user ID from the authenticated user in the token
+      const userId = (req as any).user.id;
 
-  // Get 'language' and 'block' from query parameters
-  const { language, block } = req.query;
+      // Get 'language' and 'block' from query parameters
+      const { language, block } = req.query;
 
-  // Validate if both 'language' and 'block' are provided
-  if (!language || !block) {
-    res.status(400).json({ error: 'Language and block are required.' });
-    return;
-  }
+      // Validate if both 'language' and 'block' are provided
+      if (!language || !block) {
+        res.status(400).json({ error: "Language and block are required." });
+        return;
+      }
 
-  // Make sure 'block' is a number
-  const blockNumber = Number(block);
-  if (isNaN(blockNumber) || blockNumber <= 0) {
-    res.status(400).json({ error: 'Invalid block number.' });
-    return;
-  }
+      // Make sure 'block' is a number
+      const blockNumber = Number(block);
+      if (isNaN(blockNumber) || blockNumber <= 0) {
+        res.status(400).json({ error: "Invalid block number." });
+        return;
+      }
 
-  try {
-    // Fetch words for the user
-    const words = await getUserWords(Number(userId), language as string, blockNumber);
-    res.status(200).json(words);
-  } catch (error) {
-    logger.error('Error fetching words for practice:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
+      const words = await getUserWords(db, Number(userId), language as string, blockNumber);
+      res.status(200).json(words);
+    } catch (error) {
+      logger.error("Error fetching words for practice:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  };
 }
 
 /**
- * Controller for updating user words progress and next_at, adding words to user_words if not already in
+ * Controller for updating user words progress and next_at, adding words to user_words if not already in.
+ * @param db updated database
  */
-export async function updateUserWordsController(req: Request, res: Response): Promise<void> {
-  const userId = (req as any).user.id;
-  const { words, SRS } = req.body;
+export function updateUserWordsController(db: sqlite3.Database) {
+  return async (req: Request, res: Response): Promise<void> => {
+    try {
+      const userId = (req as any).user.id;
+      const { words, SRS } = req.body;
 
-  if (!Array.isArray(words) || !Array.isArray(SRS)) {
-    res.status(400).json({ error: 'Words and SRS intervals must be arrays.' });
-    return;
-  }
+      if (!Array.isArray(words) || !Array.isArray(SRS)) {
+        res.status(400).json({ error: "Words and SRS intervals must be arrays." });
+        return;
+      }
 
-  try {
-    await updateUserWords(Number(userId), words, SRS);
-    res.status(200).json({ message: 'User words updated successfully.' });
-  } catch (error) {
-    logger.error('Error updating user words:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
+      await updateUserWords(db, Number(userId), words, SRS);
+      res.status(200).json({ message: "User words updated successfully." });
+    } catch (error) {
+      logger.error("Error updating user words:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  };
 }
 
 /**
  * Finds user by ID, and res.json UserLogin (userID, username, email)
+ * @param db searched database
  */
-export async function getUserProfileController(req: Request, res: Response): Promise<void> {
-  const userId = (req as any).user.id;
+export function getUserProfileController(db: sqlite3.Database) {
+  return async (req: Request, res: Response): Promise<void> => {
+    try {
+      const userId = (req as any).user.id;
+      const user = await findUserById(db, userId);
 
-  try {
-    const user: UserLogin = await findUserById(userId);
-    
-    if (!user) {
-      res.status(404).json({ error: "User not found" });
-      return;
+      if (!user) {
+        res.status(404).json({ error: "User not found" });
+        return;
+      }
+
+      res.json(user);
+    } catch (err) {
+      logger.error("Database error during authentication:", err);
+      res.status(500).json({ error: "Internal server error" });
     }
-
-    res.json(user);
-  } catch (err) {
-    logger.error("Database error during authentication:", err);
-    res.status(500).json({ error: "Internal server error" });
-  }
-};
+  };
+}

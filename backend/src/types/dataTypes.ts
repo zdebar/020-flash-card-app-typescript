@@ -7,6 +7,9 @@ export interface WordData {
   progress: number | null;
 }
 
+export interface WordDataNew extends Omit<WordData, 'progress'> {
+}
+
 export interface User {
   id: number;
   username: string;

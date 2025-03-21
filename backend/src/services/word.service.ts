@@ -1,17 +1,20 @@
 import { WordData } from "../types/dataTypes";
-import { queryDatabase, executeQuery } from "../utils/db.utils";
 import { config } from '../config/config';
+import { queryDatabase, executeQuery } from "../utils/db.utils";
 import { mapNewWordsToWordData } from "../types/dataConversion";
+import sqlite3 from "sqlite3";
+
 
 /**
  * Returns requested number of unused new words with lowest seq values from table words.
  * Unused means that are not present in table user_words. 
- * @param userId: identifies user
- * @param language: language of extracted words
- * @param numWords: number of new words
+ * @param db word database
+ * @param userId identifies user
+ * @param language language of extracted words
+ * @param numWords number of new words
  * @returns A promise with Array of WordData
  */
-export async function getNewWords(userId: number, language: string, numWords: number): Promise<WordData[]> {
+export async function getNewWords(db: sqlite3.Database, userId: number, language: string, numWords: number): Promise<WordData[]> {
   const query = `
     SELECT w.id AS word_id, w.src, w.trg, w.prn, w.language, w.audio
     FROM words w
@@ -22,7 +25,7 @@ export async function getNewWords(userId: number, language: string, numWords: nu
   `;
 
   try {
-    const rows = await queryDatabase<any>(query, [userId, language, numWords]);
+    const rows = await queryDatabase<any>(db, query, [userId, language, numWords]);
     return mapNewWordsToWordData(rows);
   } catch (error) {
     throw new Error("Failed to get new words: " + error.message);
@@ -31,12 +34,13 @@ export async function getNewWords(userId: number, language: string, numWords: nu
 
 /**
  * Returns already practiced words with current day or older from table user_words up to maximum number of block size.
+ * @param db word database
  * @param userId searched user ID
  * @param language required words language
  * @param block maximum block size
  * @returns A Promise with array of WordData 
  */
-export async function getWordsAlreadyPracticed(userId: number, language: string, block: number = config.block ): Promise<WordData[]> {
+export async function getWordsAlreadyPracticed(db: sqlite3.Database, userId: number, language: string, block: number = config.block ): Promise<WordData[]> {
   const query = `
     SELECT w.id AS word_id, w.src, w.trg, w.prn, w.audio, uw.progress
     FROM user_words uw
@@ -49,26 +53,27 @@ export async function getWordsAlreadyPracticed(userId: number, language: string,
     LIMIT ?;
   `;
 
-  const rows = await queryDatabase<any>(query, [userId, language, block]);
+  const rows = await queryDatabase<any>(db, query, [userId, language, block]);
   return mapNewWordsToWordData(rows);
 }
 
 /**
  * Gets words for practice up to number block value. First select already practiced words from table user_words, if amount less then block value, fills it up with new words from table words.
+ * @param db word database
  * @param userId identifies user
  * @param language language of extracted words
  * @param block number of new words
  * @returns A promise with Array of WordData if at least one word found, returns null if no words found. 
  */
-export async function getUserWords(userId: number, language: string, block: number = config.block): Promise<WordData[] | null> {
+export async function getUserWords(db: sqlite3.Database, userId: number, language: string, block: number = config.block): Promise<WordData[]> {
   try {
-    let rows = await getWordsAlreadyPracticed(userId, language, block);
+    let rows = await getWordsAlreadyPracticed(db, userId, language, block);
     if (rows.length < block) {
       const remainingWordsCount = block - rows.length;
-      const newWords = await getNewWords(userId, language, remainingWordsCount);
+      const newWords = await getNewWords(db, userId, language, remainingWordsCount);
       rows = [...newWords, ...rows];
     }
-    return rows.length > 0 ? rows : null;
+    return rows;
   } catch (error) {
     throw new Error('Error fetching words for practice: ' + error);
   }
@@ -76,12 +81,13 @@ export async function getUserWords(userId: number, language: string, block: numb
 
 /**
  * Update table user_words with updates progress and next_at.
+ * @param db word database
  * @param userId identifies user
  * @param words Array of words
  * @param SRS Array of integer numbers determining repetition algorithm
  * @returns A void Promise
  */
-export async function updateUserWords(userId: number, words: WordData[], SRS: number[]): Promise<void> {
+export async function updateUserWords(db: sqlite3.Database, userId: number, words: WordData[], SRS: number[]): Promise<void> {
   const today = new Date();
 
   try {
@@ -99,7 +105,7 @@ export async function updateUserWords(userId: number, words: WordData[], SRS: nu
         ? new Date(today.getTime() + interval * 86400000).toISOString().split('T')[0]
         : null;
 
-      await executeQuery(insertStmt, [userId, word.word_id, progress, nextAt, today.toISOString().split('T')[0]]);
+      await executeQuery(db, insertStmt, [userId, word.word_id, progress, nextAt, today.toISOString().split('T')[0]]);
     });
 
     await Promise.all(promises);
