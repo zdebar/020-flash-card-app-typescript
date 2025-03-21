@@ -27,19 +27,19 @@
   user.repository.ts / if I dont need full User, use only UserLogin
     findUserByID
     findUserByEmail
-    findUserByUsername / make tests
-    insertUser / make tests
+    findUserByUsername 
+    insertUser
   
 ## Services
-  auth.service.ts
-    registerUserService / more tests
-    loginUserService / more tests
+  auth.service.ts / repair tests
+    registerUserService 
+    loginUserService
 
   word.service.ts
-    getNewWords / more tests
-    getWordAlreadyPracticed / more tests
-    getUserWords / more tests
-    updateUserWords / more tests
+    getNewWords
+    getWordAlreadyPracticed 
+    getUserWords
+    updateUserWords 
 
 ## Middleware
   auth.middleware.ts / more tests
