@@ -17,8 +17,9 @@ export function registerUserController(db: sqlite3.Database) {
     }
 
     try {
-      const message = await registerUserService(db, username, email, password);
-      res.status(201).json({ message });
+      await registerUserService(db, username, email, password);
+      const token = await loginUserService(db, email, password);
+      res.status(201).json({ message: "User registered successfully.", token });
     } catch (err: any) {
       res.status(400).json({ error: err.message });
     }
