@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { registerUserService, loginUserService } from "../services/auth.service";
 import sqlite3 from "sqlite3";
+import logger from "../utils/logger.utils";
 
 /**
  * Registers new user into database with username, email, password. Reads these from req.body. 
@@ -42,6 +43,7 @@ export function loginUserController(db: sqlite3.Database) {
 
     try {
       const token = await loginUserService(db, email, password);
+      logger.info(`Sent token for: ${email}`);
       res.json({ token });
     } catch (err: any) {
       res.status(401).json({ error: err.message });

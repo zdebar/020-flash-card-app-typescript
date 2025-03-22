@@ -7,8 +7,7 @@ export interface WordData {
   progress: number | null;
 }
 
-export interface WordDataNew extends Omit<WordData, 'progress'> {
-}
+export type WordDataNew = Omit<WordData, 'progress'>
 
 export interface User {
   id: number;
@@ -18,5 +17,4 @@ export interface User {
   created_at: Date;
 }
 
-export interface UserLogin extends Omit<User, 'password' | 'created_at'> {
-}
+export type UserLogin = Omit<User, 'password' | 'created_at'>

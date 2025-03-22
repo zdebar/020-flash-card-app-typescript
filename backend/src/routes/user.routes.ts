@@ -5,7 +5,7 @@ import db from '../config/database.config';
 
 const userRouter = express.Router();
 
-userRouter.get('/user', authenticateTokenMiddleware, getUserProfileController(db));
+userRouter.get('/', authenticateTokenMiddleware, getUserProfileController(db));
 userRouter.get('/words/:userId/:language', authenticateTokenMiddleware, getUserWordsController(db));
 userRouter.post('/words/:userId/progress', authenticateTokenMiddleware, updateUserWordsController(db));
 

@@ -4,5 +4,8 @@
 
 
   More
-    setting - notifications, light-dark mode
+    user setting - notifications, light-dark mode
+      logout
+      autologin
     languages - de, es, en
+    
