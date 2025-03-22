@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export function RegisterCard() {
+export default function RegisterCard() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

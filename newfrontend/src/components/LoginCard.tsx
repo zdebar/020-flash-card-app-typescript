@@ -72,7 +72,7 @@ export default function LoginCard() {
 
           <button
             type="submit"
-            className="btn w-full bg-blue-500 text-white hover:bg-blue-600"
+            className="btn btn-primary w-full"
           >
             Login
           </button>
