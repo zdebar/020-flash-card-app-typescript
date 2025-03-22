@@ -1,33 +1,11 @@
-interface Word {
-  src: string;
-  trg: string;
-  prn: string;
-}
-
-interface NoteProps {
-  words: Word[];
-  showTranslations: boolean;
-  onClick: () => void;
-}
-
-export default function Note({ words = [], showTranslations, onClick }: NoteProps) {
-  if (!words || words.length === 0) {
-    return (
-      <div className="flex flex-col justify-between border-t p-4">
-        <div className="flex flex-col justify-between items-center"></div>
-      </div>
-    );
-  }
-
+export default function Note() {
   return (
-    <button onClick={onClick} className="flex flex-col justify-between items-center border-t p-4 bg-base-100 hover:bg-base-200 rounded-md">
-      <p className="text-xl font-semibold">{words[0].src}</p>
-      {showTranslations && (
-        <div className="text-sm">
-          <p>{words[0].trg}</p>
-          <p className="italic">{words[0].prn}</p>
-        </div>
-      )}
+    <button className="btn w-full max-w-xs shadow-xl bg-gray-100 text-center h-[120px] flex flex-col items-center">
+      <p className="text-xl font-bold h-[35px] flex items-center">src</p>
+      <div className="text-l">
+        <p className="h-[25px] flex items-center">trg</p>
+        <p className="h-[25px] flex items-center">prn</p>
+      </div>
     </button>
   );
 }

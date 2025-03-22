@@ -4,159 +4,159 @@
     "src": "pracovat",
     "trg": "arbeiten",
     "prn": "ˈaɾbaɪtən",
-    "language": "de",
-    "audio": "arbeiten.mp3"
+    "audio": "arbeiten.mp3",
+    "progress": 0
   },
   {
     "word_id": 123,
     "src": "pracuji",
     "trg": "ich arbeite",
     "prn": "ɪç ˈaɾbaɪtə",
-    "language": "de",
-    "audio": "ich_arbeite.mp3"
+    "audio": "ich_arbeite.mp3",
+    "progress": 0
   },
   {
     "word_id": 124,
     "src": "ten, ta, to",
     "trg": "der, die, das",
     "prn": "dɛɾ diː dˈas",
-    "language": "de",
-    "audio": "der_die_das.mp3"
+    "audio": "der_die_das.mp3",
+    "progress": 0
   },
   {
     "word_id": 125,
     "src": "tobě, ti",
     "trg": "dir",
     "prn": "dˈiːɾ",
-    "language": "de",
-    "audio": "dir.mp3"
+    "audio": "dir.mp3",
+    "progress": 0
   },
   {
     "word_id": 126,
     "src": "ty",
     "trg": "du",
     "prn": "dˈuː",
-    "language": "de",
-    "audio": "du.mp3"
+    "audio": "du.mp3",
+    "progress": 0
   },
   {
     "word_id": 127,
     "src": "hotový",
     "trg": "fertig",
     "prn": "fˈɛɾtɪç",
-    "language": "de",
-    "audio": "fertig.mp3"
+    "audio": "fertig.mp3",
+    "progress": 0
   },
   {
     "word_id": 128,
     "src": "přítel",
     "trg": "der Freund",
     "prn": "dɛɾ frˈɔønt",
-    "language": "de",
-    "audio": "der_freund.mp3"
+    "audio": "der_freund.mp3",
+    "progress": 0
   },
   {
     "word_id": 129,
     "src": "přítelkyně",
     "trg": "die Freundin",
     "prn": "diː frˈɔøndɪn",
-    "language": "de",
-    "audio": "die_freundin.mp3"
+    "audio": "die_freundin.mp3",
+    "progress": 0
   },
   {
     "word_id": 130,
     "src": "dobrý, dobře",
     "trg": "gut",
     "prn": "ɡˈuːt",
-    "language": "de",
-    "audio": "gut.mp3"
+    "audio": "gut.mp3",
+    "progress": 0
   },
   {
     "word_id": 131,
     "src": "já",
     "trg": "ich",
     "prn": "ˈɪç",
-    "language": "de",
-    "audio": "ich.mp3"
+    "audio": "ich.mp3",
+    "progress": 0
   },
   {
     "word_id": 132,
     "src": "jsem",
     "trg": "ich bin",
     "prn": "ˈɪç bɪn",
-    "language": "de",
-    "audio": "ich_bin.mp3"
+    "audio": "ich_bin.mp3",
+    "progress": 0
   },
   {
     "word_id": 133,
     "src": "můj",
     "trg": "mein",
     "prn": "mˈaɪn",
-    "language": "de",
-    "audio": "mein.mp3"
+    "audio": "mein.mp3",
+    "progress": 0
   },
   {
     "word_id": 134,
     "src": "mně",
     "trg": "mir",
     "prn": "mˈiːɾ",
-    "language": "de",
-    "audio": "mir.mp3"
+    "audio": "mir.mp3",
+    "progress": 0
   },
   {
     "word_id": 135,
     "src": "ještě",
     "trg": "noch",
     "prn": "nˈɔx",
-    "language": "de",
-    "audio": "noch.mp3"
+    "audio": "noch.mp3",
+    "progress": 0
   },
   {
     "word_id": 136,
     "src": "už, ji",
     "trg": "schon",
     "prn": "ʃˈoːn",
-    "language": "de",
-    "audio": "schon.mp3"
+    "audio": "schon.mp3",
+    "progress": 0
   },
   {
     "word_id": 137,
     "src": "studovat",
     "trg": "studieren",
-    "prn": "ʃtuːdˈiːrən",
-    "language": "de",
-    "audio": "studieren.mp3"
+    "prn": "ʃtu˂dˈiːrən",
+    "audio": "studieren.mp3",
+    "progress": 0
   },
   {
     "word_id": 138,
     "src": "studuji",
     "trg": "ich studiere",
-    "prn": "ɪç ʃtuːdˈiːrə",
-    "language": "de",
-    "audio": "ich_studiere.mp3"
+    "prn": "ɪç ʃtu˂dˈiːrə",
+    "audio": "ich_studiere.mp3",
+    "progress": 0
   },
   {
     "word_id": 139,
     "src": "studuješ",
     "trg": "du studierst",
-    "prn": "duː ʃtuːdˈiːɾst",
-    "language": "de",
-    "audio": "du_studierst.mp3"
+    "prn": "duː ʃtu˂dˈiːɾst",
+    "audio": "du_studierst.mp3",
+    "progress": 0
   },
   {
     "word_id": 140,
     "src": "a",
     "trg": "und",
     "prn": "ˈʊnt",
-    "language": "de",
-    "audio": "und.mp3"
+    "audio": "und.mp3",
+    "progress": 0
   },
   {
     "word_id": 141,
     "src": "kdo",
     "trg": "wer",
     "prn": "vˈeːɾ",
-    "language": "de",
-    "audio": "wer.mp3"
+    "audio": "wer.mp3",
+    "progress": 0
   }
 ]
