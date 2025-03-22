@@ -1,18 +1,20 @@
 import './App.css'
+import Header from './components/Header';
+import Card from './components/Card';
+import Footer from './components/Footer';
+import jsonData from './data/lecture1-test.json';
 
-function handleClick() {
-  console.log("Hello")
-}
+// function handleClick() {
+//   console.log("Ahoj")
+// }
 
 export default function App() {
+  const data = jsonData as JsonData;
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
-      <button className="btn btn-primary" onClick={handleClick}>Click Me</button>
-      <button className='btn btn-secondary mt-4'>New Button</button>
-      <div className="card w-96 bg-base-100 shadow-xl p-4 mt-4">
-        <h2 className="card-title">Hello, DaisyUI!</h2>
-        <p>This works perfectly in TypeScript.</p>
-      </div>
+    <div className="flex flex-col items-center justify-between min-h-screen w-full max-w-[900px] min-w-[320px] mx-auto">
+      <Header></Header>
+      <Card words={data.blocks[0]?.words}></Card>
+      <Footer></Footer>
     </div>
   );
 }

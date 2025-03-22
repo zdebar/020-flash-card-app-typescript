@@ -4,11 +4,10 @@ export default function Footer(): ReactNode {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="footer sm:footer-horizontal footer-center bg-base-300 text-base-content p-4">
+    <footer className="footer sm:footer-horizontal footer-center text-base-content p-4">
     <aside>
       <p>&copy; {year} Zdeněk Barth</p>
     </aside>
   </footer>
   );
 }
-
