@@ -8,4 +8,5 @@
       logout
       autologin
     languages - de, es, en
+    incosistent formatting between login and register
     
