@@ -6,7 +6,7 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "typeRoots": ["./node_modules/@types", "./types", "./src/types"],
-    "types": ["node"], 
+    "types": ["node", "react", "react-dom"], 
   },
   "include": ["src", "types"],
   "files": [],
