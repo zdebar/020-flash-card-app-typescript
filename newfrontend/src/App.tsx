@@ -4,10 +4,6 @@ import Card from './components/Card';
 import Footer from './components/Footer';
 import jsonData from './data/lecture1-test.json';
 
-// function handleClick() {
-//   console.log("Ahoj")
-// }
-
 export default function App() {
   const data = jsonData as JsonData;
   return (
