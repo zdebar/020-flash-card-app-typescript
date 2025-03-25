@@ -41,12 +41,8 @@ async def process_sheet(sheet_name, input_file, output_folder, audio_folder):
     audio_files = await generate_audio_for_words(df, audio_folder, "de")
     df["audio"] = audio_files
 
-    # Add order and language columns
-    df["seq"] = df.index + 1
-    df["language"] = "de"
-
     # Reorder columns
-    final_df = df[["src", "trg", "prn", "audio", "language", "seq"]]
+    final_df = df[["src", "trg", "prn", "audio"]]
 
     # Save the CSV file
     output_file = os.path.join(output_folder, f"{sheet_name}.csv")
