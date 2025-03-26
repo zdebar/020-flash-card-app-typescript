@@ -1,20 +1,17 @@
-export interface WordNew {
+export interface Word {
   id: number;
   src: string;
   trg: string;
   prn: string | null;
-  audio: string | null  
-}
-
-export interface Word extends WordNew {
-  progress: number | null
+  audio: string | null;  
+  progress: number
 }
 
 export interface User {
   id: number;
   username: string;
   email: string;  
-  created_at: string;
+  created_at: string; // ISO 8601 string
 }
 
 export interface UserLogin extends User {

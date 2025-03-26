@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS user_preferences (
 CREATE TABLE IF NOT EXISTS languages (
   id SERIAL PRIMARY KEY,
   language TEXT NOT NULL UNIQUE,
-  complete INTEGER DEFAULT 0 CHECK (complete IN (0, 1)) -- complete, means with prn and audio files, only complete languages could be "in learning", incomplet could still serve as native / original languages
+  complete INTEGER DEFAULT 0 CHECK (complete IN (0, 1)) -- 0 = incomplete, 1 = complete; only complete languages is possible to learn, complete should incorporate both prn and audio
 );
 
 CREATE TABLE IF NOT EXISTS meanings (
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS words (
   word TEXT NOT NULL, -- 
   prn TEXT, -- pronunciation
   audio TEXT, -- file name
-  seq INTEGER, -- order of learning from 1 up
+  seq INTEGER, -- order of learning 
   FOREIGN KEY (language_id) REFERENCES languages(id) ON DELETE CASCADE
 );
 
@@ -54,19 +54,19 @@ CREATE TABLE IF NOT EXISTS user_languages ( -- languages user is learning
 CREATE TABLE IF NOT EXISTS word_meanings ( -- connection of words of individual languages to meanings
   word_id INTEGER NOT NULL,
   meaning_id INTEGER NOT NULL,
-  priority INTEGER DEFAULT 1, -- with multiple meanings there are more common meanings (with smaller priority index)
+  priority INTEGER DEFAULT 1, -- priority of multiple meanings
   PRIMARY KEY (word_id, meaning_id),
   FOREIGN KEY (word_id) REFERENCES words(id) ON DELETE CASCADE,
   FOREIGN KEY (meaning_id) REFERENCES meanings(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS user_words (
+  id SERIAL PRIMARY KEY,
   user_id INTEGER NOT NULL, 
   word_id INTEGER NOT NULL,
-  progress INTEGER DEFAULT 0, -- main learning index, starts with 0 going up with successfull repetitions, null is reserved for learned words
+  progress INTEGER DEFAULT 0, -- main learning index, starts with 0, null / learned word
   learned_at TEXT DEFAULT (TO_CHAR(NOW(), 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"')),
   next_at TEXT DEFAULT (TO_CHAR(NOW(), 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"')),
-  PRIMARY KEY (user_id, word_id),
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
   FOREIGN KEY (word_id) REFERENCES words(id) ON DELETE CASCADE
 );
@@ -74,26 +74,25 @@ CREATE TABLE IF NOT EXISTS user_words (
 CREATE INDEX IF NOT EXISTS idx_user_words_user ON user_words(user_id);
 CREATE INDEX IF NOT EXISTS idx_user_words_word ON user_words(word_id);
 
-CREATE TABLE IF NOT EXISTS interaction_history ( -- saves every interaction of user_words, new row by trigger on user_words.progress change
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(), -- only one id using UUID to enable synchronization between offline and backend databases
-  user_id INTEGER NOT NULL,
-  word_id INTEGER,
-  progress INTEGER,
-  timestamp TEXT DEFAULT (TO_CHAR(NOW(), 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"')),
-  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-  FOREIGN KEY (word_id) REFERENCES words(id) ON DELETE CASCADE
+CREATE TABLE IF NOT EXISTS interaction_history (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),  -- Unique ID for synchronization
+  user_word_id INTEGER NOT NULL,  -- Reference to user_words.id
+  progress INTEGER,  -- Progress value for interaction
+  timestamp TEXT DEFAULT (TO_CHAR(NOW(), 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"')),  -- Timestamp of the interaction
+  FOREIGN KEY (user_word_id) REFERENCES user_words(id) ON DELETE CASCADE
 );
 
-CREATE INDEX IF NOT EXISTS idx_interaction_history_user ON interaction_history(user_id);
-CREATE INDEX IF NOT EXISTS idx_interaction_history_word ON interaction_history(word_id);
+-- Create the indexes for better query performance
+CREATE INDEX IF NOT EXISTS idx_interaction_history_user_word ON interaction_history(user_word_id);
 CREATE INDEX IF NOT EXISTS idx_interaction_history_timestamp ON interaction_history(timestamp);
+
 
 -- Trigger to log progress updates
 CREATE OR REPLACE FUNCTION log_user_word_interaction() 
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO interaction_history (user_id, word_id, progress, timestamp)
-  VALUES (NEW.user_id, NEW.word_id, NEW.progress, TO_CHAR(NOW(), 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'));
+  INSERT INTO interaction_history (user_word_id, progress, timestamp)
+  VALUES (NEW.id, NEW.progress, TO_CHAR(NOW(), 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'));
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;

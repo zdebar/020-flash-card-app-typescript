@@ -27,7 +27,7 @@
     loginUserService
 
   word.service.ts
-    getNewWords
+    getWordsPostgress / check if it will work even with entries in user_row
     getWordAlreadyPracticed 
     getUserWords
     updateUserWords 

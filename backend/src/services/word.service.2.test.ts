@@ -1,26 +1,41 @@
-import { describe, it, expect} from 'vitest';
-import sqlite3 from 'sqlite3';
-import { getNewWords } from './word.service';
-import db from '../config/databaseSQLite.config'; // assuming db is already initialized
-import logger from '../utils/logger.utils'; // assuming logger is set up
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { Client } from 'pg';
+import { getWordsPostgres } from './word.service.postgres'; // Update with the actual function name
+import logger from '../utils/logger.utils';
 
-// This test is for extraction testing data
+// Setup PostgreSQL client
+const db = new Client({
+  host: 'localhost',
+  port: 5432,
+  user: 'your_user',
+  password: 'your_password',
+  database: 'your_database',
+});
 
-describe('getNewWords', () => {
-  let dbInstance: sqlite3.Database;
+describe('getNewWords - PostgreSQL', () => {
+  beforeAll(async () => {
+    await db.connect();
+  });
+
+  afterAll(async () => {
+    await db.end();
+  });
 
   it('should retrieve new words that are not in user_words', async () => {
     const userId = 1; 
-    const language = 'de';
+    const sourceLanguage = 2;
+    const targetLanguage = 1;
     const numWords = 20; 
 
     try {
-      const words = await getNewWords(db, userId, language, numWords);
+      const words = await getWordsPostgres(db, userId, sourceLanguage, targetLanguage, numWords);
 
       logger.info('Retrieved words:', words);
       expect(words.length).toBe(numWords);
     } catch (error) {
       logger.error('Error retrieving new words:', error);
+      throw error;
     }
   });
 });
+
