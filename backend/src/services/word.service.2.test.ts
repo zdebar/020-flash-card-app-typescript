@@ -1,7 +1,7 @@
 import { describe, it, expect} from 'vitest';
 import sqlite3 from 'sqlite3';
 import { getNewWords } from './word.service';
-import db from '../config/database.config'; // assuming db is already initialized
+import db from '../config/databaseSQLite.config'; // assuming db is already initialized
 import logger from '../utils/logger.utils'; // assuming logger is set up
 
 // This test is for extraction testing data

@@ -1,6 +1,6 @@
 import express from "express";
 import { registerUserController, loginUserController } from "../controllers/auth.controller";
-import db from "../config/database.config";
+import db from "../config/databaseSQLite.config";
 
 const authRoutes = express.Router();
 

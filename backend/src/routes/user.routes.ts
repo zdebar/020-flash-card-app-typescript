@@ -1,7 +1,7 @@
 import express from 'express';
 import { authenticateTokenMiddleware } from '../middlewares/auth.middleware'; 
 import { getUserWordsController, updateUserWordsController, getUserProfileController } from '../controllers/user.controller';
-import db from '../config/database.config';
+import db from '../config/databaseSQLite.config';
 
 const userRouter = express.Router();
 

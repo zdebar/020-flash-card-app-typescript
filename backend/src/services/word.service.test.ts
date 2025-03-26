@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, Mock } from 'vitest';
 import { getNewWords, getWordsAlreadyPracticed, getUserWords, updateUserWords } from '../services/word.service';
-import { queryDatabase, executeQuery } from '../utils/db.utils';
+import { queryDatabaseSQLite, executeQuerySQLite } from '../utils/db.utils';
 import sqlite3 from 'sqlite3';
 
 // Mocking the database utility functions
@@ -23,7 +23,7 @@ describe('Word Service Functions', () => {
     ];
 
     // Mock queryDatabase to return mockRows
-    (queryDatabase as Mock).mockResolvedValue(mockRows);
+    (queryDatabaseSQLite as Mock).mockResolvedValue(mockRows);
 
     const words = await getNewWords({} as sqlite3.Database, mockUserId, mockLanguage, 2);
 
@@ -39,7 +39,7 @@ describe('Word Service Functions', () => {
     ];
 
     // Mock queryDatabase to return mockRows
-    (queryDatabase as Mock).mockResolvedValue(mockRows);
+    (queryDatabaseSQLite as Mock).mockResolvedValue(mockRows);
 
     const words = await getWordsAlreadyPracticed({} as sqlite3.Database, mockUserId, mockLanguage, mockBlock);
 
@@ -56,8 +56,8 @@ describe('Word Service Functions', () => {
       { word_id: 2, src: 'dog', trg: 'perro', prn: 'dog', audio: 'dog.mp3' },
     ];
 
-    (queryDatabase as Mock).mockResolvedValueOnce(mockPracticedWords); // First query for practiced words
-    (queryDatabase as Mock).mockResolvedValueOnce(mockNewWords); // Second query for new words
+    (queryDatabaseSQLite as Mock).mockResolvedValueOnce(mockPracticedWords); // First query for practiced words
+    (queryDatabaseSQLite as Mock).mockResolvedValueOnce(mockNewWords); // Second query for new words
 
     const words = await getUserWords({} as sqlite3.Database, mockUserId, mockLanguage, mockBlock);
 
@@ -67,7 +67,7 @@ describe('Word Service Functions', () => {
   });
 
   it('should handle errors during getNewWords', async () => {
-    (queryDatabase as Mock).mockRejectedValueOnce(new Error('Database error'));
+    (queryDatabaseSQLite as Mock).mockRejectedValueOnce(new Error('Database error'));
 
     try {
       await getNewWords({} as sqlite3.Database, mockUserId, mockLanguage, 2);
@@ -83,11 +83,11 @@ describe('Word Service Functions', () => {
     ];
     const mockSRS = [1, 2, 3];
 
-    (executeQuery as Mock).mockResolvedValueOnce(undefined);
+    (executeQuerySQLite as Mock).mockResolvedValueOnce(undefined);
 
     await updateUserWords({} as sqlite3.Database, mockUserId, mockWords, mockSRS);
 
-    expect(executeQuery).toHaveBeenCalledTimes(2); // One for each word
+    expect(executeQuerySQLite).toHaveBeenCalledTimes(2); // One for each word
   });
 
   it('should handle errors during updateUserWords', async () => {
@@ -96,7 +96,7 @@ describe('Word Service Functions', () => {
     ];
     const mockSRS = [1, 2, 3];
 
-    (executeQuery as Mock).mockRejectedValueOnce(new Error('Failed to update user words'));
+    (executeQuerySQLite as Mock).mockRejectedValueOnce(new Error('Failed to update user words'));
 
     try {
       await updateUserWords({} as sqlite3.Database, mockUserId, mockWords, mockSRS);

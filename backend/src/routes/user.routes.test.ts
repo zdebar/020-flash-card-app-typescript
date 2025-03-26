@@ -3,7 +3,7 @@ import request from 'supertest';
 import express, { NextFunction } from 'express';
 import userRouter from '../routes/user.routes';
 import { authenticateTokenMiddleware } from '../middlewares/auth.middleware';
-import db from '../config/database.config';
+import db from '../config/databaseSQLite.config';
 
 // Create a mock Express app
 const app = express();

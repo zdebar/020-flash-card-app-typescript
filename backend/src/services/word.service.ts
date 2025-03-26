@@ -1,6 +1,6 @@
 import { WordData } from "../types/dataTypes";
 import { config } from '../config/config';
-import { queryDatabase, executeQuery } from "../utils/db.utils";
+import { queryDatabaseSQLite, executeQuerySQLite } from "../utils/db.utils";
 import { mapNewWordsToWordData } from "../types/dataConversion";
 import sqlite3 from "sqlite3";
 import logger from "../utils/logger.utils";
@@ -27,7 +27,7 @@ export async function getNewWords(db: sqlite3.Database, userId: number, language
 
   try {
     logger.info(`Running query to fetch words for userId: ${userId}, language: ${language}, numWords: ${numWords}`);
-    const rows = await queryDatabase<any>(db, query, [userId, language, numWords]);
+    const rows = await queryDatabaseSQLite<any>(db, query, [userId, language, numWords]);
     const data = mapNewWordsToWordData(rows)
     logger.info(`Fetched rows from the database: ${JSON.stringify(data)}`);
     return data;
@@ -57,7 +57,7 @@ export async function getWordsAlreadyPracticed(db: sqlite3.Database, userId: num
     LIMIT ?;
   `;
 
-  const rows = await queryDatabase<any>(db, query, [userId, language, block]);
+  const rows = await queryDatabaseSQLite<any>(db, query, [userId, language, block]);
   return mapNewWordsToWordData(rows);
 }
 
@@ -109,7 +109,7 @@ export async function updateUserWords(db: sqlite3.Database, userId: number, word
         ? new Date(today.getTime() + interval * 86400000).toISOString().split('T')[0]
         : null;
 
-      await executeQuery(db, insertStmt, [userId, word.word_id, progress, nextAt, today.toISOString().split('T')[0]]);
+      await executeQuerySQLite(db, insertStmt, [userId, word.word_id, progress, nextAt, today.toISOString().split('T')[0]]);
     });
 
     await Promise.all(promises);

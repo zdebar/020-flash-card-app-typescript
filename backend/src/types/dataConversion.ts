@@ -1,7 +1,7 @@
 import { Word, WordNew } from "./dataTypes";
 
 /**
- * Converts new words to full WordData format.
+ * Converts new words to full Word format.
  * @param rows 
  * @returns 
  */
