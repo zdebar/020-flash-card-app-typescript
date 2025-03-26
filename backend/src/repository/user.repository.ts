@@ -64,6 +64,24 @@ export async function findUserPreferencesByIdPostgres(db: Client, userId: number
 }
 
 /**
+ * Finds a user by their Username in the "users" table.
+ * @param db searched database
+ * @param username searched username
+ * @returns A Promise, resolves to a `User` with identification data / id, username, email, created_at
+ * @throws Will throw an error if the database query fails.
+ */
+export async function findUserByUsernamePostgres(db: Client, username: string): Promise<User | null> {
+  try {
+    const res = await db.query("SELECT id, username, email, created_at FROM users WHERE username = $1", [username]);
+    if (!res) return null;
+    return res.rows[0] || null;
+  } catch (err: any) {
+    logger.error(`Error querying user by Username: ${err.message}`);
+    throw err;
+  }
+}
+
+/**
  * Finds a user by their "Email" in the "users" table.
  * @param db - searched database
  * @param email - searched "Email"

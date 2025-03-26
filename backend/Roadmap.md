@@ -22,46 +22,46 @@
   auth.middleware.ts
 
 ## Services
-  auth.service.ts / repair tests
+  auth.service.ts / make tests
     registerUserService 
     loginUserService
 
   word.service.ts
-    getWordsPostgress / check if it will work even with entries in user_row
-    getWordAlreadyPracticed 
-    getUserWords
-    updateUserWords 
+    getWordsPostgres / check if it will work even with entries in user_row
+    updateWordsPostgres / make tests
+    batchUpdateWordsPostgres / make tests
 
 ## Repository
   user.repository.ts
-    findUserByID
-    findUserByEmail
-    findUserByUsername 
-    insertUser
+    findUserByIdPostgres
+    findUserPreferencesByIdPostgres
+    findUserByUsernamePostgres
+    findUserByEmailPostgres
+    insertUserPostgres
 
 ## Utils
-  auth.utils.ts / so far not possible to run env variables in vscode tests
+  auth.utils.ts
     hashPassword
     comparePasswords
     createToken 
     verifyToken
 
-  db.utils.ts
-    queryDatabase
-    executeDatabase
+  config.utils.ts
+    convertSRSToSeconds
 
   logger.utils.ts
 
 ## Types
   dataTypes.ts
-    WordData
-    WordDataNew
+    Word
     User
     UserLogin
+    UserSettings
 
   dataConversion.ts
     mapNewWordsToWordData
 
 ## Config
   config.ts
-  database.config.ts
+  databasePostgres.config.ts
+  databaseSQLite.config.ts

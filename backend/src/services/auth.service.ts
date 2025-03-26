@@ -1,7 +1,8 @@
 import logger from "../utils/logger.utils";
 import { hashPassword, comparePasswords, createToken } from "../utils/auth.utils";
-import { findUserByEmail, findUserByUsername, insertUser } from "../repository/user.repository";
+import { findUserByEmailPostgres, findUserByUsernamePostgres, insertUserPostgres } from "../repository/user.repository";
 import sqlite3 from "sqlite3";
+import { Client } from "pg";
 
 /**
  * Register new user into database table users.
@@ -11,16 +12,16 @@ import sqlite3 from "sqlite3";
  * @param email register email, must be unique
  * @param password register password
  */
-export async function registerUserService(db: sqlite3.Database, username: string, email: string, password: string): Promise<void> {
+export async function registerUserService(db: Client, username: string, email: string, password: string): Promise<void> {
   try {
     // Check if email already exists
-    const existingEmail = await findUserByEmail(db, email);
+    const existingEmail = await findUserByEmailPostgres(db, email);
     if (existingEmail) {
       throw new Error("Email is already taken.");
     }
 
     // Check if username already exists
-    const existingUsername = await findUserByUsername(db, username);
+    const existingUsername = await findUserByUsernamePostgres(db, username);
     if (existingUsername) {
       throw new Error("Username is already taken.");
     }
@@ -29,7 +30,7 @@ export async function registerUserService(db: sqlite3.Database, username: string
     const hashedPassword = await hashPassword(password);
 
     // Insert new user into the database
-    await insertUser(db, username, email, hashedPassword);
+    await insertUserPostgres(db, username, email, hashedPassword);
     logger.info(`User registered successfully: ${username}`); 
   } catch (err: any) {
     logger.error("Error during user registration:", err);
@@ -46,10 +47,10 @@ export async function registerUserService(db: sqlite3.Database, username: string
  * @param password login password
  * @returns JWT access token, Expiration time of token si defined in .env as JWT_EXPIRES_IN.
  */
-export async function loginUserService(db: sqlite3.Database, email: string, password: string): Promise<string> {
+export async function loginUserService(db: Client, email: string, password: string, JWT_SECRET_KEY: string, expiresIn: string): Promise<string> {
   try {
     // Find user by email
-    const user = await findUserByEmail(db, email);
+    const user = await findUserByEmailPostgres(db, email);
     if (!user) {
       throw new Error("User doesn't exist.");
     }
@@ -61,7 +62,7 @@ export async function loginUserService(db: sqlite3.Database, email: string, pass
     }
 
     // Create JWT token
-    const token = createToken(user);    
+    const token = createToken(user, JWT_SECRET_KEY, expiresIn);    
     return token;
   } catch (err: any) {
     logger.error("Error during user login:", err);

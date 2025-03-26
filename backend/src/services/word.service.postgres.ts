@@ -1,7 +1,6 @@
 import { Word } from "../types/dataTypes";
 import { config } from '../config/config';
 import { Client } from "pg";
-import { mapNewWordsToWordData } from "../types/dataConversion";
 import logger from "../utils/logger.utils";
 
 /**
@@ -57,8 +56,8 @@ export async function getWordsPostgres(client: Client, userId: number, srcLangua
  * Update table user_words with updates progress and next_at.
  * @param client PostgreSQL client
  * @param userId identifies user
- * @param words Array of words
- * @param SRS Array of integer numbers determining repetition algorithm
+ * @param words Array of Words
+ * @param SRS Array of integer numbers determining repetition algorithm, in seconds
  * @returns A void Promise
  */
 export async function updateWordsPostgres(client: Client, userId: number, words: Word[], SRS: number[]): Promise<void> {
@@ -75,11 +74,12 @@ export async function updateWordsPostgres(client: Client, userId: number, words:
     const promises = words.map(async (word) => {
       const progress = word.progress ?? 0;
       const interval = SRS[progress] ?? null;
+      
       const nextAt = interval !== null
-        ? new Date(today.getTime() + interval * 86400000).toISOString().split('T')[0]
+        ? new Date(today.getTime() + interval * 1000).toISOString()
         : null;
 
-      await client.query(insertStmt, [userId, word.id, progress, nextAt, today.toISOString().split('T')[0]]);
+      await client.query(insertStmt, [userId, word.id, progress, nextAt, today.toISOString()]);
     });
 
     await Promise.all(promises);
@@ -88,3 +88,34 @@ export async function updateWordsPostgres(client: Client, userId: number, words:
     throw new Error('Error updating user_words: ' + err.message);
   }
 }
+
+export async function batchUpdateWordsPostgres(client: Client, userId: number, words: Word[], SRS: number[]): Promise<void> {
+  const today = new Date();
+  const values: any[] = [];
+
+  try {
+    const insertStmt = `
+      INSERT INTO user_words (user_id, word_id, progress, next_at, created_at)
+      VALUES 
+      ${words.map((_, index) => `($${index * 5 + 1}, $${index * 5 + 2}, $${index * 5 + 3}, $${index * 5 + 4}, $${index * 5 + 5})`).join(', ')}
+      ON CONFLICT(user_id, word_id) 
+      DO UPDATE SET progress = excluded.progress, next_at = excluded.next_at;
+    `;
+
+    words.forEach((word) => {
+      const progress = word.progress ?? 0;
+      const interval = SRS[progress] ?? null;
+      const nextAt = interval !== null
+        ? new Date(today.getTime() + interval * 1000).toISOString()
+        : null;
+
+      values.push(userId, word.id, progress, nextAt, today.toISOString());
+    });
+
+    await client.query(insertStmt, values);
+    return;
+  } catch (err: any) {
+    throw new Error('Error updating user_words: ' + err.message);
+  }
+}
+
