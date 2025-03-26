@@ -1,13 +1,13 @@
-import { WordData, WordDataNew } from "./dataTypes";
+import { Word, WordNew } from "./dataTypes";
 
 /**
  * Converts new words to full WordData format.
  * @param rows 
  * @returns 
  */
-export function mapNewWordsToWordData(rows: WordDataNew[]): WordData[] {
-  return rows.map((row: WordDataNew) => ({
-    word_id: row.word_id,
+export function mapNewWordsToWordData(rows: WordNew[]): Word[] {
+  return rows.map((row: WordNew) => ({
+    id: row.id,
     src: row.src,
     trg: row.trg,
     prn: row.prn || null,
