@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import { UserLogin } from "../types/dataTypes";
+import jwt, {SignOptions} from "jsonwebtoken";
+import { User } from "../types/dataTypes";
 import 'dotenv/config';
 
 /**
@@ -23,46 +23,42 @@ export function comparePasswords(password: string, hashedPassword: string): Prom
 }
 
 /**
- * Will create access token. Expiration time of token si defined in .env as JWT_EXPIRES_IN.
- * Reads password from .env as JWT_SECRET.
+ * Will create access token. Expiration time of token is passed as a parameter.
  * @param user 
- * @returns A string on success, error on fail. 
+ * @param JWT_SECRET_KEY Secret key for signing the JWT token
+ * @param expiresIn Expiration time for the token
+ * @returns A string on success, error on failure
  */
-export function createToken(user: UserLogin): string {
-  const payload: UserLogin = {
+export function createToken(user: User, JWT_SECRET_KEY: string, expiresIn: string): string {
+  const payload: User = {
     id: user.id,
     username: user.username,
     email: user.email,
-  };  
+    created_at: user.created_at,
+  };
 
-  const JWT_SECRET_KEY = process.env.JWT_SECRET;
-  const expiresIn = process.env.JWT_EXPIRES_IN as jwt.SignOptions["expiresIn"];
-  
   if (!JWT_SECRET_KEY) {
     throw new Error("JWT_SECRET is missing in environment variables.");
   }
 
-  return jwt.sign(payload, JWT_SECRET_KEY, { expiresIn: expiresIn });
+  const expirationTime = expiresIn as jwt.SignOptions["expiresIn"]
+
+  return jwt.sign(payload, JWT_SECRET_KEY, {expiresIn: expirationTime});
 }
 
 /**
- * Verifys JWT token. Reads password from .env as JWT_SECRET.
- * @param token 
- * @returns A Promise with payload of JWT token, in format UserLogin.
+ * Verifies JWT token. Secret key is passed as a parameter.
+ * @param token JWT token to verify
+ * @param JWT_SECRET_KEY Secret key used to verify the JWT token
+ * @returns A Promise with the decoded JWT payload (User)
  */
-export function verifyToken(token: string): Promise<UserLogin> {
+export function verifyToken(token: string, JWT_SECRET_KEY: string): Promise<User> {
   return new Promise((resolve, reject) => {
-    const JWT_SECRET_KEY = process.env.JWT_SECRET;
-
-    if (!JWT_SECRET_KEY) {
-      throw new Error("JWT_SECRET is missing in environment variables.");
-    }
-
     jwt.verify(token, JWT_SECRET_KEY, (err, decoded) => {
       if (err) {
         reject(new Error("Invalid token"));
       } else {
-        resolve(decoded as UserLogin);
+        resolve(decoded as User);
       }
     });
   });

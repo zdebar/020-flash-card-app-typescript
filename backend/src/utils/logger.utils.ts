@@ -3,8 +3,8 @@ import path from "path";
 import fs from "fs";
 import dotenv from "dotenv";
 
-dotenv.config(); // Ensure .env is loaded
-
+const envPath = path.resolve(__dirname, "../../.env");
+dotenv.config({ path: envPath });
 const loggerLevel: string = process.env.LOGGER_LEVEL || "error";
 
 // Log file paths
