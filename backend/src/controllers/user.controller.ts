@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { getUserWords, updateUserWords } from "../services/word.service.sqlite"; 
 import logger from '../utils/logger.utils';
 import { UserLogin } from '../types/dataTypes';
-import { findUserById } from '../repository/user.repository';
+import { findUserById } from '../repository/user.repository.postgres';
 import sqlite3 from 'sqlite3';
 
 /**

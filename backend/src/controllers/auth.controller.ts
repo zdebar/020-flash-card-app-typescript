@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { registerUserService, loginUserService } from "../services/auth.service";
+import { registerUserServicePostgres, loginUserServicePostgres } from "../services/auth.service.postgres";
 import sqlite3 from "sqlite3";
 import logger from "../utils/logger.utils";
 
@@ -18,8 +18,8 @@ export function registerUserController(db: sqlite3.Database) {
     }
 
     try {
-      await registerUserService(db, username, email, password);
-      const token = await loginUserService(db, email, password);
+      await registerUserServicePostgres(db, username, email, password);
+      const token = await loginUserServicePostgres(db, email, password);
       res.status(201).json({ message: "User registered successfully.", token });
     } catch (err: any) {
       res.status(400).json({ error: err.message });

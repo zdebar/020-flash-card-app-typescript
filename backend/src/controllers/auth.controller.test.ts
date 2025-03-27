@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, Mock } from "vitest";
 import { registerUserController, loginUserController } from "../controllers/auth.controller";
-import { registerUserService, loginUserService } from "../services/auth.service";
+import { registerUserService, loginUserService } from "../services/auth.service.postgres";
 import { Request, Response } from "express";
 import sqlite3 from "sqlite3";
 

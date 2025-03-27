@@ -4,8 +4,8 @@ import { User } from "../types/dataTypes";
 import dotenv from 'dotenv';
 import path from "path";
 
-const envPath = path.resolve(__dirname, "../../.env");
-dotenv.config({ path: envPath });
+dotenv.config({ path: path.resolve(__dirname, "../../.env") });
+
 const jwt_secret = process.env.JWT_SECRET || "backup_password"
 const jwt_expires_in = process.env.JWT_EXPIRES_IN || "1h"
 console.log('JWT_SECRET:', jwt_secret);

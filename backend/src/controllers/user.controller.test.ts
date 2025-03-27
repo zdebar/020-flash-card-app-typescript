@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, Mock } from "vitest";
 import { getUserWordsController, updateUserWordsController, getUserProfileController } from "../controllers/user.controller";
 import { getUserWords, updateUserWords } from "../services/word.service.sqlite";
-import { findUserById } from "../repository/user.repository";
+import { findUserById } from "../repository/user.repository.postgres";
 import { Request, Response } from "express";
 import sqlite3 from "sqlite3";
 

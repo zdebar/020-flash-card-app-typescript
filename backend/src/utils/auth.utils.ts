@@ -1,7 +1,6 @@
 import bcrypt from "bcryptjs";
-import jwt, {SignOptions} from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import { User } from "../types/dataTypes";
-import 'dotenv/config';
 
 /**
  * Hashing password with 10 salt round of bcrypt
@@ -56,7 +55,7 @@ export function verifyToken(token: string, JWT_SECRET_KEY: string): Promise<User
   return new Promise((resolve, reject) => {
     jwt.verify(token, JWT_SECRET_KEY, (err, decoded) => {
       if (err) {
-        reject(new Error("Invalid token"));
+        reject(err);
       } else {
         resolve(decoded as User);
       }

@@ -4,6 +4,7 @@ import { verifyToken } from "../utils/auth.utils"; // Import verifyToken
 import { describe, it, expect, vi, Mock } from "vitest";
 import { UserLogin } from "../types/dataTypes";
 
+// Extending the Request interface to include the user property
 declare global {
   namespace Express {
     interface Request {
@@ -20,7 +21,7 @@ describe("authenticateTokenMiddleware", () => {
 
   it("should respond with 401 if no token is provided", async () => {
     const mockReq = {
-      headers: {},
+      headers: {}, // Simulate no token provided in headers
     } as Request;
 
     const res = {
@@ -32,13 +33,13 @@ describe("authenticateTokenMiddleware", () => {
     await authenticateTokenMiddleware(mockReq, res, mockNext);
 
     expect(res.status).toHaveBeenCalledWith(401);
-    expect(res.json).toHaveBeenCalledWith({ error: "No token" });
+    expect(res.json).toHaveBeenCalledWith({ error: "No authentication token" });
     expect(mockNext).not.toHaveBeenCalled();
   });
 
   it("should respond with 403 if token is invalid", async () => {
     const mockReq = {
-      headers: { authorization: "Bearer invalidToken" },
+      headers: { authorization: "Bearer invalidToken" }, // Invalid token
     } as Request;
 
     // Mocking verifyToken to throw an error for invalid token
@@ -53,13 +54,13 @@ describe("authenticateTokenMiddleware", () => {
     await authenticateTokenMiddleware(mockReq, res, mockNext);
 
     expect(res.status).toHaveBeenCalledWith(403);
-    expect(res.json).toHaveBeenCalledWith({ error: "Invalid token" });
+    expect(res.json).toHaveBeenCalledWith({ error: "Authentication failed" });
     expect(mockNext).not.toHaveBeenCalled();
   });
 
   it("should call next() if the token is valid", async () => {
     const mockReq = {
-      headers: { authorization: "Bearer validToken" },
+      headers: { authorization: "Bearer validToken" }, // Valid token
     } as Request;
 
     // Mocking verifyToken to resolve with a decoded token

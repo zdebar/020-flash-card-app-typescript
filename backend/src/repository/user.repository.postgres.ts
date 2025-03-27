@@ -4,16 +4,17 @@ import logger from "../utils/logger.utils";
 
 /**
  * Finds a user by their ID in the "users" table.
- * @param db - searched database
- * @param userId - searched user ID
- * @returns A Promise, resolves to a `User` with identification data / id, username, email, created_at
+ * 
+ * @param db The Postgres database client.
+ * @param userId The ID of the user to find.
+ * @returns The user if found, or null if no user exist.
  * @throws Will throw an error if the database query fails.
  */
 export async function findUserByIdPostgres(db: Client, userId: number): Promise<User | null> {
   try {
     const res = await db.query("SELECT id, username, email, created_at FROM users WHERE id = $1", [userId]);
-    if (!res) return null;
-    return res.rows[0] || null;
+    if (!res?.rows?.length) return null;
+    return res.rows[0];
   } catch (err: any) {
     logger.error(`Error querying user by ID: ${err.message}`);
     throw err;
@@ -21,10 +22,11 @@ export async function findUserByIdPostgres(db: Client, userId: number): Promise<
 }
 
 /**
- * Finds a user by their ID in the "users" table and includes user preferences from the "user_preferences" table.
- * @param db - searched database
- * @param userId - searched user ID
- * @returns A Promise, resolves to a `UserSettings` object with user identification data (`id`, `username`, `email`, `created_at`) and their preferences (`mode_day`, `font_size`, `notifications`).
+ * Finds a user's preferences by their ID.
+ * 
+ * @param db The Postgres database client.
+ * @param userId The ID of the user to find.
+ * @returns The user's preferences if found, or null if no preferences exist.
  * @throws Will throw an error if the database query fails.
  */
 export async function findUserPreferencesByIdPostgres(db: Client, userId: number): Promise<UserSettings | null> {
@@ -35,46 +37,33 @@ export async function findUserPreferencesByIdPostgres(db: Client, userId: number
         u.username, 
         u.email, 
         u.created_at, 
-        up.mode_day, 
-        up.font_size, 
-        up.notifications
+        up.* 
       FROM users u
       LEFT JOIN user_preferences up ON u.id = up.user_id
-      WHERE u.id = $1
-    `, [userId]);
+      WHERE u.id = $1`,
+    [userId]);
 
-    if (res.rows.length > 0) {
-      const user = res.rows[0];
-      return {
-        id: user.id,
-        username: user.username,
-        email: user.email,
-        created_at: user.created_at,
-        mode_day: user.mode_day,
-        font_size: user.font_size,
-        notifications: user.notifications,
-      };
-    }
-
-    return null; 
+    if (!res?.rows?.length) return null;
+    return res.rows[0];
   } catch (err: any) {
-    logger.error(`Error querying user with settings by ID: ${err.message}`);
+    logger.error(`Error querying user preferences for userId ${userId}: ${err.message}`);
     throw err;
   }
 }
 
 /**
- * Finds a user by their Username in the "users" table.
- * @param db searched database
- * @param username searched username
- * @returns A Promise, resolves to a `User` with identification data / id, username, email, created_at
+ * Finds a user by their Username.
+ * 
+ * @param db The Postgres database client.
+ * @param username The username of the user to find.
+ * @returns The user if found, or null if no user exist.
  * @throws Will throw an error if the database query fails.
  */
 export async function findUserByUsernamePostgres(db: Client, username: string): Promise<User | null> {
   try {
     const res = await db.query("SELECT id, username, email, created_at FROM users WHERE username = $1", [username]);
-    if (!res) return null;
-    return res.rows[0] || null;
+    if (!res?.rows?.length) return null;
+    return res.rows[0];
   } catch (err: any) {
     logger.error(`Error querying user by Username: ${err.message}`);
     throw err;
@@ -82,17 +71,18 @@ export async function findUserByUsernamePostgres(db: Client, username: string): 
 }
 
 /**
- * Finds a user by their "Email" in the "users" table.
- * @param db - searched database
- * @param email - searched "Email"
- * @returns A Promise, resolves to a `UserLogin` object containing `id`, `username`, `email`, `password`, `created_at` if found, or `null` if the user is not found.
+ * Finds a user by their emails.
+ * 
+ * @param db The Postgres database client.
+ * @param email The email of the user to find.
+ * @returns The userloing (user with added attribute of hashedpassword) if found, or null if no user exist.
  * @throws Will throw an error if the database query fails.
  */
 export async function findUserByEmailPostgres(db: Client, email: string): Promise<UserLogin | null> {
   try {
     const res = await db.query("SELECT * FROM users WHERE email = $1", [email]);
-    if (!res) return null;
-    return res.rows[0] || null;
+    if (!res?.rows?.length) return null;
+    return res.rows[0];
   } catch (err: any) {
     logger.error(`Error querying user by email: ${err.message}`);
     throw err;
@@ -100,12 +90,13 @@ export async function findUserByEmailPostgres(db: Client, email: string): Promis
 }
 
 /**
- * Insert user into the "users" table.
- * @param db - insertion database
- * @param username - inserted to column "username"
- * @param email - inserted to column "email"
- * @param hashedPassword - inserted to column "password"
- * @returns A Promise, resolves to `void` return if insert succeeds.
+ * Insert user into database.
+ * 
+ * @param db The Postgres database client.
+ * @param username The usernam of the user to insert.
+ * @param email The email of the user to insert.
+ * @param hashedPassword The hashedpassord of the user to insert.
+ * @returns Void
  * @throws Will throw an error if the database query fails.
  */
 export async function insertUserPostgres(db: Client, username: string, email: string, hashedPassword: string): Promise<void> {

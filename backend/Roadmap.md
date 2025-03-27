@@ -16,20 +16,19 @@
     getUserProfileController / authenticate with JWT token -> findUserbyID -> sends User information + settings back
     getUserWordsController / authenticate with JWT token -> query database for words to practice -> sends words back
     updateUserWordsController / authenticate with JWT token -> update user progrest to database table user_words
-     
 
 ## Middleware
   auth.middleware.ts
 
 ## Services
-  auth.service.ts / make tests
+  auth.service.ts
     registerUserService 
     loginUserService
 
   word.service.ts
-    getWordsPostgres / check if it will work even with entries in user_row
-    updateWordsPostgres / make tests
-    batchUpdateWordsPostgres / make tests
+    getWordsPostgres
+    updateWordsPostgres
+    batchUpdateWordsPostgres
 
 ## Repository
   user.repository.ts
@@ -57,9 +56,6 @@
     User
     UserLogin
     UserSettings
-
-  dataConversion.ts
-    mapNewWordsToWordData
 
 ## Config
   config.ts
