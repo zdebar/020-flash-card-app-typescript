@@ -38,7 +38,6 @@ describe("findUserByIdPostgres", () => {
     (mockDb.query as Mock).mockResolvedValue({ rows: [] });
 
     const result = await findUserByIdPostgres(mockDb as Client, 999);
-
     expect(result).toBeNull();
   });
 
@@ -46,7 +45,6 @@ describe("findUserByIdPostgres", () => {
     (mockDb.query as Mock).mockResolvedValue({ undefined });
 
     const result = await findUserByIdPostgres(mockDb as Client, 999);
-
     expect(result).toBeNull();
   });
 
@@ -54,6 +52,7 @@ describe("findUserByIdPostgres", () => {
     const error = new Error("Database error");
     (mockDb.query as Mock).mockRejectedValue(error);
 
-    await expect(findUserByIdPostgres(mockDb as Client, 1)).rejects.toThrow("Database error");
+    const expectedErrorMessage = "Error querying user by ID 1: Database error";
+    await expect(findUserByIdPostgres(mockDb as Client, 1)).rejects.toThrow(expectedErrorMessage);
   });
 });

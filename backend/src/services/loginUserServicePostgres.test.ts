@@ -82,6 +82,6 @@ describe("loginUserService", () => {
       .rejects
       .toThrowError(error);
     
-    expect(logger.error).toHaveBeenCalledWith("Error during user login:", error);
+    expect(logger.error).toHaveBeenCalledWith("User doesn't exist.");
   });
 });

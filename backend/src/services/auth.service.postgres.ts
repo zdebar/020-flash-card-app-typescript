@@ -17,18 +17,19 @@ import { JWT_SECRET, JWT_EXPIRES_IN } from "../config/config";
  * @throws Error if there is any issue during user registration.
  */
 export async function registerUserServicePostgres(db: Client, username: string, email: string, password: string): Promise<void> {
-  try {
-    // Check if email already exists
-    const existingEmail = await findUserByEmailPostgres(db, email);
-    if (existingEmail) {
-      throw new Error("Email is already taken.");
-    }
+  // Check if email already exists
+  const existingEmail = await findUserByEmailPostgres(db, email);
+  if (existingEmail) {
+    throw new Error("Email is already taken.");
+  }
+  // Check if username already exists
+  const existingUsername = await findUserByUsernamePostgres(db, username);
+  if (existingUsername) {
+    throw new Error("Username is already taken.");
+  }
 
-    // Check if username already exists
-    const existingUsername = await findUserByUsernamePostgres(db, username);
-    if (existingUsername) {
-      throw new Error("Username is already taken.");
-    }
+  try {
+    
 
     // Hash password
     const hashedPassword = await hashPassword(password);
@@ -37,8 +38,9 @@ export async function registerUserServicePostgres(db: Client, username: string, 
     await insertUserPostgres(db, username, email, hashedPassword);
     logger.info(`User registered successfully: ${username}`); 
   } catch (err: any) {
-    logger.error("Error during user registration:", err.message);
-    throw err;
+    const errorMsg = `Error during user registration: ${err.message}`
+    logger.error(errorMsg);
+    throw new Error(errorMsg);
   }
 }
 
@@ -76,8 +78,9 @@ export async function loginUserServicePostgres(
     const token = createToken(user, JWT_SECRET, JWT_EXPIRES_IN);
     return token;
   } catch (err: any) {
-    logger.error("Error during user login:", err);
-    throw err;
+    const errorMsg = `Error during user login: ${err.message}`
+    logger.error(errorMsg);
+    throw new Error(errorMsg);
   }
 }
 

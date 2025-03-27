@@ -10,11 +10,11 @@ export interface Word {
 export interface User {
   id: number;
   username: string;
-  email: string;  
-  created_at: string; // ISO 8601 string
+  email: string;
 }
 
 export interface UserLogin extends User {
+  created_at: string; // ISO 8601 string
   password: string;  
 }
 

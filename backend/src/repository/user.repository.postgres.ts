@@ -16,8 +16,9 @@ export async function findUserByIdPostgres(db: Client, userId: number): Promise<
     if (!res?.rows?.length) return null;
     return res.rows[0];
   } catch (err: any) {
-    logger.error(`Error querying user by ID: ${err.message}`);
-    throw err;
+    const errorMsg = `Error querying user by ID ${userId}: ${err.message}`
+    logger.error(errorMsg);
+    throw new Error(errorMsg);
   }
 }
 
@@ -45,9 +46,10 @@ export async function findUserPreferencesByIdPostgres(db: Client, userId: number
 
     if (!res?.rows?.length) return null;
     return res.rows[0];
-  } catch (err: any) {
-    logger.error(`Error querying user preferences for userId ${userId}: ${err.message}`);
-    throw err;
+  } catch (err: any) {   
+    const errorMsg = `Error querying user preferences for userId ${userId}: ${err.message}`
+    logger.error(errorMsg);
+    throw new Error(errorMsg)
   }
 }
 
@@ -65,8 +67,9 @@ export async function findUserByUsernamePostgres(db: Client, username: string): 
     if (!res?.rows?.length) return null;
     return res.rows[0];
   } catch (err: any) {
-    logger.error(`Error querying user by Username: ${err.message}`);
-    throw err;
+    const errorMsg = `Error querying user preferences for username ${username}: ${err.message}`
+    logger.error(errorMsg);
+    throw new Error(errorMsg)
   }
 }
 
@@ -84,8 +87,9 @@ export async function findUserByEmailPostgres(db: Client, email: string): Promis
     if (!res?.rows?.length) return null;
     return res.rows[0];
   } catch (err: any) {
-    logger.error(`Error querying user by email: ${err.message}`);
-    throw err;
+    const errorMsg = `Error querying user preferences for email ${email}: ${err.message}`
+    logger.error(errorMsg);
+    throw new Error(errorMsg)
   }
 }
 
@@ -106,8 +110,9 @@ export async function insertUserPostgres(db: Client, username: string, email: st
       [username, email, hashedPassword]
     );
   } catch (err: any) {
-    logger.error(`Error inserting user: ${err.message}`);
-    throw err;
+    const errorMsg = `Error inserting user: ${username} ${email} ${err.message}`
+    logger.error(errorMsg);
+    throw new Error(errorMsg)
   }
 }
 

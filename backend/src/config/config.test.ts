@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import path from 'path';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 
 describe('Environment Configuration', () => {
   it('should correctly resolve the path to the .env file', () => {

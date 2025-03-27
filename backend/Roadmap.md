@@ -1,4 +1,4 @@
-# TODO
+# Backend Directory Structure
 
 ## Server
   server.ts
@@ -21,43 +21,71 @@
   auth.middleware.ts
 
 ## Services
-  auth.service.ts
-    registerUserService 
-    loginUserService
+### auth.service.ts
+#### registerUserService 
+#### loginUserService
 
-  word.service.ts
-    getWordsPostgres
-    updateWordsPostgres
-    batchUpdateWordsPostgres
+### word.service.ts
+#### getWordsPostgres
+#### updateWordsPostgres
 
 ## Repository
-  user.repository.ts
-    findUserByIdPostgres
-    findUserPreferencesByIdPostgres
-    findUserByUsernamePostgres
-    findUserByEmailPostgres
-    insertUserPostgres
+### user.repository.ts
+#### findUserByIdPostgres
+    finds User by ID in database Postgres
+
+#### findUserPreferencesByIdPostgres
+    finds User byt with Preferences in database Postgres
+
+#### findUserByUsernamePostgres
+    finds User by Username in database Postgres
+
+#### findUserByEmailPostgres
+    finds User by Email in database Postgres
+
+#### insertUserPostgres
+    insert with username, email, hashedPassword to database Postgres
 
 ## Utils
-  auth.utils.ts
-    hashPassword
-    comparePasswords
-    createToken 
-    verifyToken
+### auth.utils.ts
+#### hashPassword
+    hashing password bcrypt, 10 salt rounds
 
-  config.utils.ts
-    convertSRSToSeconds
+#### comparePasswords
+    compares password with hashed password for bcrypt
 
-  logger.utils.ts
+#### createToken 
+    creates jwt access token
+
+#### verifyToken
+    verify JWT token, and User info from decoded token
+
+### config.utils.ts
+#### convertSRSToSeconds
+    converts SRS to array of seconds
+
+### logger.utils.ts
 
 ## Types
-  dataTypes.ts
-    Word
-    User
-    UserLogin
-    UserSettings
+### dataTypes.ts
+#### Word
+    Word format for communication between frontend and backend
+  
+#### User
+    Unsecure user data
+
+#### UserLogin
+    Secure user data with hashed password
+
+#### UserSettings 
+    Unsecure user data with user preferences
 
 ## Config
-  config.ts
-  databasePostgres.config.ts
-  databaseSQLite.config.ts
+### config.ts 
+    basic configuration values
+
+### database.config.Postgres.ts
+    Postgres database connection
+
+### database.config.SQLite.ts
+    SQLite database connection
