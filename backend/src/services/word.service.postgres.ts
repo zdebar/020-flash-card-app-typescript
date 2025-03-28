@@ -1,8 +1,6 @@
 import { Word } from "../types/dataTypes";
 import { Client } from "pg";
-import logger from "../utils/logger.utils";
 import { SRS } from "../config/config";
-import { convertSRSToSeconds } from "../utils/config.utils";
 
 /**
  * Returns requested number of words for practiced.
@@ -43,16 +41,10 @@ export async function getWordsPostgres(client: Client, userId: number, srcLangua
     limit $4;
   `;
 
-  try {
-    const res = await client.query(query, [userId, srcLanguageID, trgLanguageID, numWords]);
-    if (!res?.rows?.length) return null;
-    const data = res.rows;
-    logger.info(`Fetched rows from the database: ${JSON.stringify(data)}`);
-    return data;
-  } catch (err: any) {
-    logger.error(`Failed to get new words: ${err.message}`);
-    throw err;
-  }
+  const res = await client.query(query, [userId, srcLanguageID, trgLanguageID, numWords]);
+  if (!res?.rows?.length) return null;
+  const data = res.rows;
+  return data;
 }
 
 /**
@@ -74,39 +66,32 @@ export async function updateWordsPostgres(
   const today = new Date();
   const values: unknown[] = [];
 
-  try {
-    const query = `
-      INSERT INTO user_words (user_id, word_id, progress, next_at, created_at, learned_at)
-      VALUES 
-      ${words.map((_, index) => `($${index * 6 + 1}, $${index * 6 + 2}, $${index * 6 + 3}, $${index * 6 + 4}, $${index * 6 + 5}, $${index * 6 + 6})`).join(', ')}
-      ON CONFLICT(user_id, word_id) 
-      DO UPDATE SET progress = EXCLUDED.progress, next_at = EXCLUDED.next_at, learned_at = EXCLUDED.learned_at;
-    `;
+  const query = `
+    INSERT INTO user_words (user_id, word_id, progress, next_at, created_at, learned_at)
+    VALUES 
+    ${words.map((_, index) => `($${index * 6 + 1}, $${index * 6 + 2}, $${index * 6 + 3}, $${index * 6 + 4}, $${index * 6 + 5}, $${index * 6 + 6})`).join(', ')}
+    ON CONFLICT(user_id, word_id) 
+    DO UPDATE SET progress = EXCLUDED.progress, next_at = EXCLUDED.next_at, learned_at = EXCLUDED.learned_at;
+  `;
+
+  // Iterate over each word
+  words.forEach((word) => {
+    const progress = (Number.isInteger(word.progress) && word.progress > 0) ? word.progress : 1;      
+    const interval = SRS[progress - 1] ?? null;
     
-    const numberSRS = convertSRSToSeconds(SRS);
+    let nextAt: string | null = null;
+    let learnedAt: string | null = null;
 
-    // Iterate over each word
-    words.forEach((word) => {
-      const progress = (Number.isInteger(word.progress) && word.progress > 0) ? word.progress : 1;      
-      const interval = numberSRS[progress - 1] ?? null;
-      
-      let nextAt: string | null = null;
-      let learnedAt: string | null = null;
+    if (interval !== null) {
+      nextAt = new Date(today.getTime() + interval * 1000).toISOString();
+    } else {
+      learnedAt = today.toISOString();
+    }
+    
+    values.push(userId, word.id, progress, nextAt, today.toISOString(), learnedAt);
+  });
 
-      if (interval !== null) {
-        nextAt = new Date(today.getTime() + interval * 1000).toISOString();
-      } else {
-        learnedAt = today.toISOString();
-      }
-      
-      values.push(userId, word.id, progress, nextAt, today.toISOString(), learnedAt);
-    });
-
-    await client.query(query, values);
-  } catch (err: any) {
-    logger.error("Error updating user_words:", err);
-    throw err;
-  }
+  await client.query(query, values);
 }
 
 

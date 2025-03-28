@@ -1,7 +1,6 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { User } from "../types/dataTypes";
-import logger from "./logger.utils";
 
 /**
  * Hashes a password using bcrypt with a salt round of 10.
@@ -27,14 +26,11 @@ export async function comparePasswords(password: string, hashedPassword: string)
  * Will create an access token. The expiration time of the token is passed as a parameter.
  * @param user The user object that contains the necessary user information.
  * @param JWT_SECRET_KEY Secret key for signing the JWT token.
- * @param expiresIn Expiration time for JWT token (e.g., "1h", "24h").
+ * @param JWT_EXPIRES_IN Expiration time for JWT token (e.g., "1h", "24h").
  * @returns A promise that resolves to the JWT token string on success, reject with error on failure to create token.
  */
-export async function createToken(user: User, JWT_SECRET_KEY: string | undefined, expiresIn: string | undefined): Promise<string> {
-  if (!JWT_SECRET_KEY) {
-    const errorMsg = 'JWT_SECRET is missing in environment variables.';
-    throw new Error(errorMsg);
-  }
+export async function createToken(user: User, JWT_SECRET_KEY: string | undefined, JWT_EXPIRES_IN: string | undefined): Promise<string> {
+  if (!JWT_SECRET_KEY || !JWT_EXPIRES_IN) throw new Error(`ENV variables not loaded!`)
 
   const payload: User = {
     id: user.id,
@@ -42,15 +38,9 @@ export async function createToken(user: User, JWT_SECRET_KEY: string | undefined
     email: user.email,
   };
 
-  const expirationTime = expiresIn as jwt.SignOptions["expiresIn"];
-
-  try {
-    const token = jwt.sign(payload, JWT_SECRET_KEY, { expiresIn: expirationTime });
-    return token;
-  } catch (err: any) {
-    const errorMsg = `Error creating JWT token ${err.message}`;
-    throw new Error(errorMsg);
-  }
+  const expirationTime = JWT_EXPIRES_IN as jwt.SignOptions["expiresIn"];
+  const token = jwt.sign(payload, JWT_SECRET_KEY, { expiresIn: expirationTime });
+  return token;
 }
 
 /**
@@ -59,15 +49,19 @@ export async function createToken(user: User, JWT_SECRET_KEY: string | undefined
  * @param JWT_SECRET_KEY Secret key used to verify the JWT token
  * @returns A promise resolves to User data from JWT token, or rejects with error.
  */
-export function verifyToken(token: string, JWT_SECRET_KEY: string): Promise<User> {
+export async function verifyToken(token: string, JWT_SECRET_KEY: string | undefined): Promise<User> {
+  if (!JWT_SECRET_KEY) throw new Error(`ENV variables not loaded!`)
+
   return new Promise((resolve, reject) => {
     jwt.verify(token, JWT_SECRET_KEY, (err, decoded) => {
       if (err) {
-        const errorMsg = `JWT verification failed ${err.message}`;
-        reject(new Error(errorMsg));
+        reject(err);
       } else {
         resolve(decoded as User);
       }
     });
   });
 }
+
+
+

@@ -1,33 +1,24 @@
 import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
 import { Client } from 'pg';
-import { updateWordsPostgres } from './word.service.postgres'; // Update with the actual file path
+import { updateWordsPostgres } from './word.service.postgres'; 
 import { SRS } from '../config/config';
-import { convertSRSToSeconds } from '../utils/config.utils';
 
-const numberSRS = convertSRSToSeconds(SRS);
-
-// Mock data
 const mockWords = [
   { id: 1, progress: 0, src: "", trg: "", prn: "", audio: "" },
   { id: 2, progress: 1, src: "", trg: "", prn: "", audio: "" },
   { id: 3, progress: 2, src: "", trg: "", prn: "", audio: "" }
 ];
 
-// Mock PostgreSQL Client
 const mockClient = {
   query: vi.fn(),
 };
 
-// Setup mock database client
 describe('updateWordsPostgres', () => {
   let originalDateNow: typeof Date.now;
 
   beforeAll(() => {
-    // Mock Date.now to return a fixed timestamp
     originalDateNow = Date.now;
     vi.spyOn(Date, 'now').mockReturnValue(new Date('2025-03-27T00:00:00Z').getTime());
-
-    // Set up mock for the query method
     mockClient.query.mockResolvedValueOnce({ rows: [] });
   });
 
@@ -72,9 +63,9 @@ describe('updateWordsPostgres', () => {
 
     // Calculate expected `nextAt` based on `SRS` for progress 1 and 2
     const today = new Date('2025-03-27T00:00:00Z');
-    const nextAt1 = new Date(today.getTime() + numberSRS[0] * 1000).toISOString();
-    const nextAt2 = new Date(today.getTime() + numberSRS[1] * 1000).toISOString();
-    const nextAt3 = new Date(today.getTime() + numberSRS[2] * 1000).toISOString();
+    const nextAt1 = new Date(today.getTime() + SRS[0] * 1000).toISOString();
+    const nextAt2 = new Date(today.getTime() + SRS[0] * 1000).toISOString();
+    const nextAt3 = new Date(today.getTime() + SRS[1] * 1000).toISOString();
 
     // Check that `nextAt` is calculated correctly
     expect(mockClient.query).toHaveBeenCalledWith(
@@ -89,16 +80,12 @@ describe('updateWordsPostgres', () => {
 
   it('should set learned_at when interval is null', async () => {
     const userId = 99;
-
-    // Test word with progress 0, which should result in learned_at being set to now
+  
     const mockWordsWithProgressZero = [{ id: 1, progress: 100, src: "", trg: "", prn: "", audio: "" }];
-
-    // Call the function
     await updateWordsPostgres(mockClient as unknown as Client, userId, mockWordsWithProgressZero);
 
     const today = new Date('2025-03-27T00:00:00Z');
     
-    // Check if learned_at is set to today when interval is null
     expect(mockClient.query).toHaveBeenCalledWith(
       expect.stringContaining('INSERT INTO user_words'),
       expect.arrayContaining([

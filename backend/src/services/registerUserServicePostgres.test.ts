@@ -75,8 +75,6 @@ describe("registerUserService", () => {
     expect(findUserByUsernamePostgres).toHaveBeenCalledWith(mockDb, "newuser");
     expect(hashPassword).toHaveBeenCalledWith("password123");
     expect(insertUserPostgres).toHaveBeenCalledWith(mockDb, "newuser", "new@example.com", "hashedPassword");
-
-    expect(logger.info).toHaveBeenCalledWith("User registered successfully: newuser");
   });
 
   it("should throw an error if there is an issue during registration", async () => {
@@ -88,7 +86,5 @@ describe("registerUserService", () => {
     await expect(registerUserServicePostgres(mockDb as Client, "newuser", "new@example.com", "password123"))
       .rejects
       .toThrow(Error);
-
-    expect(logger.error).toHaveBeenCalledWith("Error during user registration:", error.message);
   });
 });

@@ -1,3 +1,5 @@
+import { Client, Pool } from "pg";
+
 export interface Word {
   id: number;
   src: string;
@@ -24,5 +26,13 @@ export interface UserSettings extends User {
   notifications: number;
 }
 
+export class UserError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'UserError';
+  }
+}
+
+export type PostgresClient = Pick<Client | Pool, "query">;
 
 

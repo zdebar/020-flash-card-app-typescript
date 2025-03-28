@@ -50,8 +50,7 @@ describe("JWT Token Creation & Verification", () => {
   it("should fail token creation if JWT_SECRET is missing", async () => {
     const missingSecret = undefined;
 
-    await expect(createToken(mockUser, missingSecret, jwt_expires_in)).rejects.toThrowError(
-      'JWT_SECRET is missing in environment variables.'
-    );
+    await expect(createToken(mockUser, missingSecret, jwt_expires_in)).rejects.toThrowError(Error);
+    await expect(verifyToken("test-string", missingSecret)).rejects.toThrowError(Error);
   });
 });

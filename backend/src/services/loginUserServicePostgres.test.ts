@@ -73,15 +73,4 @@ describe("loginUserService", () => {
     expect(comparePasswords).toHaveBeenCalledWith("password123", "hashedPassword");
     expect(token).toBe("jwtToken");
   });
-
-  it("should log an error if there is an issue during login", async () => {
-    const error = new Error("Database error");
-    (findUserByEmailPostgres as Mock).mockRejectedValue(error);
-
-    await expect(loginUserServicePostgres(mockDb as Client, "test@example.com", "password123"))
-      .rejects
-      .toThrowError(error);
-    
-    expect(logger.error).toHaveBeenCalledWith("User doesn't exist.");
-  });
 });

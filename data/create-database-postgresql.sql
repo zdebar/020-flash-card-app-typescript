@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS user_words (
   id SERIAL PRIMARY KEY,
   user_id INTEGER NOT NULL, 
   word_id INTEGER NOT NULL,
-  progress INTEGER DEFAULT 0, -- main learning index, starts with 1
+  progress INTEGER DEFAULT 1 CHECK (progress >= 1), -- main learning index
   learned_at TEXT,
   next_at TEXT DEFAULT (TO_CHAR(NOW(), 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"')),
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
