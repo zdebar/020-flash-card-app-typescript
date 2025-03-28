@@ -78,8 +78,14 @@
 #### UserLogin
     Secure user data with hashed password
 
-#### UserSettings 
+#### UserPreferences 
     Unsecure user data with user preferences
+
+#### UserError
+    For User specific error messages
+
+#### PosgresClient
+    General for Client or Pool
 
 ## Config
 ### config.ts 
@@ -87,6 +93,9 @@
 
 ### database.config.Postgres.ts
     Postgres database connection
+
+### databaseTesting.config.Postgres.ts
+    Postgres testing database connection
 
 ### database.config.SQLite.ts
     SQLite database connection

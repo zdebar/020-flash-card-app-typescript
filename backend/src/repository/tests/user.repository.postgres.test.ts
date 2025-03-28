@@ -1,16 +1,19 @@
-import { describe, it, expect, vi, beforeEach, afterEach, Mock } from "vitest";
-import { findUserByEmailPostgres, findUserByIdPostgres, findUserPreferencesByIdPostgres, findUserByUsernamePostgres, insertUserPostgres } from "./user.repository.postgres";
+import { describe, it, expect, vi, beforeEach, afterEach, Mock, afterAll, beforeAll } from "vitest";
+import { findUserByEmailPostgres, findUserByIdPostgres, findUserPreferencesByIdPostgres, findUserByUsernamePostgres, insertUserPostgres } from "../user.repository.postgres";
 import { Client} from "pg";
-import { PostgresClient, UserError } from "../types/dataTypes";
-import postgresDBTest from "../config/database.config.postgres";
+import { PostgresClient, UserError } from "../../types/dataTypes";
+import postgresDBTest from "../../config/databaseTesting.config.postgres";
 
 describe('findUserByIDPostgres', () => {
   let mockDb: PostgresClient;
 
-  beforeEach(() => {
-    mockDb = {
-      query: vi.fn()
-    };
+  beforeAll(async () => {
+    await postgresDBTest.connect();
+    mockDb = { query: vi.fn() };
+  });
+  
+  afterAll(async () => {
+    await postgresDBTest.end(); 
   });
 
   it('should return user object if found', async () => {
@@ -18,8 +21,8 @@ describe('findUserByIDPostgres', () => {
 
     expect(result).toEqual({
       id: 1,
-      username: 'test',
-      email: 'example@example.cz',
+      username: 'myUser',
+      email: 'myUser@example.cz',
     });
   });
 
@@ -40,10 +43,13 @@ describe('findUserByIDPostgres', () => {
 describe('findUserPreferencesByIDPostgres', () => {
   let mockDb: PostgresClient;
 
-  beforeEach(() => {
-    mockDb = {
-      query: vi.fn()
-    };
+  beforeAll(async () => {
+    await postgresDBTest.connect();
+    mockDb = { query: vi.fn() };
+  });
+  
+  afterAll(async () => {
+    await postgresDBTest.end(); 
   });
 
   it('should return user object if found', async () => {
@@ -51,8 +57,8 @@ describe('findUserPreferencesByIDPostgres', () => {
 
     expect(result).toEqual({
       id: 1,
-      username: 'test',
-      email: 'example@example.cz',
+      username: 'myUser',
+      email: 'myUser@example.cz',
       font_size: null,
       mode_day: null,
       notifications: null,
@@ -77,19 +83,22 @@ describe('findUserPreferencesByIDPostgres', () => {
 describe('findUserByUsernamePostgres', () => {
   let mockDb: PostgresClient;
 
-  beforeEach(() => {
-    mockDb = {
-      query: vi.fn()
-    };
+  beforeAll(async () => {
+    await postgresDBTest.connect();
+    mockDb = { query: vi.fn() };
+  });
+  
+  afterAll(async () => {
+    await postgresDBTest.end(); 
   });
 
   it('should return user object if found', async () => {
-    const result = await findUserByUsernamePostgres(postgresDBTest as Client, "test");
+    const result = await findUserByUsernamePostgres(postgresDBTest as Client, "myUser");
 
     expect(result).toEqual({
       id: 1,
-      username: 'test',
-      email: 'example@example.cz',
+      username: 'myUser',
+      email: 'myUser@example.cz'
     });
   });
 
@@ -110,19 +119,22 @@ describe('findUserByUsernamePostgres', () => {
 describe('findUserByEmailPostgres', () => {
   let mockDb: PostgresClient;
 
-  beforeEach(() => {
-    mockDb = {
-      query: vi.fn()
-    };
+  beforeAll(async () => {
+    await postgresDBTest.connect();
+    mockDb = { query: vi.fn() };
+  });
+  
+  afterAll(async () => {
+    await postgresDBTest.end(); 
   });
 
   it('should return user object if found', async () => {
-    const result = await findUserByEmailPostgres(postgresDBTest as Client, 'example@example.cz');
+    const result = await findUserByEmailPostgres(postgresDBTest as Client, 'myUser@example.cz');
 
     expect(result).toEqual({
       id: 1,
-      username: 'test',
-      email: 'example@example.cz',
+      username: 'myUser',
+      email: 'myUser@example.cz',
       created_at: "2025-03-26T15:26:20.420Z",
       password: "something"
     });
@@ -143,6 +155,18 @@ describe('findUserByEmailPostgres', () => {
 });
 
 describe('insertUserPostgres', () => {
+  let mockDb: PostgresClient;
+
+  beforeAll(async () => {
+    await postgresDBTest.connect();
+    mockDb = { query: vi.fn() };
+    await postgresDBTest.query('DELETE FROM users WHERE email = $1', ['test@example.com']);
+  });
+  
+  afterAll(async () => {
+    await postgresDBTest.end(); 
+  });
+
   afterEach(async () => {
     await postgresDBTest.query('DELETE FROM users WHERE email = $1', ['test@example.com']);
   });

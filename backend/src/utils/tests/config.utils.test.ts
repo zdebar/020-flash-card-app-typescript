@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { convertSRSToSeconds } from './config.utils';
+import { convertSRSToSeconds } from '../config.utils';
 
 describe('convertToSeconds function', () => {
   

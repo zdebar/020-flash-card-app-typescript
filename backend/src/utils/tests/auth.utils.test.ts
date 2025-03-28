@@ -1,6 +1,6 @@
-import { hashPassword, comparePasswords, createToken, verifyToken } from "../utils/auth.utils";
+import { hashPassword, comparePasswords, createToken, verifyToken } from "../auth.utils";
 import { describe, it, expect, vi } from "vitest";
-import { User } from "../types/dataTypes";
+import { User } from "../../types/dataTypes";
 import dotenv from 'dotenv';
 import path from "path";
 

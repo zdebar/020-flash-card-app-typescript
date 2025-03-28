@@ -2,7 +2,7 @@ import { Client } from "pg";
 import logger from "../utils/logger.utils";
 
 // PostgreSQL connection details
-const postgresDBTest = new Client({
+const postgresDB = new Client({
   host: "localhost", 
   port: 5432,        
   database: "postgres", 
@@ -10,7 +10,7 @@ const postgresDBTest = new Client({
   password: "mbc299748", 
 });
 
-postgresDBTest.connect((err) => {
+postgresDB.connect((err) => {
   if (err) {
     logger.error("Database connection failed:", err.message);
   } else {
@@ -18,4 +18,4 @@ postgresDBTest.connect((err) => {
   }
 });
 
-export default postgresDBTest;
+export default postgresDB;

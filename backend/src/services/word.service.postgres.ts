@@ -1,20 +1,19 @@
 import { Word, PostgresClient } from "../types/dataTypes";
 import { SRS } from "../config/config";
-import db from "../config/database.config.postgres";
 
 /**
  * Returns requested number of words for practiced.
  * Preferably chooses words already in learning. It means words with already corresponding entry in table user_words with date next_at older than now. 
  * If these words is less than numWords. Fills the number with new words with lowest unused seq number.
  *  
- * @param client - PostgreSQL client
+ * @param db - PostgreSQL client
  * @param userId - Identifies the user
  * @param srcLanguageID - Source language of extracted words
  * @param trgLanguageID - Target language of extracted words
  * @param numWords - Number of new words to fetch
  * @returns A promise resolving to an array of Word objects, or null if no words found.
  */
-export async function getWordsPostgres(userId: number, srcLanguageID: number, trgLanguageID: number, numWords: number): Promise<Word[] | null> {
+export async function getWordsPostgres(db: PostgresClient, userId: number, srcLanguageID: number, trgLanguageID: number, numWords: number): Promise<Word[] | null> {
   const query = `
     SELECT 
       target.id AS id, 
@@ -52,12 +51,13 @@ export async function getWordsPostgres(userId: number, srcLanguageID: number, tr
  * Updates the `user_words` table with new progress and next review timestamps.
  * Uses batch processing to improve performance by reducing the number of queries.
  *
+ * @param db - PostgreSQL client
  * @param userId - The ID of the user whose words are being updated.
  * @param words - An array of words to update, each containing an ID and progress level.
  * @returns A Promise that resolves when the update is complete.
  * @throws An error if the database update fails.
  */
-export async function updateWordsPostgres(userId: number, words: Word[] ): Promise<void> {
+export async function updateWordsPostgres(db: PostgresClient, userId: number, words: Word[] ): Promise<void> {
   const today = new Date();
   const values: unknown[] = [];
 

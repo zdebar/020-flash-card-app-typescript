@@ -1,8 +1,7 @@
 import { hashPassword, comparePasswords, createToken } from "../utils/auth.utils";
 import { findUserByEmailPostgres, findUserPreferencesByIdPostgres, insertUserPostgres } from "../repository/user.repository.postgres";
 import { JWT_SECRET, JWT_EXPIRES_IN } from "../config/config";
-import { UserError, UserPreferences } from "../types/dataTypes";
-import db from "../config/database.config.postgres";
+import { UserError, UserPreferences, PostgresClient } from "../types/dataTypes";
 
 /**
  * Registers a new user into the database table "users".
@@ -12,7 +11,7 @@ import db from "../config/database.config.postgres";
  * @param email The email to register. Must be unique.
  * @param password The password to register. Will be hashed. * 
  */
-export async function registerUserService(username: string, email: string, password: string): Promise<void> {
+export async function registerUserService(db: PostgresClient, username: string, email: string, password: string): Promise<void> {
   const hashedPassword = await hashPassword(password);
   await insertUserPostgres(db, username, email, hashedPassword);  
 }
@@ -29,7 +28,7 @@ export async function registerUserService(username: string, email: string, passw
  * @returns A promise that resolves to the JWT access token.
  * @throws Error if the user doesn't exist or if the password is incorrect.
  */
-export async function loginUserService(email: string, password: string, ): Promise<string> {
+export async function loginUserService(db: PostgresClient, email: string, password: string, ): Promise<string> {
   const user = await findUserByEmailPostgres(db, email);
   if (!user) {
     throw new UserError("User doesn't exist.");
@@ -44,7 +43,7 @@ export async function loginUserService(email: string, password: string, ): Promi
   return token;
 }
 
-export async function getUserPreferences(userId: number): Promise<UserPreferences | null> {
+export async function getUserPreferences(db: PostgresClient, userId: number): Promise<UserPreferences | null> {
   return await findUserPreferencesByIdPostgres(db, userId);
 }
 
