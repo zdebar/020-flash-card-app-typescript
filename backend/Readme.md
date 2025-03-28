@@ -24,6 +24,7 @@
 ### auth.service.ts
 #### registerUserService 
 #### loginUserService
+#### getUserPreferences
 
 ### word.service.ts
 #### getWordsPostgres

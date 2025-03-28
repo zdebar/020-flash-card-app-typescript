@@ -1,6 +1,6 @@
-import { Word } from "../types/dataTypes";
-import { Client } from "pg";
+import { Word, PostgresClient } from "../types/dataTypes";
 import { SRS } from "../config/config";
+import db from "../config/database.config.postgres";
 
 /**
  * Returns requested number of words for practiced.
@@ -14,7 +14,7 @@ import { SRS } from "../config/config";
  * @param numWords - Number of new words to fetch
  * @returns A promise resolving to an array of Word objects, or null if no words found.
  */
-export async function getWordsPostgres(client: Client, userId: number, srcLanguageID: number, trgLanguageID: number, numWords: number): Promise<Word[] | null> {
+export async function getWordsPostgres(userId: number, srcLanguageID: number, trgLanguageID: number, numWords: number): Promise<Word[] | null> {
   const query = `
     SELECT 
       target.id AS id, 
@@ -37,11 +37,12 @@ export async function getWordsPostgres(client: Client, userId: number, srcLangua
         WHEN progress > 0 THEN 1
         ELSE 2
       END asc,
-      progress ASC
+      progress ASC,
+      target.seq ASC
     limit $4;
   `;
 
-  const res = await client.query(query, [userId, srcLanguageID, trgLanguageID, numWords]);
+  const res = await db.query(query, [userId, srcLanguageID, trgLanguageID, numWords]);
   if (!res?.rows?.length) return null;
   const data = res.rows;
   return data;
@@ -51,34 +52,32 @@ export async function getWordsPostgres(client: Client, userId: number, srcLangua
  * Updates the `user_words` table with new progress and next review timestamps.
  * Uses batch processing to improve performance by reducing the number of queries.
  *
- * @param client - The PostgreSQL client instance.
  * @param userId - The ID of the user whose words are being updated.
  * @param words - An array of words to update, each containing an ID and progress level.
- * @param SRS - An array of intervals (in seconds) defining spaced repetition steps.
  * @returns A Promise that resolves when the update is complete.
  * @throws An error if the database update fails.
  */
-export async function updateWordsPostgres(
-  client: Client,
-  userId: number,
-  words: Word[]
-): Promise<void> {
+export async function updateWordsPostgres(userId: number, words: Word[] ): Promise<void> {
   const today = new Date();
   const values: unknown[] = [];
 
   const query = `
-    INSERT INTO user_words (user_id, word_id, progress, next_at, created_at, learned_at)
+    INSERT INTO user_words (user_id, word_id, progress, next_at, learned_at)
     VALUES 
-    ${words.map((_, index) => `($${index * 6 + 1}, $${index * 6 + 2}, $${index * 6 + 3}, $${index * 6 + 4}, $${index * 6 + 5}, $${index * 6 + 6})`).join(', ')}
+    ${words
+      .map(
+        (_, index) =>
+          `($${index * 5 + 1}, $${index * 5 + 2}, $${index * 5 + 3}, $${index * 5 + 4}, $${index * 5 + 5})`
+      )
+      .join(', ')}
     ON CONFLICT(user_id, word_id) 
     DO UPDATE SET progress = EXCLUDED.progress, next_at = EXCLUDED.next_at, learned_at = EXCLUDED.learned_at;
   `;
 
-  // Iterate over each word
   words.forEach((word) => {
-    const progress = (Number.isInteger(word.progress) && word.progress > 0) ? word.progress : 1;      
+    const progress = Number.isInteger(word.progress) && word.progress > 0 ? word.progress : 1;
     const interval = SRS[progress - 1] ?? null;
-    
+
     let nextAt: string | null = null;
     let learnedAt: string | null = null;
 
@@ -87,12 +86,13 @@ export async function updateWordsPostgres(
     } else {
       learnedAt = today.toISOString();
     }
-    
-    values.push(userId, word.id, progress, nextAt, today.toISOString(), learnedAt);
+
+    values.push(userId, word.id, progress, nextAt, learnedAt);
   });
 
-  await client.query(query, values);
+  await db.query(query, values);
 }
+
 
 
 

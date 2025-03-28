@@ -20,7 +20,7 @@ export interface UserLogin extends User {
   password: string;  
 }
 
-export interface UserSettings extends User {
+export interface UserPreferences extends User {
   mode_day: number;
   font_size: number;
   notifications: number;

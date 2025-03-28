@@ -1,33 +1,18 @@
-import logger from "../utils/logger.utils";
 import { hashPassword, comparePasswords, createToken } from "../utils/auth.utils";
-import { findUserByEmailPostgres, findUserByUsernamePostgres, insertUserPostgres } from "../repository/user.repository.postgres";
-import { Client } from "pg";
+import { findUserByEmailPostgres, findUserPreferencesByIdPostgres, insertUserPostgres } from "../repository/user.repository.postgres";
 import { JWT_SECRET, JWT_EXPIRES_IN } from "../config/config";
-import { UserError } from "../types/dataTypes";
+import { UserError, UserPreferences } from "../types/dataTypes";
+import db from "../config/database.config.postgres";
 
 /**
  * Registers a new user into the database table "users".
- * First, checks if the username or email are already in use. 
- * Then, hashes the password (bcrypt) and inserts the user into the database. 
  * 
  * @param db The database client.
  * @param username The username to register. Must be unique.
  * @param email The email to register. Must be unique.
  * @param password The password to register. Will be hashed. * 
- * @throws Error if the email or username is already taken.
  */
-export async function registerUserServicePostgres(db: Client, username: string, email: string, password: string): Promise<void> {
-
-  const existingEmail = await findUserByEmailPostgres(db, email);
-  if (existingEmail) {
-    throw new UserError("Email is already taken.");
-  }
-
-  const existingUsername = await findUserByUsernamePostgres(db, username);
-  if (existingUsername) {
-    throw new UserError("Username is already taken.");
-  }
-  
+export async function registerUserService(username: string, email: string, password: string): Promise<void> {
   const hashedPassword = await hashPassword(password);
   await insertUserPostgres(db, username, email, hashedPassword);  
 }
@@ -44,22 +29,22 @@ export async function registerUserServicePostgres(db: Client, username: string, 
  * @returns A promise that resolves to the JWT access token.
  * @throws Error if the user doesn't exist or if the password is incorrect.
  */
-export async function loginUserServicePostgres(
-  db: Client,
-  email: string,
-  password: string,
-): Promise<string> {
+export async function loginUserService(email: string, password: string, ): Promise<string> {
   const user = await findUserByEmailPostgres(db, email);
   if (!user) {
     throw new UserError("User doesn't exist.");
   }
 
   const passwordMatch = await comparePasswords(password, user.password);
-    if (!passwordMatch) {
-      throw new UserError("Invalid password.");
-    }
+  if (!passwordMatch) {
+    throw new UserError("Invalid password.");
+  }
   
   const token = createToken(user, JWT_SECRET, JWT_EXPIRES_IN);
   return token;
+}
+
+export async function getUserPreferences(userId: number): Promise<UserPreferences | null> {
+  return await findUserPreferencesByIdPostgres(db, userId);
 }
 

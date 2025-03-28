@@ -1,4 +1,4 @@
-import { User, UserLogin, UserSettings, PostgresClient, UserError } from "../types/dataTypes";
+import { User, UserLogin, UserPreferences, PostgresClient, UserError } from "../types/dataTypes";
 import { QueryResult } from "pg";
 
 /**
@@ -23,8 +23,8 @@ export async function findUserByIdPostgres(db: PostgresClient, userId: number): 
  * @returns The user's preferences if found, or null if no preferences exist.
  * @throws Will throw an error if the database query fails.
  */
-export async function findUserPreferencesByIdPostgres(db: PostgresClient, userId: number): Promise<UserSettings | null> {
-  const user: QueryResult<UserSettings> = await db.query(`
+export async function findUserPreferencesByIdPostgres(db: PostgresClient, userId: number): Promise<UserPreferences | null> {
+  const user: QueryResult<UserPreferences> = await db.query(`
     SELECT 
       u.id, 
       u.username, 
@@ -67,14 +67,12 @@ export async function findUserByEmailPostgres(db: PostgresClient, email: string)
 }
 
 /**
- * Insert user into database.
+ * Insert user into database. Sends specific UserError if username or email is already used. 
  * 
  * @param db The Postgres database client.
  * @param username The usernam of the user to insert.
  * @param email The email of the user to insert.
  * @param hashedPassword The hashedpassord of the user to insert.
- * @returns Void
- * @throws Will throw an error if the database query fails.
  */
 export async function insertUserPostgres(db: PostgresClient, username: string, email: string, hashedPassword: string): Promise<void> {
   try {

@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { User } from "../types/dataTypes";
 import { verifyToken } from "../utils/auth.utils";
 import { JWT_SECRET } from "../config/config";
+import logger from "../utils/logger.utils";
 
 /**
  * Middleware to authenticate and verify JWT token from request headers.
@@ -19,6 +20,7 @@ export async function authenticateTokenMiddleware(req: Request, res: Response, n
   const token = req.headers.authorization?.split(" ")[1];
 
   if (!token) {
+    logger.warn(`Authentication failed: No token provided for ${req.ip}`);
     res.status(401).json({ error: "No authentication token" });
     return;
   }
