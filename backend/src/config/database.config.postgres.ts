@@ -1,12 +1,21 @@
 import { Client } from "pg";
+import dotenv from "dotenv";
+import path from "path";
 
-// PostgreSQL connection details
+if (process.env.NODE_ENV === 'test') {
+  dotenv.config({ path: path.resolve(__dirname, "../../.env.test") });
+} else {
+  dotenv.config({ path: path.resolve(__dirname, "../../.env") });
+}
+console.log(process.env.NODE_ENV)
+
 const postgresDB = new Client({
-  host: "localhost", 
-  port: 5432,        
-  database: "postgres", 
-  user: "postgres", 
-  password: "mbc299748", 
+  host: process.env.DB_HOST,
+  port: Number(process.env.DB_PORT),
+  database: process.env.DB_NAME,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
 });
 
 export default postgresDB;
+

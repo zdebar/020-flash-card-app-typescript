@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll, vi } from "vitest";
 import { registerUserService, loginUserService } from "../user.service";
 import { UserError } from "../../types/dataTypes";
-import postgresDBTest from "../../config/databaseTesting.config.postgres";
+import db from "../../config/database.config.postgres";
 
 describe('User Registration, Login, and Deletion Flow', () => {
   const email = 'test@example.com';
@@ -10,19 +10,19 @@ describe('User Registration, Login, and Deletion Flow', () => {
   let token: string;
 
   beforeAll(async () => {
-    await postgresDBTest.connect();
-    await postgresDBTest.query('DELETE FROM users WHERE email = $1', [email]);
+    await db.connect();
+    await db.query('DELETE FROM users WHERE email = $1', [email]);
   });
 
   afterAll(async () => {
-    await postgresDBTest.query('DELETE FROM users WHERE email = $1', [email]);
-    await postgresDBTest.end();
+    await db.query('DELETE FROM users WHERE email = $1', [email]);
+    await db.end();
   });
 
   it('should register a new user successfully', async () => {
-    await registerUserService(postgresDBTest, username, email, password);
+    await registerUserService(db, username, email, password);
 
-    const res = await postgresDBTest.query("SELECT * FROM users WHERE email = $1", [email]);
+    const res = await db.query("SELECT * FROM users WHERE email = $1", [email]);
     expect(res.rows.length).toBe(1);
     expect(res.rows[0]).toEqual({
       id: expect.any(Number),
@@ -34,14 +34,14 @@ describe('User Registration, Login, and Deletion Flow', () => {
   });
 
   it('should throw an error when trying to register the same user again', async () => {
-    await registerUserService(postgresDBTest, username, email, password);
-    await expect(registerUserService(postgresDBTest, username, email, password))
+    await registerUserService(db, username, email, password);
+    await expect(registerUserService(db, username, email, password))
       .rejects
       .toThrowError(UserError);
   });
 
   it('should login the user and return a token', async () => {
-    token = await loginUserService(postgresDBTest, email, password);
+    token = await loginUserService(db, email, password);
     
     expect(token).toBeDefined();
     expect(token).toBeTypeOf('string');
@@ -50,7 +50,7 @@ describe('User Registration, Login, and Deletion Flow', () => {
   it('should throw an error when logging in with the wrong password', async () => {
     const wrongPassword = 'wrongpassword';
 
-    await expect(loginUserService(postgresDBTest, email, wrongPassword))
+    await expect(loginUserService(db, email, wrongPassword))
       .rejects
       .toThrowError(UserError);
   });

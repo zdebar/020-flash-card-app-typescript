@@ -2,22 +2,23 @@ import { describe, it, expect, vi, beforeEach, afterEach, Mock, afterAll, before
 import { findUserByEmailPostgres, findUserByIdPostgres, findUserPreferencesByIdPostgres, findUserByUsernamePostgres, insertUserPostgres } from "../user.repository.postgres";
 import { Client} from "pg";
 import { PostgresClient, UserError } from "../../types/dataTypes";
-import postgresDBTest from "../../config/databaseTesting.config.postgres";
+import db from "../../config/database.config.postgres";
 
 describe('findUserByIDPostgres', () => {
   let mockDb: PostgresClient;
 
-  beforeAll(async () => {
-    await postgresDBTest.connect();
+  beforeAll(async () => {    
+    await db.connect();
     mockDb = { query: vi.fn() };
   });
   
   afterAll(async () => {
-    await postgresDBTest.end(); 
+    await db.end(); 
+    // dotenv.config({ path: path.resolve(__dirname, "../../.env") });
   });
 
   it('should return user object if found', async () => {
-    const result = await findUserByIdPostgres(postgresDBTest as Client, 1);
+    const result = await findUserByIdPostgres(db as Client, 1);
 
     expect(result).toEqual({
       id: 1,
@@ -27,7 +28,7 @@ describe('findUserByIDPostgres', () => {
   });
 
   it('should return null object if user not found', async () => {
-    const result = await findUserByIdPostgres(postgresDBTest as Client, 1000);
+    const result = await findUserByIdPostgres(db as Client, 1000);
 
     expect(result).toBeNull();
   });
@@ -44,16 +45,16 @@ describe('findUserPreferencesByIDPostgres', () => {
   let mockDb: PostgresClient;
 
   beforeAll(async () => {
-    await postgresDBTest.connect();
+    await db.connect();
     mockDb = { query: vi.fn() };
   });
   
   afterAll(async () => {
-    await postgresDBTest.end(); 
+    await db.end(); 
   });
 
   it('should return user object if found', async () => {
-    const result = await findUserPreferencesByIdPostgres(postgresDBTest as Client, 1);
+    const result = await findUserPreferencesByIdPostgres(db as Client, 1);
 
     expect(result).toEqual({
       id: 1,
@@ -67,7 +68,7 @@ describe('findUserPreferencesByIDPostgres', () => {
   });
 
   it('should return null object if user not found', async () => {
-    const result = await findUserPreferencesByIdPostgres(postgresDBTest as Client, 1000);
+    const result = await findUserPreferencesByIdPostgres(db as Client, 1000);
 
     expect(result).toBeNull();
   });
@@ -84,16 +85,16 @@ describe('findUserByUsernamePostgres', () => {
   let mockDb: PostgresClient;
 
   beforeAll(async () => {
-    await postgresDBTest.connect();
+    await db.connect();
     mockDb = { query: vi.fn() };
   });
   
   afterAll(async () => {
-    await postgresDBTest.end(); 
+    await db.end(); 
   });
 
   it('should return user object if found', async () => {
-    const result = await findUserByUsernamePostgres(postgresDBTest as Client, "myUser");
+    const result = await findUserByUsernamePostgres(db as Client, "myUser");
 
     expect(result).toEqual({
       id: 1,
@@ -103,7 +104,7 @@ describe('findUserByUsernamePostgres', () => {
   });
 
   it('should return null object if user not found', async () => {
-    const result = await findUserByUsernamePostgres(postgresDBTest as Client, "non-existent");
+    const result = await findUserByUsernamePostgres(db as Client, "non-existent");
 
     expect(result).toBeNull();
   });
@@ -120,16 +121,16 @@ describe('findUserByEmailPostgres', () => {
   let mockDb: PostgresClient;
 
   beforeAll(async () => {
-    await postgresDBTest.connect();
+    await db.connect();
     mockDb = { query: vi.fn() };
   });
   
   afterAll(async () => {
-    await postgresDBTest.end(); 
+    await db.end(); 
   });
 
   it('should return user object if found', async () => {
-    const result = await findUserByEmailPostgres(postgresDBTest as Client, 'myUser@example.cz');
+    const result = await findUserByEmailPostgres(db as Client, 'myUser@example.cz');
 
     expect(result).toEqual({
       id: 1,
@@ -141,7 +142,7 @@ describe('findUserByEmailPostgres', () => {
   });
 
   it('should return null object if user not found', async () => {
-    const result = await findUserByEmailPostgres(postgresDBTest as Client, 'noexample@example.cz');
+    const result = await findUserByEmailPostgres(db as Client, 'noexample@example.cz');
 
     expect(result).toBeNull();
   });
@@ -158,17 +159,17 @@ describe('insertUserPostgres', () => {
   let mockDb: PostgresClient;
 
   beforeAll(async () => {
-    await postgresDBTest.connect();
+    await db.connect();
     mockDb = { query: vi.fn() };
-    await postgresDBTest.query('DELETE FROM users WHERE email = $1', ['test@example.com']);
+    await db.query('DELETE FROM users WHERE email = $1', ['test@example.com']);
   });
   
   afterAll(async () => {
-    await postgresDBTest.end(); 
+    await db.end(); 
   });
 
   afterEach(async () => {
-    await postgresDBTest.query('DELETE FROM users WHERE email = $1', ['test@example.com']);
+    await db.query('DELETE FROM users WHERE email = $1', ['test@example.com']);
   });
 
   it('should insert user into the database', async () => {
@@ -176,8 +177,8 @@ describe('insertUserPostgres', () => {
     const email = 'test@example.com';
     const hashedPassword = 'hashedpassword123';
 
-    await insertUserPostgres(postgresDBTest, username, email, hashedPassword);
-    const res = await postgresDBTest.query("SELECT * FROM users WHERE email = $1", [email]);
+    await insertUserPostgres(db, username, email, hashedPassword);
+    const res = await db.query("SELECT * FROM users WHERE email = $1", [email]);
 
     expect(res.rows.length).toBe(1);
     expect(res.rows[0]).toEqual({
@@ -193,8 +194,8 @@ describe('insertUserPostgres', () => {
     const username = 'testuser';
     const email = 'test@example.com';
     const hashedPassword = 'hashedpassword123';
-    await insertUserPostgres(postgresDBTest, username, email, hashedPassword);
-    await expect(insertUserPostgres(postgresDBTest, username, email, hashedPassword))
+    await insertUserPostgres(db, username, email, hashedPassword);
+    await expect(insertUserPostgres(db, username, email, hashedPassword))
       .rejects
       .toThrowError(UserError);
 
