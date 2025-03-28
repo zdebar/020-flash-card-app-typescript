@@ -3,6 +3,7 @@ import { registerUserService, loginUserService } from "../services/user.service"
 import db from "../config/database.config.postgres";
 import logger from "../utils/logger.utils";
 import { closeDbConnection } from "../utils/database.utils";
+import { handleControllerError } from "../utils/validation.utils";
 
 /**
  * Registers new user into database with username, email, password. Reads these from req.body. 
@@ -12,10 +13,13 @@ import { closeDbConnection } from "../utils/database.utils";
 export async function registerUserController(req: Request, res: Response): Promise<void> {
   const { username, email, password } = req.body;
 
+  // res.status(400).json({ error: "Sorry. So far application is closed to public users." });
+  // return;
+
   if (!username || !email || !password) {
-    res.status(400).json({ error: "All fields are required." });
+    res.status(400).json({ error: "Username, email and password are all required." });
     return;
-  }
+  }  
   
   try {
     await db.connect()
@@ -23,7 +27,7 @@ export async function registerUserController(req: Request, res: Response): Promi
     const token = await loginUserService(db, email, password);
     res.status(201).json({ message: "User registered successfully.", token });
   } catch (err: any) {
-    res.status(400).json({ error: err.message });
+    handleControllerError(err, res)
   } finally {
     await closeDbConnection(db)
   }
@@ -48,7 +52,7 @@ export async function loginUserController(req: Request, res: Response): Promise<
     logger.info(`Sent token for: ${email}`);
     res.json({ token });
   } catch (err: any) {
-    res.status(401).json({ error: err.message });
+    handleControllerError(err, res)
   } finally {
     await closeDbConnection(db)
   }

@@ -4,6 +4,7 @@ import logger from '../utils/logger.utils';
 import { getUserPreferences } from '../services/user.service';
 import db from '../config/database.config.postgres';
 import { closeDbConnection } from '../utils/database.utils';
+import { handleControllerError } from '../utils/validation.utils';
 
 /**
  * Controller for getting words for practice. 
@@ -17,8 +18,7 @@ export async function getUserWordsController(req: Request, res: Response): Promi
     const words = await getWordsPostgres(db, Number(userId), Number(srcLanguage), Number(trgLanguage), Number(block));
     res.status(200).json(words);
   } catch (err: any) {
-    logger.error("Error fetching words for practice:", err.message);
-    res.status(500).json("Out of service. Please try again later.");
+    handleControllerError(err, res)
   } finally {
     await closeDbConnection(db)
   }
@@ -36,8 +36,7 @@ export async function updateUserWordsController(req: Request, res: Response): Pr
     await updateWordsPostgres(db, Number(userId), words);
     res.status(200).json({ message: "User words updated successfully." });
   } catch (err: any) {
-    logger.error("Error updating user words:", err.message);
-    res.status(500).json("Out of service. Please try again later.");
+    handleControllerError(err, res)
   } finally {
     await closeDbConnection(db)
   }
@@ -54,8 +53,7 @@ export async function getUserProfileController(req: Request, res: Response): Pro
     const userPrefer = await getUserPreferences(db, userId);
     res.json(userPrefer);
   } catch (err: any) {
-    logger.error("Error getting user preferences:", err.message);
-    res.status(500).json("Out of service. Please try again later.");
+    handleControllerError(err, res)
   } finally {
     await closeDbConnection(db)
   }

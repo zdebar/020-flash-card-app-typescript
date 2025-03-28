@@ -1,3 +1,7 @@
+import { UserError } from "../types/dataTypes";
+import logger from "./logger.utils";
+import { Response } from "express";
+
 /**
  * Function converts request strings to number.
  * 
@@ -15,4 +19,20 @@ export function parseAndValidateRequestValue(value: string | undefined | null, p
     throw new Error(`Invalid ${paramName} number: ${value}`)
   }
   return numberValue;
+}
+
+/**
+ * For separating interal server error and UserErrors. UserErrors are res.status(400) with specific error message.
+ * Interal server errors are logged.  
+ * 
+ * @param err 
+ * @param res 
+ */
+export function handleControllerError(err: any, res: Response) {  
+  if (err instanceof UserError) {
+    res.status(400).json({ error: err.message });
+  } else {
+    res.status(500).json({ error: 'Something went wrong. Please try again later.' });
+    logger.error({ error: err.message })
+  }    
 }

@@ -62,6 +62,3 @@ export async function verifyToken(token: string, JWT_SECRET_KEY: string | undefi
     });
   });
 }
-
-
-
