@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
-import { authenticateTokenMiddleware } from "../middlewares/auth.middleware";
-import { verifyToken } from "../utils/auth.utils"; 
+import { authenticateTokenMiddleware } from "../../middlewares/auth.middleware";
+import { verifyToken } from "../../utils/auth.utils"; 
 import { describe, it, expect, vi, Mock } from "vitest";
-import { UserLogin } from "../types/dataTypes";
+import { User } from "../../types/dataTypes";
 
 declare global {
   namespace Express {
     interface Request {
-      user?: UserLogin; 
+      user?: User; 
     }
   }
 }
