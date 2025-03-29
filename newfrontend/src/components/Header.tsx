@@ -8,7 +8,7 @@ export default function Header(): ReactNode {
       <RoundButton to="/Practice">
         <AcademicCapIcon />
       </RoundButton>
-      <RoundButton to="/Practice">
+      <RoundButton to="/User">
         <UserIcon />
       </RoundButton>
     </header>

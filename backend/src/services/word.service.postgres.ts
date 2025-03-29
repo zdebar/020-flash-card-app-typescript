@@ -1,11 +1,11 @@
-import { Word, PostgresClient } from "../types/dataTypes";
+import { Word, PostgresClient, UserError } from "../types/dataTypes";
 import { SRS } from "../config/config";
 
 /**
  * Returns requested number of words for practiced.
- * Preferably chooses words already in learning. It means words with already corresponding entry in table user_words with date next_at older than now. 
+ * Preferably chooses words already in learning. It means words with already corresponding entry in table user_words with date next_at older than now.
  * If these words is less than numWords. Fills the number with new words with lowest unused seq number.
- *  
+ *
  * @param db - PostgreSQL client
  * @param userId - Identifies the user
  * @param srcLanguageID - Source language of extracted words
@@ -13,7 +13,13 @@ import { SRS } from "../config/config";
  * @param numWords - Number of new words to fetch
  * @returns A promise resolving to an array of Word objects, or null if no words found.
  */
-export async function getWordsPostgres(db: PostgresClient, userId: number, srcLanguageID: number, trgLanguageID: number, numWords: number): Promise<Word[] | null> {
+export async function getWordsPostgres(
+  db: PostgresClient,
+  userId: number,
+  srcLanguageID: number,
+  trgLanguageID: number,
+  numWords: number = 20
+): Promise<Word[]> {
   const query = `
     SELECT 
       target.id AS id, 
@@ -41,8 +47,16 @@ export async function getWordsPostgres(db: PostgresClient, userId: number, srcLa
     limit $4;
   `;
 
-  const res = await db.query(query, [userId, srcLanguageID, trgLanguageID, numWords]);
-  if (!res?.rows?.length) return null;
+  const res = await db.query(query, [
+    userId,
+    srcLanguageID,
+    trgLanguageID,
+    numWords,
+  ]);
+
+  if (!res?.rows?.length) {
+    throw new Error(`No more words to learn!`);
+  }
   const data = res.rows;
   return data;
 }
@@ -57,7 +71,11 @@ export async function getWordsPostgres(db: PostgresClient, userId: number, srcLa
  * @returns A Promise that resolves when the update is complete.
  * @throws An error if the database update fails.
  */
-export async function updateWordsPostgres(db: PostgresClient, userId: number, words: Word[] ): Promise<void> {
+export async function updateWordsPostgres(
+  db: PostgresClient,
+  userId: number,
+  words: Word[]
+): Promise<void> {
   const today = new Date();
   const values: unknown[] = [];
 
@@ -67,15 +85,18 @@ export async function updateWordsPostgres(db: PostgresClient, userId: number, wo
     ${words
       .map(
         (_, index) =>
-          `($${index * 5 + 1}, $${index * 5 + 2}, $${index * 5 + 3}, $${index * 5 + 4}, $${index * 5 + 5})`
+          `($${index * 5 + 1}, $${index * 5 + 2}, $${index * 5 + 3}, $${
+            index * 5 + 4
+          }, $${index * 5 + 5})`
       )
-      .join(', ')}
+      .join(", ")}
     ON CONFLICT(user_id, word_id) 
     DO UPDATE SET progress = EXCLUDED.progress, next_at = EXCLUDED.next_at, learned_at = EXCLUDED.learned_at;
   `;
 
   words.forEach((word) => {
-    const progress = Number.isInteger(word.progress) && word.progress > 0 ? word.progress : 1;
+    const progress =
+      Number.isInteger(word.progress) && word.progress > 0 ? word.progress : 1;
     const interval = SRS[progress - 1] ?? null;
 
     let nextAt: string | null = null;
@@ -92,7 +113,3 @@ export async function updateWordsPostgres(db: PostgresClient, userId: number, wo
 
   await db.query(query, values);
 }
-
-
-
-
