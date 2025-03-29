@@ -18,7 +18,7 @@ export async function getUserWordsController(req: Request, res: Response): Promi
     const words = await getWordsPostgres(db, Number(userId), Number(srcLanguage), Number(trgLanguage), Number(block));
     res.status(200).json(words);
   } catch (err: any) {
-    handleControllerError(err, res)
+    handleControllerError(err, res, req)
   } finally {
     await closeDbConnection(db)
   }
@@ -36,7 +36,7 @@ export async function updateUserWordsController(req: Request, res: Response): Pr
     await updateWordsPostgres(db, Number(userId), words);
     res.status(200).json({ message: "User words updated successfully." });
   } catch (err: any) {
-    handleControllerError(err, res)
+    handleControllerError(err, res, req)
   } finally {
     await closeDbConnection(db)
   }
@@ -53,7 +53,7 @@ export async function getUserProfileController(req: Request, res: Response): Pro
     const userPrefer = await getUserPreferences(db, userId);
     res.json(userPrefer);
   } catch (err: any) {
-    handleControllerError(err, res)
+    handleControllerError(err, res, req)
   } finally {
     await closeDbConnection(db)
   }

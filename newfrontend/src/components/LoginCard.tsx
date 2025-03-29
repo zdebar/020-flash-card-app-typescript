@@ -12,9 +12,9 @@ export default function LoginCard() {
 
     try {
       const response = await fetch('http://localhost:3000/auth/login', {
-        method: 'POST',
-        body: JSON.stringify({ email, password }),
+        method: 'POST',        
         headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
       });
 
       if (response.ok) {
@@ -29,6 +29,7 @@ export default function LoginCard() {
       } else {
         const errorData = await response.json();
         setError(errorData.message || 'An error occurred');
+        console.error("Error:", errorData.error)
       }
     } catch (error) {
       console.error('Error logging in:', error);

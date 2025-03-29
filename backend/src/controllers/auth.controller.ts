@@ -27,7 +27,7 @@ export async function registerUserController(req: Request, res: Response): Promi
     const token = await loginUserService(db, email, password);
     res.status(201).json({ message: "User registered successfully.", token });
   } catch (err: any) {
-    handleControllerError(err, res)
+    handleControllerError(err, res, req)
   } finally {
     await closeDbConnection(db)
   }
@@ -52,7 +52,7 @@ export async function loginUserController(req: Request, res: Response): Promise<
     logger.info(`Sent token for: ${email}`);
     res.json({ token });
   } catch (err: any) {
-    handleControllerError(err, res)
+    handleControllerError(err, res, req)
   } finally {
     await closeDbConnection(db)
   }

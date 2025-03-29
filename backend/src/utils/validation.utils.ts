@@ -1,6 +1,6 @@
 import { UserError } from "../types/dataTypes";
 import logger from "./logger.utils";
-import { Response } from "express";
+import { Response, Request } from "express";
 
 /**
  * Function converts request strings to number.
@@ -28,11 +28,20 @@ export function parseAndValidateRequestValue(value: string | undefined | null, p
  * @param err 
  * @param res 
  */
-export function handleControllerError(err: any, res: Response) {  
+export function handleControllerError(err: any, res: Response, req: Request) {  
   if (err instanceof UserError) {
     res.status(400).json({ error: err.message });
   } else {
     res.status(500).json({ error: 'Something went wrong. Please try again later.' });
-    logger.error({ error: err.message })
-  }    
+  } 
+  logger.error({
+    message: err.message,
+    stack: err.stack,
+    request: {
+      method: req.method,
+      url: req.url,
+      body: req.body,
+      headers: req.headers,
+    },
+  });
 }
