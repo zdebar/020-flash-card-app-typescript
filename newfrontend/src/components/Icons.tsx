@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 
 export function AcademicCapIcon({
-  className = 'size-6',
+  className = 'size-10',
 }: {
   className?: string;
 }): ReactNode {
@@ -41,7 +41,7 @@ export function UserIcon({
 }
 
 export function RefreshIcon({
-  className = 'size-6',
+  className = 'size-5',
 }: {
   className?: string;
 }): ReactNode {
@@ -62,7 +62,7 @@ export function RefreshIcon({
 }
 
 export function CheckIcon({
-  className = 'size-6',
+  className = 'size-5',
 }: {
   className?: string;
 }): ReactNode {

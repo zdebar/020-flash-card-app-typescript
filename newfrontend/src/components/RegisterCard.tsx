@@ -83,7 +83,7 @@ export default function RegisterCard() {
               required
             />
           </div>
-          <button type="submit" className="btn-blue">
+          <button type="submit" className="btn btn-rec btn-blue">
             Register
           </button>
         </form>

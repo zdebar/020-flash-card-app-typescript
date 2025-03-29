@@ -73,7 +73,7 @@ export default function LoginCard() {
             />
           </div>
 
-          <button type="submit" className="btn-blue">
+          <button type="submit" className="btn btn-rec btn-blue">
             Login
           </button>
         </form>
@@ -82,7 +82,10 @@ export default function LoginCard() {
         <div className="mt-4 text-center">
           <p className="text-sm">
             Don't have an account?{' '}
-            <Link to="/register" className="text-blue-500 hover:text-blue-600">
+            <Link
+              to="/register"
+              className="text-sm text-blue-500 hover:text-blue-600"
+            >
               Register here
             </Link>
           </p>
