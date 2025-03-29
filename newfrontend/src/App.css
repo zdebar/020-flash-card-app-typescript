@@ -4,54 +4,55 @@
   border: blue 1px dotted;
 } */
 
-.btn {
-  @apply flex w-full items-center justify-center px-4 py-2 shadow-md active:shadow-none;
+@layer base {
+  Button {
+    @apply shadow-[2px_2px_4px_rgba(0,0,0,0.2)] active:shadow-none;
+  }
 }
 
-.btn-round {
-  @apply h-12 w-12 rounded-full;
-}
+@layer components {
+  /** Button behavior*/
+  .btn {
+    @apply flex w-full items-center justify-center;
+  }
 
-.btn-rec {
-  @apply h-11 rounded-lg;
-}
+  /** Button shapes */
+  .btn-rec {
+    @apply h-10;
+  }
 
-.btn-blue {
-  @apply bg-blue-600 text-white hover:bg-blue-800;
-}
+  .btn-round {
+    @apply h-12 w-12 rounded-full;
+  }
 
-.btn-gray {
-  @apply bg-gray-100 hover:bg-gray-200;
-}
+  /** Button Colors */
+  .btn-blue {
+    @apply bg-blue-600 text-white hover:bg-blue-800;
+  }
 
-.note-src {
-  @apply flex h-[20px] items-center text-lg font-bold;
-}
+  .btn-gray {
+    @apply bg-gray-100 hover:bg-gray-200;
+  }
 
-.note-trg {
-  @apply flex h-[20px] items-center text-base;
-}
+  /** Cards */
+  .card-auth {
+    @apply w-[320px] rounded-md bg-gray-100 p-4;
+  }
 
-.card {
-  @apply flex h-[120px] w-full max-w-xs flex-col items-center justify-evenly rounded-lg bg-gray-100 pt-3 pb-2 text-center shadow-md hover:bg-gray-200 active:shadow-none;
-}
+  /** Text classes*/
+  .title {
+    @apply mb-4 text-center text-2xl font-bold;
+  }
 
-.card-auth {
-  @apply w-[320px] rounded-lg bg-gray-100 p-4 shadow-md;
-}
+  .error {
+    @apply mb-4 text-red-500;
+  }
 
-.title {
-  @apply mb-4 text-center text-2xl font-bold;
-}
+  .label {
+    @apply mb-1 block text-sm font-semibold text-black;
+  }
 
-.error {
-  @apply mb-4 text-red-500;
-}
-
-.label {
-  @apply mb-1 block text-sm font-semibold text-black;
-}
-
-.input {
-  @apply w-full rounded-md border border-gray-300 bg-white p-2 text-sm;
+  .input {
+    @apply w-full rounded-md border border-gray-300 bg-white p-2 text-sm;
+  }
 }
