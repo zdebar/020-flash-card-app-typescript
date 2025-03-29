@@ -3,7 +3,7 @@ import ChoiceBar from './ChoiceBar';
 
 export default function Card() {
   return (
-    <div className="flex flex-col items-center rounded-lg w-[320px] pb-4">
+    <div className="flex w-[320px] flex-col items-center rounded-lg pb-4">
       <Note />
       <ChoiceBar />
     </div>

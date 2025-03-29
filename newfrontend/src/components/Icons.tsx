@@ -1,6 +1,10 @@
-import { ReactNode } from "react";
+import { ReactNode } from 'react';
 
-export function AcademicCapIcon ({ className = "size-6" } : { className?: string }) : ReactNode {
+export function AcademicCapIcon({
+  className = 'size-6',
+}: {
+  className?: string;
+}): ReactNode {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -13,9 +17,13 @@ export function AcademicCapIcon ({ className = "size-6" } : { className?: string
       <path d="M4.462 19.462c.42-.419.753-.89 1-1.395.453.214.902.435 1.347.662a6.742 6.742 0 0 1-1.286 1.794.75.75 0 0 1-1.06-1.06Z" />
     </svg>
   );
-};
+}
 
-export function UserIcon ({ className = "size-6" } : { className?: string }) : ReactNode{
+export function UserIcon({
+  className = 'size-6',
+}: {
+  className?: string;
+}): ReactNode {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -30,9 +38,13 @@ export function UserIcon ({ className = "size-6" } : { className?: string }) : R
       />
     </svg>
   );
-};
+}
 
-export function RefreshIcon({ className = "size-6" } : { className?: string }) : ReactNode {
+export function RefreshIcon({
+  className = 'size-6',
+}: {
+  className?: string;
+}): ReactNode {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -47,9 +59,13 @@ export function RefreshIcon({ className = "size-6" } : { className?: string }) :
       />
     </svg>
   );
-};
+}
 
-export function CheckIcon({ className = "size-6" }: { className?: string }) : ReactNode {
+export function CheckIcon({
+  className = 'size-6',
+}: {
+  className?: string;
+}): ReactNode {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
