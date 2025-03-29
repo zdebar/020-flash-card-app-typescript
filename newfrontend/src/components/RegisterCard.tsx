@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { SubmitButton } from './SubmitButton';
+import { InputForm } from './InputForm';
+import { AuthForm } from './AuthForm';
 
 export default function RegisterCard() {
   const [username, setUsername] = useState('');
@@ -36,56 +39,29 @@ export default function RegisterCard() {
   };
 
   return (
-    <div className="card-auth">
-      <h2 className="title">Register</h2>
-      {error && <div className="error">{error}</div>}
-      <form onSubmit={handleRegister}>
-        <div className="mb-4">
-          <label htmlFor="username" className="label">
-            Username
-          </label>
-          <input
-            type="text"
-            id="username"
-            className="input"
-            placeholder="Enter your username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-        </div>
-        <div className="mb-4">
-          <label htmlFor="email" className="label">
-            Email
-          </label>
-          <input
-            type="email"
-            id="email"
-            className="input"
-            placeholder="Enter your email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <div className="mb-4">
-          <label htmlFor="password" className="label">
-            Password
-          </label>
-          <input
-            type="password"
-            id="password"
-            className="input"
-            placeholder="Enter your password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit" className="btn btn-rec btn-blue rounded-md">
-          Register
-        </button>
-      </form>
-    </div>
+    <AuthForm title="Register" onSubmit={handleRegister} error={error}>
+      <InputForm
+        type="text"
+        label="Username"
+        placeholder="Enter your username"
+        value={username}
+        onChange={setUsername}
+      />
+      <InputForm
+        type="email"
+        label="Email"
+        placeholder="Enter your email"
+        value={email}
+        onChange={setEmail}
+      />
+      <InputForm
+        type="password"
+        label="Password"
+        placeholder="Enter your password"
+        value={password}
+        onChange={setPassword}
+      />
+      <SubmitButton>Register</SubmitButton>
+    </AuthForm>
   );
 }

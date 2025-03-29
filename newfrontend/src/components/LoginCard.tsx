@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { InputForm } from './InputForm';
+import { SubmitButton } from './SubmitButton';
+import { AuthForm } from './AuthForm';
 
 export default function LoginCard() {
   const [email, setEmail] = useState('');
@@ -38,46 +41,22 @@ export default function LoginCard() {
   };
 
   return (
-    <div className="card-auth">
-      <h2 className="title">Login</h2>
-      {error && <div className="error">{error}</div>}
-      <form onSubmit={handleLogin}>
-        <div className="mb-4">
-          <label className="label" htmlFor="email">
-            Email
-          </label>
-          <input
-            type="email"
-            id="email"
-            className="input"
-            placeholder="Enter your email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-
-        <div className="mb-4">
-          <label className="label" htmlFor="password">
-            Password
-          </label>
-          <input
-            type="password"
-            id="password"
-            className="input"
-            placeholder="Enter your password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-
-        <button type="submit" className="btn btn-rec btn-blue rounded-md">
-          Login
-        </button>
-      </form>
-
-      {/* Register Link */}
+    <AuthForm title="Login" onSubmit={handleLogin} error={error}>
+      <InputForm
+        type="email"
+        label="Email"
+        placeholder="Enter your email"
+        value={email}
+        onChange={setEmail}
+      />
+      <InputForm
+        type="password"
+        label="Password"
+        placeholder="Enter your password"
+        value={password}
+        onChange={setPassword}
+      />
+      <SubmitButton>Login</SubmitButton>
       <div className="mt-4 text-center">
         <p className="text-sm">
           Don't have an account?{' '}
@@ -89,6 +68,6 @@ export default function LoginCard() {
           </Link>
         </p>
       </div>
-    </div>
+    </AuthForm>
   );
 }

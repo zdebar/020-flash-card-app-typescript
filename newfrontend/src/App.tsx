@@ -10,16 +10,21 @@ export default function App() {
   const { userInfo, loading } = useUser();
 
   return (
-    <div className="flex flex-col items-center min-h-screen w-full max-w-[900px] min-w-[320px] mx-auto">
+    <div className="mx-auto flex min-h-screen w-full max-w-[900px] min-w-[320px] flex-col items-center">
       <Header />
       <Card></Card>
       <Routes>
-        <Route 
-          path="/" 
+        <Route
+          path="/"
           element={
-            loading ? <p>Loading...</p> : 
-            userInfo ? <h1>Hello {userInfo.username}</h1> : <Navigate to="/login" />
-          } 
+            loading ? (
+              <p>Loading...</p>
+            ) : userInfo ? (
+              <h1>Hello {userInfo.username}</h1>
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
         />
         <Route path="/login" element={<LoginCard />} />
         <Route path="/register" element={<RegisterCard />} />
@@ -27,4 +32,3 @@ export default function App() {
     </div>
   );
 }
-

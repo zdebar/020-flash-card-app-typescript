@@ -12,41 +12,25 @@
 
 @layer components {
   /** Button behavior*/
-  .btn {
-    @apply flex w-full items-center justify-center;
-  }
-
-  /** Button shapes */
-  .btn-rec {
-    @apply h-10;
-  }
-
-  .btn-round {
-    @apply h-12 w-12 rounded-full;
-  }
 
   /** Button Colors */
-  .btn-blue {
-    @apply bg-blue-600 text-white hover:bg-blue-800;
+  .color-blue {
+    @apply bg-blue-600 text-white;
   }
 
-  .btn-gray {
-    @apply bg-gray-100 hover:bg-gray-200;
+  .color-blue-hover {
+    @apply hover:bg-blue-800;
   }
 
-  /** Cards */
-  .card-auth {
-    @apply w-[320px] rounded-md bg-gray-100 p-4;
+  .color-gray {
+    @apply bg-gray-100;
+  }
+
+  .color-gray-hover {
+    @apply hover:bg-gray-200;
   }
 
   /** Text classes*/
-  .title {
-    @apply mb-4 text-center text-2xl font-bold;
-  }
-
-  .error {
-    @apply mb-4 text-red-500;
-  }
 
   .label {
     @apply mb-1 block text-sm font-semibold text-black;
