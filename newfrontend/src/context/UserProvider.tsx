@@ -1,10 +1,10 @@
 import { useState, useEffect, ReactNode } from 'react';
 import { UserContext } from './UserContext';
 import { fetchUserInfo } from '../functions/fetchUserInfo';
-import { UserLogin } from '../types/dataTypes';
+import { UserPreferences } from '../types/dataTypes';
 
 export function UserProvider({ children }: { children: ReactNode }) {
-  const [userInfo, setUserInfo] = useState<UserLogin | null>(null);
+  const [userInfo, setUserInfo] = useState<UserPreferences | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

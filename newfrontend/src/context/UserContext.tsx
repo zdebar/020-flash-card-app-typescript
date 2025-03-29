@@ -1,10 +1,10 @@
 import { createContext } from 'react';
-import { UserLogin } from '../types/dataTypes';
+import { UserPreferences } from '../types/dataTypes';
 
 export interface UserContextType {
-  userInfo: UserLogin | null;
+  userInfo: UserPreferences | null;
   loading: boolean;
-  setUserInfo: (user: UserLogin | null) => void;
+  setUserInfo: (user: UserPreferences | null) => void;
 }
 
 export const UserContext = createContext<UserContextType | undefined>(undefined);

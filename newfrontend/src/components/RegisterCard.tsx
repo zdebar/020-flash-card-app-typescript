@@ -26,6 +26,7 @@ export default function RegisterCard() {
         }
       } else {
         const errorData = await response.json();
+        console.error('Error registering:', errorData);
         setError(errorData.message || 'An error occurred');
       }
     } catch (error) {
@@ -36,17 +37,17 @@ export default function RegisterCard() {
 
   return (
     <div className="flex justify-center items-center">
-      <div className="card w-[320px] shadow-md bg-gray-100">
-        <div className="card-body">
+      <div className="rounded-lg w-[320px] shadow-md bg-gray-100 p-4">
+        <div className="">
           <h2 className="text-2xl font-bold text-center mb-4">Register</h2>
           {error && <div className="text-red-500 text-center mb-4">{error}</div>}
           <form onSubmit={handleRegister}>
             <div className="mb-4">
-              <label htmlFor="username" className="block text-sm font-semibold">Username</label>
+              <label htmlFor="username" className="block text-sm font-semibold mb-2">Username</label>
               <input
                 type="text"
                 id="username"
-                className="input input-bordered w-full mt-2"
+                className="w-full border border-gray-300 p-2 rounded-md bg-white text-sm"
                 placeholder="Enter your username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
@@ -54,11 +55,11 @@ export default function RegisterCard() {
               />
             </div>
             <div className="mb-4">
-              <label htmlFor="email" className="block text-sm font-semibold">Email</label>
+              <label htmlFor="email" className="block text-sm font-semibold mb-2">Email</label>
               <input
                 type="email"
                 id="email"
-                className="input input-bordered w-full mt-2"
+                className="w-full border border-gray-300 p-2 rounded-md bg-white text-sm"
                 placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -66,18 +67,18 @@ export default function RegisterCard() {
               />
             </div>
             <div className="mb-4">
-              <label htmlFor="password" className="block text-sm font-semibold">Password</label>
+              <label htmlFor="password" className="block text-sm font-semibold mb-2">Password</label>
               <input
                 type="password"
                 id="password"
-                className="input input-bordered w-full mt-2"
+                className="w-full border border-gray-300 p-2 rounded-md bg-white text-sm"
                 placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
             </div>
-            <button type="submit" className="btn btn-primary w-full">Register</button>
+            <button type="submit" className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-800 shadow-l active:shadow-none">Register</button>
           </form>
         </div>
       </div>

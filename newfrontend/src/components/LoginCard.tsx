@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom'; // Import Link component for routing
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function LoginCard() {
   const [email, setEmail] = useState('');
@@ -16,7 +16,7 @@ export default function LoginCard() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
       });
-
+      
       if (response.ok) {
         const data = await response.json();
         if (data.token) {
@@ -28,8 +28,8 @@ export default function LoginCard() {
         }
       } else {
         const errorData = await response.json();
+        console.error('Error logging in:', errorData);
         setError(errorData.message || 'An error occurred');
-        console.error("Error:", errorData.error)
       }
     } catch (error) {
       console.error('Error logging in:', error);
@@ -39,7 +39,7 @@ export default function LoginCard() {
 
   return (
     <div className="flex justify-center items-center">
-      <div className="card w-[320px] shadow-md bg-gray-100 p-4">
+      <div className="rounded-lg w-[320px] shadow-md bg-gray-100 p-4">
         <h2 className="text-center text-2xl font-bold mb-4">Login</h2>
         {error && <div className="text-red-500 mb-4">{error}</div>}
         <form onSubmit={handleLogin}>
@@ -50,7 +50,7 @@ export default function LoginCard() {
             <input
               type="email"
               id="email"
-              className="input input-bordered w-full"
+              className="w-full border border-gray-300 p-2 rounded-md bg-white text-sm"
               placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -58,14 +58,14 @@ export default function LoginCard() {
             />
           </div>
 
-          <div className="mb-6">
+          <div className="mb-4">
             <label className="block text-sm font-semibold mb-2" htmlFor="password">
               Password
             </label>
             <input
               type="password"
               id="password"
-              className="input input-bordered w-full"
+              className="w-full border border-gray-300 p-2 rounded-md bg-white text-sm"
               placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -75,7 +75,7 @@ export default function LoginCard() {
 
           <button
             type="submit"
-            className="btn btn-primary w-full"
+            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-800 shadow-md active:shadow-none"
           >
             Login
           </button>
