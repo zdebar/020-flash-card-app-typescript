@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { InputForm } from './InputForm';
 import { SubmitButton } from './SubmitButton';
 import { AuthForm } from './AuthForm';
+import { RegisterLink } from './RegisterLink';
 
 export default function LoginCard() {
   const [email, setEmail] = useState('');
@@ -57,17 +58,7 @@ export default function LoginCard() {
         onChange={setPassword}
       />
       <SubmitButton>Login</SubmitButton>
-      <div className="mt-4 text-center">
-        <p className="text-sm">
-          Don't have an account?{' '}
-          <Link
-            to="/register"
-            className="text-sm text-blue-500 hover:text-blue-600"
-          >
-            Register here
-          </Link>
-        </p>
-      </div>
+      <RegisterLink />
     </AuthForm>
   );
 }

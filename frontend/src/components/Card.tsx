@@ -1,37 +1,21 @@
-import { ReactNode, useState } from 'react';
-import './Card.css';
-import ChoiceBar from './ChoiceBar';
-import Note from './Note';
+import { RefreshIcon, CheckIcon } from './Icons';
 
-interface Word {
-  src: string;
-  trg: string;
-  prn: string;
-}
-
-interface CardProps {
-  words: Word[];
-}
-
-export default function Card({ words = [] }: CardProps): ReactNode {
-  const [showTranslations, setShowTranslations] = useState<boolean>(false);
-
-  if (!words || words.length === 0) {
-    return (
-      <div className="card flex-column justify-between">
-        <div className="flex-column justify-between align-center border-top"></div>
-      </div>
-    );
-  }
-
-  const handleReveal = (): void => {
-    setShowTranslations(true);
-  };
-
+export default function Card() {
   return (
-    <div  className="card flex-column justify-between">
-      <Note words={words} showTranslations={showTranslations} onClick={handleReveal} />
-      {showTranslations && <ChoiceBar />}
+    <div className="w-[320px]">
+      <button className="color-gray color-gray-hover flex h-[120px] w-full flex-col items-center justify-evenly rounded-t-md py-4">
+        <p className="font-bold">src</p>
+        <p>trg</p>
+        <p>prn</p>
+      </button>
+      <div className="my-1 grid h-10 w-full grid-cols-2 gap-1">
+        <button className="color-gray color-gray-hover flex w-full items-center justify-center rounded-bl-md">
+          <RefreshIcon className="size-5" />
+        </button>
+        <button className="color-blue color-blue-hover flex w-full items-center justify-center rounded-br-md">
+          <CheckIcon className="size-5" />
+        </button>
+      </div>
     </div>
   );
 }

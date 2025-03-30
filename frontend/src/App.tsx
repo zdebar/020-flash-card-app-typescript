@@ -1,49 +1,34 @@
-import { Routes, Route, useNavigate} from 'react-router-dom'
-import { useEffect } from 'react';
+import './App.css';
 import Header from './components/Header';
-import Footer from './components/Footer';
+import LoginCard from './components/LoginCard';
+import RegisterCard from './components/RegisterCard';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { useUser } from './hooks/useUser';
 import Card from './components/Card';
-import User from './components/User';
-import History from './components/History';
-import Repetition from './components/Repetition';
-import jsonData from './data/lecture1-test.json';
-import Register from './components/Register';
-
-interface Word {
-  src: string;
-  trg: string;
-  prn: string;
-}
-
-interface JsonData {
-  blocks: {
-    words: Word[];
-  }[];
-}
 
 export default function App() {
-  const data = jsonData as JsonData;
-  const login = useNavigate();
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      login('/login');
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, [login]);
+  const { userInfo, loading } = useUser();
 
   return (
-    <div className="app flex-column m-auto">
+    <div className="mx-auto flex min-h-screen w-full max-w-[900px] min-w-[320px] flex-col items-center">
       <Header />
+      <Card></Card>
       <Routes>
-        <Route path="/login" element={<Register />} />
-        <Route path="/practice" element={<Card words={data.blocks[0]?.words} />} />
-        <Route path="/repetition" element={<Repetition />} />
-        <Route path="/history" element={<History />} />
-        <Route path="/user" element={<User />} /> 
+        <Route
+          path="/"
+          element={
+            loading ? (
+              <p>Loading...</p>
+            ) : userInfo ? (
+              <h1>Hello {userInfo.username}</h1>
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        <Route path="/login" element={<LoginCard />} />
+        <Route path="/register" element={<RegisterCard />} />
       </Routes>
-      <Footer />
     </div>
   );
 }
