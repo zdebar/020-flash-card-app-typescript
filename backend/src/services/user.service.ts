@@ -12,12 +12,14 @@ import { JWT_SECRET, JWT_EXPIRES_IN } from "../config/config";
 import { UserError, UserPreferences, PostgresClient } from "../types/dataTypes";
 
 /**
- * Registers a new user into the database table "users". Throws UserError on failed to insert due to uniqueness fail.
+ * Registers a new user in the system by hashing the provided password
+ * and inserting the user details into the PostgreSQL database.
  *
- * @param db The database client.
- * @param username The username to register. Must be unique.
- * @param email The email to register. Must be unique.
- * @param password The password to register. Will be hashed. *
+ * @param db - The PostgreSQL client instance used to interact with the database.
+ * @param username - The username of the new user.
+ * @param email - The email address of the new user.
+ * @param password - The plaintext password of the new user, which will be hashed before storage.
+ * @returns A promise that resolves when the user has been successfully registered.
  */
 export async function registerUserService(
   db: PostgresClient,
@@ -30,17 +32,13 @@ export async function registerUserService(
 }
 
 /**
- * Logs in a user by email.
+ * Authenticates a user by verifying their email and password, and generates a JWT token upon successful login.
  *
- * First, it checks for the existence of the user by email. Throws UserError when user doesn´t exists.
- * If the user exists, it compares the provided password with the hashed password stored in the database.
- * If the password matches, it creates and returns a JWT token for authentication.
- *
- * @param db The database client used to query the database.
- * @param email The email of the user attempting to log in.
- * @param password The password provided by the user.
- * @returns A promise that resolves to the JWT access token.
- * @throws Error if the user doesn't exist or if the password is incorrect.
+ * @param db - The Postgres client instance used to query the database.
+ * @param email - The email address of the user attempting to log in.
+ * @param password - The plaintext password provided by the user for authentication.
+ * @returns A promise that resolves to a JWT token string if authentication is successful.
+ * @throws {UserError} If the provided password does not match the stored password for the user.
  */
 export async function loginUserService(
   db: PostgresClient,
@@ -51,7 +49,7 @@ export async function loginUserService(
   const passwordMatch = await comparePasswords(password, user.password);
 
   if (!passwordMatch) {
-    throw new UserError("Invalid password.");
+    throw new UserError("The provided password is incorrect.");
   }
 
   const token = createToken(user, JWT_SECRET, JWT_EXPIRES_IN);
@@ -59,10 +57,11 @@ export async function loginUserService(
 }
 
 /**
+ * Retrieves the user preferences for a given user ID from the database.
  *
- * @param db The database client used to query the database.
- * @param userId Searched ID
- * @returns UserPreference or null
+ * @param db - The Postgres client instance used to query the database.
+ * @param userId - The unique identifier of the user whose preferences are being retrieved.
+ * @returns A promise that resolves to the user's preferences.
  */
 export async function getUserPreferences(
   db: PostgresClient,

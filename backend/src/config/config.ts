@@ -1,33 +1,32 @@
 import dotenv from "dotenv";
 import path from "path";
-import { convertSRSToSeconds } from "../utils/config.utils";
 
 dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 
 export const block = 20; // The size of repetition block
-// repetition algorithm (m - minutes, h - hours, d - days) has to have one these format letters
-export const SRS = convertSRSToSeconds([
-  "0m",
-  "5m",
-  "15m",
-  "30m",
-  "1h",
-  "2h",
-  "4h",
-  "8h",
-  "12h",
-  "1d",
-  "2d",
-  "3d",
-  "4d",
-  "6d",
-  "8d",
-  "12d",
-  "16d",
-  "20d",
-  "30d",
-  "40d",
-]);
+export const SRS = [
+  // Precomputed repetition algorithm in seconds
+  0, // 0m
+  60, // 1m
+  120, // 2m
+  240, // 4m
+  480, // 8m
+  900, // 15m
+  1800, // 30m
+  3600, // 1h
+  7200, // 2h
+  14400, // 4h
+  28800, // 8h
+  43200, // 12h
+  86400, // 1d
+  172800, // 2d
+  345600, // 4d
+  691200, // 8d
+  1036800, // 12d
+  1382400, // 16d
+  1728000, // 20d
+  3456000, // 40d
+];
 export const JWT_SECRET =
   process.env.NODE_ENV === "test" ? "test-password" : process.env.JWT_SECRET;
 export const JWT_EXPIRES_IN =

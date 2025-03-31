@@ -16,11 +16,11 @@ import logger from "../utils/logger.utils";
  *
  * @throws {Error} If the JWT verification fails, responds with a 403 status.
  */
-export async function authenticateTokenMiddleware(
+export function authenticateTokenMiddleware(
   req: Request,
   res: Response,
   next: NextFunction
-): Promise<void> {
+): void {
   const token = req.headers.authorization?.split(" ")[1];
 
   if (!token) {
@@ -30,10 +30,11 @@ export async function authenticateTokenMiddleware(
   }
 
   try {
-    const decoded = await verifyToken(token, JWT_SECRET);
+    const decoded = verifyToken(token, JWT_SECRET);
     (req as any).user = decoded as User;
     next();
   } catch (err: any) {
+    logger.debug(`Authentication failed: ${err.message}`);
     res.status(403).json({ error: "Authentication failed" });
   }
 }

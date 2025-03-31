@@ -12,10 +12,6 @@ console.log("JWT_SECRET:", JWT_SECRET);
 console.log("JWT_EXPIRES_IN:", JWT_EXPIRES_IN);
 
 describe("Password Hashing & Verification", () => {
-  afterAll(() => {
-    process.env.NODE_ENV = "development";
-  });
-
   it("should hash a password and verify it correctly", async () => {
     const password = "securePassword123";
 
@@ -41,30 +37,26 @@ describe("JWT Token Creation & Verification", () => {
     process.env.NODE_ENV = "development";
   });
 
-  it("should create a valid JWT token and verify it", async () => {
-    const token = await createToken(mockUser, JWT_SECRET, JWT_EXPIRES_IN);
+  it("should create a valid JWT token and verify it", () => {
+    const token = createToken(mockUser, JWT_SECRET, JWT_EXPIRES_IN);
     expect(typeof token).toBe("string");
 
-    const decodedUser = await verifyToken(token, JWT_SECRET);
+    const decodedUser = verifyToken(token, JWT_SECRET);
     expect(decodedUser).toMatchObject(mockUser);
   });
 
-  it("should fail verification with an invalid token", async () => {
-    await verifyToken("invalid-token", JWT_SECRET).catch(() => {});
-    expect.objectContaining({
-      error: expect.any(String),
-      token: "invalid-token",
-    });
+  it("should fail verification with an invalid token", () => {
+    expect(() => verifyToken("invalid-token", JWT_SECRET)).toThrowError();
   });
 
-  it("should fail token creation if JWT_SECRET is missing", async () => {
+  it("should fail token creation if JWT_SECRET is missing", () => {
     const missingSecret = undefined;
 
-    await expect(
+    expect(() =>
       createToken(mockUser, missingSecret, JWT_EXPIRES_IN)
-    ).rejects.toThrowError(Error);
-    await expect(
-      verifyToken("test-string", missingSecret)
-    ).rejects.toThrowError(Error);
+    ).toThrowError("ENV variables not loaded!");
+    expect(() => verifyToken("test-string", missingSecret)).toThrowError(
+      "ENV variables not loaded!"
+    );
   });
 });

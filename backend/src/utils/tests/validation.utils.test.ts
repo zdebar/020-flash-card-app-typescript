@@ -2,9 +2,6 @@ import { describe, it, expect, afterAll } from "vitest";
 import { parseAndValidateRequestValue } from "../validation.utils";
 
 describe("parseAndValidateRequestValue", () => {
-  afterAll(() => {
-    process.env.NODE_ENV = "development";
-  });
   it("should throw an error when value is null", () => {
     expect(() => parseAndValidateRequestValue(null, "srcLanguage")).toThrow(
       Error

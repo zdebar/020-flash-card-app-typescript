@@ -5,8 +5,8 @@ export interface Word {
   src: string;
   trg: string;
   prn: string | null;
-  audio: string | null;  
-  progress: number
+  audio: string | null;
+  progress: number;
 }
 
 export interface User {
@@ -17,7 +17,7 @@ export interface User {
 
 export interface UserLogin extends User {
   created_at: string; // ISO 8601 string
-  password: string;  
+  password: string;
 }
 
 export interface UserPreferences extends User {
@@ -29,10 +29,8 @@ export interface UserPreferences extends User {
 export class UserError extends Error {
   constructor(message: string) {
     super(message);
-    this.name = 'UserError';
+    this.name = "UserError";
   }
 }
 
 export type PostgresClient = Pick<Client | Pool, "query">;
-
-

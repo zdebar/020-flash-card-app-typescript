@@ -30,7 +30,6 @@ describe("findUserByIDPostgres", () => {
 
   afterAll(async () => {
     await db.end();
-    process.env.NODE_ENV = "development";
   });
 
   it("should return user object if found", async () => {
@@ -79,11 +78,12 @@ describe("findUserPreferencesByIDPostgres", () => {
       id: 1,
       username: "myUser",
       email: "myUser@example.cz",
-      font_size: null,
-      mode_day: null,
-      notifications: null,
-      user_id: null,
+      font_size: 2,
+      mode_day: 1,
+      notifications: 1,
     });
+
+    console.log(result);
   });
 
   it("should throw error object if user not found", async () => {

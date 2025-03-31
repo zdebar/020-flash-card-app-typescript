@@ -12,9 +12,12 @@ const postgresDB = new Client({
   password: process.env.DB_PASSWORD,
 });
 
-if (process.env.NODE_ENV === 'test') {
+if (process.env.NODE_ENV === "test") {
+  postgresDB.host = "localhost";
   postgresDB.port = 5432;
+  postgresDB.database = "postgres";
+  postgresDB.user = "postgres";
+  postgresDB.password = "mbc299748";
 }
 
 export default postgresDB;
-

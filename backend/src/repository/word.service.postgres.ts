@@ -2,16 +2,18 @@ import { Word, PostgresClient, UserError } from "../types/dataTypes";
 import { SRS } from "../config/config";
 
 /**
- * Returns requested number of words for practiced.
- * Preferably chooses words already in learning. It means words with already corresponding entry in table user_words with date next_at older than now.
- * If these words is less than numWords. Fills the number with new words with lowest unused seq number.
+ * Retrieves a list of words from a PostgreSQL database for a specific user,
+ * based on the source and target languages, and filters out words that have
+ * already been marked as learned by the user.
  *
- * @param db - PostgreSQL client
- * @param userId - Identifies the user
- * @param srcLanguageID - Source language of extracted words
- * @param trgLanguageID - Target language of extracted words
- * @param numWords - Number of new words to fetch
- * @returns A promise resolving to an array of Word objects, or null if no words found.
+ * @param db - The PostgreSQL client instance used to execute the query.
+ * @param userId - The ID of the user requesting the words.
+ * @param srcLanguageID - The ID of the source language.
+ * @param trgLanguageID - The ID of the target language.
+ * @param numWords - The maximum number of words to retrieve (default is 20).
+ * @returns A promise that resolves to an array of words, each containing the
+ *          target word's ID, source word, target word, pronunciation, audio,
+ *          and progress.
  */
 export async function getWordsPostgres(
   db: PostgresClient,
@@ -33,18 +35,18 @@ export async function getWordsPostgres(
     JOIN word_meanings wm_trg ON wm_src.meaning_id = wm_trg.meaning_id
     JOIN words target ON wm_trg.word_id = target.id
     LEFT JOIN user_words uw ON target.id = uw.word_id AND uw.user_id = $1
-    where source.language_id = $2
-      and target.language_id = $3
-      and uw.learned_at is NULL
+    WHERE source.language_id = $2
+      AND target.language_id = $3
+      AND uw.learned_at IS NULL
       AND EXISTS (SELECT 1 FROM user_words WHERE user_id = $1)
     ORDER BY 
       CASE 
         WHEN progress > 0 THEN 1
         ELSE 2
-      END asc,
+      END ASC,
       progress ASC,
       target.seq ASC
-    limit $4;
+    LIMIT $4;
   `;
 
   const res = await db.query(query, [
@@ -54,22 +56,23 @@ export async function getWordsPostgres(
     numWords,
   ]);
 
-  if (!res?.rows?.length) {
-    throw new Error(`No more words to learn!`);
-  }
-  const data = res.rows;
-  return data;
+  return res.rows;
 }
 
 /**
- * Updates the `user_words` table with new progress and next review timestamps.
- * Uses batch processing to improve performance by reducing the number of queries.
+ * Updates the user's word progress in a PostgreSQL database.
  *
- * @param db - PostgreSQL client
- * @param userId - The ID of the user whose words are being updated.
- * @param words - An array of words to update, each containing an ID and progress level.
- * @returns A Promise that resolves when the update is complete.
- * @throws An error if the database update fails.
+ * This function inserts or updates records in the `user_words` table for the given user and words.
+ * If a record for a specific `user_id` and `word_id` already exists, it updates the `progress`,
+ * `next_at`, and `learned_at` fields. Otherwise, it inserts a new record.
+ *
+ * @param db - The PostgreSQL client instance used to execute the query.
+ * @param userId - The ID of the user whose word progress is being updated.
+ * @param words - An array of words containing their IDs and progress information.
+ *
+ * @returns A promise that resolves when the operation is complete.
+ *
+ * @throws Will throw an error if the database query fails.
  */
 export async function updateWordsPostgres(
   db: PostgresClient,

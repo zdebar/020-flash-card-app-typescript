@@ -1,26 +1,26 @@
 import { Request, Response } from "express";
 import { authenticateTokenMiddleware } from "../../middlewares/auth.middleware";
-import { verifyToken } from "../../utils/auth.utils"; 
+import { verifyToken } from "../../utils/auth.utils";
 import { describe, it, expect, vi, Mock } from "vitest";
 import { User } from "../../types/dataTypes";
 
 declare global {
   namespace Express {
     interface Request {
-      user?: User; 
+      user?: User;
     }
   }
 }
 
-vi.mock("../utils/auth.utils"); 
+vi.mock("../utils/auth.utils");
 
 describe("authenticateTokenMiddleware", () => {
   const mockNext = vi.fn();
   const mockRes = {} as Response;
 
-  it("should respond with 401 if no token is provided", async () => {
+  it("should respond with 401 if no token is provided", () => {
     const mockReq = {
-      headers: {}, 
+      headers: {},
     } as Request;
 
     const res = {
@@ -29,19 +29,17 @@ describe("authenticateTokenMiddleware", () => {
       json: vi.fn().mockReturnThis(),
     } as unknown as Response;
 
-    await authenticateTokenMiddleware(mockReq, res, mockNext);
+    authenticateTokenMiddleware(mockReq, res, mockNext);
 
     expect(res.status).toHaveBeenCalledWith(401);
     expect(res.json).toHaveBeenCalledWith({ error: "No authentication token" });
     expect(mockNext).not.toHaveBeenCalled();
   });
 
-  it("should respond with 403 if token is invalid", async () => {
+  it("should respond with 403 if token is invalid", () => {
     const mockReq = {
-      headers: { authorization: "Bearer invalidToken" }, 
+      headers: { authorization: "Bearer invalidToken" },
     } as Request;
-
-    (verifyToken as Mock).mockRejectedValue(new Error("Invalid token"));
 
     const res = {
       ...mockRes,
@@ -49,25 +47,37 @@ describe("authenticateTokenMiddleware", () => {
       json: vi.fn().mockReturnThis(),
     } as unknown as Response;
 
-    await authenticateTokenMiddleware(mockReq, res, mockNext);
+    authenticateTokenMiddleware(mockReq, res, mockNext);
 
     expect(res.status).toHaveBeenCalledWith(403);
     expect(res.json).toHaveBeenCalledWith({ error: "Authentication failed" });
     expect(mockNext).not.toHaveBeenCalled();
   });
 
-  it("should call next() if the token is valid", async () => {
+  it("should call next() if the token is valid", () => {
     const mockReq = {
-      headers: { authorization: "Bearer validToken" }, // Valid token
+      headers: { authorization: "Bearer validToken" },
     } as Request;
 
-    (verifyToken as Mock).mockResolvedValue({ userId: 1, username: "testUser" });
+    (verifyToken as Mock).mockReturnValue({
+      userId: 1,
+      username: "testUser",
+      email: "test@example.cz",
+    });
 
-    const res = {} as Response;
+    const res = {
+      ...mockRes,
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn().mockReturnThis(),
+    } as unknown as Response;
 
-    await authenticateTokenMiddleware(mockReq, res, mockNext);
+    authenticateTokenMiddleware(mockReq, res, mockNext);
 
     expect(mockNext).toHaveBeenCalled();
-    expect(mockReq.user).toEqual({ userId: 1, username: "testUser" });
+    expect(mockReq.user).toEqual({
+      userId: 1,
+      username: "testUser",
+      email: "test@example.cz",
+    });
   });
 });

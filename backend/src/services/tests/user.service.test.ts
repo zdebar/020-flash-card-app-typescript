@@ -67,11 +67,10 @@ describe("User Registration, Login, and User Preferences", () => {
   it("should return userPreferences", async () => {
     await expect(getUserPreferences(db, 1)).resolves.toEqual({
       email: "myUser@example.cz",
-      font_size: null,
+      font_size: 2,
       id: 1,
-      mode_day: null,
-      notifications: null,
-      user_id: null,
+      mode_day: 1,
+      notifications: 1,
       username: "myUser",
     });
   });

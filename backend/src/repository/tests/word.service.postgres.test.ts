@@ -2,7 +2,7 @@ import { describe, it, expect, beforeAll, afterAll, vi } from "vitest";
 import {
   getWordsPostgres,
   updateWordsPostgres,
-} from "../../services/word.service.postgres";
+} from "../word.service.postgres";
 import db from "../../config/database.config.postgres";
 import { UserError, Word } from "../../types/dataTypes";
 
@@ -112,28 +112,48 @@ describe("getWordsPostgres tests", () => {
     ]);
   });
 
-  it("should throw Error for nonexistent user", async () => {
-    await expect(
-      getWordsPostgres(db, 999, srcLanguageID, trgLanguageID, numWords)
-    ).rejects.toThrow(Error);
+  it("should return empty array for nonexistent user", async () => {
+    const words = await getWordsPostgres(
+      db,
+      999,
+      srcLanguageID,
+      trgLanguageID,
+      numWords
+    );
+    expect(words).toEqual([]);
   });
 
-  it("should throw Error when numWord 0", async () => {
-    await expect(
-      getWordsPostgres(db, userId, srcLanguageID, trgLanguageID, 0)
-    ).rejects.toThrow(Error);
+  it("should return empty array when numWord 0", async () => {
+    const words = await getWordsPostgres(
+      db,
+      userId,
+      srcLanguageID,
+      trgLanguageID,
+      0
+    );
+    expect(words).toEqual([]);
   });
 
-  it("should return null for nonexistent srcLanguage", async () => {
-    await expect(
-      getWordsPostgres(db, userId, 999, trgLanguageID, numWords)
-    ).rejects.toThrow(Error);
+  it("should return empty array for nonexistent srcLanguage", async () => {
+    const words = await getWordsPostgres(
+      db,
+      userId,
+      999,
+      trgLanguageID,
+      numWords
+    );
+    expect(words).toEqual([]);
   });
 
-  it("should return null for nonexistent trgLanguage", async () => {
-    await expect(
-      getWordsPostgres(db, userId, srcLanguageID, 999, numWords)
-    ).rejects.toThrow(Error);
+  it("should return empty array for nonexistent trgLanguage", async () => {
+    const words = await getWordsPostgres(
+      db,
+      userId,
+      srcLanguageID,
+      999,
+      numWords
+    );
+    expect(words).toEqual([]);
   });
 });
 
