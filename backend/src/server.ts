@@ -1,9 +1,9 @@
-import express from 'express';
-import cors from 'cors';
+import express from "express";
+import cors from "cors";
 import authRoutes from "./routes/auth.routes";
-import userRouter from './routes/user.routes';
+import userRouter from "./routes/user.routes";
 
-const app = express();
+export const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
@@ -19,7 +19,7 @@ app.get("/", (req, res) => {
 app.use("/auth", authRoutes);
 
 // Protected Route
-app.use('/user', userRouter);
+app.use("/user", userRouter);
 
 // Start server
 app.listen(PORT, () => {

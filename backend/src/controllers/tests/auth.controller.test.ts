@@ -1,36 +1,100 @@
-import { describe, it, expect, vi } from 'vitest';
-import { Client } from 'pg';
-import postgresDB from '../../config/database.config.postgres';
+import request from "supertest";
+import { app } from "../../server";
+import db from "../../config/database.config.postgres";
+import * as userService from "../../services/user.service";
+import { describe, it, expect, vi, afterEach } from "vitest";
 
-vi.mock('pg', () => ({
-  Client: vi.fn().mockImplementation(() => ({
-    connect: vi.fn().mockResolvedValue('connected'),
-    query: vi.fn().mockResolvedValue({ rows: [{ id: 1, name: 'Test User' }] }),
-    end: vi.fn().mockResolvedValue('disconnected'),
-  })),
-}));
+vi.mock("../../services/user.service");
+vi.mock("../../config/database.config.postgres");
 
-describe('Database Configuration with Environment Variables', () => {
-  it('should connect to the test database', async () => {
-    // Override the environment variables for the test
-    process.env.DB_HOST = 'test-db-host';
-    process.env.DB_PORT = '5433';
-    process.env.DB_NAME = 'test-database';
-    process.env.DB_USER = 'test-user';
-    process.env.DB_PASSWORD = 'test-password';
+describe("Auth Controller", () => {
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
 
-    // Now, initialize the postgresDB with new settings
-    const testClient = new Client();  // Uses the new env settings
+  describe("POST /auth/register", () => {
+    it("should return 400 if required fields are missing", async () => {
+      const response = await request(app).post("/auth/register").send({});
+      expect(response.status).toBe(400);
+      expect(response.body.error).toBe(
+        "Username, email and password are all required."
+      );
+    });
 
-    await testClient.connect();
+    it("should return 201 and a token if registration is successful", async () => {
+      vi.spyOn(db, "connect").mockResolvedValueOnce();
+      vi.spyOn(db, "end").mockResolvedValueOnce();
+      vi.spyOn(userService, "registerUserService").mockResolvedValueOnce();
+      vi.spyOn(userService, "loginUserService").mockResolvedValueOnce(
+        "mocked-token"
+      );
 
-    // Assert if the correct connection settings were used
-    expect(testClient).toHaveProperty('host', 'test-db-host');
-    expect(testClient).toHaveProperty('port', 5433);
-    expect(testClient).toHaveProperty('database', 'test-database');
-    expect(testClient).toHaveProperty('user', 'test-user');
-    expect(testClient).toHaveProperty('password', 'test-password');
+      const response = await request(app).post("/auth/register").send({
+        username: "testuser",
+        email: "test@example.com",
+        password: "password123",
+      });
 
-    await testClient.end();
+      expect(response.status).toBe(201);
+      expect(response.body.message).toBe("User registered successfully.");
+      expect(response.body.token).toBe("mocked-token");
+    });
+
+    it("should handle errors during registration", async () => {
+      vi.spyOn(db, "connect").mockResolvedValueOnce();
+      vi.spyOn(db, "end").mockResolvedValueOnce();
+      vi.spyOn(userService, "registerUserService").mockRejectedValueOnce(
+        new Error("Registration error")
+      );
+
+      const response = await request(app).post("/auth/register").send({
+        username: "testuser",
+        email: "test@example.com",
+        password: "password123",
+      });
+
+      expect(response.status).toBe(500);
+      expect(response.body.error).toBe("Internal Server Error");
+    });
+  });
+
+  describe("POST /login", () => {
+    it("should return 400 if email or password is missing", async () => {
+      const response = await request(app).post("/auth/login").send({});
+      expect(response.status).toBe(400);
+      expect(response.body.error).toBe("Email and password are required.");
+    });
+
+    it("should return 200 and a token if login is successful", async () => {
+      vi.spyOn(db, "connect").mockResolvedValueOnce();
+      vi.spyOn(db, "end").mockResolvedValueOnce();
+      vi.spyOn(userService, "loginUserService").mockResolvedValueOnce(
+        "mocked-token"
+      );
+
+      const response = await request(app).post("/auth/login").send({
+        email: "test@example.com",
+        password: "password123",
+      });
+
+      expect(response.status).toBe(200);
+      expect(response.body.token).toBe("mocked-token");
+    });
+
+    it("should handle errors during login", async () => {
+      vi.spyOn(db, "connect").mockResolvedValueOnce();
+      vi.spyOn(db, "end").mockResolvedValueOnce();
+      vi.spyOn(userService, "loginUserService").mockRejectedValueOnce(
+        new Error("Login error")
+      );
+
+      const response = await request(app).post("/auth/login").send({
+        email: "test@example.com",
+        password: "password123",
+      });
+
+      expect(response.status).toBe(500);
+      expect(response.body.error).toBe("Internal Server Error");
+    });
   });
 });

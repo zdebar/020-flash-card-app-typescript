@@ -8,7 +8,7 @@ import {
   findUserPreferencesByIdPostgres,
   insertUserPostgres,
 } from "../repository/user.repository.postgres";
-import { JWT_SECRET, JWT_EXPIRES_IN } from "../config/config";
+import config from "../config/config";
 import { UserError, UserPreferences, PostgresClient } from "../types/dataTypes";
 
 /**
@@ -52,7 +52,7 @@ export async function loginUserService(
     throw new UserError("The provided password is incorrect.");
   }
 
-  const token = createToken(user, JWT_SECRET, JWT_EXPIRES_IN);
+  const token = createToken(user, config.JWT_SECRET, config.JWT_EXPIRES_IN);
   return token;
 }
 
