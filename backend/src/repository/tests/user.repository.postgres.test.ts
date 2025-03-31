@@ -3,7 +3,6 @@ import {
   it,
   expect,
   vi,
-  beforeEach,
   afterEach,
   Mock,
   afterAll,
@@ -32,6 +31,17 @@ describe("findUserByIDPostgres", () => {
     await db.end();
   });
 
+  it("should throw an error for invalid userId (negative or zero)", async () => {
+    await expect(findUserByIdPostgres(db as Client, -1)).rejects.toThrow(Error);
+    await expect(findUserByIdPostgres(db as Client, 0)).rejects.toThrow(Error);
+  });
+
+  it("should throw an error for non-numeric userId", async () => {
+    await expect(
+      findUserByIdPostgres(db as Client, "invalid" as unknown as number)
+    ).rejects.toThrow(Error);
+  });
+
   it("should return user object if found", async () => {
     const result = await findUserByIdPostgres(db as Client, 1);
 
@@ -55,6 +65,13 @@ describe("findUserByIDPostgres", () => {
     await expect(findUserByIdPostgres(mockDb as Client, 1)).rejects.toThrow(
       "Database error"
     );
+  });
+
+  it("should prevent SQL injection attacks", async () => {
+    const maliciousInput = "'test' OR 'a' = 'a'";
+    await expect(
+      findUserByUsernamePostgres(db as Client, maliciousInput)
+    ).rejects.toThrow();
   });
 });
 
@@ -115,6 +132,20 @@ describe("findUserByUsernamePostgres", () => {
     process.env.NODE_ENV = "development";
   });
 
+  it("should prevent SQL injection in username", async () => {
+    const maliciousInput = "'; DROP TABLE users; --";
+    await expect(
+      findUserByUsernamePostgres(db as Client, maliciousInput)
+    ).rejects.toThrow();
+  });
+
+  it("should prevent SQL injection in email", async () => {
+    const maliciousInput = "'; DROP TABLE users; --";
+    await expect(
+      findUserByEmailPostgres(db as Client, maliciousInput)
+    ).rejects.toThrow();
+  });
+
   it("should return user object if found", async () => {
     const result = await findUserByUsernamePostgres(db as Client, "myUser");
 
@@ -138,6 +169,13 @@ describe("findUserByUsernamePostgres", () => {
     await expect(
       findUserByUsernamePostgres(mockDb as Client, "test")
     ).rejects.toThrow("Database error");
+  });
+
+  it("should prevent SQL injection attacks", async () => {
+    const maliciousInput = "'test' OR 'a' = 'a'";
+    await expect(
+      findUserByUsernamePostgres(db as Client, maliciousInput)
+    ).rejects.toThrow();
   });
 });
 
@@ -181,6 +219,12 @@ describe("findUserByEmailPostgres", () => {
     await expect(
       findUserByEmailPostgres(mockDb as Client, "test@example.com")
     ).rejects.toThrow("Database error");
+  });
+
+  it("should return user object for case-insensitive email match", async () => {
+    await expect(
+      findUserByEmailPostgres(db as Client, "MYUSER@example.cz")
+    ).resolves.toBeTruthy();
   });
 });
 
@@ -242,5 +286,95 @@ describe("insertUserPostgres", () => {
         "hashedpassword123"
       )
     ).rejects.toThrow("Database insertion failed");
+  });
+
+  it("should throw an error when username is null", async () => {
+    await expect(
+      insertUserPostgres(
+        db as Client,
+        null as unknown as string,
+        "test@example.com",
+        "hashedpassword123"
+      )
+    ).rejects.toThrow();
+  });
+
+  it("should throw an error when email is empty", async () => {
+    await expect(
+      insertUserPostgres(db as Client, "testuser", "", "hashedpassword123")
+    ).rejects.toThrow();
+  });
+
+  it("should throw an error when username is null or empty", async () => {
+    await expect(
+      insertUserPostgres(
+        db as Client,
+        null as unknown as string,
+        "test@example.com",
+        "hashedpassword123"
+      )
+    ).rejects.toThrow();
+
+    await expect(
+      insertUserPostgres(
+        db as Client,
+        "",
+        "test@example.com",
+        "hashedpassword123"
+      )
+    ).rejects.toThrow();
+  });
+
+  it("should throw an error when email is null or empty", async () => {
+    await expect(
+      insertUserPostgres(
+        db as Client,
+        "testuser",
+        null as unknown as string,
+        "hashedpassword123"
+      )
+    ).rejects.toThrow();
+
+    await expect(
+      insertUserPostgres(db as Client, "testuser", "", "hashedpassword123")
+    ).rejects.toThrow();
+  });
+
+  it("should throw an error when hashedPassword is null or empty", async () => {
+    await expect(
+      insertUserPostgres(
+        db as Client,
+        "testuser",
+        "test@example.com",
+        null as unknown as string
+      )
+    ).rejects.toThrow();
+
+    await expect(
+      insertUserPostgres(db as Client, "testuser", "test@example.com", "")
+    ).rejects.toThrow();
+  });
+
+  it("should throw an error for excessively long username or email", async () => {
+    const longUsername = "a".repeat(256);
+    const longEmail = "a".repeat(256) + "@example.com";
+
+    await expect(
+      insertUserPostgres(
+        db as Client,
+        longUsername,
+        "test@example.com",
+        "hashedpassword123"
+      )
+    ).rejects.toThrow();
+
+    await expect(
+      insertUserPostgres(
+        db as Client,
+        "testuser",
+        longEmail,
+        "hashedpassword123"
+      )
+    ).rejects.toThrow();
   });
 });

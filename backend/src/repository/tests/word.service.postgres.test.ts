@@ -4,7 +4,7 @@ import {
   updateWordsPostgres,
 } from "../word.service.postgres";
 import db from "../../config/database.config.postgres";
-import { UserError, Word } from "../../types/dataTypes";
+import { Word } from "../../types/dataTypes";
 
 describe("getWordsPostgres tests", () => {
   const userId = 1;
@@ -183,6 +183,7 @@ describe("updateWordsPostgres tests", () => {
     await db.query("DELETE FROM user_words WHERE word_id = $1", [
       wordIdToUpdate,
     ]);
+    await db.query("DELETE FROM user_words WHERE word_id = $1", [89]);
     await db.end();
   });
 
@@ -262,5 +263,130 @@ describe("updateWordsPostgres tests", () => {
 
     expect(result.rows.length).toBe(1);
     expect(result.rows[0].progress).toBe(1);
+  });
+
+  it("should throw an error if userId does not exist", async () => {
+    await expect(
+      updateWordsPostgres(db, 9999, wordToUpdateValid)
+    ).rejects.toThrowError(Error);
+  });
+
+  it("should throw an error if wordId does not exist", async () => {
+    const invalidWord: Word[] = [
+      {
+        id: 9999, // Nonexistent word ID
+        src: "test",
+        trg: "test",
+        prn: "test",
+        audio: "test",
+        progress: 5,
+      },
+    ];
+
+    await expect(
+      updateWordsPostgres(db, userId, invalidWord)
+    ).rejects.toThrowError(Error);
+  });
+
+  it("should update multiple words in a single call", async () => {
+    const wordsToUpdate: Word[] = [
+      {
+        id: 88,
+        src: "test1",
+        trg: "test1",
+        prn: "test1",
+        audio: "test1",
+        progress: 3,
+      },
+      {
+        id: 89,
+        src: "test2",
+        trg: "test2",
+        prn: "test2",
+        audio: "test2",
+        progress: 4,
+      },
+    ];
+
+    await updateWordsPostgres(db, userId, wordsToUpdate);
+
+    const result = await db.query(
+      "SELECT * FROM user_words WHERE user_id = $1 AND word_id IN ($2, $3)",
+      [userId, 88, 89]
+    );
+
+    expect(result.rows.length).toBe(2);
+    expect(result.rows[0].progress).toBe(3);
+    expect(result.rows[1].progress).toBe(4);
+  });
+
+  it("should default progress to 1 for invalid progress values", async () => {
+    const wordToUpdate: Word[] = [
+      {
+        id: wordIdToUpdate,
+        src: "test",
+        trg: "test",
+        prn: "test",
+        audio: "test",
+        progress: -5,
+      },
+    ];
+
+    await updateWordsPostgres(db, userId, wordToUpdate);
+
+    const result = await db.query(
+      "SELECT * FROM user_words WHERE user_id = $1 AND word_id = $2",
+      [userId, wordIdToUpdate]
+    );
+
+    expect(result.rows.length).toBe(1);
+    expect(result.rows[0].progress).toBe(1);
+  });
+
+  it("should mark a word as learned if progress is equal learnedAt limit", async () => {
+    const wordToUpdate: Word[] = [
+      {
+        id: wordIdToUpdate,
+        src: "test",
+        trg: "test",
+        prn: "test",
+        audio: "test",
+        progress: 14,
+      },
+    ];
+
+    await updateWordsPostgres(db, userId, wordToUpdate);
+
+    const result = await db.query(
+      "SELECT * FROM user_words WHERE user_id = $1 AND word_id = $2",
+      [userId, wordIdToUpdate]
+    );
+
+    expect(result.rows.length).toBe(1);
+    expect(result.rows[0].learned_at).not.toBeNull();
+    expect(result.rows[0].mastered_at).toBeNull();
+  });
+
+  it("should mark a word as mastered if progress is over SRS.length", async () => {
+    const wordToUpdate: Word[] = [
+      {
+        id: wordIdToUpdate,
+        src: "test",
+        trg: "test",
+        prn: "test",
+        audio: "test",
+        progress: 25,
+      },
+    ];
+
+    await updateWordsPostgres(db, userId, wordToUpdate);
+
+    const result = await db.query(
+      "SELECT * FROM user_words WHERE user_id = $1 AND word_id = $2",
+      [userId, wordIdToUpdate]
+    );
+
+    expect(result.rows.length).toBe(1);
+    expect(result.rows[0].mastered_at).not.toBeNull();
   });
 });

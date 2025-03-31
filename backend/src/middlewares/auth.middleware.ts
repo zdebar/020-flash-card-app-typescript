@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { User } from "../types/dataTypes";
 import { verifyToken } from "../utils/auth.utils";
-import { JWT_SECRET } from "../config/config";
+import config from "../config/config";
 import logger from "../utils/logger.utils";
 
 /**
@@ -29,8 +29,14 @@ export function authenticateTokenMiddleware(
     return;
   }
 
+  if (!config.JWT_SECRET) {
+    logger.error("JWT secret is not defined in the configuration.");
+    res.status(500).json({ error: "Internal server error" });
+    return;
+  }
+
   try {
-    const decoded = verifyToken(token, JWT_SECRET);
+    const decoded = verifyToken(token, config.JWT_SECRET);
     (req as any).user = decoded as User;
     next();
   } catch (err: any) {

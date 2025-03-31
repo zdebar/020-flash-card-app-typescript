@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import path from "path";
 import { describe, it, expect, afterAll } from "vitest";
-import { JWT_SECRET, SRS } from "../config";
+import config from "../config";
 
 describe("Environment Configuration", () => {
   afterAll(() => {
@@ -21,10 +21,10 @@ describe("Environment Configuration", () => {
   });
 
   it("should be an array of numbers", () => {
-    expect(Array.isArray(SRS)).toBe(true);
-    SRS.forEach((item) => {
+    expect(Array.isArray(config.SRS)).toBe(true);
+    config.SRS.forEach((item) => {
       expect(typeof item).toBe("number");
     });
-    console.log(SRS);
+    console.log(config.SRS);
   });
 });

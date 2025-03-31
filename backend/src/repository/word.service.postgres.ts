@@ -1,5 +1,5 @@
 import { Word, PostgresClient, UserError } from "../types/dataTypes";
-import { SRS } from "../config/config";
+import config from "../config/config";
 
 /**
  * Retrieves a list of words from a PostgreSQL database for a specific user,
@@ -37,7 +37,7 @@ export async function getWordsPostgres(
     LEFT JOIN user_words uw ON target.id = uw.word_id AND uw.user_id = $1
     WHERE source.language_id = $2
       AND target.language_id = $3
-      AND uw.learned_at IS NULL
+      AND uw.mastered_at IS NULL
       AND EXISTS (SELECT 1 FROM user_words WHERE user_id = $1)
     ORDER BY 
       CASE 
@@ -64,7 +64,7 @@ export async function getWordsPostgres(
  *
  * This function inserts or updates records in the `user_words` table for the given user and words.
  * If a record for a specific `user_id` and `word_id` already exists, it updates the `progress`,
- * `next_at`, and `learned_at` fields. Otherwise, it inserts a new record.
+ * `next_at`, `learned_at`, and `mastered_at` fields. Otherwise, it inserts a new record.
  *
  * @param db - The PostgreSQL client instance used to execute the query.
  * @param userId - The ID of the user whose word progress is being updated.
@@ -83,35 +83,39 @@ export async function updateWordsPostgres(
   const values: unknown[] = [];
 
   const query = `
-    INSERT INTO user_words (user_id, word_id, progress, next_at, learned_at)
+    INSERT INTO user_words (user_id, word_id, progress, next_at, learned_at, mastered_at)
     VALUES 
     ${words
       .map(
         (_, index) =>
-          `($${index * 5 + 1}, $${index * 5 + 2}, $${index * 5 + 3}, $${
-            index * 5 + 4
-          }, $${index * 5 + 5})`
+          `($${index * 6 + 1}, $${index * 6 + 2}, $${index * 6 + 3}, $${
+            index * 6 + 4
+          }, $${index * 6 + 5}, $${index * 6 + 6})`
       )
       .join(", ")}
     ON CONFLICT(user_id, word_id) 
-    DO UPDATE SET progress = EXCLUDED.progress, next_at = EXCLUDED.next_at, learned_at = EXCLUDED.learned_at;
+    DO UPDATE SET progress = EXCLUDED.progress, next_at = EXCLUDED.next_at, learned_at = EXCLUDED.learned_at, mastered_at = EXCLUDED.mastered_at;
   `;
 
   words.forEach((word) => {
     const progress =
       Number.isInteger(word.progress) && word.progress > 0 ? word.progress : 1;
-    const interval = SRS[progress - 1] ?? null;
+    const interval = config.SRS[progress - 1] ?? null;
 
     let nextAt: string | null = null;
     let learnedAt: string | null = null;
+    let masteredAt: string | null = null;
 
     if (interval !== null) {
       nextAt = new Date(today.getTime() + interval * 1000).toISOString();
+      if (progress === config.learnedAt) {
+        learnedAt = today.toISOString();
+      }
     } else {
-      learnedAt = today.toISOString();
+      masteredAt = today.toISOString();
     }
 
-    values.push(userId, word.id, progress, nextAt, learnedAt);
+    values.push(userId, word.id, progress, nextAt, learnedAt, masteredAt);
   });
 
   await db.query(query, values);

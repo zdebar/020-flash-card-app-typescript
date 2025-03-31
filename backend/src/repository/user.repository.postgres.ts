@@ -1,3 +1,4 @@
+import { Hash } from "crypto";
 import {
   User,
   UserLogin,
@@ -127,6 +128,25 @@ export async function insertUserPostgres(
   email: string,
   hashedPassword: string
 ): Promise<void> {
+  if (!username || username.trim() === "") {
+    throw new UserError("Username cannot be empty");
+  }
+  if (!email || email.trim() === "") {
+    throw new UserError("Email cannot be empty");
+  }
+  if (!hashedPassword || hashedPassword.trim() === "") {
+    throw new UserError("Password cannot be empty");
+  }
+  if (username.length > 255) {
+    throw new UserError("Username cannot exceed 255 characters");
+  }
+  if (email.length > 255) {
+    throw new UserError("Email cannot exceed 255 characters");
+  }
+  if (username.length > 255) {
+    throw new UserError("Username cannot exceed 255 characters");
+  }
+
   try {
     await db.query(
       "INSERT INTO users (username, email, password) VALUES ($1, $2, $3)",

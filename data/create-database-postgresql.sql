@@ -1,14 +1,23 @@
 -- Enable the UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp"; 
+CREATE EXTENSION IF NOT EXISTS citext;
 
 -- Create tables
 
 CREATE TABLE IF NOT EXISTS users (
   id SERIAL PRIMARY KEY,
-  username TEXT NOT NULL UNIQUE,
-  email TEXT NOT NULL UNIQUE, -- primary login identification
-  password TEXT NOT NULL, -- hashed by bcryp, 10 salt rounds
+  username VARCHAR(255) NOT NULL UNIQUE CHECK (username <> ''),
+  email CITEXT NOT NULL UNIQUE CHECK (email <> ''),
+  password VARCHAR(255) NOT NULL CHECK (password <> ''),
   created_at TEXT DEFAULT (TO_CHAR(NOW(), 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"')) -- text format data to ensure future synchronization with offline SQLite database
+);
+
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  username VARCHAR(255) NOT NULL CHECK (username <> ''), -- Reject empty strings
+  email VARCHAR(255) NOT NULL CHECK (email <> ''),       -- Reject empty strings
+  password TEXT NOT NULL CHECK (password <> ''),         -- Reject empty strings
+  created_at TIMESTAMP DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS user_preferences (
@@ -66,6 +75,7 @@ CREATE TABLE IF NOT EXISTS user_words (
   word_id INTEGER NOT NULL,
   progress INTEGER DEFAULT 1 CHECK (progress >= 1), -- main learning index
   learned_at TEXT,
+  mastered_at TEXT,
   next_at TEXT DEFAULT (TO_CHAR(NOW(), 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"')),
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
   FOREIGN KEY (word_id) REFERENCES words(id) ON DELETE CASCADE,

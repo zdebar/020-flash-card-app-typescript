@@ -41,7 +41,7 @@ export function createToken(
   JWT_EXPIRES_IN: string | undefined
 ): string {
   if (!JWT_SECRET_KEY || !JWT_EXPIRES_IN)
-    throw new Error(`ENV variables not loaded!`);
+    throw new Error(`JWT_SECRET_KEY or JWT_EXPIRES_IN not provided!`);
 
   const payload: User = {
     id: user.id,
@@ -65,7 +65,7 @@ export function verifyToken(
   token: string,
   JWT_SECRET_KEY: string | undefined
 ): User {
-  if (!JWT_SECRET_KEY) throw new Error(`ENV variables not loaded!`);
+  if (!JWT_SECRET_KEY) throw new Error(`JWT_SECRET_KEY not provided!`);
 
   const decoded = jwt.verify(token, JWT_SECRET_KEY);
   return decoded as User;

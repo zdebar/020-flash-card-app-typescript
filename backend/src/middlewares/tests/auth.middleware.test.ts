@@ -12,7 +12,7 @@ declare global {
   }
 }
 
-vi.mock("../utils/auth.utils");
+vi.mock("../../utils/auth.utils");
 
 describe("authenticateTokenMiddleware", () => {
   const mockNext = vi.fn();

@@ -12,6 +12,6 @@ export async function closeDbConnection(db: Client) {
   try {
     await db.end();
   } catch (err: any) {
-    logger.error("Error closing database connection:", err.message);
+    logger.error("Error closing database connection:", err);
   }
 }
