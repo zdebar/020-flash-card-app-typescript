@@ -7,6 +7,7 @@ export interface Word {
   prn: string | null;
   audio: string | null;
   progress: number;
+  learned_at: string | null;
 }
 
 export interface User {

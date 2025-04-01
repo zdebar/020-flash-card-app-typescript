@@ -39,29 +39,29 @@ export default function RegisterCard() {
   };
 
   return (
-    <AuthForm title="Register" onSubmit={handleRegister} error={error}>
+    <AuthForm title="Registrace" onSubmit={handleRegister} error={error}>
       <InputForm
         type="text"
-        label="Username"
-        placeholder="Enter your username"
+        label="Uživatelské jméno"
+        placeholder="Zadejte své uživatelské jméno"
         value={username}
         onChange={setUsername}
       />
       <InputForm
         type="email"
         label="Email"
-        placeholder="Enter your email"
+        placeholder="Zadejte svůj e-mail"
         value={email}
         onChange={setEmail}
       />
       <InputForm
         type="password"
-        label="Password"
-        placeholder="Enter your password"
+        label="Heslo"
+        placeholder="Zadejte svoje heslo"
         value={password}
         onChange={setPassword}
       />
-      <SubmitButton>Register</SubmitButton>
+      <SubmitButton>Zaregistrovat se</SubmitButton>
     </AuthForm>
   );
 }

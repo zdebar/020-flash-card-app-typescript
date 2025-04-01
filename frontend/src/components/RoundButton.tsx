@@ -16,7 +16,7 @@ export function RoundButton({
   return (
     <NavLink to={to} className={className}>
       <button
-        className={`color-blue color-blue-hover flex h-12 w-12 items-center justify-center rounded-full`}
+        className={`color-primary color-primary-hover flex h-12 w-12 items-center justify-center rounded-full`}
       >
         {children}
       </button>

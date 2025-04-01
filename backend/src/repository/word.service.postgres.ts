@@ -30,7 +30,8 @@ export async function getWordsPostgres(
       target.word AS trg, 
       target.prn AS prn,
       target.audio AS audio,
-      COALESCE(uw.progress,0) AS progress
+      COALESCE(uw.progress,0) AS progress,
+      uw.learned_at AS learned_at
     FROM words source
     JOIN word_meanings wm_src ON source.id = wm_src.word_id
     JOIN word_meanings wm_trg ON wm_src.meaning_id = wm_trg.meaning_id
@@ -45,7 +46,7 @@ export async function getWordsPostgres(
         WHEN progress > 0 THEN 1
         ELSE 2
       END ASC,
-      progress ASC,
+      uw.next_at ASC,
       target.seq ASC
     LIMIT $4;
   `;

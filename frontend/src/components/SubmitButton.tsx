@@ -8,7 +8,7 @@ export function SubmitButton({ children, ...props }: SubmitButtonProps) {
   return (
     <button
       type="submit"
-      className={`color-blue color-blue-hover flex h-10 w-full items-center justify-center rounded-md`}
+      className={`color-primary color-primary-hover flex h-10 w-full items-center justify-center rounded-md`}
       {...props}
     >
       {children}

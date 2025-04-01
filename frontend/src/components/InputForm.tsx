@@ -23,16 +23,13 @@ export function InputForm({
 
   return (
     <div className="mb-4">
-      <label
-        htmlFor={label}
-        className="mb-1 block text-sm font-semibold text-black"
-      >
+      <label htmlFor={label} className="label mb-1 block text-sm font-semibold">
         {label}
       </label>
       <input
         type={type}
         id={label}
-        className="w-full rounded-md border border-gray-300 bg-white p-2 text-sm"
+        className="w-full rounded-md border border-gray-300 bg-white p-2 text-sm text-black"
         placeholder={placeholder}
         value={value}
         onChange={handleChange}

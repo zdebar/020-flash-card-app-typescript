@@ -42,22 +42,22 @@ export default function LoginCard() {
   };
 
   return (
-    <AuthForm title="Login" onSubmit={handleLogin} error={error}>
+    <AuthForm title="Přihlášení" onSubmit={handleLogin} error={error}>
       <InputForm
         type="email"
         label="Email"
-        placeholder="Enter your email"
+        placeholder="Zadejte svůj e-mail"
         value={email}
         onChange={setEmail}
       />
       <InputForm
         type="password"
-        label="Password"
-        placeholder="Enter your password"
+        label="Heslo"
+        placeholder="Zadejte svoje heslo"
         value={password}
         onChange={setPassword}
       />
-      <SubmitButton>Login</SubmitButton>
+      <SubmitButton>Přihlásit se</SubmitButton>
       <RegisterLink />
     </AuthForm>
   );

@@ -8,35 +8,35 @@
   Button {
     @apply shadow-[2px_2px_4px_rgba(0,0,0,0.2)] active:shadow-none;
   }
+
+  Button.color-primary {
+    @apply shadow-[2px_2px_4px_rgba(0,0,0,0.3)];
+  }
 }
 
 @layer components {
   /** Button behavior*/
 
   /** Button Colors */
-  .color-blue {
-    @apply bg-blue-600 text-white;
+  .color-primary {
+    @apply bg-blue-600 text-white dark:bg-blue-800 dark:text-white;
   }
 
-  .color-blue-hover {
-    @apply hover:bg-blue-800;
+  .color-primary-hover {
+    @apply hover:bg-blue-800 dark:hover:bg-blue-600;
   }
 
-  .color-gray {
-    @apply bg-gray-100;
+  .color-secondary {
+    @apply bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-white;
   }
 
-  .color-gray-hover {
-    @apply hover:bg-gray-200;
+  .color-secondary-hover {
+    @apply hover:bg-gray-200 dark:hover:bg-gray-700;
   }
 
   /** Text classes*/
 
   .label {
-    @apply mb-1 block text-sm font-semibold text-black;
-  }
-
-  .input {
-    @apply w-full rounded-md border border-gray-300 bg-white p-2 text-sm;
+    @apply text-black dark:text-white;
   }
 }

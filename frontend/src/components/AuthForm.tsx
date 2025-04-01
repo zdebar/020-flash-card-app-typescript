@@ -21,7 +21,7 @@ export function AuthForm({
   };
 
   return (
-    <div className="color-gray w-[320px] rounded-md p-4">
+    <div className="color-secondary w-[320px] rounded-md p-4">
       <h2 className="mb-4 text-center text-2xl font-bold">{title}</h2>
 
       {error && <div className="mb-4 text-sm text-red-500">{error}</div>}

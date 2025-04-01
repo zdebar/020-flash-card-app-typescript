@@ -1,7 +1,6 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { User } from "../types/dataTypes";
-import logger from "./logger.utils";
 
 /**
  * Hashes a plain text password using bcrypt with a salt round of 10.
