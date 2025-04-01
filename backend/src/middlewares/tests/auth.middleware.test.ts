@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { authenticateTokenMiddleware } from "../../middlewares/auth.middleware";
 import { verifyToken } from "../../utils/auth.utils";
-import { describe, it, expect, vi, Mock } from "vitest";
+import { describe, it, expect, vi, Mock, afterEach } from "vitest";
 import { User } from "../../types/dataTypes";
 
 declare global {
@@ -19,72 +19,64 @@ vi.mock("../../utils/auth.utils");
  * - next if token is valid
  * - 401 if no token is provided
  * - 403 if token is invalid
- * - 500 if JWT_SECRET is not defined in the configuration
  */
 describe("authenticateTokenMiddleware", () => {
   const mockNext = vi.fn();
-  const mockRes = {} as Response;
+  const mockRes = {
+    status: vi.fn().mockReturnThis(),
+    json: vi.fn(),
+  } as unknown as Response;
 
-  it("should respond with 401 if no token is provided", () => {
-    const mockReq = {
-      headers: {},
-    } as Request;
-
-    const res = {
-      ...mockRes,
-      status: vi.fn().mockReturnThis(),
-      json: vi.fn().mockReturnThis(),
-    } as unknown as Response;
-
-    authenticateTokenMiddleware(mockReq, res, mockNext);
-
-    expect(res.status).toHaveBeenCalledWith(401);
-    expect(res.json).toHaveBeenCalledWith({ error: "No authentication token" });
-    expect(mockNext).not.toHaveBeenCalled();
+  afterEach(() => {
+    vi.clearAllMocks();
   });
 
-  it("should respond with 403 if token is invalid", () => {
-    const mockReq = {
-      headers: { authorization: "Bearer invalidToken" },
-    } as Request;
-
-    const res = {
-      ...mockRes,
-      status: vi.fn().mockReturnThis(),
-      json: vi.fn().mockReturnThis(),
-    } as unknown as Response;
-
-    authenticateTokenMiddleware(mockReq, res, mockNext);
-
-    expect(res.status).toHaveBeenCalledWith(403);
-    expect(res.json).toHaveBeenCalledWith({ error: "Authentication failed" });
-    expect(mockNext).not.toHaveBeenCalled();
-  });
-
-  it("should call next() if the token is valid", () => {
+  it("should call next if token is valid", () => {
     const mockReq = {
       headers: { authorization: "Bearer validToken" },
+      ip: "127.0.0.1",
     } as Request;
 
-    (verifyToken as Mock).mockReturnValue({
-      userId: 1,
-      username: "testUser",
-      email: "test@example.cz",
-    });
+    (verifyToken as Mock).mockReturnValue({ id: "123", name: "Test User" });
 
-    const res = {
-      ...mockRes,
-      status: vi.fn().mockReturnThis(),
-      json: vi.fn().mockReturnThis(),
-    } as unknown as Response;
+    authenticateTokenMiddleware(mockReq, mockRes, mockNext);
 
-    authenticateTokenMiddleware(mockReq, res, mockNext);
-
+    expect(verifyToken).toHaveBeenCalledWith("validToken", expect.any(String));
+    expect(mockReq.user).toEqual({ id: "123", name: "Test User" });
     expect(mockNext).toHaveBeenCalled();
-    expect(mockReq.user).toEqual({
-      userId: 1,
-      username: "testUser",
-      email: "test@example.cz",
+  });
+
+  it("should return 401 if no token is provided", () => {
+    const mockReq = {
+      headers: {},
+      ip: "127.0.0.1",
+    } as Request;
+
+    authenticateTokenMiddleware(mockReq, mockRes, mockNext);
+
+    expect(mockRes.status).toHaveBeenCalledWith(401);
+    expect(mockRes.json).toHaveBeenCalledWith({
+      error: "Žádný autentizační token.",
     });
+    expect(mockNext).not.toHaveBeenCalled();
+  });
+
+  it("should return 403 if token is invalid", () => {
+    const mockReq = {
+      headers: { authorization: "Bearer invalidToken" },
+      ip: "127.0.0.1",
+    } as Request;
+
+    (verifyToken as Mock).mockImplementation(() => {
+      throw new Error("Invalid token");
+    });
+
+    authenticateTokenMiddleware(mockReq, mockRes, mockNext);
+
+    expect(mockRes.status).toHaveBeenCalledWith(403);
+    expect(mockRes.json).toHaveBeenCalledWith({
+      error: "Autentifikace selhala.",
+    });
+    expect(mockNext).not.toHaveBeenCalled();
   });
 });

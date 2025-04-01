@@ -33,7 +33,7 @@ export async function registerUserController(
   if (!username || !email || !password) {
     res
       .status(400)
-      .json({ error: "Username, email and password are all required." });
+      .json({ error: "Uživatelské jméno, email, i heslo jsou vyžadovány." });
     return;
   }
 
@@ -42,7 +42,7 @@ export async function registerUserController(
   try {
     await registerUserService(postgresDBPool, username, email, password);
     const token = await loginUserService(postgresDBPool, email, password);
-    res.status(201).json({ message: "User registered successfully.", token });
+    res.status(201).json({ message: "Uživatel úspěšně zaregistrován.", token });
   } catch (err: any) {
     next(err);
   }
@@ -79,6 +79,7 @@ export async function loginUserController(
 
   try {
     const token = await loginUserService(postgresDBPool, email, password);
+
     res.json({ token });
   } catch (err: any) {
     next(err);

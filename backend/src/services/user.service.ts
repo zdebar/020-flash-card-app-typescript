@@ -10,6 +10,8 @@ import {
 } from "../repository/user.repository.postgres";
 import config from "../config/config";
 import { UserError, UserPreferences, PostgresClient } from "../types/dataTypes";
+import { log } from "console";
+import logger from "../utils/logger.utils";
 
 /**
  * Registers a new user in the system by hashing the provided password
@@ -49,7 +51,7 @@ export async function loginUserService(
   const passwordMatch = await comparePasswords(password, user.password);
 
   if (!passwordMatch) {
-    throw new UserError("The provided password is incorrect.");
+    throw new UserError("Zadané heslo je nesprávné");
   }
 
   const token = createToken(user, config.JWT_SECRET, config.JWT_EXPIRES_IN);

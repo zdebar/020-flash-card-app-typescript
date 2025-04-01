@@ -1,5 +1,5 @@
 import { describe, it, expect, afterAll } from "vitest";
-import postgresDBClient from "../database.config.postgres";
+import { postgresDBClient } from "../database.config.postgres";
 
 describe("Database Configuration Test", () => {
   afterAll(() => {

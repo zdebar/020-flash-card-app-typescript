@@ -25,13 +25,7 @@ export function authenticateTokenMiddleware(
 
   if (!token) {
     logger.error(`Authentication failed: No token provided for ${req.ip}`);
-    res.status(401).json({ error: "No authentication token" });
-    return;
-  }
-
-  if (!config.JWT_SECRET) {
-    logger.error("JWT secret is not defined in the configuration.");
-    res.status(500).json({ error: "Internal server error" });
+    res.status(401).json({ error: "Žádný autentizační token." });
     return;
   }
 
@@ -41,6 +35,6 @@ export function authenticateTokenMiddleware(
     next();
   } catch (err: any) {
     logger.debug(`Authentication failed: ${err.message}`);
-    res.status(403).json({ error: "Authentication failed" });
+    res.status(403).json({ error: "Autentifikace selhala." });
   }
 }

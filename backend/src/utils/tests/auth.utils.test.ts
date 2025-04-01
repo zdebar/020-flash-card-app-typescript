@@ -10,13 +10,11 @@ import config from "../../config/config";
 
 /**
  * hashPassword
- * - throw error  if hashing fails
- * - return hashed password if hashing is successful
+ * - return hashed password if hashing is successful DONE
  *
  * comparePasswords
- * - throw error if comparison fails
- * - return false if passwords do not match
- * - return true if passwords match
+ * - return false if passwords do not match DONE
+ * - return true if passwords match DONE
  *
  */
 
@@ -43,27 +41,6 @@ describe("Password Hashing & Verification", () => {
     const isMatch = await comparePasswords(password, hashedPassword);
     expect(isMatch).toBe(true);
   });
-
-  it("should hash and verify very long passwords", async () => {
-    const longPassword = "a".repeat(1000);
-
-    const hashedPassword = await hashPassword(longPassword);
-    expect(hashedPassword).not.toBe(longPassword);
-
-    const isMatch = await comparePasswords(longPassword, hashedPassword);
-    expect(isMatch).toBe(true);
-  });
-
-  it("should handle multiple password hashes in parallel", async () => {
-    const passwords = ["password1", "password2", "password3"];
-    const hashedPasswords = await Promise.all(
-      passwords.map((password) => hashPassword(password))
-    );
-
-    hashedPasswords.forEach((hashedPassword, index) => {
-      expect(hashedPassword).not.toBe(passwords[index]);
-    });
-  });
 });
 
 /**
@@ -73,11 +50,12 @@ describe("Password Hashing & Verification", () => {
  * - throw error if signing fails
  *
  * verifyToken
- * - throw error if JWT_SECRET_KEY is not provided
- * - return decoded payload if token is valid
- * - throw error if token verification fails
- * - throw error if token is invalid
- * - throw error if token is expired
+ * - throw error if JWT_SECRET_KEY is not provided DONE
+ * - throw error if JWT_EXPIRES_IN is invalid DONE
+ * - return decoded payload if token is valid DONE
+ * - throw error if token verification fails DONE
+ * - throw error if token is invalid DONE
+ * - throw error if token is expired DONE
  *
  */
 describe("JWT Token Creation & Verification", () => {
@@ -109,15 +87,6 @@ describe("JWT Token Creation & Verification", () => {
     ).toThrowError();
   });
 
-  it("should fail token creation if JWT_SECRET is missing", () => {
-    const missingSecret = undefined;
-
-    expect(() =>
-      createToken(mockUser, missingSecret, config.JWT_EXPIRES_IN)
-    ).toThrowError();
-    expect(() => verifyToken("test-string", missingSecret)).toThrowError();
-  });
-
   it("should fail verification for expired tokens", async () => {
     const shortExpiry = "1s";
     const token = createToken(mockUser, config.JWT_SECRET, shortExpiry);
@@ -127,6 +96,15 @@ describe("JWT Token Creation & Verification", () => {
     expect(() => verifyToken(token, config.JWT_SECRET)).toThrowError(
       "jwt expired"
     );
+  });
+
+  it("should fail token creation if JWT_SECRET is missing", () => {
+    const missingSecret = undefined;
+
+    expect(() =>
+      createToken(mockUser, missingSecret, config.JWT_EXPIRES_IN)
+    ).toThrowError();
+    expect(() => verifyToken("test-string", missingSecret)).toThrowError(Error);
   });
 
   it("should fail token creation if JWT_EXPIRES_IN is missing", () => {

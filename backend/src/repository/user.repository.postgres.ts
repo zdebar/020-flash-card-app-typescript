@@ -7,6 +7,7 @@ import {
 } from "../types/dataTypes";
 import { QueryResult } from "pg";
 import { PoolClient } from "pg";
+import logger from "../utils/logger.utils";
 
 /**
  * Finds a user by their ID in a PostgreSQL database.
@@ -123,7 +124,7 @@ export async function findUserByEmailPostgres(
   );
 
   if (!user.rows.length) {
-    throw new UserError(`User with email: ${email} does not exist!`);
+    throw new UserError(`Uživatel s emailem: ${email} neexistuje!`);
   }
   return user.rows[0];
 }
@@ -146,19 +147,19 @@ export async function insertUserPostgres(
   hashedPassword: string
 ): Promise<void> {
   if (!username || username.trim() === "") {
-    throw new UserError("Username cannot be empty");
+    throw new UserError("Uživatelské jméno nemůže být prázdné");
   }
   if (!email || email.trim() === "") {
-    throw new UserError("Email cannot be empty");
+    throw new UserError("Email nemůže být prázdný");
   }
   if (!hashedPassword || hashedPassword.trim() === "") {
-    throw new UserError("Password cannot be empty");
+    throw new UserError("Heslo nemůže být prázdné");
   }
   if (username.length > 255) {
-    throw new UserError("Username cannot exceed 255 characters");
+    throw new UserError("Uživatelské jméno nemůže být delší než 255 znaků");
   }
   if (email.length > 255) {
-    throw new UserError("Email cannot exceed 255 characters");
+    throw new UserError("Email nemůže být delší než 255 znaků");
   }
 
   const client = (await db.connect()) as PoolClient;
@@ -171,9 +172,9 @@ export async function insertUserPostgres(
   } catch (err: any) {
     if (err.code === "23505") {
       if (err.detail.includes("username")) {
-        throw new UserError("Username is already taken.");
+        throw new UserError("Uživatelské jméno je již obsaženo");
       } else if (err.detail.includes("email")) {
-        throw new UserError("Email is already taken.");
+        throw new UserError("Email je již obsažen");
       }
     }
     throw err;

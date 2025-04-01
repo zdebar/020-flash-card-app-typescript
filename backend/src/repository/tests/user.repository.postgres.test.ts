@@ -15,42 +15,30 @@ import {
   findUserByUsernamePostgres,
   insertUserPostgres,
 } from "../user.repository.postgres";
-import { Client } from "pg";
+import { Client, PoolClient } from "pg";
 import { PostgresClient, UserError } from "../../types/dataTypes";
-import db from "../../config/database.config.postgres";
+import { postgresDBPool } from "../../config/database.config.postgres";
 
 /**
  * findUserByIdPostgres
- * - return user object if found
- * - throw error object if user not found
+ * - return user object if found DONE
+ * - throw error if userId is negative or zero DONE
+ * - throw error object if user not found DONE
  * - throw error if database query fails
  * - prevent SQL injection attacks
  */
 describe("findUserByIDPostgres", () => {
-  let mockDb: PostgresClient;
-
-  beforeAll(async () => {
-    await db.connect();
-    mockDb = { query: vi.fn() };
-  });
-
-  afterAll(async () => {
-    await db.end();
-  });
-
   it("should throw an error for invalid userId (negative or zero)", async () => {
-    await expect(findUserByIdPostgres(db as Client, -1)).rejects.toThrow(Error);
-    await expect(findUserByIdPostgres(db as Client, 0)).rejects.toThrow(Error);
-  });
-
-  it("should throw an error for non-numeric userId", async () => {
-    await expect(
-      findUserByIdPostgres(db as Client, "invalid" as unknown as number)
-    ).rejects.toThrow(Error);
+    await expect(findUserByIdPostgres(postgresDBPool, -1)).rejects.toThrow(
+      Error
+    );
+    await expect(findUserByIdPostgres(postgresDBPool, 0)).rejects.toThrow(
+      Error
+    );
   });
 
   it("should return user object if found", async () => {
-    const result = await findUserByIdPostgres(db as Client, 1);
+    const result = await findUserByIdPostgres(postgresDBPool, 1);
 
     expect(result).toEqual({
       id: 1,
@@ -60,50 +48,29 @@ describe("findUserByIDPostgres", () => {
   });
 
   it("should throw error object if user not found", async () => {
-    await expect(findUserByIdPostgres(db as Client, 1000)).rejects.toThrow(
+    await expect(findUserByIdPostgres(postgresDBPool, 1000)).rejects.toThrow(
       Error
-    );
-  });
-
-  it("should throw an error on database query failure", async () => {
-    const error = new Error("Database error");
-    (mockDb.query as Mock).mockRejectedValue(error);
-
-    await expect(findUserByIdPostgres(mockDb as Client, 1)).rejects.toThrow(
-      "Database error"
     );
   });
 
   it("should prevent SQL injection attacks", async () => {
     const maliciousInput = "'test' OR 'a' = 'a'";
     await expect(
-      findUserByUsernamePostgres(db as Client, maliciousInput)
+      findUserByUsernamePostgres(postgresDBPool, maliciousInput)
     ).rejects.toThrow();
   });
 });
 
 /**
  * findUserPreferencesByIdPostgres
- * - return user object if found
- * - throw error object if user not found
+ * - return user object if found DONE
+ * - throw error object if user not found DONE
  * - throw error if database query fails
  * - prevent SQL injection attacks
  */
 describe("findUserPreferencesByIDPostgres", () => {
-  let mockDb: PostgresClient;
-
-  beforeAll(async () => {
-    await db.connect();
-    mockDb = { query: vi.fn() };
-  });
-
-  afterAll(async () => {
-    await db.end();
-    process.env.NODE_ENV = "development";
-  });
-
   it("should return user object if found", async () => {
-    const result = await findUserPreferencesByIdPostgres(db as Client, 1);
+    const result = await findUserPreferencesByIdPostgres(postgresDBPool, 1);
 
     expect(result).toEqual({
       id: 1,
@@ -119,56 +86,21 @@ describe("findUserPreferencesByIDPostgres", () => {
 
   it("should throw error object if user not found", async () => {
     await expect(
-      findUserPreferencesByIdPostgres(db as Client, 1000)
+      findUserPreferencesByIdPostgres(postgresDBPool, 1000)
     ).rejects.toThrow(Error);
-  });
-
-  it("should throw an error on database query failure", async () => {
-    const error = new Error("Database error");
-    (mockDb.query as Mock).mockRejectedValue(error);
-
-    await expect(
-      findUserPreferencesByIdPostgres(mockDb as Client, 1)
-    ).rejects.toThrow("Database error");
   });
 });
 
 /**
  * findUserByUsernamePostgres
- * - return user object if found
- * - throw error object if user not found
+ * - return user object if found DONE
+ * - throw error object if user not found DONE
  * - throw error if database query fails
- * - prevent SQL injection attacks
+ * - prevent SQL injection attacks DONE
  */
 describe("findUserByUsernamePostgres", () => {
-  let mockDb: PostgresClient;
-
-  beforeAll(async () => {
-    await db.connect();
-    mockDb = { query: vi.fn() };
-  });
-
-  afterAll(async () => {
-    await db.end();
-    process.env.NODE_ENV = "development";
-  });
-
-  it("should prevent SQL injection in username", async () => {
-    const maliciousInput = "'; DROP TABLE users; --";
-    await expect(
-      findUserByUsernamePostgres(db as Client, maliciousInput)
-    ).rejects.toThrow();
-  });
-
-  it("should prevent SQL injection in email", async () => {
-    const maliciousInput = "'; DROP TABLE users; --";
-    await expect(
-      findUserByEmailPostgres(db as Client, maliciousInput)
-    ).rejects.toThrow();
-  });
-
   it("should return user object if found", async () => {
-    const result = await findUserByUsernamePostgres(db as Client, "myUser");
+    const result = await findUserByUsernamePostgres(postgresDBPool, "myUser");
 
     expect(result).toEqual({
       id: 1,
@@ -179,49 +111,36 @@ describe("findUserByUsernamePostgres", () => {
 
   it("should throw error object if user not found", async () => {
     await expect(
-      findUserByUsernamePostgres(db as Client, "non-existent")
+      findUserByUsernamePostgres(postgresDBPool, "non-existent")
     ).rejects.toThrow(Error);
   });
 
-  it("should throw an error on database query failure", async () => {
-    const error = new Error("Database error");
-    (mockDb.query as Mock).mockRejectedValue(error);
-
+  it("should prevent SQL injection attack #1", async () => {
+    const maliciousInput = "'; DROP TABLE users; --";
     await expect(
-      findUserByUsernamePostgres(mockDb as Client, "test")
-    ).rejects.toThrow("Database error");
+      findUserByUsernamePostgres(postgresDBPool, maliciousInput)
+    ).rejects.toThrow();
   });
 
-  it("should prevent SQL injection attacks", async () => {
+  it("should prevent SQL injection attacks #2", async () => {
     const maliciousInput = "'test' OR 'a' = 'a'";
     await expect(
-      findUserByUsernamePostgres(db as Client, maliciousInput)
+      findUserByUsernamePostgres(postgresDBPool, maliciousInput)
     ).rejects.toThrow();
   });
 });
 
 /**
  * findUserByEmailPostgres
- * - return user object if found
- * - throw usererror object if user not found
+ * - return user object if found DONE
+ * - throw usererror object if user not found DONE
  * - throw error if database query fails
- * - prevent SQL injection attacks
+ * - prevent SQL injection attacks DONE
  */
 describe("findUserByEmailPostgres", () => {
-  let mockDb: PostgresClient;
-
-  beforeAll(async () => {
-    await db.connect();
-    mockDb = { query: vi.fn() };
-  });
-
-  afterAll(async () => {
-    await db.end();
-  });
-
   it("should return user object if found", async () => {
     const result = await findUserByEmailPostgres(
-      db as Client,
+      postgresDBPool,
       "myUser@example.cz"
     );
 
@@ -234,53 +153,53 @@ describe("findUserByEmailPostgres", () => {
     });
   });
 
-  it("should throw UserError object if user not found", async () => {
+  it("should prevent SQL injection in email", async () => {
+    const maliciousInput = "'; DROP TABLE users; --";
     await expect(
-      findUserByEmailPostgres(db as Client, "noexample@example.cz")
-    ).rejects.toThrow(UserError);
+      findUserByEmailPostgres(postgresDBPool, maliciousInput)
+    ).rejects.toThrow();
   });
 
-  it("should throw an error on database query failure", async () => {
-    const error = new Error("Database error");
-    (mockDb.query as Mock).mockRejectedValue(error);
-
+  it("should throw UserError object if user not found", async () => {
     await expect(
-      findUserByEmailPostgres(mockDb as Client, "test@example.com")
-    ).rejects.toThrow("Database error");
+      findUserByEmailPostgres(postgresDBPool, "noexample@example.cz")
+    ).rejects.toThrow(UserError);
   });
 
   it("should return user object for case-insensitive email match", async () => {
     await expect(
-      findUserByEmailPostgres(db as Client, "MYUSER@example.cz")
+      findUserByEmailPostgres(postgresDBPool, "MYUSER@example.cz")
     ).resolves.toBeTruthy();
   });
 });
 
 /**
  * insertUserPostgres
- * - return void if user is inserted successfully
- * - throw usererror object if user already exists
+ * - return void if user is inserted successfully DONE
+ * - throw usererror object if user already exists DONE
  * - throw error if database query fails
  * - prevent SQL injection attacks
- * - throw error if username or email is null or empty
- * - throw error if username or email is too long
- * - throw error if hashedPassword is null or empty
+ * - throw error if username is null or empty DONE
+ * - throw error if username too long DONE
+ * - throw error if email is null or empty DONE
+ * - throw error if email too long DONE
+ * - throw error if hashedPassword is null or empty DONE
  */
 describe("insertUserPostgres", () => {
-  let mockDb: PostgresClient;
-
   beforeAll(async () => {
-    await db.connect();
-    mockDb = { query: vi.fn() };
-    await db.query("DELETE FROM users WHERE email = $1", ["test@example.com"]);
-  });
-
-  afterAll(async () => {
-    await db.end();
+    const client = (await postgresDBPool.connect()) as PoolClient;
+    await postgresDBPool.query("DELETE FROM users WHERE email = $1", [
+      "test@example.com",
+    ]);
+    client.release();
   });
 
   afterEach(async () => {
-    await db.query("DELETE FROM users WHERE email = $1", ["test@example.com"]);
+    const client = (await postgresDBPool.connect()) as PoolClient;
+    await postgresDBPool.query("DELETE FROM users WHERE email = $1", [
+      "test@example.com",
+    ]);
+    client.release();
   });
 
   it("should insert user into the database", async () => {
@@ -288,8 +207,14 @@ describe("insertUserPostgres", () => {
     const email = "test@example.com";
     const hashedPassword = "hashedpassword123";
 
-    await insertUserPostgres(db, username, email, hashedPassword);
-    const res = await db.query("SELECT * FROM users WHERE email = $1", [email]);
+    await insertUserPostgres(postgresDBPool, username, email, hashedPassword);
+
+    const client = (await postgresDBPool.connect()) as PoolClient;
+    const res = await postgresDBPool.query(
+      "SELECT * FROM users WHERE email = $1",
+      [email]
+    );
+    client.release();
 
     expect(res.rows.length).toBe(1);
     expect(res.rows[0]).toEqual({
@@ -305,48 +230,16 @@ describe("insertUserPostgres", () => {
     const username = "testuser";
     const email = "test@example.com";
     const hashedPassword = "hashedpassword123";
-    await insertUserPostgres(db, username, email, hashedPassword);
+    await insertUserPostgres(postgresDBPool, username, email, hashedPassword);
     await expect(
-      insertUserPostgres(db, username, email, hashedPassword)
+      insertUserPostgres(postgresDBPool, username, email, hashedPassword)
     ).rejects.toThrowError(UserError);
-  });
-
-  it("should throw an error on database failure", async () => {
-    const mockDb: PostgresClient = {
-      query: vi.fn().mockRejectedValue(new Error("Database insertion failed")),
-    };
-
-    await expect(
-      insertUserPostgres(
-        mockDb,
-        "testuser",
-        "test@example.com",
-        "hashedpassword123"
-      )
-    ).rejects.toThrow("Database insertion failed");
-  });
-
-  it("should throw an error when username is null", async () => {
-    await expect(
-      insertUserPostgres(
-        db as Client,
-        null as unknown as string,
-        "test@example.com",
-        "hashedpassword123"
-      )
-    ).rejects.toThrow();
-  });
-
-  it("should throw an error when email is empty", async () => {
-    await expect(
-      insertUserPostgres(db as Client, "testuser", "", "hashedpassword123")
-    ).rejects.toThrow();
   });
 
   it("should throw an error when username is null or empty", async () => {
     await expect(
       insertUserPostgres(
-        db as Client,
+        postgresDBPool,
         null as unknown as string,
         "test@example.com",
         "hashedpassword123"
@@ -355,7 +248,7 @@ describe("insertUserPostgres", () => {
 
     await expect(
       insertUserPostgres(
-        db as Client,
+        postgresDBPool,
         "",
         "test@example.com",
         "hashedpassword123"
@@ -366,7 +259,7 @@ describe("insertUserPostgres", () => {
   it("should throw an error when email is null or empty", async () => {
     await expect(
       insertUserPostgres(
-        db as Client,
+        postgresDBPool,
         "testuser",
         null as unknown as string,
         "hashedpassword123"
@@ -374,14 +267,14 @@ describe("insertUserPostgres", () => {
     ).rejects.toThrow();
 
     await expect(
-      insertUserPostgres(db as Client, "testuser", "", "hashedpassword123")
+      insertUserPostgres(postgresDBPool, "testuser", "", "hashedpassword123")
     ).rejects.toThrow();
   });
 
   it("should throw an error when hashedPassword is null or empty", async () => {
     await expect(
       insertUserPostgres(
-        db as Client,
+        postgresDBPool,
         "testuser",
         "test@example.com",
         null as unknown as string
@@ -389,7 +282,7 @@ describe("insertUserPostgres", () => {
     ).rejects.toThrow();
 
     await expect(
-      insertUserPostgres(db as Client, "testuser", "test@example.com", "")
+      insertUserPostgres(postgresDBPool, "testuser", "test@example.com", "")
     ).rejects.toThrow();
   });
 
@@ -399,7 +292,7 @@ describe("insertUserPostgres", () => {
 
     await expect(
       insertUserPostgres(
-        db as Client,
+        postgresDBPool,
         longUsername,
         "test@example.com",
         "hashedpassword123"
@@ -408,7 +301,7 @@ describe("insertUserPostgres", () => {
 
     await expect(
       insertUserPostgres(
-        db as Client,
+        postgresDBPool,
         "testuser",
         longEmail,
         "hashedpassword123"

@@ -22,6 +22,6 @@ export default function errorHandler(
   if (err instanceof UserError) {
     res.status(400).json({ message: err.message });
   } else {
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ message: "Interní chyba serveru" });
   }
 }

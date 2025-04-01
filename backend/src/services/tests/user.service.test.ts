@@ -5,18 +5,25 @@ import {
   getUserPreferences,
 } from "../user.service";
 import { UserError, UserPreferences } from "../../types/dataTypes";
-import db from "../../config/database.config.postgres";
+import { postgresDBPool } from "../../config/database.config.postgres";
+import { PoolClient } from "pg";
 
 /**
  * registerUserService
- * - rethrows Erros from repository layer
- * - hashes password and inserts user into the database
+ * - registers user in the database DONE
+ * - throws UserError if user already exists DONE
+ * - logins user and returns token DONE
+ * - throws UserError if password is incorrect DONE
  */
 /**
  * loginUserService
- * - rethrows Erros from repository layer
- * - compares password and returns token
- * - throws UserError if password is incorrect
+ * - rethrows Erros from repository layer DONE
+ * - compares password and returns token DONE
+ * - throws UserError if password is incorrect DONE
+ *
+ * getUserPreferences
+ * - returns user preferences DONE
+ * - throws Error if user does not exist DONE
  */
 describe("User Registration, Login, and User Preferences", () => {
   const email = "test@example.com";
@@ -25,21 +32,26 @@ describe("User Registration, Login, and User Preferences", () => {
   let token: string;
 
   beforeAll(async () => {
-    await db.connect();
-    await db.query("DELETE FROM users WHERE email = $1", [email]);
+    const client = (await postgresDBPool.connect()) as PoolClient;
+    await client.query("DELETE FROM users WHERE email = $1", [email]);
+    client.release();
   });
 
   afterAll(async () => {
-    await db.query("DELETE FROM users WHERE email = $1", [email]);
-    await db.end();
+    const client = (await postgresDBPool.connect()) as PoolClient;
+    await client.query("DELETE FROM users WHERE email = $1", [email]);
+    client.release();
   });
 
-  beforeEach(async () => {});
-
   it("should register a new user successfully", async () => {
-    await registerUserService(db, username, email, password);
+    await registerUserService(postgresDBPool, username, email, password);
 
-    const res = await db.query("SELECT * FROM users WHERE email = $1", [email]);
+    const client = (await postgresDBPool.connect()) as PoolClient;
+    const res = await client.query("SELECT * FROM users WHERE email = $1", [
+      email,
+    ]);
+    client.release();
+
     expect(res.rows.length).toBe(1);
     expect(res.rows[0]).toEqual({
       id: expect.any(Number),
@@ -52,12 +64,12 @@ describe("User Registration, Login, and User Preferences", () => {
 
   it("should throw an error when trying to register the same user again", async () => {
     await expect(
-      registerUserService(db, username, email, password)
+      registerUserService(postgresDBPool, username, email, password)
     ).rejects.toThrowError(UserError);
   });
 
   it("should login the user and return a token", async () => {
-    token = await loginUserService(db, email, password);
+    token = await loginUserService(postgresDBPool, email, password);
 
     expect(token).toBeDefined();
     expect(token).toBeTypeOf("string");
@@ -67,16 +79,18 @@ describe("User Registration, Login, and User Preferences", () => {
     const wrongPassword = "wrongpassword";
 
     await expect(
-      loginUserService(db, email, wrongPassword)
+      loginUserService(postgresDBPool, email, wrongPassword)
     ).rejects.toThrowError(UserError);
   });
 
   it("should throw an error when getting userPreferences with wrong ID", async () => {
-    await expect(getUserPreferences(db, 999)).rejects.toThrowError(Error);
+    await expect(getUserPreferences(postgresDBPool, 999)).rejects.toThrowError(
+      Error
+    );
   });
 
   it("should return userPreferences", async () => {
-    await expect(getUserPreferences(db, 1)).resolves.toEqual({
+    await expect(getUserPreferences(postgresDBPool, 1)).resolves.toEqual({
       email: "myUser@example.cz",
       font_size: 2,
       id: 1,
