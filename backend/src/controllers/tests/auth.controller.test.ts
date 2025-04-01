@@ -96,5 +96,15 @@ describe("Auth Controller", () => {
       expect(response.status).toBe(500);
       expect(response.body.error).toBe("Internal Server Error");
     });
+
+    it("should handle errors during login", async () => {
+      const response = await request(app).post("/auth/login").send({
+        email: "test@example.com",
+        password: "wrongpassword",
+      });
+
+      expect(response.status).toBe(500);
+      expect(response.body.error).toBe("Internal Server Error");
+    });
   });
 });

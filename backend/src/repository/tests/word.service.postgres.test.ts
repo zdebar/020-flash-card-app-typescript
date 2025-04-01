@@ -6,6 +6,13 @@ import {
 import db from "../../config/database.config.postgres";
 import { Word } from "../../types/dataTypes";
 
+/**
+ * getWordsPostgres
+ * - Retrieves a list of words from a PostgreSQL database for a specific user
+ * - returns and empty array if the user does not exist
+ * - get testing database with all edge cases, covering all possible cases
+ * - throws and error if database connection fails
+ *  */
 describe("getWordsPostgres tests", () => {
   const userId = 1;
   const srcLanguageID = 2;
@@ -157,6 +164,18 @@ describe("getWordsPostgres tests", () => {
   });
 });
 
+/**
+ * updateWordsPostgres
+ * - throws an error if the user does not exist
+ * - throws an error if database connection fails
+ * - throws an error if the word does not exist / or would skip the word
+ * - created new user_word if it does not exist in user_words table
+ * - updates user_word if it exists in user_words table
+ * - updates with progress 1 if progress is less than 1
+ * - updates learned_at if progress is equal to learnedAt limit
+ * - updates mastered_at if progress is over SRS.length
+ * - updates next_at correctly
+ */
 describe("updateWordsPostgres tests", () => {
   const userId = 1;
   const wordIdToUpdate = 88;

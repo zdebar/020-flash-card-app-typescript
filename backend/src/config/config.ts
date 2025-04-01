@@ -5,7 +5,7 @@ dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 
 const config = {
   block: 20, // The size of repetition block
-  learnedAt: 14, // Card learned at progress 14
+  learnedAt: 10, // Card learned at progress
   SRS: [
     // Precomputed repetition algorithm in seconds, should have 20 elements; learned at progress 10, mastered at progress 20
     0, // 0m

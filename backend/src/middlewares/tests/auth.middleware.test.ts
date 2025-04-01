@@ -14,6 +14,13 @@ declare global {
 
 vi.mock("../../utils/auth.utils");
 
+/**
+ * authenticateTokenMiddleware
+ * - next if token is valid
+ * - 401 if no token is provided
+ * - 403 if token is invalid
+ * - 500 if JWT_SECRET is not defined in the configuration
+ */
 describe("authenticateTokenMiddleware", () => {
   const mockNext = vi.fn();
   const mockRes = {} as Response;

@@ -1,5 +1,6 @@
 import { Word, PostgresClient, UserError } from "../types/dataTypes";
 import config from "../config/config";
+import { PoolClient } from "pg";
 
 /**
  * Retrieves a list of words from a PostgreSQL database for a specific user,
@@ -49,14 +50,19 @@ export async function getWordsPostgres(
     LIMIT $4;
   `;
 
-  const res = await db.query(query, [
-    userId,
-    srcLanguageID,
-    trgLanguageID,
-    numWords,
-  ]);
+  const client = (await db.connect()) as PoolClient;
 
-  return res.rows;
+  try {
+    const res = await db.query(query, [
+      userId,
+      srcLanguageID,
+      trgLanguageID,
+      numWords,
+    ]);
+    return res.rows;
+  } finally {
+    client.release();
+  }
 }
 
 /**
@@ -118,5 +124,11 @@ export async function updateWordsPostgres(
     values.push(userId, word.id, progress, nextAt, learnedAt, masteredAt);
   });
 
-  await db.query(query, values);
+  const client = (await db.connect()) as PoolClient;
+
+  try {
+    await db.query(query, values);
+  } finally {
+    client.release();
+  }
 }

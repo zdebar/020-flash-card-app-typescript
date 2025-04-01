@@ -33,4 +33,4 @@ export class UserError extends Error {
   }
 }
 
-export type PostgresClient = Pick<Client | Pool, "query">;
+export type PostgresClient = Pick<Client | Pool, "query" | "connect" | "end">;

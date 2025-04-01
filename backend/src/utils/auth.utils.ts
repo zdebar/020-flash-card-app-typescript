@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { User } from "../types/dataTypes";
+import logger from "./logger.utils";
 
 /**
  * Hashes a plain text password using bcrypt with a salt round of 10.
@@ -40,8 +41,9 @@ export function createToken(
   JWT_SECRET_KEY: string | undefined,
   JWT_EXPIRES_IN: string | undefined
 ): string {
-  if (!JWT_SECRET_KEY || !JWT_EXPIRES_IN)
+  if (!JWT_SECRET_KEY || !JWT_EXPIRES_IN) {
     throw new Error(`JWT_SECRET_KEY or JWT_EXPIRES_IN not provided!`);
+  }
 
   const payload: User = {
     id: user.id,
@@ -65,7 +67,9 @@ export function verifyToken(
   token: string,
   JWT_SECRET_KEY: string | undefined
 ): User {
-  if (!JWT_SECRET_KEY) throw new Error(`JWT_SECRET_KEY not provided!`);
+  if (!JWT_SECRET_KEY) {
+    throw new Error(`JWT_SECRET_KEY not provided!`);
+  }
 
   const decoded = jwt.verify(token, JWT_SECRET_KEY);
   return decoded as User;

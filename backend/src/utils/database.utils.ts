@@ -1,17 +1,34 @@
-import { Client } from "pg";
-import logger from "./logger.utils";
+import { PoolClient, QueryResult, QueryResultRow } from "pg";
+import { PostgresClient } from "../types/dataTypes";
+
+interface ConnectAndQueryParams<T extends QueryResultRow> {
+  pool: PostgresClient;
+  query: string;
+  params?: any[];
+  onError?: (error: Error) => void;
+}
 
 /**
- * Closes the database connection gracefully.
+ * So far unused refactor of database pool connection.
  *
- * @param db - The database client instance to close.
- * @returns A promise that resolves when the connection is successfully closed.
- * @throws Logs an error message if the connection closure fails.
+ * @param param0
+ * @returns
  */
-export async function closeDbConnection(db: Client) {
+export async function connectAndQuery<T extends QueryResultRow>({
+  pool,
+  query,
+  params = [],
+  onError,
+}: ConnectAndQueryParams<T>): Promise<QueryResult<T>> {
+  const client = (await pool.connect()) as PoolClient;
   try {
-    await db.end();
+    return await client.query(query, params);
   } catch (err: any) {
-    logger.error("Error closing database connection:", err);
+    if (onError) {
+      onError(err);
+    }
+    throw err;
+  } finally {
+    client.release();
   }
 }

@@ -7,6 +7,17 @@ import {
 import { UserError, UserPreferences } from "../../types/dataTypes";
 import db from "../../config/database.config.postgres";
 
+/**
+ * registerUserService
+ * - rethrows Erros from repository layer
+ * - hashes password and inserts user into the database
+ */
+/**
+ * loginUserService
+ * - rethrows Erros from repository layer
+ * - compares password and returns token
+ * - throws UserError if password is incorrect
+ */
 describe("User Registration, Login, and User Preferences", () => {
   const email = "test@example.com";
   const username = "testuser";

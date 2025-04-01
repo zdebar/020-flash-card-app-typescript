@@ -1,4 +1,3 @@
-import { Hash } from "crypto";
 import {
   User,
   UserLogin,
@@ -7,6 +6,7 @@ import {
   UserError,
 } from "../types/dataTypes";
 import { QueryResult } from "pg";
+import { PoolClient } from "pg";
 
 /**
  * Finds a user by their ID in a PostgreSQL database.
@@ -20,15 +20,20 @@ export async function findUserByIdPostgres(
   db: PostgresClient,
   userId: number
 ): Promise<User> {
-  const user: QueryResult<User> = await db.query(
-    "SELECT id, username, email FROM users WHERE id = $1",
-    [userId]
-  );
+  const client = (await db.connect()) as PoolClient;
 
-  if (!user.rows.length) {
-    throw new Error(`User ${userId} not found.`);
+  try {
+    const user = await client.query(
+      "SELECT id, username, email FROM users WHERE id = $1",
+      [userId]
+    );
+    if (!user.rows.length) {
+      throw new Error(`User ${userId} not found.`);
+    }
+    return user.rows[0];
+  } finally {
+    client.release();
   }
-  return user.rows[0];
 }
 
 /**
@@ -44,25 +49,31 @@ export async function findUserPreferencesByIdPostgres(
   db: PostgresClient,
   userId: number
 ): Promise<UserPreferences> {
-  const user: QueryResult<UserPreferences> = await db.query(
-    `
-    SELECT 
-      u.id, 
-      u.username, 
-      u.email, 
-      COALESCE(up.mode_day, 1) AS mode_day, 
-      COALESCE(up.font_size, 2) AS font_size,
-      COALESCE(up.notifications, 1) AS notifications
-    FROM users u
-    LEFT JOIN user_preferences up ON u.id = up.user_id
-    WHERE u.id = $1`,
-    [userId]
-  );
+  const client = (await db.connect()) as PoolClient;
 
-  if (!user.rows.length) {
-    throw new Error(`User ${userId} not found.`);
+  try {
+    const user: QueryResult<UserPreferences> = await db.query(
+      `
+      SELECT 
+        u.id, 
+        u.username, 
+        u.email, 
+        COALESCE(up.mode_day, 1) AS mode_day, 
+        COALESCE(up.font_size, 2) AS font_size,
+        COALESCE(up.notifications, 1) AS notifications
+      FROM users u
+      LEFT JOIN user_preferences up ON u.id = up.user_id
+      WHERE u.id = $1`,
+      [userId]
+    );
+
+    if (!user.rows.length) {
+      throw new Error(`User ${userId} not found.`);
+    }
+    return user.rows[0];
+  } finally {
+    client.release();
   }
-  return user.rows[0];
 }
 
 /**
@@ -77,15 +88,21 @@ export async function findUserByUsernamePostgres(
   db: PostgresClient,
   username: string
 ): Promise<User> {
-  const user: QueryResult<User> = await db.query(
-    "SELECT id, username, email FROM users WHERE username = $1",
-    [username]
-  );
+  const client = (await db.connect()) as PoolClient;
 
-  if (!user.rows.length) {
-    throw new Error(`Username ${username} not found.`);
+  try {
+    const user: QueryResult<User> = await db.query(
+      "SELECT id, username, email FROM users WHERE username = $1",
+      [username]
+    );
+
+    if (!user.rows.length) {
+      throw new Error(`Username ${username} not found.`);
+    }
+    return user.rows[0];
+  } finally {
+    client.release();
   }
-  return user.rows[0];
 }
 
 /**
@@ -143,12 +160,11 @@ export async function insertUserPostgres(
   if (email.length > 255) {
     throw new UserError("Email cannot exceed 255 characters");
   }
-  if (username.length > 255) {
-    throw new UserError("Username cannot exceed 255 characters");
-  }
+
+  const client = (await db.connect()) as PoolClient;
 
   try {
-    await db.query(
+    await client.query(
       "INSERT INTO users (username, email, password) VALUES ($1, $2, $3)",
       [username, email, hashedPassword]
     );
@@ -161,5 +177,7 @@ export async function insertUserPostgres(
       }
     }
     throw err;
+  } finally {
+    client.release();
   }
 }

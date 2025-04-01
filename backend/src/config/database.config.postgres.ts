@@ -1,10 +1,10 @@
-import { Client } from "pg";
+import { Client, Pool } from "pg";
 import dotenv from "dotenv";
 import path from "path";
 
 dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 
-const postgresDB = new Client({
+export const postgresDBClient = new Client({
   host: process.env.DB_HOST,
   port: Number(process.env.DB_PORT),
   database: process.env.DB_NAME,
@@ -12,12 +12,21 @@ const postgresDB = new Client({
   password: process.env.DB_PASSWORD,
 });
 
-if (process.env.NODE_ENV === "test") {
-  postgresDB.host = "localhost";
-  postgresDB.port = 5432;
-  postgresDB.database = "postgres";
-  postgresDB.user = "postgres";
-  postgresDB.password = "mbc299748";
-}
+export const postgresDBPool = new Pool({
+  host: process.env.DB_HOST,
+  port: Number(process.env.DB_PORT),
+  database: process.env.DB_NAME,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  max: 20,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 2000,
+});
 
-export default postgresDB;
+if (process.env.NODE_ENV === "test") {
+  postgresDBClient.host = "localhost";
+  postgresDBClient.port = 5432;
+  postgresDBClient.database = "postgres";
+  postgresDBClient.user = "postgres";
+  postgresDBClient.password = "mbc299748";
+}

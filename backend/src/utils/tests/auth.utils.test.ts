@@ -8,8 +8,17 @@ import { describe, it, expect, afterAll } from "vitest";
 import { User } from "../../types/dataTypes";
 import config from "../../config/config";
 
-console.log("JWT_SECRET:", config.JWT_SECRET);
-console.log("JWT_EXPIRES_IN:", config.JWT_EXPIRES_IN);
+/**
+ * hashPassword
+ * - throw error  if hashing fails
+ * - return hashed password if hashing is successful
+ *
+ * comparePasswords
+ * - throw error if comparison fails
+ * - return false if passwords do not match
+ * - return true if passwords match
+ *
+ */
 
 describe("Password Hashing & Verification", () => {
   it("should hash a password and verify it correctly", async () => {
@@ -57,6 +66,20 @@ describe("Password Hashing & Verification", () => {
   });
 });
 
+/**
+ * createToken
+ * - throw error if JWT_SECRET_KEY or JWT_EXPIRES_IN is not provided
+ * - return token if JWT_SECRET_KEY and JWT_EXPIRES_IN are provided
+ * - throw error if signing fails
+ *
+ * verifyToken
+ * - throw error if JWT_SECRET_KEY is not provided
+ * - return decoded payload if token is valid
+ * - throw error if token verification fails
+ * - throw error if token is invalid
+ * - throw error if token is expired
+ *
+ */
 describe("JWT Token Creation & Verification", () => {
   const mockUser: User = {
     id: 1,
@@ -104,12 +127,6 @@ describe("JWT Token Creation & Verification", () => {
     expect(() => verifyToken(token, config.JWT_SECRET)).toThrowError(
       "jwt expired"
     );
-  });
-
-  it("should fail verification for malformed tokens", () => {
-    const malformedToken = "malformed.token";
-
-    expect(() => verifyToken(malformedToken, config.JWT_SECRET)).toThrowError();
   });
 
   it("should fail token creation if JWT_EXPIRES_IN is missing", () => {

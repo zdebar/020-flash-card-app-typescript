@@ -19,6 +19,13 @@ import { Client } from "pg";
 import { PostgresClient, UserError } from "../../types/dataTypes";
 import db from "../../config/database.config.postgres";
 
+/**
+ * findUserByIdPostgres
+ * - return user object if found
+ * - throw error object if user not found
+ * - throw error if database query fails
+ * - prevent SQL injection attacks
+ */
 describe("findUserByIDPostgres", () => {
   let mockDb: PostgresClient;
 
@@ -75,6 +82,13 @@ describe("findUserByIDPostgres", () => {
   });
 });
 
+/**
+ * findUserPreferencesByIdPostgres
+ * - return user object if found
+ * - throw error object if user not found
+ * - throw error if database query fails
+ * - prevent SQL injection attacks
+ */
 describe("findUserPreferencesByIDPostgres", () => {
   let mockDb: PostgresClient;
 
@@ -119,6 +133,13 @@ describe("findUserPreferencesByIDPostgres", () => {
   });
 });
 
+/**
+ * findUserByUsernamePostgres
+ * - return user object if found
+ * - throw error object if user not found
+ * - throw error if database query fails
+ * - prevent SQL injection attacks
+ */
 describe("findUserByUsernamePostgres", () => {
   let mockDb: PostgresClient;
 
@@ -179,6 +200,13 @@ describe("findUserByUsernamePostgres", () => {
   });
 });
 
+/**
+ * findUserByEmailPostgres
+ * - return user object if found
+ * - throw usererror object if user not found
+ * - throw error if database query fails
+ * - prevent SQL injection attacks
+ */
 describe("findUserByEmailPostgres", () => {
   let mockDb: PostgresClient;
 
@@ -228,6 +256,16 @@ describe("findUserByEmailPostgres", () => {
   });
 });
 
+/**
+ * insertUserPostgres
+ * - return void if user is inserted successfully
+ * - throw usererror object if user already exists
+ * - throw error if database query fails
+ * - prevent SQL injection attacks
+ * - throw error if username or email is null or empty
+ * - throw error if username or email is too long
+ * - throw error if hashedPassword is null or empty
+ */
 describe("insertUserPostgres", () => {
   let mockDb: PostgresClient;
 

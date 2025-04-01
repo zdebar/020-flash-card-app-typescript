@@ -1,5 +1,5 @@
 import { describe, it, expect, afterAll } from "vitest";
-import postgresDB from "../database.config.postgres";
+import postgresDBClient from "../database.config.postgres";
 
 describe("Database Configuration Test", () => {
   afterAll(() => {
@@ -7,16 +7,16 @@ describe("Database Configuration Test", () => {
   });
 
   it("should have the correct PostgreSQL connection settings from environment variables", () => {
-    console.log("DB_HOST:", postgresDB.host);
-    console.log("DB_PORT:", postgresDB.port);
-    console.log("DB_NAME:", postgresDB.database);
-    console.log("DB_USER:", postgresDB.user);
-    console.log("DB_PASSWORD:", postgresDB.password);
+    console.log("DB_HOST:", postgresDBClient.host);
+    console.log("DB_PORT:", postgresDBClient.port);
+    console.log("DB_NAME:", postgresDBClient.database);
+    console.log("DB_USER:", postgresDBClient.user);
+    console.log("DB_PASSWORD:", postgresDBClient.password);
 
-    expect(postgresDB.host).toBeDefined();
-    expect(postgresDB.port).toBeDefined();
-    expect(postgresDB.database).toBeDefined();
-    expect(postgresDB.user).toBeDefined();
-    expect(postgresDB.password).toBeDefined();
+    expect(postgresDBClient.host).toBeDefined();
+    expect(postgresDBClient.port).toBeDefined();
+    expect(postgresDBClient.database).toBeDefined();
+    expect(postgresDBClient.user).toBeDefined();
+    expect(postgresDBClient.password).toBeDefined();
   });
 });
