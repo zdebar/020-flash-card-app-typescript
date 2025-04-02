@@ -6,7 +6,11 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "typeRoots": ["./node_modules/@types", "./types", "./src/types"],
-    "types": ["node", "react", "react-dom"], 
+    "types": ["node", "react", "react-dom"],
+    "baseUrl": ".",
+    "paths": {
+      "@shared/*": ["../shared/*"]
+    }
   },
   "include": ["src", "types"],
   "files": [],
@@ -15,4 +19,3 @@
     { "path": "./tsconfig.node.json" }
   ]
 }
-

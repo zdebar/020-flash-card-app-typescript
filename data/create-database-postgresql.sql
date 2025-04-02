@@ -6,18 +6,10 @@ CREATE EXTENSION IF NOT EXISTS citext;
 
 CREATE TABLE IF NOT EXISTS users (
   id SERIAL PRIMARY KEY,
-  username VARCHAR(255) NOT NULL UNIQUE CHECK (username <> ''),
-  email CITEXT NOT NULL UNIQUE CHECK (email <> ''),
+  username VARCHAR(255) NOT NULL UNIQUE CHECK (username <> '' AND LENGTH(username) <= 255),
+  email CITEXT NOT NULL UNIQUE CHECK (email <> '' AND email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'),
   password VARCHAR(255) NOT NULL CHECK (password <> ''),
-  created_at TEXT DEFAULT (TO_CHAR(NOW(), 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"')) -- text format data to ensure future synchronization with offline SQLite database
-);
-
-CREATE TABLE users (
-  id SERIAL PRIMARY KEY,
-  username VARCHAR(255) NOT NULL CHECK (username <> ''), -- Reject empty strings
-  email VARCHAR(255) NOT NULL CHECK (email <> ''),       -- Reject empty strings
-  password TEXT NOT NULL CHECK (password <> ''),         -- Reject empty strings
-  created_at TIMESTAMP DEFAULT NOW()
+  created_at TEXT DEFAULT (TO_CHAR(NOW(), 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'))
 );
 
 CREATE TABLE IF NOT EXISTS user_preferences (
@@ -30,7 +22,7 @@ CREATE TABLE IF NOT EXISTS user_preferences (
 
 CREATE TABLE IF NOT EXISTS languages (
   id SERIAL PRIMARY KEY,
-  language TEXT NOT NULL UNIQUE,
+  language TEXT NOT NULL UNIQUE CHECK (language <> ''),
   complete INTEGER DEFAULT 0 CHECK (complete IN (0, 1)) -- 0 = incomplete, 1 = complete; only complete languages is possible to learn, complete should incorporate both prn and audio
 );
 

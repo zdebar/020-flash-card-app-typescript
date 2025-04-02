@@ -4,7 +4,7 @@ import {
   loginUserService,
   getUserPreferences,
 } from "../user.service";
-import { UserError, UserPreferences } from "../../types/dataTypes";
+import { UserError, UserPreferences } from "../../../../shared/types/dataTypes";
 import { postgresDBPool } from "../../config/database.config.postgres";
 import { PoolClient } from "pg";
 

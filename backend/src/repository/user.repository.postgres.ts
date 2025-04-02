@@ -4,10 +4,9 @@ import {
   UserPreferences,
   PostgresClient,
   UserError,
-} from "../types/dataTypes";
+} from "../../../shared/types/dataTypes";
 import { QueryResult } from "pg";
 import { PoolClient } from "pg";
-import logger from "../utils/logger.utils";
 
 /**
  * Finds a user by their ID in a PostgreSQL database.
@@ -146,22 +145,6 @@ export async function insertUserPostgres(
   email: string,
   hashedPassword: string
 ): Promise<void> {
-  if (!username || username.trim() === "") {
-    throw new UserError("Uživatelské jméno nemůže být prázdné");
-  }
-  if (!email || email.trim() === "") {
-    throw new UserError("Email nemůže být prázdný");
-  }
-  if (!hashedPassword || hashedPassword.trim() === "") {
-    throw new UserError("Heslo nemůže být prázdné");
-  }
-  if (username.length > 255) {
-    throw new UserError("Uživatelské jméno nemůže být delší než 255 znaků");
-  }
-  if (email.length > 255) {
-    throw new UserError("Email nemůže být delší než 255 znaků");
-  }
-
   const client = (await db.connect()) as PoolClient;
 
   try {

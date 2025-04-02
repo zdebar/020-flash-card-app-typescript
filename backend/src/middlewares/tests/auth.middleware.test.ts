@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { authenticateTokenMiddleware } from "../../middlewares/auth.middleware";
 import { verifyToken } from "../../utils/auth.utils";
 import { describe, it, expect, vi, Mock, afterEach } from "vitest";
-import { User } from "../../types/dataTypes";
+import { User } from "../../../../shared/types/dataTypes";
 
 declare global {
   namespace Express {

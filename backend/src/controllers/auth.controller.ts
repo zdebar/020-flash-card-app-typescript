@@ -4,6 +4,7 @@ import {
   loginUserService,
 } from "../services/user.service";
 import { postgresDBPool } from "../config/database.config.postgres";
+import { validateRequiredUserFields } from "../utils/validate.utils";
 
 /**
  * Handles the user registration process.
@@ -30,14 +31,7 @@ export async function registerUserController(
 ): Promise<void> {
   const { username, email, password } = req.body;
 
-  if (!username || !email || !password) {
-    res
-      .status(400)
-      .json({ error: "Uživatelské jméno, email, i heslo jsou vyžadovány." });
-    return;
-  }
-
-  // TODO: Validate username, email, password formats and constraints
+  validateRequiredUserFields({ username, email, password });
 
   try {
     await registerUserService(postgresDBPool, username, email, password);
@@ -72,14 +66,10 @@ export async function loginUserController(
 ): Promise<void> {
   const { email, password } = req.body;
 
-  if (!email || !password) {
-    res.status(400).json({ error: "Email and password are required." });
-    return;
-  }
+  validateRequiredUserFields({ email, password });
 
   try {
     const token = await loginUserService(postgresDBPool, email, password);
-
     res.json({ token });
   } catch (err: any) {
     next(err);

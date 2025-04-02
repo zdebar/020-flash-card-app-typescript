@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { User } from "../types/dataTypes";
+import { User } from "../../../shared/types/dataTypes";
 import { verifyToken } from "../utils/auth.utils";
 import config from "../config/config";
 import logger from "../utils/logger.utils";
@@ -30,7 +30,7 @@ export function authenticateTokenMiddleware(
   }
 
   try {
-    const decoded = verifyToken(token, config.JWT_SECRET);
+    const decoded = verifyToken(token);
     (req as any).user = decoded as User;
     next();
   } catch (err: any) {

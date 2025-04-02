@@ -15,18 +15,10 @@ import {
   findUserByUsernamePostgres,
   insertUserPostgres,
 } from "../user.repository.postgres";
-import { Client, PoolClient } from "pg";
-import { PostgresClient, UserError } from "../../types/dataTypes";
+import { PoolClient } from "pg";
+import { UserError } from "../../../../shared/types/dataTypes";
 import { postgresDBPool } from "../../config/database.config.postgres";
 
-/**
- * findUserByIdPostgres
- * - return user object if found DONE
- * - throw error if userId is negative or zero DONE
- * - throw error object if user not found DONE
- * - throw error if database query fails
- * - prevent SQL injection attacks
- */
 describe("findUserByIDPostgres", () => {
   it("should throw an error for invalid userId (negative or zero)", async () => {
     await expect(findUserByIdPostgres(postgresDBPool, -1)).rejects.toThrow(

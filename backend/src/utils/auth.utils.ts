@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { User } from "../types/dataTypes";
+import { User } from "../../../shared/types/dataTypes";
+import config from "../config/config";
 
 /**
  * Hashes a plain text password using bcrypt with a salt round of 10.
@@ -30,46 +31,28 @@ export async function comparePasswords(
  * Creates a JSON Web Token (JWT) for the given user.
  *
  * @param user - The user object containing user details such as `id`, `username`, and `email`.
- * @param JWT_SECRET_KEY - The secret key used to sign the JWT. Must be provided.
- * @param JWT_EXPIRES_IN - The expiration time for the JWT. Must be provided.
  * @returns The signed JWT as a string.
- * @throws Will throw an error if `JWT_SECRET_KEY` or `JWT_EXPIRES_IN` is not provided.
  */
-export function createToken(
-  user: User,
-  JWT_SECRET_KEY: string | undefined,
-  JWT_EXPIRES_IN: string | undefined
-): string {
-  if (!JWT_SECRET_KEY || !JWT_EXPIRES_IN) {
-    throw new Error(`JWT_SECRET_KEY or JWT_EXPIRES_IN not provided!`);
-  }
-
+export function createToken(user: User): string {
   const payload: User = {
     id: user.id,
     username: user.username,
     email: user.email,
   };
 
-  const expirationTime = JWT_EXPIRES_IN as jwt.SignOptions["expiresIn"];
-  return jwt.sign(payload, JWT_SECRET_KEY, { expiresIn: expirationTime });
+  const expirationTime = config.JWT_EXPIRES_IN as jwt.SignOptions["expiresIn"];
+  return jwt.sign(payload, config.JWT_SECRET as string, {
+    expiresIn: expirationTime,
+  });
 }
 
 /**
  * Verifies a JSON Web Token (JWT) and decodes its payload.
  *
  * @param token - The JWT string to be verified.
- * @param JWT_SECRET_KEY - The secret key used to verify the token. If undefined, an error will be thrown.
  * @returns The decoded payload as a `User` object if the token is valid.
- * @throws An error if the `JWT_SECRET_KEY` is not provided or if the token verification fails.
  */
-export function verifyToken(
-  token: string,
-  JWT_SECRET_KEY: string | undefined
-): User {
-  if (!JWT_SECRET_KEY) {
-    throw new Error(`JWT_SECRET_KEY not provided!`);
-  }
-
-  const decoded = jwt.verify(token, JWT_SECRET_KEY);
+export function verifyToken(token: string): User {
+  const decoded = jwt.verify(token, config.JWT_SECRET as string);
   return decoded as User;
 }

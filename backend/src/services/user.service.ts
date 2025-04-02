@@ -8,10 +8,11 @@ import {
   findUserPreferencesByIdPostgres,
   insertUserPostgres,
 } from "../repository/user.repository.postgres";
-import config from "../config/config";
-import { UserError, UserPreferences, PostgresClient } from "../types/dataTypes";
-import { log } from "console";
-import logger from "../utils/logger.utils";
+import {
+  UserError,
+  UserPreferences,
+  PostgresClient,
+} from "../../../shared/types/dataTypes";
 
 /**
  * Registers a new user in the system by hashing the provided password
@@ -54,7 +55,7 @@ export async function loginUserService(
     throw new UserError("Zadané heslo je nesprávné");
   }
 
-  const token = createToken(user, config.JWT_SECRET, config.JWT_EXPIRES_IN);
+  const token = createToken(user);
   return token;
 }
 

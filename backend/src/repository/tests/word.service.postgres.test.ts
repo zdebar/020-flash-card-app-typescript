@@ -4,7 +4,7 @@ import {
   updateWordsPostgres,
 } from "../word.service.postgres";
 import { postgresDBPool } from "../../config/database.config.postgres";
-import { Word } from "../../types/dataTypes";
+import { Word } from "../../../../shared/types/dataTypes";
 import { PoolClient } from "pg";
 import config from "../../config/config";
 

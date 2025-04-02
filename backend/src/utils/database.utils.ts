@@ -1,34 +1,19 @@
-import { PoolClient, QueryResult, QueryResultRow } from "pg";
-import { PostgresClient } from "../types/dataTypes";
-
-interface ConnectAndQueryParams<T extends QueryResultRow> {
-  pool: PostgresClient;
-  query: string;
-  params?: any[];
-  onError?: (error: Error) => void;
-}
+import { postgresDBPool } from "../config/database.config.postgres";
 
 /**
- * So far unused refactor of database pool connection.
+ * Checks the connection to the database by attempting to acquire and release a client
+ * from the PostgreSQL connection pool.
  *
- * @param param0
- * @returns
+ * @throws {Error} Throws an error if the database connection fails.
+ * @returns {Promise<void>} A promise that resolves if the connection is successful.
  */
-export async function connectAndQuery<T extends QueryResultRow>({
-  pool,
-  query,
-  params = [],
-  onError,
-}: ConnectAndQueryParams<T>): Promise<QueryResult<T>> {
-  const client = (await pool.connect()) as PoolClient;
+export async function checkDatabaseConnection(): Promise<void> {
   try {
-    return await client.query(query, params);
-  } catch (err: any) {
-    if (onError) {
-      onError(err);
-    }
-    throw err;
-  } finally {
+    const client = await postgresDBPool.connect();
     client.release();
+    console.log("Database connected successfully.");
+  } catch (err: any) {
+    console.error("Failed to connect to the database:", err.message);
+    throw new Error("Database connection failed.");
   }
 }

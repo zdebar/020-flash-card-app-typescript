@@ -1,4 +1,4 @@
-import { Word, PostgresClient, UserError } from "../types/dataTypes";
+import { Word, PostgresClient } from "../../../shared/types/dataTypes";
 import config from "../config/config";
 import { PoolClient } from "pg";
 
@@ -105,8 +105,7 @@ export async function updateWordsPostgres(
   `;
 
   words.forEach((word) => {
-    const progress =
-      Number.isInteger(word.progress) && word.progress > 0 ? word.progress : 1;
+    const progress = word.progress || 1;
     const interval = config.SRS[progress - 1] ?? null;
 
     let nextAt: string | null = null;
