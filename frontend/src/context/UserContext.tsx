@@ -1,10 +1,11 @@
 import { createContext } from 'react';
-import { UserPreferences } from '../../../shared/types/dataTypes';
+import { User } from '../../../shared/types/dataTypes';
 
 export interface UserContextType {
-  userInfo: UserPreferences | null;
+  userInfo: User | null;
   loading: boolean;
-  setUserInfo: (user: UserPreferences | null) => void;
+  setUserInfo: (user: User | null) => void;
+  setLoading: (loading: boolean) => void;
 }
 
 export const UserContext = createContext<UserContextType | undefined>(

@@ -1,14 +1,16 @@
-import { UserPreferences } from '../../../shared/types/dataTypes';
+import { User } from '../../../shared/types/dataTypes';
 
-export async function fetchUserInfo(): Promise<UserPreferences | null> {
+export async function fetchUserPreferences(): Promise<User | null> {
   const token = localStorage.getItem('token');
 
   if (!token) {
     return null;
   }
 
+  const API_PATH = `${process.env.REACT_APP_API_URL}/auth/getPreferences`;
+
   try {
-    const response = await fetch('http://localhost:3000/user', {
+    const response = await fetch(API_PATH, {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${token}`,

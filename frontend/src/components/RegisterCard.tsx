@@ -2,44 +2,42 @@ import React, { useState } from 'react';
 import { SubmitButton } from './SubmitButton';
 import { InputForm } from './InputForm';
 import { AuthForm } from './AuthForm';
+import { useUser } from '../hooks/useUser';
+import { useNavigate } from 'react-router-dom';
+import { handleApiResponse } from '../utils/handleApiResponse';
 
 export default function RegisterCard() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [userError, setUserError] = useState('');
+  const { setUserInfo, setLoading } = useUser();
+  const navigate = useNavigate();
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const API_PATH = `${process.env.REACT_APP_API_URL}/auth/register`;
+
     try {
-      const response = await fetch('http://localhost:3000/auth/register', {
+      const response = await fetch(API_PATH, {
         method: 'POST',
         body: JSON.stringify({ username, email, password }),
         headers: { 'Content-Type': 'application/json' },
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        if (data.token) {
-          localStorage.setItem('token', data.token);
-          window.location.href = '/';
-        } else {
-          setError(data.message || 'Interní chyba serveru.');
-        }
+      await handleApiResponse(response, setUserInfo, setLoading, navigate);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setUserError(error.message);
       } else {
-        const errorData = await response.json();
-        console.error('Error registering:', errorData);
-        setError(errorData.message || 'Interní chyba serveru.');
+        setUserError('An unknown error occurred.');
       }
-    } catch (error) {
-      console.error('Error registering:', error);
-      setError('Chyba připojení.');
     }
   };
 
   return (
-    <AuthForm title="Registrace" onSubmit={handleRegister} error={error}>
+    <AuthForm title="Registrace" onSubmit={handleRegister} error={userError}>
       <InputForm
         type="text"
         label="Uživatelské jméno"

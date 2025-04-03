@@ -4,45 +4,40 @@ import { InputForm } from './InputForm';
 import { SubmitButton } from './SubmitButton';
 import { AuthForm } from './AuthForm';
 import { RegisterLink } from './RegisterLink';
+import { useUser } from '../hooks/useUser';
+import { handleApiResponse } from '../utils/handleApiResponse';
 
 export default function LoginCard() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [userError, setUserError] = useState('');
+  const { setUserInfo, setLoading } = useUser();
   const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const API_PATH = `${process.env.REACT_APP_API_URL}/auth/login`;
+
     try {
-      const response = await fetch('http://localhost:3000/auth/login', {
+      const response = await fetch(API_PATH, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        if (data.token) {
-          localStorage.setItem('token', data.token);
-          console.log('Token stored succesfully!');
-          navigate('/');
-        } else {
-          setError('Interní chyba serveru.');
-        }
+      await handleApiResponse(response, setUserInfo, setLoading, navigate);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setUserError(error.message);
       } else {
-        const errorData = await response.json();
-        console.error('Error logging in:', errorData);
-        setError(errorData.message || 'Interní chyba serveru.');
+        setUserError('An unknown error occurred.');
       }
-    } catch (error) {
-      console.error('Error logging in:', error);
-      setError('Chyba připojení.');
     }
   };
 
   return (
-    <AuthForm title="Přihlášení" onSubmit={handleLogin} error={error}>
+    <AuthForm title="Přihlášení" onSubmit={handleLogin} error={userError}>
       <InputForm
         type="email"
         label="Email"
