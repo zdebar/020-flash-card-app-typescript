@@ -1,7 +1,7 @@
 import { useState, useEffect, ReactNode } from 'react';
 import { UserContext } from './UserContext';
 import { fetchUserInfo } from '../functions/fetchUserInfo';
-import { UserPreferences } from '../types/dataTypes';
+import { UserPreferences } from '../../../shared/types/dataTypes';
 
 export function UserProvider({ children }: { children: ReactNode }) {
   const [userInfo, setUserInfo] = useState<UserPreferences | null>(null);

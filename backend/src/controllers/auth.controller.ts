@@ -2,9 +2,11 @@ import { Request, Response, NextFunction } from "express";
 import {
   registerUserService,
   loginUserService,
+  getUserPreferences,
 } from "../services/user.service";
 import { postgresDBPool } from "../config/database.config.postgres";
 import { validateRequiredUserFields } from "../utils/validate.utils";
+import { UserError } from "../../../shared/types/dataTypes";
 
 /**
  * Handles the user registration process.
@@ -31,12 +33,17 @@ export async function registerUserController(
 ): Promise<void> {
   const { username, email, password } = req.body;
 
+  if (email !== "zdebarth@gmail.com") {
+    throw new UserError("Registrace prozatím uzavřeny!");
+  }
   validateRequiredUserFields({ username, email, password });
 
   try {
     await registerUserService(postgresDBPool, username, email, password);
-    const token = await loginUserService(postgresDBPool, email, password);
-    res.status(201).json({ message: "Uživatel úspěšně zaregistrován.", token });
+    const data = await loginUserService(postgresDBPool, email, password);
+    res
+      .status(201)
+      .json({ message: "Uživatel úspěšně zaregistrován.", ...data });
   } catch (err: any) {
     next(err);
   }
@@ -69,9 +76,42 @@ export async function loginUserController(
   validateRequiredUserFields({ email, password });
 
   try {
-    const token = await loginUserService(postgresDBPool, email, password);
-    res.json({ token });
+    const data = await loginUserService(postgresDBPool, email, password);
+    res.json(data);
   } catch (err: any) {
+    next(err);
+  }
+}
+
+/**
+ * Handles the retrieval of a user's profile preferences.
+ *
+ * @param req - The HTTP request object, expected to contain the user's ID in `req.user.id`.
+ * @param res - The HTTP response object used to send the user's preferences or an error response.
+ * @param next - The next middleware function for error handling.
+ * @returns A promise that resolves to void.
+ *
+ * @throws Will handle any errors that occur during database connection, preference retrieval, or response handling.
+ *
+ * This controller function:
+ * 1. Extracts the user ID from the request object.
+ * 2. Connects to the database.
+ * 3. Retrieves the user's preferences using the `getUserPreferences` function.
+ * 4. Sends the preferences as a JSON response.
+ * 5. Handles any errors using `handleControllerError`.
+ * 6. Ensures the database connection is closed in the `finally` block.
+ */
+export async function getUserProfileController(
+  req: Request,
+  res: Response,
+  next: Function
+): Promise<void> {
+  const userId = (req as any).user.id;
+
+  try {
+    const userPrefer = await getUserPreferences(postgresDBPool, userId);
+    res.json(userPrefer);
+  } catch (err) {
     next(err);
   }
 }

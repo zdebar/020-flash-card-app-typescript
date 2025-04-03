@@ -25,16 +25,16 @@ export default function RegisterCard() {
           localStorage.setItem('token', data.token);
           window.location.href = '/';
         } else {
-          setError(data.message || 'Token not received');
+          setError(data.message || 'Interní chyba serveru.');
         }
       } else {
         const errorData = await response.json();
         console.error('Error registering:', errorData);
-        setError(errorData.message || 'An error occurred');
+        setError(errorData.message || 'Interní chyba serveru.');
       }
     } catch (error) {
       console.error('Error registering:', error);
-      setError('An error occurred while registering.');
+      setError('Chyba připojení.');
     }
   };
 

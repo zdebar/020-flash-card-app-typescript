@@ -28,16 +28,16 @@ export default function LoginCard() {
           console.log('Token stored succesfully!');
           navigate('/');
         } else {
-          setError('Token not received');
+          setError('Interní chyba serveru.');
         }
       } else {
         const errorData = await response.json();
         console.error('Error logging in:', errorData);
-        setError(errorData.message || 'An error occurred');
+        setError(errorData.message || 'Interní chyba serveru.');
       }
     } catch (error) {
       console.error('Error logging in:', error);
-      setError('An error occurred while logging in.');
+      setError('Chyba připojení.');
     }
   };
 

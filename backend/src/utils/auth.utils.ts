@@ -33,15 +33,9 @@ export async function comparePasswords(
  * @param user - The user object containing user details such as `id`, `username`, and `email`.
  * @returns The signed JWT as a string.
  */
-export function createToken(user: User): string {
-  const payload: User = {
-    id: user.id,
-    username: user.username,
-    email: user.email,
-  };
-
+export function createToken(userID: number): string {
   const expirationTime = config.JWT_EXPIRES_IN as jwt.SignOptions["expiresIn"];
-  return jwt.sign(payload, config.JWT_SECRET as string, {
+  return jwt.sign(userID.toString, config.JWT_SECRET as string, {
     expiresIn: expirationTime,
   });
 }

@@ -1,9 +1,20 @@
 import express from "express";
-import { registerUserController, loginUserController } from "../controllers/auth.controller";
+import {
+  registerUserController,
+  loginUserController,
+  getUserProfileController,
+} from "../controllers/auth.controller";
+import { authenticateTokenMiddleware } from "../middlewares/auth.middleware";
 
-const authRoutes = express.Router();
+const authRouter = express.Router();
 
-authRoutes.post("/register", registerUserController);
-authRoutes.post("/login", loginUserController);
+authRouter.post("/register", registerUserController);
+authRouter.post("/login", loginUserController);
+authRouter.get(
+  "/getPreferences",
+  authenticateTokenMiddleware,
+  getUserProfileController
+);
+authRouter.get("/updatePreferences", authenticateTokenMiddleware); // TODO: implement update preferences
 
-export default authRoutes;
+export default authRouter;

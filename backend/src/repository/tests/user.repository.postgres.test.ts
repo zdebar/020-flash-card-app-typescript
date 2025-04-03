@@ -9,9 +9,9 @@ import {
   beforeAll,
 } from "vitest";
 import {
-  findUserByEmailPostgres,
+  findUserLoginByEmailPostgres,
   findUserByIdPostgres,
-  findUserPreferencesByIdPostgres,
+  findUserPreferencesByEmailPostgres,
   findUserByUsernamePostgres,
   insertUserPostgres,
 } from "../user.repository.postgres";
@@ -62,7 +62,7 @@ describe("findUserByIDPostgres", () => {
  */
 describe("findUserPreferencesByIDPostgres", () => {
   it("should return user object if found", async () => {
-    const result = await findUserPreferencesByIdPostgres(postgresDBPool, 1);
+    const result = await findUserPreferencesByEmailPostgres(postgresDBPool, 1);
 
     expect(result).toEqual({
       id: 1,
@@ -78,7 +78,7 @@ describe("findUserPreferencesByIDPostgres", () => {
 
   it("should throw error object if user not found", async () => {
     await expect(
-      findUserPreferencesByIdPostgres(postgresDBPool, 1000)
+      findUserPreferencesByEmailPostgres(postgresDBPool, 1000)
     ).rejects.toThrow(Error);
   });
 });
@@ -131,7 +131,7 @@ describe("findUserByUsernamePostgres", () => {
  */
 describe("findUserByEmailPostgres", () => {
   it("should return user object if found", async () => {
-    const result = await findUserByEmailPostgres(
+    const result = await findUserLoginByEmailPostgres(
       postgresDBPool,
       "myUser@example.cz"
     );
@@ -148,19 +148,19 @@ describe("findUserByEmailPostgres", () => {
   it("should prevent SQL injection in email", async () => {
     const maliciousInput = "'; DROP TABLE users; --";
     await expect(
-      findUserByEmailPostgres(postgresDBPool, maliciousInput)
+      findUserLoginByEmailPostgres(postgresDBPool, maliciousInput)
     ).rejects.toThrow();
   });
 
   it("should throw UserError object if user not found", async () => {
     await expect(
-      findUserByEmailPostgres(postgresDBPool, "noexample@example.cz")
+      findUserLoginByEmailPostgres(postgresDBPool, "noexample@example.cz")
     ).rejects.toThrow(UserError);
   });
 
   it("should return user object for case-insensitive email match", async () => {
     await expect(
-      findUserByEmailPostgres(postgresDBPool, "MYUSER@example.cz")
+      findUserLoginByEmailPostgres(postgresDBPool, "MYUSER@example.cz")
     ).resolves.toBeTruthy();
   });
 });

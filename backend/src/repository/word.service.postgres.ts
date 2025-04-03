@@ -1,4 +1,5 @@
-import { Word, PostgresClient } from "../../../shared/types/dataTypes";
+import { Word } from "../../../shared/types/dataTypes";
+import { PostgresClient } from "../types/dataTypes";
 import config from "../config/config";
 import { PoolClient } from "pg";
 
@@ -46,7 +47,6 @@ export async function getWordsPostgres(
         WHEN progress > 0 THEN 1
         ELSE 2
       END ASC,
-      uw.next_at ASC,
       target.seq ASC
     LIMIT $4;
   `;

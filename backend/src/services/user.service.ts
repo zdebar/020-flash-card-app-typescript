@@ -4,15 +4,12 @@ import {
   createToken,
 } from "../utils/auth.utils";
 import {
-  findUserByEmailPostgres,
-  findUserPreferencesByIdPostgres,
   insertUserPostgres,
+  findUserLoginByEmailPostgres,
+  findUserPreferencesByIdPostgres,
 } from "../repository/user.repository.postgres";
-import {
-  UserError,
-  UserPreferences,
-  PostgresClient,
-} from "../../../shared/types/dataTypes";
+import { UserError, User } from "../../../shared/types/dataTypes";
+import { PostgresClient } from "../types/dataTypes";
 
 /**
  * Registers a new user in the system by hashing the provided password
@@ -47,28 +44,30 @@ export async function loginUserService(
   db: PostgresClient,
   email: string,
   password: string
-): Promise<string> {
-  const user = await findUserByEmailPostgres(db, email);
+): Promise<{ token: string; userPreferences: User }> {
+  const user = await findUserLoginByEmailPostgres(db, email);
   const passwordMatch = await comparePasswords(password, user.password);
 
   if (!passwordMatch) {
     throw new UserError("Zadané heslo je nesprávné");
   }
 
-  const token = createToken(user);
-  return token;
+  const token = createToken(user.id);
+  const { password: _, ...userPreferences } = user;
+
+  return { token, userPreferences };
 }
 
 /**
  * Retrieves the user preferences for a given user ID from the database.
  *
  * @param db - The Postgres client instance used to query the database.
- * @param userId - The unique identifier of the user whose preferences are being retrieved.
+ * @param email - The unique identifier of the user whose preferences are being retrieved.
  * @returns A promise that resolves to the user's preferences.
  */
 export async function getUserPreferences(
   db: PostgresClient,
   userId: number
-): Promise<UserPreferences> {
+): Promise<User> {
   return await findUserPreferencesByIdPostgres(db, userId);
 }

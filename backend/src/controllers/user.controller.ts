@@ -3,7 +3,6 @@ import {
   getWordsPostgres,
   updateWordsPostgres,
 } from "../repository/word.service.postgres";
-import { getUserPreferences } from "../services/user.service";
 import { postgresDBPool } from "../config/database.config.postgres";
 import config from "../config/config";
 
@@ -68,39 +67,6 @@ export async function updateUserWordsController(
   try {
     await updateWordsPostgres(postgresDBPool, Number(userId), words);
     res.status(200).json({ message: "User words updated successfully." });
-  } catch (err) {
-    next(err);
-  }
-}
-
-/**
- * Handles the retrieval of a user's profile preferences.
- *
- * @param req - The HTTP request object, expected to contain the user's ID in `req.user.id`.
- * @param res - The HTTP response object used to send the user's preferences or an error response.
- * @param next - The next middleware function for error handling.
- * @returns A promise that resolves to void.
- *
- * @throws Will handle any errors that occur during database connection, preference retrieval, or response handling.
- *
- * This controller function:
- * 1. Extracts the user ID from the request object.
- * 2. Connects to the database.
- * 3. Retrieves the user's preferences using the `getUserPreferences` function.
- * 4. Sends the preferences as a JSON response.
- * 5. Handles any errors using `handleControllerError`.
- * 6. Ensures the database connection is closed in the `finally` block.
- */
-export async function getUserProfileController(
-  req: Request,
-  res: Response,
-  next: Function
-): Promise<void> {
-  const userId = (req as any).user.id;
-
-  try {
-    const userPrefer = await getUserPreferences(postgresDBPool, userId);
-    res.json(userPrefer);
   } catch (err) {
     next(err);
   }

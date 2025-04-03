@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS user_preferences (
   user_id INTEGER PRIMARY KEY, 
-  mode_day INTEGER DEFAULT 1 CHECK (mode_day IN (0, 1)), -- light / mode browser mode; limited integer instead of boolean to ensure future synchronization with offline SQLite database
+  mode_day INTEGER DEFAULT 1 CHECK (mode_day IN (1, 2, 3)), -- default / light / night; limited integer instead of boolean to ensure future synchronization with offline SQLite database
   font_size INTEGER DEFAULT 2 CHECK (font_size IN (1, 2, 3)),
   notifications INTEGER DEFAULT 1 CHECK (notifications IN (0, 1)), -- enable push notifications
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE

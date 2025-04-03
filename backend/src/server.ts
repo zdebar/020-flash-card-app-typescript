@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import authRoutes from "./routes/auth.routes";
+import authRouter from "./routes/auth.routes";
 import userRouter from "./routes/user.routes";
 import errorHandler from "./middlewares/errorHandler.middleware";
 import { requestLogger } from "./utils/logger.utils";
@@ -21,7 +21,7 @@ app.get("/", (req, res) => {
 });
 
 // Authentication Routes
-app.use("/auth", authRoutes);
+app.use("/auth", authRouter);
 
 // Protected Route
 app.use("/user", userRouter);

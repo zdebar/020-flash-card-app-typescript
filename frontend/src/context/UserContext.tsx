@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { UserPreferences } from '../types/dataTypes';
+import { UserPreferences } from '../../../shared/types/dataTypes';
 
 export interface UserContextType {
   userInfo: UserPreferences | null;
@@ -7,4 +7,6 @@ export interface UserContextType {
   setUserInfo: (user: UserPreferences | null) => void;
 }
 
-export const UserContext = createContext<UserContextType | undefined>(undefined);
+export const UserContext = createContext<UserContextType | undefined>(
+  undefined
+);
