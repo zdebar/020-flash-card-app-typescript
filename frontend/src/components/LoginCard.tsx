@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { InputForm } from './InputForm';
-import { SubmitButton } from './SubmitButton';
-import { AuthForm } from './AuthForm';
-import { RegisterLink } from './RegisterLink';
+import InputForm from './InputForm';
+import SubmitButton from './SubmitButton';
+import AuthForm from './AuthForm';
+import RegisterLink from './RegisterLink';
 import { useUser } from '../hooks/useUser';
 import { handleApiResponse } from '../utils/handleApiResponse';
+import { handleAPIError } from '../utils/errorHandlers';
 
 export default function LoginCard() {
   const [email, setEmail] = useState('');
@@ -31,7 +32,7 @@ export default function LoginCard() {
       if (error instanceof Error) {
         setUserError(error.message);
       } else {
-        setUserError('An unknown error occurred.');
+        handleAPIError(error, setUserError);
       }
     }
   };

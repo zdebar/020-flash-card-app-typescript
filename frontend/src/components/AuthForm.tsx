@@ -7,7 +7,7 @@ interface AuthFormProps extends FormHTMLAttributes<HTMLFormElement> {
   onSubmit: (e: React.FormEvent) => void;
 }
 
-export function AuthForm({
+export default function AuthForm({
   title,
   error,
   children,

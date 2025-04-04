@@ -1,4 +1,4 @@
-import { IconWrapper } from './IconWrapper';
+import IconWrapper from './IconWrapper';
 
 export function AcademicCapIcon({
   className = 'size-5',

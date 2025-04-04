@@ -9,7 +9,7 @@ interface InputFormProps
   onChange: (value: string) => void;
 }
 
-export function InputForm({
+export default function InputForm({
   type,
   label,
   placeholder,

@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import { AcademicCapIcon, UserIcon } from './Icons';
-import { RoundButton } from './RoundButton';
+import RoundButton from './RoundButton';
 
 export default function Header(): ReactNode {
   return (
@@ -8,7 +8,7 @@ export default function Header(): ReactNode {
       <RoundButton to="/Practice">
         <AcademicCapIcon />
       </RoundButton>
-      <RoundButton to="/User">
+      <RoundButton to="/userDashboard">
         <UserIcon />
       </RoundButton>
     </header>

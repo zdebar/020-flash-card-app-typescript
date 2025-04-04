@@ -8,7 +8,7 @@ type RoundButtonProps = {
   className?: string;
 };
 
-export function RoundButton({
+export default function RoundButton({
   children,
   to,
   className = '',

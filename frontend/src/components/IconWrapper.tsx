@@ -5,7 +5,7 @@ type IconWrapperProps = {
   className?: string;
 };
 
-export function IconWrapper({ children, className }: IconWrapperProps) {
+export default function IconWrapper({ children, className }: IconWrapperProps) {
   return (
     <div className={`rounded-full p-1`}>
       <svg

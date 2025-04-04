@@ -4,7 +4,10 @@ interface SubmitButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
 }
 
-export function SubmitButton({ children, ...props }: SubmitButtonProps) {
+export default function SubmitButton({
+  children,
+  ...props
+}: SubmitButtonProps) {
   return (
     <button
       type="submit"

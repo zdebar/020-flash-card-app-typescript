@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-export function RegisterLink() {
+export default function RegisterLink() {
   return (
     <div className="mt-4 text-center">
       <p className="text-sm">

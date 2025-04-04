@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { SubmitButton } from './SubmitButton';
-import { InputForm } from './InputForm';
-import { AuthForm } from './AuthForm';
+import SubmitButton from './SubmitButton';
+import InputForm from './InputForm';
+import AuthForm from './AuthForm';
 import { useUser } from '../hooks/useUser';
 import { useNavigate } from 'react-router-dom';
 import { handleApiResponse } from '../utils/handleApiResponse';
+import { handleAPIError } from '../utils/errorHandlers';
 
 export default function RegisterCard() {
   const [username, setUsername] = useState('');
@@ -28,11 +29,7 @@ export default function RegisterCard() {
 
       await handleApiResponse(response, setUserInfo, setLoading, navigate);
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        setUserError(error.message);
-      } else {
-        setUserError('An unknown error occurred.');
-      }
+      handleAPIError(error, setUserError);
     }
   };
 
