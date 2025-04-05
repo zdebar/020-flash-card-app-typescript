@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import { User } from "../../../shared/types/dataTypes";
+import { UserID } from "../types/dataTypes";
 import { verifyToken } from "../utils/auth.utils";
-import config from "../config/config";
 import logger from "../utils/logger.utils";
 
 /**
@@ -21,7 +20,10 @@ export function authenticateTokenMiddleware(
   res: Response,
   next: NextFunction
 ): void {
-  const token = req.headers.authorization?.split(" ")[1];
+  const token = req.cookies?.token;
+
+  console.log("Token from cookies:", req);
+  console.log("Token from cookies:", token);
 
   if (!token) {
     logger.error(`Authentication failed: No token provided for ${req.ip}`);
@@ -31,7 +33,7 @@ export function authenticateTokenMiddleware(
 
   try {
     const decoded = verifyToken(token);
-    (req as any).user = decoded as User;
+    (req as any).user = decoded as UserID;
     next();
   } catch (err: any) {
     logger.debug(`Authentication failed: ${err.message}`);

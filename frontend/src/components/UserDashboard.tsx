@@ -8,10 +8,9 @@ export default function UserDashboard() {
   const isActive = userInfo !== null;
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
     setUserInfo(null);
     setLoading(false);
-    navigate('/login');
+    navigate('/');
   };
 
   return (

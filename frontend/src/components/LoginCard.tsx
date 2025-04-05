@@ -5,8 +5,7 @@ import SubmitButton from './SubmitButton';
 import AuthForm from './AuthForm';
 import RegisterLink from './RegisterLink';
 import { useUser } from '../hooks/useUser';
-import { handleLoginResponse } from '../utils/handleLoginResponse';
-import { handleLoginError } from '../utils/errorHandlers';
+import { postAPI } from '../utils/login.utils';
 
 export default function LoginCard() {
   const [email, setEmail] = useState('');
@@ -18,25 +17,19 @@ export default function LoginCard() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    console.log('Register form submitted with:', { email, password });
+
     // const API_PATH = `${process.env.REACT_APP_API_URL}/auth/login`;
-    const API_PATH = `http://localhost:3000/auth/login`;
-    console.log('API Path:', API_PATH);
+    const API_PATH = `http://localhost:3000/user/login`;
 
-    try {
-      const response = await fetch(API_PATH, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
-
-      await handleLoginResponse(response, setUserInfo, setLoading, navigate);
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        setUserError(error.message);
-      } else {
-        handleLoginError(error, setUserError);
-      }
-    }
+    await postAPI(
+      { email, password },
+      setUserInfo,
+      setLoading,
+      navigate,
+      setUserError,
+      API_PATH
+    );
   };
 
   return (

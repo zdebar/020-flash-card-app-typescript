@@ -3,7 +3,7 @@ import {
   getUserWordsController,
   updateUserWordsController,
   getUserProfileController,
-} from "../user.controller";
+} from "../practice.controller";
 import { Request, Response } from "express";
 import db from "../../config/database.config.postgres";
 import * as wordService from "../../repository/word.service.postgres";

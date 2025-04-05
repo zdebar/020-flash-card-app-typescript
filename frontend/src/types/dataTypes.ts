@@ -1,17 +1,27 @@
-export interface Word {
+// Word Data Types
+export interface WordUpdate {
   id: number;
+  progress: number;
+}
+
+export interface Word extends WordUpdate {
   src: string;
   trg: string;
   prn: string | null;
   audio: string | null;
-  progress: number;
-  learned_at: string | null; // should this be a boolean?
+  learned: boolean;
 }
 
-export interface UserID {
-  id: number;
+export interface WordOverview extends WordUpdate {
+  src: string;
+  trg: string;
+  prn: string | null;
+  audio: string | null;
+  learned_at: string | null;
+  mastered_at: string | null;
 }
 
+// User Data Types
 export enum ModeDay {
   DEFAULT = 1,
   LIGHT = 2,
@@ -29,6 +39,10 @@ export enum Notifications {
   Enabled = 1,
 }
 
+export interface UserID {
+  id: number;
+}
+
 export interface User extends UserID {
   username: string;
   mode_day: ModeDay;
@@ -41,9 +55,10 @@ export interface UserLogin extends User {
   password: string;
 }
 
+// Error Data Types
 export class UserError extends Error {
   constructor(message: string) {
     super(message);
-    this.name = "UserError";
+    this.name = 'UserError';
   }
 }

@@ -5,7 +5,7 @@ import RegisterCard from './components/RegisterCard';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useUser } from './hooks/useUser';
 import UserDashboard from './components/UserDashboard';
-import Card from './components/Card';
+import PracticeCard from './components/PracticeCard';
 
 export default function App() {
   const { userInfo, loading } = useUser();
@@ -29,7 +29,7 @@ export default function App() {
           />
           <Route path="/login" element={<LoginCard />} />
           <Route path="/register" element={<RegisterCard />} />
-          <Route path="/card" element={<Card />} />
+          <Route path="/practice" element={<PracticeCard />} />
           <Route path="/userDashboard" element={<UserDashboard />} />
         </Routes>
       </div>

@@ -1,25 +1,23 @@
 import { RefreshIcon, CheckIcon } from './Icons';
-import { fetchAndSaveUserWords } from '../functions/fetchData';
+import { getAPI } from '../functions/fetchData';
 import { useState, useEffect, useRef } from 'react';
-import { Word } from '../../../shared/types/dataTypes';
+import { Word, User } from '../types/dataTypes';
 import { postUpgradeWords } from '../functions/postData';
 
-export default function Card() {
+export default function PracticeCard() {
   const [wordArray, setWordArray] = useState<Word[] | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [revealed, setRevealed] = useState(false);
-  const [firstRun, setFirstRun] = useState(true);
+  const [firstRound, setFirstRun] = useState(true);
   const audioCache = useRef<{ [key: string]: string }>({});
 
   useEffect(() => {
+    const API_PATH = `http://localhost:3000/practice/getUserWords?srcLanguage=2&trgLanguage=1`;
+
     const fetchAndStoreWords = async () => {
       try {
-        let userWords = localStorage.getItem('userWords');
-        if (!userWords) {
-          await fetchAndSaveUserWords();
-          userWords = localStorage.getItem('userWords');
-        }
-        setWordArray(JSON.parse(userWords || '[]'));
+        const userWords = await getAPI<Word[]>(API_PATH, setWordArray);
+        setWordArray(userWords);
       } catch (error) {
         console.error('Error fetching or loading words:', error);
       }
@@ -64,7 +62,7 @@ export default function Card() {
   };
 
   const handleEndOfArray = () => {
-    let isFirstRun = firstRun;
+    let isFirstRun = firstRound;
 
     if (currentIndex === wordArray.length - 1) {
       setFirstRun(false);
@@ -96,12 +94,6 @@ export default function Card() {
     const updatedWordArray = [...wordArray];
     updatedWordArray[currentIndex].progress = 0;
     setWordArray(updatedWordArray);
-    console.log(
-      'Updated word array:',
-      wordArray[currentIndex].src,
-      wordArray[currentIndex].progress
-    );
-
     handleEndOfArray();
     setRevealed(false);
   };
@@ -110,12 +102,6 @@ export default function Card() {
     const updatedWordArray = [...wordArray];
     updatedWordArray[currentIndex].progress++;
     setWordArray(updatedWordArray);
-    console.log(
-      'Updated word array:',
-      wordArray[currentIndex].src,
-      wordArray[currentIndex].progress
-    );
-
     handleEndOfArray();
     setRevealed(false);
   };

@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { User } from '../../../shared/types/dataTypes';
+import { User } from '../types/dataTypes';
 
 export interface UserContextType {
   userInfo: User | null;

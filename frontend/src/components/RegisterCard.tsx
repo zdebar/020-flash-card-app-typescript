@@ -4,8 +4,7 @@ import InputForm from './InputForm';
 import AuthForm from './AuthForm';
 import { useUser } from '../hooks/useUser';
 import { useNavigate } from 'react-router-dom';
-import { handleLoginResponse } from '../utils/handleLoginResponse';
-import { handleLoginError } from '../utils/errorHandlers';
+import { postAPI } from '../utils/login.utils';
 
 export default function RegisterCard() {
   const [username, setUsername] = useState('');
@@ -20,31 +19,17 @@ export default function RegisterCard() {
 
     console.log('Register form submitted with:', { username, email, password });
 
-    // const API_PATH = `${process.env?.VITE_API_URL || 'http://localhost:3000'}/auth/register`;
-    const API_PATH = `http://localhost:3000/auth/register`;
-    console.log('API Path:', API_PATH);
+    // const API_PATH = `${process.env?.VITE_API_URL || 'http://localhost:3000'}/user/register`;
+    const API_PATH = `http://localhost:3000/user/register`;
 
-    // // Optionally, you can throw an error if the environment variable is missing
-    // if (!process.env?.VITE_API_URL) {
-    //   console.warn(
-    //     'Environment variable REACT_APP_API_URL is not defined. Using fallback URL.'
-    //   );
-    // }
-
-    try {
-      const response = await fetch(API_PATH, {
-        method: 'POST',
-        body: JSON.stringify({ username, email, password }),
-        headers: { 'Content-Type': 'application/json' },
-      });
-
-      console.log('API response:', response);
-
-      await handleLoginResponse(response, setUserInfo, setLoading, navigate);
-    } catch (error: unknown) {
-      console.error('Error during registration:', error);
-      handleLoginError(error, setUserError);
-    }
+    await postAPI(
+      { username, email, password },
+      setUserInfo,
+      setLoading,
+      navigate,
+      setUserError,
+      API_PATH
+    );
   };
 
   return (

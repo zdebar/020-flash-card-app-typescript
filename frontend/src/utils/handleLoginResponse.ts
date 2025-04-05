@@ -7,19 +7,28 @@ export const handleLoginResponse = async (
   setLoading: UserContextType['setLoading'],
   navigate: NavigateFunction
 ) => {
-  if (response.ok) {
-    const data = await response.json();
-    const { token, userPreferences } = data;
-    if (token && userPreferences) {
-      localStorage.setItem('token', token);
-      setUserInfo(userPreferences);
-      setLoading(false);
-      navigate('/');
+  try {
+    if (response.ok) {
+      const data = await response.json();
+      if (data) {
+        console.log('Registration / Login successful:', data);
+        setUserInfo(data);
+        navigate('/');
+      } else {
+        console.warn('No user data returned from the server.');
+      }
     } else {
-      throw new Error('Token or userPreferences not found in response.');
+      const errorData = await response.json();
+      console.error(
+        `Registration / Login failed with status ${response.status}: ${errorData.message}`
+      );
     }
-  } else {
-    const errorData = await response.json();
-    throw new Error(errorData.message || 'Response not ok.');
+  } catch (error: unknown) {
+    console.error(
+      'Error during processing response login / registration:',
+      error
+    );
+  } finally {
+    setLoading(false);
   }
 };

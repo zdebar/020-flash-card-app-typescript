@@ -1,36 +1,26 @@
 import { useState, useEffect, ReactNode } from 'react';
 import { UserContext } from './UserContext';
-import { fetchAndSaveUserPreferences } from '../functions/fetchData';
-import { User } from '../../../shared/types/dataTypes';
+import { getAPI } from '../functions/fetchData';
+import { User } from '../types/dataTypes';
 
 export function UserProvider({ children }: { children: ReactNode }) {
   const [userInfo, setUserInfo] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const getUserInfo = async () => {
-      const token = localStorage.getItem('token');
+    const API_PATH = `http://localhost:3000/user/getPreferences`;
 
-      if (token) {
-        try {
-          const user = await fetchAndSaveUserPreferences();
-          if (user) {
-            setUserInfo(user);
-          } else {
-            setUserInfo(null);
-          }
-        } catch (error) {
-          console.error('Token invalid or expired', error);
-          setUserInfo(null);
-        }
-      } else {
-        setUserInfo(null);
+    const fetchUserPreferences = async () => {
+      try {
+        await getAPI<User>(API_PATH, setUserInfo);
+      } catch (error) {
+        console.error('Error fetching user preferences:', error);
+      } finally {
+        setLoading(false);
       }
-
-      setLoading(false);
     };
 
-    getUserInfo();
+    fetchUserPreferences();
   }, []);
 
   return (

@@ -1,26 +1,16 @@
-import { User, Word } from '../../../shared/types/dataTypes';
-
-async function fetchData<T>(
+export async function getAPI<T>(
   apiPath: string,
-  storageKey?: string
+  setData: (data: T | null) => void
 ): Promise<T | null> {
-  const token = localStorage.getItem('token');
-
-  if (!token) {
-    return null;
-  }
-
   try {
     const response = await fetch(apiPath, {
       method: 'GET',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      credentials: 'include',
     });
 
+    console.log('API response:', response);
     if (!response.ok) {
       if (response.status === 401) {
-        localStorage.removeItem('token');
         throw new Error('Unauthorized. Please log in again.');
       }
       const errorData = await response.json();
@@ -29,24 +19,17 @@ async function fetchData<T>(
 
     const data = await response.json();
     console.log('Fetched data:', data);
-
-    if (storageKey) {
-      localStorage.setItem(storageKey, JSON.stringify(data));
-    }
+    setData(data);
 
     return data;
   } catch (error) {
     console.error(error);
+    setData(null);
     return null;
   }
 }
 
-export async function fetchAndSaveUserPreferences(): Promise<User | null> {
-  const API_PATH = `http://localhost:3000/auth/getPreferences`;
-  return fetchData<User>(API_PATH, 'userPreferences');
-}
-
-export async function fetchAndSaveUserWords(): Promise<Word[] | null> {
-  const API_PATH = `http://localhost:3000/user/getUserWords?srcLanguage=2&trgLanguage=1`;
-  return fetchData<Word[]>(API_PATH, 'userWords');
-}
+// export async function fetchUserWords(): Promise<Word[] | null> {
+//   const API_PATH = `http://localhost:3000/practice/getUserWords?srcLanguage=2&trgLanguage=1`;
+//   return getAPI<Word[]>(API_PATH);
+// }

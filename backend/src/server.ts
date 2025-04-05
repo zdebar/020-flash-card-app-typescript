@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
-import authRouter from "./routes/auth.routes";
 import userRouter from "./routes/user.routes";
+import practiceRouter from "./routes/practice.routes";
 import errorHandler from "./middlewares/errorHandler.middleware";
 import { requestLogger } from "./utils/logger.utils";
 import "./config/config";
@@ -9,10 +9,16 @@ import { checkDatabaseConnection } from "./utils/database.utils";
 import path from "path";
 
 const PORT = process.env.BACKEND_PORT || 3000;
+const allowedOrigin = process.env.FRONTEND_URL || "http://localhost:5173";
 export const app = express();
 
 // Middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: allowedOrigin,
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(requestLogger);
 
@@ -28,10 +34,10 @@ app.use(
 );
 
 // Authentication Routes
-app.use("/auth", authRouter);
+app.use("/user", userRouter);
 
 // Protected Route
-app.use("/user", userRouter);
+app.use("/practice", practiceRouter);
 
 // Error Handling Middleware
 app.use(errorHandler);
