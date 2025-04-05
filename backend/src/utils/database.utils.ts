@@ -11,7 +11,7 @@ export async function checkDatabaseConnection(): Promise<void> {
   try {
     const client = await postgresDBPool.connect();
     client.release();
-    console.log("Database connected successfully.");
+    console.log("Database connected successfully at port", process.env.DB_PORT);
   } catch (err: any) {
     console.error("Failed to connect to the database:", err.message);
     throw new Error("Database connection failed.");

@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { User } from "../../../shared/types/dataTypes";
+import { UserID } from "../types/dataTypes";
 import config from "../config/config";
 
 /**
@@ -34,8 +34,7 @@ export async function comparePasswords(
  * @returns The signed JWT as a string.
  */
 export function createToken(userID: number): string {
-  const expirationTime =
-    (config.JWT_EXPIRES_IN as jwt.SignOptions["expiresIn"]) || "48h";
+  const expirationTime = config.JWT_EXPIRES_IN as jwt.SignOptions["expiresIn"];
   return jwt.sign({ id: userID.toString() }, config.JWT_SECRET as string, {
     expiresIn: expirationTime,
   });
@@ -47,7 +46,7 @@ export function createToken(userID: number): string {
  * @param token - The JWT string to be verified.
  * @returns The decoded payload as a `User` object if the token is valid.
  */
-export function verifyToken(token: string): User {
-  const decoded = jwt.verify(token, config.JWT_SECRET as string);
-  return decoded as User;
+export function verifyToken(token: string): UserID {
+  const decoded = jwt.verify(token, config.JWT_SECRET as string) as UserID;
+  return decoded;
 }

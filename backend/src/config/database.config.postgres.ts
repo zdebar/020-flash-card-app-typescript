@@ -1,16 +1,8 @@
 import { Pool } from "pg";
 import dotenv from "dotenv";
 import path from "path";
-import { validateEnvVariables } from "../utils/validate.utils";
 
 dotenv.config({ path: path.resolve(__dirname, "../../.env") });
-validateEnvVariables([
-  "DB_HOST",
-  "DB_PORT",
-  "DB_NAME",
-  "DB_USER",
-  "DB_PASSWORD",
-]);
 
 export let postgresDBPool: Pool;
 if (process.env.NODE_ENV === "test") {

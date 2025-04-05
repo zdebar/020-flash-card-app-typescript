@@ -1,4 +1,4 @@
-import { UserError } from "../../../shared/types/dataTypes";
+import { UserError } from "../types/dataTypes";
 
 /**
  * Validates that all required user fields in the provided object are present and not empty.
@@ -15,9 +15,7 @@ export function validateRequiredUserFields(fields: Record<string, any>): void {
 
     if (key === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
       throw new UserError(`Email musí obsahovat platnou e-mailovou adresu.`);
-    }
-
-    if (key === "password") {
+    } else if (key === "password") {
       if (value.length < 8 || value.length > 128) {
         throw new UserError(`Heslo musí mít délku mezi 8 a 128 znaky.`);
       }
@@ -37,9 +35,7 @@ export function validateRequiredUserFields(fields: Record<string, any>): void {
           `Heslo musí obsahovat alespoň jeden speciální znak.`
         );
       }
-    }
-
-    if (key === "username" && (value.length < 2 || value.length > 50)) {
+    } else if (key === "username" && (value.length < 2 || value.length > 50)) {
       throw new UserError(
         `Uživatelské jméno musí mít délku mezi 2 a 50 znaky.`
       );
@@ -66,4 +62,5 @@ export function validateEnvVariables(
       );
     }
   });
+  console.log("All required environment variables are set.");
 }
