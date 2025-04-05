@@ -1,12 +1,5 @@
 import { UserError } from "../types/dataTypes";
 
-/**
- * Validates that all required user fields in the provided object are present and not empty.
- * Additionally, performs common validations such as email format, length, and numeric checks.
- *
- * @param fields - An object where keys represent field names and values represent their corresponding values.
- * @throws {UserError} If any field is missing, invalid, or fails specific validations.
- */
 export function validateRequiredUserFields(fields: Record<string, any>): void {
   for (const [key, value] of Object.entries(fields)) {
     if (!value || value.trim() === "") {

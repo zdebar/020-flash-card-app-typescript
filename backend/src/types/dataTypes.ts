@@ -1,24 +1,27 @@
 import { Client, Pool } from "pg";
 
+// Database Client Type
 export type PostgresClient = Pick<Client | Pool, "query" | "connect" | "end">;
 
-export interface Word {
+// Word Data Types
+export interface WordUpdate {
   id: number;
+  progress: number;
+}
+
+export interface Word extends WordUpdate {
   src: string;
   trg: string;
   prn: string | null;
   audio: string | null;
-  progress: number;
   learned: boolean;
 }
 
-export interface WordOverview {
-  id: number;
+export interface WordOverview extends WordUpdate {
   src: string;
   trg: string;
   prn: string | null;
   audio: string | null;
-  progress: number;
   learned_at: string | null;
   mastered_at: string | null;
 }

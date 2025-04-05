@@ -8,8 +8,7 @@ import {
   findUserLoginByEmailPostgres,
   findUserPreferencesByIdPostgres,
 } from "../repository/user.repository.postgres";
-import { UserError, User } from "../../../shared/types/dataTypes";
-import { PostgresClient } from "../types/dataTypes";
+import { UserError, User, PostgresClient } from "../types/dataTypes";
 
 /**
  * Registers a new user in the system by hashing the provided password
@@ -19,16 +18,19 @@ import { PostgresClient } from "../types/dataTypes";
  * @param username - The username of the new user.
  * @param email - The email address of the new user.
  * @param password - The plaintext password of the new user, which will be hashed before storage.
- * @returns A promise that resolves when the user has been successfully registered.
+ * @returns A promise userID / Error
  */
 export async function registerUserService(
   db: PostgresClient,
   username: string,
   email: string,
   password: string
-): Promise<void> {
+): Promise<{ token: string; user: User }> {
   const hashedPassword = await hashPassword(password);
-  await insertUserPostgres(db, username, email, hashedPassword);
+  const user = await insertUserPostgres(db, username, email, hashedPassword);
+
+  const token = createToken(user.id);
+  return { token, user };
 }
 
 /**
@@ -44,18 +46,18 @@ export async function loginUserService(
   db: PostgresClient,
   email: string,
   password: string
-): Promise<{ token: string; userPreferences: User }> {
-  const user = await findUserLoginByEmailPostgres(db, email);
-  const passwordMatch = await comparePasswords(password, user.password);
+): Promise<{ token: string; user: User }> {
+  const userLogin = await findUserLoginByEmailPostgres(db, email);
+  const passwordMatch = await comparePasswords(password, userLogin.password);
 
   if (!passwordMatch) {
     throw new UserError("Zadané heslo je nesprávné");
   }
 
-  const token = createToken(user.id);
-  const { password: _, ...userPreferences } = user;
+  const token = createToken(userLogin.id);
+  const { password: passwordToOmit, email: emailToOmit, ...user } = userLogin;
 
-  return { token, userPreferences };
+  return { token, user };
 }
 
 /**

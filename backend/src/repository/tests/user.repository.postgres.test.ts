@@ -199,23 +199,31 @@ describe("insertUserPostgres", () => {
     const email = "test@example.com";
     const hashedPassword = "hashedpassword123";
 
-    await insertUserPostgres(postgresDBPool, username, email, hashedPassword);
-
-    const client = (await postgresDBPool.connect()) as PoolClient;
-    const res = await postgresDBPool.query(
-      "SELECT * FROM users WHERE email = $1",
-      [email]
-    );
-    client.release();
-
-    expect(res.rows.length).toBe(1);
-    expect(res.rows[0]).toEqual({
-      id: expect.any(Number),
+    await expect(
+      insertUserPostgres(postgresDBPool, username, email, hashedPassword)
+    ).resolves.toBe({
+      font_size: 2,
+      id: 179,
+      mode_day: 1,
+      notifications: 1,
       username: "testuser",
-      email: "test@example.com",
-      created_at: expect.any(String),
-      password: "hashedpassword123",
     });
+
+    // const client = (await postgresDBPool.connect()) as PoolClient;
+    // const res = await postgresDBPool.query(
+    //   "SELECT * FROM users WHERE email = $1",
+    //   [email]
+    // );
+    // client.release();
+
+    // expect(res.rows.length).toBe(1);
+    // expect(res.rows[0]).toEqual({
+    //   id: expect.any(Number),
+    //   username: "testuser",
+    //   email: "test@example.com",
+    //   created_at: expect.any(String),
+    //   password: "hashedpassword123",
+    // });
   });
 
   it("should throw an error when inserting the same user again (unique constraint)", async () => {

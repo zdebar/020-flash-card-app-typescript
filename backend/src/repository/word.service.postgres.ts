@@ -1,5 +1,4 @@
-import { Word } from "../../../shared/types/dataTypes";
-import { PostgresClient } from "../types/dataTypes";
+import { PostgresClient, WordUpdate, Word } from "../types/dataTypes";
 import config from "../config/config";
 import { PoolClient } from "pg";
 
@@ -26,13 +25,13 @@ export async function getWordsPostgres(
 ): Promise<Word[]> {
   const query = `
     SELECT 
-      target.id AS id, 
-      source.word AS src, 
-      target.word AS trg, 
-      target.prn AS prn,
-      target.audio AS audio,
+      target.id, 
+      source.word, 
+      target.word, 
+      target.prn,
+      target.audio,
       COALESCE(uw.progress,0) AS progress,
-      uw.learned_at AS learned_at
+      uw.learned_at IS NOT NULL AS learned
     FROM words source
     JOIN word_meanings wm_src ON source.id = wm_src.word_id
     JOIN word_meanings wm_trg ON wm_src.meaning_id = wm_trg.meaning_id
@@ -83,7 +82,7 @@ export async function getWordsPostgres(
 export async function updateWordsPostgres(
   db: PostgresClient,
   userId: number,
-  words: Word[]
+  words: WordUpdate[]
 ): Promise<void> {
   const today = new Date();
   const values: unknown[] = [];

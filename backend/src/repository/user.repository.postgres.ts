@@ -1,7 +1,6 @@
-import { UserLogin, User, UserError } from "../../../shared/types/dataTypes";
+import { UserLogin, User, UserError, PostgresClient } from "../types/dataTypes";
 import { QueryResult } from "pg";
 import { PoolClient } from "pg";
-import { PostgresClient } from "../types/dataTypes";
 
 /**
  * Retrieves the user preferences for a specific user by their ID from a PostgreSQL database.
@@ -22,9 +21,8 @@ export async function findUserPreferencesByIdPostgres(
     const user: QueryResult<User> = await db.query(
       `
       SELECT 
-        u.id AS id,
-        u.username AS username, 
-        u.email AS email, 
+        u.id,
+        u.username, 
         COALESCE(up.mode_day, 1) AS mode_day, 
         COALESCE(up.font_size, 2) AS font_size,
         COALESCE(up.notifications, 1) AS notifications
@@ -61,10 +59,10 @@ export async function findUserLoginByEmailPostgres(
     const user: QueryResult<UserLogin> = await db.query(
       `
       SELECT 
-        u.id AS id,
-        u.username AS username, 
-        u.email AS email, 
-        u.password AS password,
+        u.id,
+        u.username, 
+        u.email, 
+        u.password,
         COALESCE(up.mode_day, 1) AS mode_day, 
         COALESCE(up.font_size, 2) AS font_size,
         COALESCE(up.notifications, 1) AS notifications
@@ -94,35 +92,40 @@ export async function findUserLoginByEmailPostgres(
  * @throws {UserError} If the username or email is already taken.
  * @throws {Error} If any other database error occurs during the operation.
  *
- * This function performs the following steps:
- * 1. Begins a database transaction.
- * 2. Inserts the user into the `users` table and retrieves the generated user ID.
- * 3. Inserts default preferences for the user into the `user_preferences` table.
- * 4. Commits the transaction if all operations succeed.
- * 5. Rolls back the transaction if an error occurs, and rethrows the error.
  */
 export async function insertUserPostgres(
   db: PostgresClient,
   username: string,
   email: string,
   hashedPassword: string
-): Promise<void> {
+): Promise<User> {
   const client = (await db.connect()) as PoolClient;
+  const defaultModeDay = 1;
+  const defaultFontSize = 2;
+  const defaultNotifications = 1;
 
   try {
     await client.query("BEGIN");
     const userResult = await client.query(
-      "INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING id",
+      "INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING id, username",
       [username, email, hashedPassword]
     );
-    const userId = userResult.rows[0].id;
+    let user = userResult.rows[0];
     await client.query(
       "INSERT INTO user_preferences (user_id, mode_day, font_size, notifications) VALUES ($1, $2, $3, $4)",
-      [userId, 1, 2, 1]
+      [user.id, defaultModeDay, defaultFontSize, defaultNotifications]
     );
     await client.query("COMMIT");
+    return {
+      id: user.id,
+      username: user.username,
+      mode_day: defaultModeDay,
+      font_size: defaultFontSize,
+      notifications: defaultNotifications,
+    };
   } catch (err: any) {
     await client.query("ROLLBACK");
+    // TODO: More limits on username and email in database now, but not in the code
     if (err.code === "23505") {
       if (err.detail.includes("username")) {
         throw new UserError("Uživatelské jméno je již obsazeno.");

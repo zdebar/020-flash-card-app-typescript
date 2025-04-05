@@ -5,6 +5,7 @@ import {
 } from "../repository/word.service.postgres";
 import { postgresDBPool } from "../config/database.config.postgres";
 import config from "../config/config";
+import { WordUpdate } from "../types/dataTypes";
 
 interface GetUserWordsQuery {
   srcLanguage?: string;
@@ -33,31 +34,18 @@ export async function getUserWordsController(
     const userId = (req as any).user.id;
     const { srcLanguage, trgLanguage }: GetUserWordsQuery = req.query;
 
-    // Validate srcLanguage and trgLanguage
-    const srcLangNum =
-      srcLanguage && !isNaN(Number(srcLanguage)) ? Number(srcLanguage) : null;
-    const trgLangNum =
-      trgLanguage && !isNaN(Number(trgLanguage)) ? Number(trgLanguage) : null;
-
-    if (srcLangNum === null || trgLangNum === null) {
-      res.status(400).json({
-        error: "Invalid or missing srcLanguage or trgLanguage parameters.",
-      });
-      return;
-    }
-
     const words = await getWordsPostgres(
       postgresDBPool,
       Number(userId),
-      srcLangNum,
-      trgLangNum,
+      Number(srcLanguage),
+      Number(trgLanguage),
       config.block
     );
 
     // Add audio file URLs to each word
     const wordsWithAudio = words.map((word: any) => ({
       ...word,
-      audio: `/${trgLangNum}/${word.audio}.opus`,
+      audio: `/${trgLanguage}/${word.audio}.opus`,
     }));
 
     res.status(200).json(wordsWithAudio);
@@ -84,8 +72,12 @@ export async function updateUserWordsController(
   try {
     const userId = (req as any).user.id;
     const { words } = req.body;
-    await updateWordsPostgres(postgresDBPool, Number(userId), words);
-    res.status(200).json({ message: "User words updated successfully." });
+    await updateWordsPostgres(
+      postgresDBPool,
+      Number(userId),
+      words as WordUpdate[]
+    );
+    res.status(200).json({ message: "Uživatelká slova aktualizována." });
   } catch (err) {
     next(err);
   }

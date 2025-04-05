@@ -39,8 +39,12 @@ export async function registerUserController(
     }
 
     validateRequiredUserFields({ username, email, password });
-    await registerUserService(postgresDBPool, username, email, password);
-    const data = await loginUserService(postgresDBPool, email, password);
+    const data = await registerUserService(
+      postgresDBPool,
+      username,
+      email,
+      password
+    );
     res
       .status(201)
       .json({ message: "Uživatel úspěšně zaregistrován.", ...data });
@@ -75,7 +79,7 @@ export async function loginUserController(
     const { email, password } = req.body;
     validateRequiredUserFields({ email, password });
     const data = await loginUserService(postgresDBPool, email, password);
-    res.json(data);
+    res.json({ message: "Uživatel úspěšně přihlášen.", ...data });
   } catch (err: any) {
     next(err);
   }
