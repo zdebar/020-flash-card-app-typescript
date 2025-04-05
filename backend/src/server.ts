@@ -6,6 +6,7 @@ import errorHandler from "./middlewares/errorHandler.middleware";
 import { requestLogger } from "./utils/logger.utils";
 import "./config/config";
 import { checkDatabaseConnection } from "./utils/database.utils";
+import path from "path";
 
 const PORT = process.env.BACKEND_PORT || 3000;
 export const app = express();
@@ -19,6 +20,12 @@ app.use(requestLogger);
 app.get("/", (req, res) => {
   res.send("Server running!");
 });
+
+// Static files
+app.use(
+  "/audio",
+  express.static(path.join(__dirname, "..", "..", "public", "audio"))
+);
 
 // Authentication Routes
 app.use("/auth", authRouter);

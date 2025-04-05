@@ -4,8 +4,8 @@ import LoginCard from './components/LoginCard';
 import RegisterCard from './components/RegisterCard';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useUser } from './hooks/useUser';
-import Card from './components/Card';
 import UserDashboard from './components/UserDashboard';
+import Card from './components/Card';
 
 export default function App() {
   const { userInfo, loading } = useUser();
@@ -14,7 +14,6 @@ export default function App() {
     <div className="dark:bg-gray-900">
       <div className="mx-auto flex min-h-screen w-full max-w-[900px] min-w-[320px] flex-col items-center">
         <Header />
-        <Card></Card>
         <Routes>
           <Route
             path="/"
@@ -30,6 +29,7 @@ export default function App() {
           />
           <Route path="/login" element={<LoginCard />} />
           <Route path="/register" element={<RegisterCard />} />
+          <Route path="/card" element={<Card />} />
           <Route path="/userDashboard" element={<UserDashboard />} />
         </Routes>
       </div>

@@ -1,7 +1,7 @@
 import { NavigateFunction } from 'react-router-dom';
 import { UserContextType } from '../context/UserContext';
 
-export const handleApiResponse = async (
+export const handleLoginResponse = async (
   response: Response,
   setUserInfo: UserContextType['setUserInfo'],
   setLoading: UserContextType['setLoading'],
@@ -9,13 +9,14 @@ export const handleApiResponse = async (
 ) => {
   if (response.ok) {
     const data = await response.json();
-    if (data.token && data.user) {
-      localStorage.setItem('token', data.token);
-      setUserInfo(data.user);
+    const { token, userPreferences } = data;
+    if (token && userPreferences) {
+      localStorage.setItem('token', token);
+      setUserInfo(userPreferences);
       setLoading(false);
       navigate('/');
     } else {
-      throw new Error('Token or user data not found in response.');
+      throw new Error('Token or userPreferences not found in response.');
     }
   } else {
     const errorData = await response.json();

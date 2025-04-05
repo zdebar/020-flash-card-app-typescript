@@ -4,8 +4,8 @@ import InputForm from './InputForm';
 import AuthForm from './AuthForm';
 import { useUser } from '../hooks/useUser';
 import { useNavigate } from 'react-router-dom';
-import { handleApiResponse } from '../utils/handleApiResponse';
-import { handleAPIError } from '../utils/errorHandlers';
+import { handleLoginResponse } from '../utils/handleLoginResponse';
+import { handleLoginError } from '../utils/errorHandlers';
 
 export default function RegisterCard() {
   const [username, setUsername] = useState('');
@@ -18,7 +18,18 @@ export default function RegisterCard() {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const API_PATH = `${process.env.REACT_APP_API_URL}/auth/register`;
+    console.log('Register form submitted with:', { username, email, password });
+
+    // const API_PATH = `${process.env?.VITE_API_URL || 'http://localhost:3000'}/auth/register`;
+    const API_PATH = `http://localhost:3000/auth/register`;
+    console.log('API Path:', API_PATH);
+
+    // // Optionally, you can throw an error if the environment variable is missing
+    // if (!process.env?.VITE_API_URL) {
+    //   console.warn(
+    //     'Environment variable REACT_APP_API_URL is not defined. Using fallback URL.'
+    //   );
+    // }
 
     try {
       const response = await fetch(API_PATH, {
@@ -27,9 +38,12 @@ export default function RegisterCard() {
         headers: { 'Content-Type': 'application/json' },
       });
 
-      await handleApiResponse(response, setUserInfo, setLoading, navigate);
+      console.log('API response:', response);
+
+      await handleLoginResponse(response, setUserInfo, setLoading, navigate);
     } catch (error: unknown) {
-      handleAPIError(error, setUserError);
+      console.error('Error during registration:', error);
+      handleLoginError(error, setUserError);
     }
   };
 

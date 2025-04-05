@@ -1,6 +1,6 @@
 import { useState, useEffect, ReactNode } from 'react';
 import { UserContext } from './UserContext';
-import { fetchUserPreferences } from '../functions/fetchUserPreferences';
+import { fetchAndSaveUserPreferences } from '../functions/fetchData';
 import { User } from '../../../shared/types/dataTypes';
 
 export function UserProvider({ children }: { children: ReactNode }) {
@@ -13,12 +13,15 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
       if (token) {
         try {
-          const user = await fetchUserPreferences();
-          setUserInfo(user);
+          const user = await fetchAndSaveUserPreferences();
+          if (user) {
+            setUserInfo(user);
+          } else {
+            setUserInfo(null);
+          }
         } catch (error) {
           console.error('Token invalid or expired', error);
           setUserInfo(null);
-          localStorage.removeItem('token');
         }
       } else {
         setUserInfo(null);

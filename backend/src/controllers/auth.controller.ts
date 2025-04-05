@@ -31,14 +31,14 @@ export async function registerUserController(
   res: Response,
   next: NextFunction
 ): Promise<void> {
-  const { username, email, password } = req.body;
-
-  if (email !== "zdebarth@gmail.com") {
-    throw new UserError("Registrace prozatím uzavřeny!");
-  }
-  validateRequiredUserFields({ username, email, password });
-
   try {
+    const { username, email, password } = req.body;
+
+    if (email !== "zdebarth@gmail.com") {
+      throw new UserError("Registrace prozatím uzavřeny!");
+    }
+
+    validateRequiredUserFields({ username, email, password });
     await registerUserService(postgresDBPool, username, email, password);
     const data = await loginUserService(postgresDBPool, email, password);
     res
@@ -71,11 +71,9 @@ export async function loginUserController(
   res: Response,
   next: NextFunction
 ): Promise<void> {
-  const { email, password } = req.body;
-
-  validateRequiredUserFields({ email, password });
-
   try {
+    const { email, password } = req.body;
+    validateRequiredUserFields({ email, password });
     const data = await loginUserService(postgresDBPool, email, password);
     res.json(data);
   } catch (err: any) {
@@ -106,9 +104,8 @@ export async function getUserProfileController(
   res: Response,
   next: Function
 ): Promise<void> {
-  const userId = (req as any).user.id;
-
   try {
+    const userId = (req as any).user.id;
     const userPrefer = await getUserPreferences(postgresDBPool, userId);
     res.json(userPrefer);
   } catch (err) {

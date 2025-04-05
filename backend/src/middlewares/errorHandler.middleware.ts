@@ -12,7 +12,6 @@ export default function errorHandler(
   if (process.env.NODE_ENV !== "production") {
     logger.error("Error occurred", {
       message: err.message,
-      stack: err.stack,
     });
   } else {
     logger.error("Error occurred", { message: err.message });

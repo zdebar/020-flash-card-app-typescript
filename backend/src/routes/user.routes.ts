@@ -8,12 +8,12 @@ import {
 const userRouter = express.Router();
 
 userRouter.get(
-  "/words/:userId/:language",
+  "/getUserWords",
   authenticateTokenMiddleware,
   getUserWordsController
 );
 userRouter.post(
-  "/words/:userId/progress",
+  "/updateUserWords",
   authenticateTokenMiddleware,
   updateUserWordsController
 );

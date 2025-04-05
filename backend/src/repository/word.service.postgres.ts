@@ -41,7 +41,6 @@ export async function getWordsPostgres(
     WHERE source.language_id = $2
       AND target.language_id = $3
       AND uw.mastered_at IS NULL
-      AND EXISTS (SELECT 1 FROM user_words WHERE user_id = $1)
     ORDER BY 
       CASE 
         WHEN progress > 0 THEN 1

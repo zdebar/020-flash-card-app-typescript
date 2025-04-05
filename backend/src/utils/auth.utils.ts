@@ -34,8 +34,9 @@ export async function comparePasswords(
  * @returns The signed JWT as a string.
  */
 export function createToken(userID: number): string {
-  const expirationTime = config.JWT_EXPIRES_IN as jwt.SignOptions["expiresIn"];
-  return jwt.sign(userID.toString, config.JWT_SECRET as string, {
+  const expirationTime =
+    (config.JWT_EXPIRES_IN as jwt.SignOptions["expiresIn"]) || "48h";
+  return jwt.sign({ id: userID.toString() }, config.JWT_SECRET as string, {
     expiresIn: expirationTime,
   });
 }

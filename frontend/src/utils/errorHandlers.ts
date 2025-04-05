@@ -4,7 +4,7 @@
  * @param error - The error to handle.
  * @param setError - A function to set the error message.
  */
-export function handleAPIError(
+export function handleLoginError(
   error: unknown,
   setError: (message: string) => void
 ): void {

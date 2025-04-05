@@ -5,8 +5,8 @@ import SubmitButton from './SubmitButton';
 import AuthForm from './AuthForm';
 import RegisterLink from './RegisterLink';
 import { useUser } from '../hooks/useUser';
-import { handleApiResponse } from '../utils/handleApiResponse';
-import { handleAPIError } from '../utils/errorHandlers';
+import { handleLoginResponse } from '../utils/handleLoginResponse';
+import { handleLoginError } from '../utils/errorHandlers';
 
 export default function LoginCard() {
   const [email, setEmail] = useState('');
@@ -18,7 +18,9 @@ export default function LoginCard() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const API_PATH = `${process.env.REACT_APP_API_URL}/auth/login`;
+    // const API_PATH = `${process.env.REACT_APP_API_URL}/auth/login`;
+    const API_PATH = `http://localhost:3000/auth/login`;
+    console.log('API Path:', API_PATH);
 
     try {
       const response = await fetch(API_PATH, {
@@ -27,12 +29,12 @@ export default function LoginCard() {
         body: JSON.stringify({ email, password }),
       });
 
-      await handleApiResponse(response, setUserInfo, setLoading, navigate);
+      await handleLoginResponse(response, setUserInfo, setLoading, navigate);
     } catch (error: unknown) {
       if (error instanceof Error) {
         setUserError(error.message);
       } else {
-        handleAPIError(error, setUserError);
+        handleLoginError(error, setUserError);
       }
     }
   };
