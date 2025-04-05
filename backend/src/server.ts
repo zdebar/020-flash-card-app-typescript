@@ -7,6 +7,7 @@ import { requestLogger } from "./utils/logger.utils";
 import "./config/config";
 import { checkDatabaseConnection } from "./utils/database.utils";
 import path from "path";
+import cookieParser from "cookie-parser";
 
 const PORT = process.env.BACKEND_PORT || 3000;
 const allowedOrigin = process.env.FRONTEND_URL || "http://localhost:5173";
@@ -19,6 +20,7 @@ app.use(
     credentials: true,
   })
 );
+app.use(cookieParser());
 app.use(express.json());
 app.use(requestLogger);
 

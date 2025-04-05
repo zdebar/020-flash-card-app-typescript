@@ -28,8 +28,3 @@ export async function getAPI<T>(
     return null;
   }
 }
-
-// export async function fetchUserWords(): Promise<Word[] | null> {
-//   const API_PATH = `http://localhost:3000/practice/getUserWords?srcLanguage=2&trgLanguage=1`;
-//   return getAPI<Word[]>(API_PATH);
-// }

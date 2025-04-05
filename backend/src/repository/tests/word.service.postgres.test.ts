@@ -2,7 +2,7 @@ import { describe, it, expect, beforeAll, afterAll, vi } from "vitest";
 import {
   getWordsPostgres,
   updateWordsPostgres,
-} from "../word.service.postgres";
+} from "../word.repository.postgres";
 import { postgresDBPool } from "../../config/database.config.postgres";
 import { Word } from "../../../../shared/types/dataTypes";
 import { PoolClient } from "pg";

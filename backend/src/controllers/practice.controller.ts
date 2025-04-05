@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import {
   getWordsPostgres,
   updateWordsPostgres,
-} from "../repository/word.service.postgres";
+} from "../repository/word.repository.postgres";
 import { postgresDBPool } from "../config/database.config.postgres";
 import config from "../config/config";
 import { WordUpdate } from "../types/dataTypes";
@@ -50,6 +50,7 @@ export async function getUserWordsController(
 
     res.status(200).json(wordsWithAudio);
   } catch (err) {
+    console.log("In practice controller", err);
     next(err);
   }
 }
@@ -72,11 +73,13 @@ export async function updateUserWordsController(
   try {
     const userId = (req as any).user.id;
     const { words } = req.body;
+
     await updateWordsPostgres(
       postgresDBPool,
       Number(userId),
       words as WordUpdate[]
     );
+
     res.status(200).json({ message: "Uživatelká slova aktualizována." });
   } catch (err) {
     next(err);

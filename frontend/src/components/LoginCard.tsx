@@ -5,7 +5,7 @@ import SubmitButton from './SubmitButton';
 import AuthForm from './AuthForm';
 import RegisterLink from './RegisterLink';
 import { useUser } from '../hooks/useUser';
-import { postAPI } from '../utils/login.utils';
+import { authenticationAPI } from '../utils/login.utils';
 
 export default function LoginCard() {
   const [email, setEmail] = useState('');
@@ -22,7 +22,7 @@ export default function LoginCard() {
     // const API_PATH = `${process.env.REACT_APP_API_URL}/auth/login`;
     const API_PATH = `http://localhost:3000/user/login`;
 
-    await postAPI(
+    await authenticationAPI(
       { email, password },
       setUserInfo,
       setLoading,

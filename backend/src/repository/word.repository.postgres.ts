@@ -26,8 +26,8 @@ export async function getWordsPostgres(
   const query = `
     SELECT 
       target.id, 
-      source.word, 
-      target.word, 
+      source.word AS src, 
+      target.word AS trg, 
       target.prn,
       target.audio,
       COALESCE(uw.progress,0) AS progress,
@@ -40,6 +40,7 @@ export async function getWordsPostgres(
     WHERE source.language_id = $2
       AND target.language_id = $3
       AND uw.mastered_at IS NULL
+      AND (uw.next_at IS NULL OR TO_TIMESTAMP(uw.next_at, 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"') < NOW())
     ORDER BY 
       CASE 
         WHEN progress > 0 THEN 1

@@ -34,9 +34,9 @@ export async function registerUserController(
   try {
     const { username, email, password } = req.body;
 
-    // if (email !== "zdebarth@gmail.com") {
-    //   throw new UserError("Registrace prozatím uzavřeny!");
-    // }
+    if (email !== "zdebarth@gmail.com") {
+      throw new UserError("Registrace prozatím uzavřeny!");
+    }
 
     validateRequiredUserFields({ username, email, password });
     const { token, user } = await registerUserService(

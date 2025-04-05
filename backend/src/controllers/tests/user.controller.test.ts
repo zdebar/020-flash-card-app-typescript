@@ -6,7 +6,7 @@ import {
 } from "../practice.controller";
 import { Request, Response } from "express";
 import db from "../../config/database.config.postgres";
-import * as wordService from "../../repository/word.service.postgres";
+import * as wordService from "../../repository/word.repository.postgres";
 import * as userService from "../../services/user.service";
 import { closeDbConnection } from "../../utils/database.utils";
 

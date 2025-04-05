@@ -1,6 +1,6 @@
 import { useState, useEffect, ReactNode } from 'react';
 import { UserContext } from './UserContext';
-import { getAPI } from '../functions/fetchData';
+import { getAPI } from '../functions/getAPI';
 import { User } from '../types/dataTypes';
 
 export function UserProvider({ children }: { children: ReactNode }) {

@@ -1,20 +1,21 @@
 import { RefreshIcon, CheckIcon } from './Icons';
-import { getAPI } from '../functions/fetchData';
+import { getAPI } from '../functions/getAPI';
 import { useState, useEffect, useRef } from 'react';
-import { Word, User } from '../types/dataTypes';
-import { postUpgradeWords } from '../functions/postData';
+import { Word } from '../types/dataTypes';
+import { upgradeWords } from '../utils/upgradeWords';
+import { useLocation } from 'react-router-dom';
 
 export default function PracticeCard() {
   const [wordArray, setWordArray] = useState<Word[] | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [revealed, setRevealed] = useState(false);
-  const [firstRound, setFirstRun] = useState(true);
+  const [firstRound, setFirstRound] = useState(true);
   const audioCache = useRef<{ [key: string]: string }>({});
+  const location = useLocation();
 
   useEffect(() => {
-    const API_PATH = `http://localhost:3000/practice/getUserWords?srcLanguage=2&trgLanguage=1`;
-
     const fetchAndStoreWords = async () => {
+      const API_PATH = `http://localhost:3000/practice/getUserWords?srcLanguage=2&trgLanguage=1`;
       try {
         const userWords = await getAPI<Word[]>(API_PATH, setWordArray);
         setWordArray(userWords);
@@ -23,8 +24,11 @@ export default function PracticeCard() {
       }
     };
 
-    fetchAndStoreWords();
-  }, []);
+    if (location.pathname === '/practice') {
+      fetchAndStoreWords();
+      setFirstRound(true);
+    }
+  }, [location]);
 
   if (!wordArray || wordArray.length === 0) {
     return <p>No words to practice</p>;
@@ -65,7 +69,7 @@ export default function PracticeCard() {
     let isFirstRun = firstRound;
 
     if (currentIndex === wordArray.length - 1) {
-      setFirstRun(false);
+      setFirstRound(false);
       isFirstRun = false;
     }
 
@@ -79,28 +83,28 @@ export default function PracticeCard() {
       }
 
       if (progress0.length === 0) {
-        //   postUpgradeWords(
-        //     wordArray.map((word) => ({ id: word.id, progress: word.progress }))
-        //   );
-        //   localStorage.removeItem('userWords');
-        //   fetchAndSaveUserWords();
+        upgradeWords(
+          wordArray.map((word) => ({
+            id: word.id,
+            progress: word.progress,
+          }))
+        );
+        setWordArray(null);
       }
     }
 
     setCurrentIndex(nextIndex);
   };
 
-  const handleRefreshButton = async () => {
+  const handleProgressUpdate = async (action: 'refresh' | 'check') => {
     const updatedWordArray = [...wordArray];
-    updatedWordArray[currentIndex].progress = 0;
-    setWordArray(updatedWordArray);
-    handleEndOfArray();
-    setRevealed(false);
-  };
 
-  const handleCheckButton = async () => {
-    const updatedWordArray = [...wordArray];
-    updatedWordArray[currentIndex].progress++;
+    if (action === 'refresh') {
+      updatedWordArray[currentIndex].progress = 0;
+    } else if (action === 'check') {
+      updatedWordArray[currentIndex].progress++;
+    }
+
     setWordArray(updatedWordArray);
     handleEndOfArray();
     setRevealed(false);
@@ -126,7 +130,7 @@ export default function PracticeCard() {
       <div className="my-1 grid h-10 w-full grid-cols-2 gap-1">
         <button
           name="refresh"
-          onClick={revealed ? handleRefreshButton : undefined}
+          onClick={revealed ? () => handleProgressUpdate('refresh') : undefined}
           className={`color-secondary flex w-full items-center justify-center rounded-bl-md ${
             revealed ? 'color-secondary-hover' : 'shadow-none'
           }`}
@@ -135,7 +139,7 @@ export default function PracticeCard() {
         </button>
         <button
           name="check"
-          onClick={revealed ? handleCheckButton : undefined}
+          onClick={revealed ? () => handleProgressUpdate('check') : undefined}
           className={`flex w-full items-center justify-center rounded-br-md ${
             revealed
               ? 'color-primary color-primary-hover'

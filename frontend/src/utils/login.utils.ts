@@ -2,7 +2,7 @@ import { UserContextType } from '../context/UserContext';
 import { NavigateFunction } from 'react-router-dom';
 
 // TODO: Maybe add post, get as parameter to this function
-export const postAPI = async (
+export const postAuth = async (
   payload: Record<string, string>,
   setUserInfo: UserContextType['setUserInfo'],
   setLoading: UserContextType['setLoading'],

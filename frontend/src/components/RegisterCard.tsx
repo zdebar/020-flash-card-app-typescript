@@ -4,7 +4,7 @@ import InputForm from './InputForm';
 import AuthForm from './AuthForm';
 import { useUser } from '../hooks/useUser';
 import { useNavigate } from 'react-router-dom';
-import { postAPI } from '../utils/login.utils';
+import { postAuth } from '../utils/login.utils';
 
 export default function RegisterCard() {
   const [username, setUsername] = useState('');
@@ -22,7 +22,7 @@ export default function RegisterCard() {
     // const API_PATH = `${process.env?.VITE_API_URL || 'http://localhost:3000'}/user/register`;
     const API_PATH = `http://localhost:3000/user/register`;
 
-    await postAPI(
+    await postAuth(
       { username, email, password },
       setUserInfo,
       setLoading,
