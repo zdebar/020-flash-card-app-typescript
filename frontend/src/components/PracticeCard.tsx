@@ -19,6 +19,9 @@ export default function PracticeCard() {
       try {
         const userWords = await getAPI<Word[]>(API_PATH, setWordArray);
         setWordArray(userWords);
+        setFirstRound(true);
+        setCurrentIndex(0);
+        setRevealed(false);
       } catch (error) {
         console.error('Error fetching or loading words:', error);
       }

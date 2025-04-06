@@ -6,7 +6,7 @@ import { validateEnvVariables } from "../utils/validate.utils";
 validateEnvVariables(["JWT_SECRET", "JWT_EXPIRES_IN"]);
 
 const config = {
-  block: 6, // The size of repetition block
+  block: 12, // The size of repetition block
   learnedAt: 10, // Card learned at progress
   SRS: [
     // Precomputed repetition algorithm in seconds, should have 20 elements
