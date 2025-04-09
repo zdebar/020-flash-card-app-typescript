@@ -1,5 +1,6 @@
 # REFORMAT
-  contains old script in process of reformating
+
+contains old script in process of reformating
 
 # GUIDE
 
@@ -8,10 +9,13 @@
 ## Spanish
 
 ## German
-  german_async.py / output csv file with - src, trg, prn, audio, language, order; creates audio mp3 files
-  resequalize.py / renumbers seq column, limit by language, sort by ID, renumber in this order
-  convert_audio.py / convert audio files to other formats or bitrates, (opus, 16k)
-  
-  
+
+    // use these functions in order, manual control in between
+
+ge_I_xls_to_csv.py
+ge_II_german_prn_audio
+ge_III_mp3_to_opus
+
 # NOTE
-  gTTS / sets daily request limit, just wait for next day or pay for premium
+
+gTTS / sets daily request limit, just wait for next day or pay for premium

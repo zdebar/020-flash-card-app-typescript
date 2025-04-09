@@ -7,15 +7,16 @@ def copy_csv_rows(input_file: str, output_file: str):
 
         # Copy the header
         header = next(reader)
-        writer.writerow(header)
+        writer.writerow([header[0]])
 
-        # Copy the first 20,000 rows
+        # Copy the first column of the first 20,000 rows
         for i, row in enumerate(reader):
             if i >= 20000:
                 break
-            writer.writerow(row)
+            writer.writerow([row[0]])
 
-# Example usage
-input_file = '../data/en-source/ngram_freq.csv'
-output_file = 'output.csv'
-copy_csv_rows('input.csv', 'output.csv')
+if __name__ == "__main__":
+    input_file = '../data/en-source/ngram_freq.csv'
+    output_file = '../data/en-source/20k_en_words.csv'
+    copy_csv_rows(input_file, output_file)
+    print(f"Copied first 20,000 rows from {input_file} to {output_file}.")

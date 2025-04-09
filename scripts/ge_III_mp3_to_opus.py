@@ -14,12 +14,12 @@ def convert_mp3_to_opus(input_path, output_path, bitrate="64k"):
     audio.export(output_path, format=output_format, bitrate=bitrate)
 
 # Process all MP3 files in the source folder
-for filename in os.listdir(source_folder):
-    if filename.endswith(".mp3"):
-        input_path = os.path.join(source_folder, filename)
-        output_filename = os.path.splitext(filename)[0] + "." + output_format
-        output_path = os.path.join(output_folder, output_filename)
-        convert_mp3_to_opus(input_path, output_path, bitrate=output_bitrate)
-        print(f"Processed {filename} to {output_filename}")
-
-print("All files processed successfully!")
+if __name__ == "__main__":
+    for filename in os.listdir(source_folder):
+        if filename.endswith(".mp3"):
+            input_path = os.path.join(source_folder, filename)
+            output_filename = os.path.splitext(filename)[0] + "." + output_format
+            output_path = os.path.join(output_folder, output_filename)
+            convert_mp3_to_opus(input_path, output_path, bitrate=output_bitrate)
+            print(f"Processed {filename} to {output_filename}")
+    print("All files processed successfully!")
