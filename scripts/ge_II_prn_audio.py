@@ -4,7 +4,7 @@ import asyncio
 from utils.pronunciation import get_IPA_pronunciation
 from utils.audio_generation import generate_audio_for_words
 from utils.prepare_words import clean_DataFrame, replace_german_article
-from utils.helpers import async_read_excel, async_save_csv
+from utils.helpers import async_save_csv
 
 async def process_csv_files_in_folder(input_folder: str, output_folder: str, audio_folder: str, file_index_start: int, file_index_end: int) -> None:
     """
@@ -47,8 +47,13 @@ async def process_single_csv_file(file_name: str, input_folder: str, output_fold
         *[get_IPA_pronunciation(word.replace(",", ""), "de") for word in df["trg"]]
     )
 
-    # Generate audio files for each word
-    audio_files = await generate_audio_for_words(df, audio_folder, "de")
+    # Create a subfolder in audio_folder named after the file (without extension)
+    subfolder_name = os.path.splitext(file_name)[0]
+    subfolder_path = os.path.join(audio_folder, subfolder_name)
+    os.makedirs(subfolder_path, exist_ok=True)
+
+    # Generate audio files in the subfolder
+    audio_files = await generate_audio_for_words(df, subfolder_path, "de")
     df["audio"] = audio_files
 
     # Reorder columns
@@ -63,8 +68,8 @@ if __name__ == "__main__":
 
     mid_folder = os.path.abspath("data/de-source/csv_output")  
     output_folder = os.path.abspath("data/de-source/csv_import_db")
-    audio_folder = os.path.abspath("data/de-source/audio-de")
-    file_index_start = 0 # Including
-    file_index_end = 1  # Excluding 
+    audio_folder = os.path.abspath("data/de-source/audio-de/mp3")
+    file_index_start = 3 # Including
+    file_index_end = 4  # Excluding 
     asyncio.run(process_csv_files_in_folder(mid_folder, output_folder, audio_folder, file_index_start, file_index_end))
 
