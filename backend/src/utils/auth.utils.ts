@@ -39,7 +39,7 @@ export function createToken(userID: number): string {
  * Verifies a JSON Web Token (JWT) and decodes its payload.
  *
  * @param token - The JWT string to be verified.
- * @returns The decoded payload as a `User` object if the token is valid.
+ * @returns `UserID` if valid, otherwise throws an error.
  */
 export function verifyToken(token: string): UserID {
   const decoded = jwt.verify(token, config.JWT_SECRET as string) as UserID;

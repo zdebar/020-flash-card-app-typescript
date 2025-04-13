@@ -3,7 +3,7 @@ import cors from "cors";
 import userRouter from "./routes/user.routes";
 import practiceRouter from "./routes/practice.routes";
 import errorHandler from "./middlewares/errorHandler.middleware";
-import { requestLogger } from "./utils/logger.utils";
+import requestLogger from "./middlewares/requestLogger.middleware";
 import "./config/config";
 import { checkDatabaseConnection } from "./utils/database.utils";
 import path from "path";
