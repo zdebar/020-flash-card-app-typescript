@@ -32,6 +32,16 @@ CREATE TABLE IF NOT EXISTS words (
 
 CREATE INDEX idx_words_language ON words (language_id);
 
+CREATE TABLE IF NOT EXISTS word_notes (
+  id SERIAL PRIMARY KEY,
+  word_id INTEGER NOT NULL, 
+  user_id INTEGER NOT NULL,
+  note TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  FOREIGN KEY (word_id) REFERENCES words(id) ON DELETE CASCADE
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS user_languages ( 
   user_id INTEGER NOT NULL,
   language_id INTEGER NOT NULL,

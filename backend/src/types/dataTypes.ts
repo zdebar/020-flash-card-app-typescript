@@ -3,6 +3,13 @@ import { Client, Pool } from "pg";
 // Database Client Type
 export type PostgresClient = Pick<Client | Pool, "query" | "connect" | "end">;
 
+// Word Note Data Types
+export interface WordNote {
+  user_id: number;
+  word_id: number;
+  note: string;
+}
+
 // Word Data Types
 export interface WordUpdate {
   id: number;
@@ -28,20 +35,15 @@ export interface WordOverview extends WordUpdate {
 
 // User Data Types
 export enum ModeDay {
-  DEFAULT = 1,
-  LIGHT = 2,
-  DARK = 3,
+  DEFAULT = "default",
+  LIGHT = "light",
+  DARK = "dark",
 }
 
 export enum FontSize {
-  SMALL = 1,
-  NORMAL = 2,
-  LARGE = 3,
-}
-
-export enum Notifications {
-  Disabled = 0,
-  Enabled = 1,
+  SMALL = "small",
+  NORMAL = "normal",
+  LARGE = "large",
 }
 
 export interface UserID {
@@ -52,7 +54,7 @@ export interface User extends UserID {
   username: string;
   mode_day: ModeDay;
   font_size: FontSize;
-  notifications: Notifications;
+  notifications: boolean;
 }
 
 export interface UserLogin extends User {

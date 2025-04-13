@@ -1,91 +1,63 @@
-import { PostgresClient, WordUpdate, Word } from "../types/dataTypes";
+import { PostgresClient, WordUpdate, Word, WordNote } from "../types/dataTypes";
 import config from "../config/config";
-import { PoolClient } from "pg";
+import { withDbClient } from "../utils/database.utils";
 
 /**
- * Retrieves a list of words from a PostgreSQL database for a specific user,
- * based on the source and target languages, and filters out words that have
- * already been marked as learned by the user.
- *
- * @param db - The PostgreSQL client instance used to execute the query.
- * @param userId - The ID of the user requesting the words.
- * @param srcLanguageID - The ID of the source language.
- * @param trgLanguageID - The ID of the target language.
- * @param numWords - The maximum number of words to retrieve (default is 20).
- * @returns A promise that resolves to an array of words, each containing the
- *          target word's ID, source word, target word, pronunciation, audio,
- *          and progress.
+ * Return required words for the user from PostgreSQL database.
  */
 export async function getWordsPostgres(
   db: PostgresClient,
   userId: number,
-  srcLanguageID: number,
-  trgLanguageID: number,
+  languageID: number,
   numWords: number = 20
 ): Promise<Word[]> {
+  // Check if the user exists
+  const userCheckQuery = `SELECT 1 FROM users WHERE id = $1`;
+
+  await withDbClient(db, async (client) => {
+    const userCheckResult = await client.query(userCheckQuery, [userId]);
+    if (userCheckResult.rowCount === 0) {
+      throw new Error(`User with ID ${userId} does not exist.`);
+    }
+  });
+
   const query = `
     SELECT 
-      target.id, 
-      source.word AS src, 
-      target.word AS trg, 
-      target.prn,
-      target.audio,
+      w.id, 
+      w.czech AS src, 
+      w.word AS trg, 
+      w.pronunciation AS prn,
+      w.audio,
       COALESCE(uw.progress,0) AS progress,
       uw.learned_at IS NOT NULL AS learned
-    FROM words source
-    JOIN word_meanings wm_src ON source.id = wm_src.word_id
-    JOIN word_meanings wm_trg ON wm_src.meaning_id = wm_trg.meaning_id
-    JOIN words target ON wm_trg.word_id = target.id
-    LEFT JOIN user_words uw ON target.id = uw.word_id AND uw.user_id = $1
-    WHERE source.language_id = $2
-      AND target.language_id = $3
+    FROM words w
+    LEFT JOIN user_words uw ON w.id = uw.word_id AND uw.user_id = $1
+    WHERE w.language_id = $2
       AND uw.mastered_at IS NULL
-      AND (uw.next_at IS NULL OR TO_TIMESTAMP(uw.next_at, 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"') < NOW())
+      AND (uw.next_at IS NULL OR uw.next_at < NOW())
     ORDER BY 
       CASE 
-        WHEN progress > 0 THEN 1
+        WHEN uw.progress > 0 THEN 1
         ELSE 2
       END ASC,
-      target.seq ASC
-    LIMIT $4;
+      w.sequence ASC
+    LIMIT $3;
   `;
 
-  const client = (await db.connect()) as PoolClient;
-
-  try {
-    const res = await db.query(query, [
-      userId,
-      srcLanguageID,
-      trgLanguageID,
-      numWords,
-    ]);
+  return await withDbClient(db, async (client) => {
+    const res = await client.query(query, [userId, languageID, numWords]);
     return res.rows;
-  } finally {
-    client.release();
-  }
+  });
 }
 
 /**
- * Updates the user's word progress in a PostgreSQL database.
- *
- * This function inserts or updates records in the `user_words` table for the given user and words.
- * If a record for a specific `user_id` and `word_id` already exists, it updates the `progress`,
- * `next_at`, `learned_at`, and `mastered_at` fields. Otherwise, it inserts a new record.
- *
- * @param db - The PostgreSQL client instance used to execute the query.
- * @param userId - The ID of the user whose word progress is being updated.
- * @param words - An array of words containing their IDs and progress information.
- *
- * @returns A promise that resolves when the operation is complete.
- *
- * @throws Will throw an error if the database query fails.
+ * Updates the user's word progress in a PostgreSQL database. --- learned_at a mastered_at se mění pouze při hraničním času
  */
 export async function updateWordsPostgres(
   db: PostgresClient,
   userId: number,
   words: WordUpdate[]
 ): Promise<void> {
-  const today = new Date();
   const values: unknown[] = [];
 
   const query = `
@@ -100,34 +72,69 @@ export async function updateWordsPostgres(
       )
       .join(", ")}
     ON CONFLICT(user_id, word_id) 
-    DO UPDATE SET progress = EXCLUDED.progress, next_at = EXCLUDED.next_at, learned_at = EXCLUDED.learned_at, mastered_at = EXCLUDED.mastered_at;
+    DO UPDATE SET 
+      progress = EXCLUDED.progress, 
+      next_at = EXCLUDED.next_at, 
+      learned_at = CASE WHEN EXCLUDED.learned_at IS NOT NULL THEN EXCLUDED.learned_at ELSE user_words.learned_at END, 
+      mastered_at = CASE WHEN EXCLUDED.mastered_at IS NOT NULL THEN EXCLUDED.mastered_at ELSE user_words.mastered_at END;
   `;
 
   words.forEach((word) => {
-    const progress = word.progress || 1;
-    const interval = config.SRS[progress - 1] ?? null;
-
-    let nextAt: string | null = null;
-    let learnedAt: string | null = null;
-    let masteredAt: string | null = null;
-
-    if (interval !== null) {
-      nextAt = new Date(today.getTime() + interval * 1000).toISOString();
-      if (progress === config.learnedAt) {
-        learnedAt = today.toISOString();
-      }
-    } else {
-      masteredAt = today.toISOString();
-    }
-
-    values.push(userId, word.id, progress, nextAt, learnedAt, masteredAt);
+    values.push(
+      userId,
+      word.id,
+      word.progress,
+      getNextAt(word.progress),
+      getLearnedAt(word.progress),
+      getMasteredAt(word.progress)
+    );
   });
 
-  const client = (await db.connect()) as PoolClient;
+  await withDbClient(db, async (client) => {
+    await client.query(query, values);
+  });
+}
 
-  try {
-    await db.query(query, values);
-  } finally {
-    client.release();
+function getNextAt(progress: number = 1): string | null {
+  const interval = config.SRS[progress - 1] ?? null;
+  if (interval) {
+    return new Date(Date.now() + interval * 1000).toISOString();
   }
+  return null;
+}
+
+function getLearnedAt(progress: number = 1): string | null {
+  if (progress === config.learnedAt) {
+    return new Date(Date.now()).toISOString();
+  }
+  return null;
+}
+
+function getMasteredAt(progress: number = 1): string | null {
+  if (progress >= config.SRS.length) {
+    return new Date(Date.now()).toISOString();
+  }
+  return null;
+}
+
+/**
+ * Inserts or updates the user's word notes in a PostgreSQL database.
+ */
+export async function insertWordNote(
+  db: PostgresClient,
+  word: WordNote
+): Promise<void> {
+  const query = `
+    INSERT INTO word_notes (user_id, word_id, note)
+    VALUES ($1, $2, $3)
+    ON CONFLICT(user_id, word_id) 
+    DO UPDATE SET 
+      note = EXCLUDED.note;
+  `;
+
+  const values = [word.user_id, word.word_id, word.note];
+
+  await withDbClient(db, async (client) => {
+    await client.query(query, values);
+  });
 }

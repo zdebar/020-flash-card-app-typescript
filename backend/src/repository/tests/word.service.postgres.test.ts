@@ -4,7 +4,7 @@ import {
   updateWordsPostgres,
 } from "../word.repository.postgres";
 import { postgresDBPool } from "../../config/database.config.postgres";
-import { Word } from "../../../../shared/types/dataTypes";
+import { Word, WordUpdate } from "../../types/dataTypes";
 import { PoolClient } from "pg";
 import config from "../../config/config";
 
@@ -19,153 +19,128 @@ import config from "../../config/config";
  *  */
 describe("getWordsPostgres tests", () => {
   const userId = 1;
-  const srcLanguageID = 2;
-  const trgLanguageID = 1;
+  const languageID = 1;
   const numWords = 10;
 
   it("should return specific words for a user", async () => {
     const words = await getWordsPostgres(
       postgresDBPool,
       userId,
-      srcLanguageID,
-      trgLanguageID,
+      languageID,
       numWords
     );
     expect(words).toEqual([
       {
-        audio: "schon.mp3",
-        id: 15,
-        learned_at: null,
-        prn: "ʃˈoːn",
-        progress: 5,
-        src: "už, ji",
-        trg: "schon",
-      },
-      {
-        audio: "arbeiten.mp3",
-        id: 1,
-        learned_at: null,
-        prn: "ˈaɾbaɪtən",
-        progress: 10,
-        src: "pracovat",
-        trg: "arbeiten",
-      },
-      {
-        audio: "ohne.mp3",
-        id: 57,
-        learned_at: null,
-        prn: "ˈoːnə",
-        progress: 25,
-        src: "bez",
-        trg: "ohne",
-      },
-      {
-        audio: "bitte.mp3",
-        id: 65,
-        learned_at: "2025-03-27T08:08:57.557Z",
-        prn: "bˈɪtə",
-        progress: 7,
-        src: "prosím",
-        trg: "bitte",
-      },
-      {
-        audio: "lieber.mp3",
-        id: 143,
-        learned_at: null,
-        prn: "lˈiːbɜ",
+        audio: "word",
+        id: 1010,
+        learned: false,
+        prn: "wˈɜːd",
         progress: 3,
-        src: "raději",
-        trg: "lieber",
+        src: "slovo",
+        trg: "word",
       },
       {
-        audio: "ich_arbeite.mp3",
-        id: 2,
-        learned_at: null,
-        prn: "ɪç ˈaɾbaɪtə",
-        progress: 0,
-        src: "pracuji",
-        trg: "ich arbeite",
+        audio: "i",
+        id: 1030,
+        learned: false,
+        prn: "ˈaɪ",
+        progress: 1,
+        src: "já",
+        trg: "I",
       },
       {
-        audio: "der_die_das.mp3",
-        id: 3,
-        learned_at: null,
-        prn: "dɛɾ diː dˈas",
-        progress: 0,
-        src: "ten, ta, to",
-        trg: "der, die, das",
+        audio: "other",
+        id: 1050,
+        learned: true,
+        prn: "ˈʌðɚ",
+        progress: 1,
+        src: "ostatní",
+        trg: "other",
       },
       {
-        audio: "dir.mp3",
-        id: 4,
-        learned_at: null,
-        prn: "dˈiːɾ",
-        progress: 0,
-        src: "tobě, ti",
-        trg: "dir",
+        audio: "can",
+        id: 1052,
+        learned: false,
+        prn: "kˈæn",
+        progress: 5,
+        src: "může",
+        trg: "can",
       },
       {
-        audio: "du.mp3",
-        id: 5,
-        learned_at: null,
-        prn: "dˈuː",
+        audio: "the",
+        id: 1011,
+        learned: false,
+        prn: "ðˈə",
         progress: 0,
-        src: "ty",
-        trg: "du",
+        src: "(určitý člen)",
+        trg: "the",
       },
       {
-        audio: "fertig.mp3",
-        id: 6,
-        learned_at: null,
-        prn: "fˈɛɾtɪç",
+        audio: "of",
+        id: 1012,
+        learned: false,
+        prn: "ˈʌv",
         progress: 0,
-        src: "hotový",
-        trg: "fertig",
+        src: "z",
+        trg: "of",
+      },
+      {
+        audio: "and",
+        id: 1013,
+        learned: false,
+        prn: "ˈænd",
+        progress: 0,
+        src: "a",
+        trg: "and",
+      },
+      {
+        audio: "to",
+        id: 1014,
+        learned: false,
+        prn: "tˈuː",
+        progress: 0,
+        src: "na",
+        trg: "to",
+      },
+      {
+        audio: "in",
+        id: 1015,
+        learned: false,
+        prn: "ˈɪn",
+        progress: 0,
+        src: "v",
+        trg: "in",
+      },
+      {
+        audio: "is",
+        id: 1016,
+        learned: false,
+        prn: "ˈɪz",
+        progress: 0,
+        src: "je",
+        trg: "is",
       },
     ]);
   });
 
-  it("should return empty array for nonexistent user", async () => {
-    const words = await getWordsPostgres(
-      postgresDBPool,
-      999,
-      srcLanguageID,
-      trgLanguageID,
-      numWords
-    );
-    expect(words).toEqual([]);
+  it("should throw error for nonexistent user", async () => {
+    await expect(
+      getWordsPostgres(postgresDBPool, 999, languageID, numWords)
+    ).rejects.toThrowError();
   });
 
   it("should return empty array when numWord 0", async () => {
-    const words = await getWordsPostgres(
-      postgresDBPool,
-      userId,
-      srcLanguageID,
-      trgLanguageID,
-      0
-    );
+    const words = await getWordsPostgres(postgresDBPool, userId, languageID, 0);
     expect(words).toEqual([]);
   });
 
   it("should return empty array for nonexistent srcLanguage", async () => {
-    const words = await getWordsPostgres(
-      postgresDBPool,
-      userId,
-      999,
-      trgLanguageID,
-      numWords
-    );
+    const words = await getWordsPostgres(postgresDBPool, userId, 999, numWords);
     expect(words).toEqual([]);
   });
 
   it("should return empty array for nonexistent trgLanguage", async () => {
-    const words = await getWordsPostgres(
-      postgresDBPool,
-      userId,
-      srcLanguageID,
-      999,
-      numWords
-    );
+    const words = await getWordsPostgres(postgresDBPool, userId, 999, numWords);
     expect(words).toEqual([]);
   });
 });
@@ -185,31 +160,26 @@ describe("getWordsPostgres tests", () => {
  */
 describe("updateWordsPostgres tests", () => {
   const userId = 1;
-  const wordIdToUpdate = 88;
+  const wordIdToUpdate = 1080;
 
-  const wordToUpdateValid: Word[] = [
+  const wordToUpdateValid: WordUpdate[] = [
     {
       id: wordIdToUpdate,
-      src: "test",
-      trg: "test",
-      prn: "test",
-      audio: "test",
       progress: 5,
-      learned_at: null,
     },
   ];
 
   beforeAll(async () => {
     await postgresDBPool.query(
       "DELETE FROM user_words WHERE word_id IN ($1, $2) AND user_id = $3",
-      [88, 89, userId]
+      [1110, 1111, userId]
     );
   });
 
   afterAll(async () => {
     await postgresDBPool.query(
       "DELETE FROM user_words WHERE word_id IN ($1, $2) AND user_id = $3",
-      [88, 89, userId]
+      [1110, 1111, userId]
     );
   });
 
@@ -220,15 +190,10 @@ describe("updateWordsPostgres tests", () => {
   });
 
   it("should throw Error on update for a nonexistent word_id", async () => {
-    const wordToUpdateInvalid: Word[] = [
+    const wordToUpdateInvalid: WordUpdate[] = [
       {
         id: 999999,
-        src: "test",
-        trg: "test",
-        prn: "test",
-        audio: "test",
         progress: 5,
-        learned_at: null,
       },
     ];
     await expect(
@@ -250,15 +215,10 @@ describe("updateWordsPostgres tests", () => {
   });
 
   it("should update user_word progress with valid progress range", async () => {
-    const wordToUpdateNew: Word[] = [
+    const wordToUpdateNew: WordUpdate[] = [
       {
         id: wordIdToUpdate,
-        src: "test",
-        trg: "test",
-        prn: "test",
-        audio: "test",
         progress: 8,
-        learned_at: null,
       },
     ];
     await updateWordsPostgres(postgresDBPool, userId, wordToUpdateNew);
@@ -274,15 +234,10 @@ describe("updateWordsPostgres tests", () => {
   });
 
   it("should update user_word progress with invalid progress range", async () => {
-    const wordToUpdateNew: Word[] = [
+    const wordToUpdateNew: WordUpdate[] = [
       {
         id: wordIdToUpdate,
-        src: "test",
-        trg: "test",
-        prn: "test",
-        audio: "test",
         progress: 0,
-        learned_at: null,
       },
     ];
     await updateWordsPostgres(postgresDBPool, userId, wordToUpdateNew);
@@ -298,24 +253,14 @@ describe("updateWordsPostgres tests", () => {
   });
 
   it("should update multiple words in a single call", async () => {
-    const wordsToUpdate: Word[] = [
+    const wordsToUpdate: WordUpdate[] = [
       {
         id: 88,
-        src: "test1",
-        trg: "test1",
-        prn: "test1",
-        audio: "test1",
         progress: 3,
-        learned_at: null,
       },
       {
         id: 89,
-        src: "test2",
-        trg: "test2",
-        prn: "test2",
-        audio: "test2",
         progress: 4,
-        learned_at: null,
       },
     ];
 
@@ -334,15 +279,10 @@ describe("updateWordsPostgres tests", () => {
   });
 
   it("should mark a word as learned if progress is equal learnedAt limit", async () => {
-    const wordToUpdate: Word[] = [
+    const wordToUpdate: WordUpdate[] = [
       {
         id: wordIdToUpdate,
-        src: "test",
-        trg: "test",
-        prn: "test",
-        audio: "test",
         progress: config.learnedAt,
-        learned_at: null,
       },
     ];
 
@@ -361,15 +301,10 @@ describe("updateWordsPostgres tests", () => {
   });
 
   it("should mark a word as mastered if progress is over SRS.length", async () => {
-    const wordToUpdate: Word[] = [
+    const wordToUpdate: WordUpdate[] = [
       {
         id: wordIdToUpdate,
-        src: "test",
-        trg: "test",
-        prn: "test",
-        audio: "test",
         progress: 250,
-        learned_at: null,
       },
     ];
 
@@ -383,6 +318,28 @@ describe("updateWordsPostgres tests", () => {
     client.release();
 
     expect(result.rows.length).toBe(1);
+    expect(result.rows[0].mastered_at).not.toBeNull();
+  });
+
+  it("should erase date at learned_at a mastered_at", async () => {
+    const wordToUpdate: WordUpdate[] = [
+      {
+        id: wordIdToUpdate,
+        progress: 15,
+      },
+    ];
+
+    await updateWordsPostgres(postgresDBPool, userId, wordToUpdate);
+
+    const client = (await postgresDBPool.connect()) as PoolClient;
+    const result = await client.query(
+      "SELECT * FROM user_words WHERE user_id = $1 AND word_id = $2",
+      [userId, wordIdToUpdate]
+    );
+    client.release();
+
+    expect(result.rows.length).toBe(1);
+    expect(result.rows[0].learned_at).not.toBeNull();
     expect(result.rows[0].mastered_at).not.toBeNull();
   });
 });

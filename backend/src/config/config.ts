@@ -2,12 +2,24 @@ import dotenv from "dotenv";
 import path from "path";
 import { validateEnvVariables } from "../utils/validate.utils";
 
-// dotenv.config({ path: path.resolve(__dirname, "../../.env") });
-validateEnvVariables(["JWT_SECRET", "JWT_EXPIRES_IN"]);
+dotenv.config({ path: path.resolve(__dirname, "../../.env") });
+validateEnvVariables([
+  "JWT_SECRET",
+  "JWT_EXPIRES_IN",
+  "LOGGER_LEVEL",
+  "NODE_ENV",
+  "BACKEND_PORT",
+  "DB_HOST",
+  "DB_PORT",
+  "DB_USER",
+  "DB_PASSWORD",
+  "DB_NAME",
+]);
 
 const config = {
-  block: 12, // The size of repetition block
+  block: 20, // The size of repetition block
   learnedAt: 10, // Card learned at progress
+  masterdAt: 16, // Card mastered at progress
   SRS: [
     // Precomputed repetition algorithm in seconds, should have 20 elements
     0, // 0m
@@ -22,6 +34,8 @@ const config = {
     14400, // 4h
     28800, // 8h
     43200, // 12h
+    86400, // 1d
+    86400, // 1d
     86400, // 1d
     172800, // 2d
     345600, // 4d

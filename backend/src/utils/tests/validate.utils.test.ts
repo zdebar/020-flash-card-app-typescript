@@ -3,7 +3,7 @@ import {
   validateRequiredUserFields,
   validateEnvVariables,
 } from "../validate.utils";
-import { UserError } from "../../../../shared/types/dataTypes";
+import { UserError } from "../../types/dataTypes";
 
 /**
  * validateRequire
