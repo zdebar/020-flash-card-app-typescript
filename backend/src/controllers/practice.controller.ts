@@ -3,6 +3,7 @@ import {
   getWordsPostgres,
   updateWordsPostgres,
 } from "../repository/word.repository.postgres";
+import { checkUserExistsById } from "../repository/user.repository.postgres";
 import { postgresDBPool } from "../config/database.config.postgres";
 import config from "../config/config";
 import { WordUpdate } from "../types/dataTypes";
@@ -33,6 +34,9 @@ export async function getUserWordsController(
   try {
     const userId = (req as any).user.id;
     const { srcLanguage, trgLanguage }: GetUserWordsQuery = req.query;
+
+    // TODO: For development purposes only, consider removing in production
+    checkUserExistsById(postgresDBPool, Number(userId));
 
     const words = await getWordsPostgres(
       postgresDBPool,

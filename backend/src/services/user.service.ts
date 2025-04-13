@@ -6,7 +6,7 @@ import {
 import {
   insertUserPostgres,
   findUserLoginByEmailPostgres,
-  findUserPreferencesByIdPostgres,
+  findUserByIdPostgres,
 } from "../repository/user.repository.postgres";
 import { UserError, User, PostgresClient } from "../types/dataTypes";
 
@@ -71,5 +71,5 @@ export async function getUserPreferences(
   db: PostgresClient,
   userId: number
 ): Promise<User> {
-  return await findUserPreferencesByIdPostgres(db, userId);
+  return await findUserByIdPostgres(db, userId);
 }

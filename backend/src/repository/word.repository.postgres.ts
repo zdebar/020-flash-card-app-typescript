@@ -1,5 +1,9 @@
 import { PostgresClient, WordUpdate, Word, WordNote } from "../types/dataTypes";
-import config from "../config/config";
+import {
+  getNextAt,
+  getLearnedAt,
+  getMasteredAt,
+} from "../utils/progress.utils";
 import { withDbClient } from "../utils/database.utils";
 
 /**
@@ -12,15 +16,6 @@ export async function getWordsPostgres(
   numWords: number = 20
 ): Promise<Word[]> {
   // Check if the user exists
-  const userCheckQuery = `SELECT 1 FROM users WHERE id = $1`;
-
-  await withDbClient(db, async (client) => {
-    const userCheckResult = await client.query(userCheckQuery, [userId]);
-    if (userCheckResult.rowCount === 0) {
-      throw new Error(`User with ID ${userId} does not exist.`);
-    }
-  });
-
   const query = `
     SELECT 
       w.id, 
@@ -95,28 +90,6 @@ export async function updateWordsPostgres(
   });
 }
 
-function getNextAt(progress: number = 1): string | null {
-  const interval = config.SRS[progress - 1] ?? null;
-  if (interval) {
-    return new Date(Date.now() + interval * 1000).toISOString();
-  }
-  return null;
-}
-
-function getLearnedAt(progress: number = 1): string | null {
-  if (progress === config.learnedAt) {
-    return new Date(Date.now()).toISOString();
-  }
-  return null;
-}
-
-function getMasteredAt(progress: number = 1): string | null {
-  if (progress >= config.SRS.length) {
-    return new Date(Date.now()).toISOString();
-  }
-  return null;
-}
-
 /**
  * Inserts or updates the user's word notes in a PostgreSQL database.
  */
@@ -127,9 +100,6 @@ export async function insertWordNote(
   const query = `
     INSERT INTO word_notes (user_id, word_id, note)
     VALUES ($1, $2, $3)
-    ON CONFLICT(user_id, word_id) 
-    DO UPDATE SET 
-      note = EXCLUDED.note;
   `;
 
   const values = [word.user_id, word.word_id, word.note];

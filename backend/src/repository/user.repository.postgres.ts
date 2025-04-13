@@ -4,9 +4,28 @@ import { QueryResult } from "pg";
 import { withDbClient } from "../utils/database.utils";
 
 /**
+ * Checks if a user exists in the database.
+ *
+ * @throws Error if the user does not exist.
+ */
+export async function checkUserExistsById(
+  db: PostgresClient,
+  userId: number
+): Promise<void> {
+  const userCheckQuery = `SELECT 1 FROM users WHERE id = $1`;
+
+  await withDbClient(db, async (client) => {
+    const userCheckResult = await client.query(userCheckQuery, [userId]);
+    if (userCheckResult.rowCount === 0) {
+      throw new Error(`User with ID ${userId} does not exist.`);
+    }
+  });
+}
+
+/**
  * Finds User by userID.
  */
-export async function findUserPreferencesByIdPostgres(
+export async function findUserByIdPostgres(
   db: PostgresClient,
   userId: number
 ): Promise<User> {
@@ -66,7 +85,8 @@ export async function findUserLoginByEmailPostgres(
 /**
  * Inserts a new user into the PostgreSQL database along with their default preferences.
  *
- * @throws {UserError} If the username or email is already taken.
+ * @returns {Promise<User>} The newly created user object.
+ * @throws {UserError} If the username or email is already taken. Specifies the error message for user feedback.
  * @throws {Error} Any other error.
  *
  */
@@ -95,5 +115,31 @@ export async function insertUserPostgres(
       }
       throw err;
     }
+  });
+}
+
+/**
+ * Gets count of learned and mastered words for a user.
+ */
+export async function getUserScore(
+  db: PostgresClient,
+  userId: number
+): Promise<{ learnedWords: number; masteredWords: number }> {
+  const query = `
+    SELECT 
+      COUNT(CASE WHEN learned_at IS NOT NULL THEN 1 END) AS learned_words,
+      COUNT(CASE WHEN mastered_at IS NOT NULL THEN 1 END) AS mastered_words
+    FROM user_words
+    WHERE user_id = $1;
+  `;
+
+  return await withDbClient(db, async (client) => {
+    const result = await client.query(query, [userId]);
+    const { learned_words, mastered_words } = result.rows[0];
+
+    return {
+      learnedWords: parseInt(learned_words, 10),
+      masteredWords: parseInt(mastered_words, 10),
+    };
   });
 }
