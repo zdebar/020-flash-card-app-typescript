@@ -11,10 +11,11 @@ const userRouter = express.Router();
 userRouter.post("/register", registerUserController);
 userRouter.post("/login", loginUserController);
 userRouter.get(
-  "/getPreferences",
+  // TODO: do I need this, is already done with login
+  "getUser",
   authenticateTokenMiddleware,
   getUserProfileController
 );
-userRouter.get("/updatePreferences", authenticateTokenMiddleware); // TODO: implement update preferences
+userRouter.get("/updateUser", authenticateTokenMiddleware); // TODO: implement update preferences
 
 export default userRouter;

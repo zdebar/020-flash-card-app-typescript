@@ -2,29 +2,13 @@ import { Request, Response, NextFunction } from "express";
 import {
   registerUserService,
   loginUserService,
-  getUserPreferences,
+  getUserService,
 } from "../services/user.service";
 import { postgresDBPool } from "../config/database.config.postgres";
 import { validateRequiredUserFields } from "../utils/validate.utils";
-import { UserError } from "../types/dataTypes";
 
 /**
  * Handles the user registration process.
- *
- * This controller function validates the request body for required fields,
- * connects to the database, registers a new user, logs the user in, and
- * returns a success response with a token. If any errors occur during the
- * process, they are handled appropriately.
- *
- * @param req - The HTTP request object containing the user registration data.
- * @param res - The HTTP response object used to send the response.
- * @param next - The next middleware function to handle errors.
- * @returns A promise that resolves to void.
- *
- * @throws Will handle and respond with an error if:
- * - Required fields (username, email, password) are missing.
- * - There is an issue with database connectivity or operations.
- * - Any other unexpected error occurs during the process.
  */
 export async function registerUserController(
   req: Request,
@@ -33,12 +17,8 @@ export async function registerUserController(
 ): Promise<void> {
   try {
     const { username, email, password } = req.body;
-
-    if (email !== "zdebarth@gmail.com") {
-      throw new UserError("Registrace prozatím uzavřeny!");
-    }
-
     validateRequiredUserFields({ username, email, password });
+
     const { token, user } = await registerUserService(
       postgresDBPool,
       username,
@@ -83,6 +63,7 @@ export async function loginUserController(
   try {
     const { email, password } = req.body;
     validateRequiredUserFields({ email, password });
+
     const { token, user } = await loginUserService(
       postgresDBPool,
       email,
@@ -126,7 +107,7 @@ export async function getUserProfileController(
 ): Promise<void> {
   try {
     const userId = (req as any).user.id;
-    const userPrefer = await getUserPreferences(postgresDBPool, userId);
+    const userPrefer = await getUserService(postgresDBPool, userId);
     res.json(userPrefer);
   } catch (err) {
     next(err);

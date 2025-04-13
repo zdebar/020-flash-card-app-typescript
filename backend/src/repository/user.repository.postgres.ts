@@ -5,7 +5,6 @@ import { withDbClient } from "../utils/database.utils";
 
 /**
  * Checks if a user exists in the database.
- *
  * @throws Error if the user does not exist.
  */
 export async function checkUserExistsById(
@@ -23,7 +22,8 @@ export async function checkUserExistsById(
 }
 
 /**
- * Finds User by userID.
+ * Finds User by userID. *
+ * @throws Error if the user does not exist.
  */
 export async function findUserByIdPostgres(
   db: PostgresClient,
@@ -51,8 +51,7 @@ export async function findUserByIdPostgres(
 }
 
 /**
- * Finds a user by their email. INCLUDES HASHED PASSWORD!
- *
+ * Finds a user by their email. INCLUDES HASHED PASSWORD! *
  * @throws Will throw a UserError if no user exists with the specified email.
  */
 export async function findUserLoginByEmailPostgres(
@@ -65,7 +64,6 @@ export async function findUserLoginByEmailPostgres(
       SELECT 
         id,
         username, 
-        email, 
         password,
         mode_day, 
         font_size,
@@ -85,7 +83,6 @@ export async function findUserLoginByEmailPostgres(
 /**
  * Inserts a new user into the PostgreSQL database along with their default preferences.
  *
- * @returns {Promise<User>} The newly created user object.
  * @throws {UserError} If the username or email is already taken. Specifies the error message for user feedback.
  * @throws {Error} Any other error.
  *
@@ -115,31 +112,5 @@ export async function insertUserPostgres(
       }
       throw err;
     }
-  });
-}
-
-/**
- * Gets count of learned and mastered words for a user.
- */
-export async function getUserScore(
-  db: PostgresClient,
-  userId: number
-): Promise<{ learnedWords: number; masteredWords: number }> {
-  const query = `
-    SELECT 
-      COUNT(CASE WHEN learned_at IS NOT NULL THEN 1 END) AS learned_words,
-      COUNT(CASE WHEN mastered_at IS NOT NULL THEN 1 END) AS mastered_words
-    FROM user_words
-    WHERE user_id = $1;
-  `;
-
-  return await withDbClient(db, async (client) => {
-    const result = await client.query(query, [userId]);
-    const { learned_words, mastered_words } = result.rows[0];
-
-    return {
-      learnedWords: parseInt(learned_words, 10),
-      masteredWords: parseInt(mastered_words, 10),
-    };
   });
 }

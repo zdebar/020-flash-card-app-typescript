@@ -1,10 +1,17 @@
-import { PostgresClient, WordUpdate, Word, WordNote } from "../types/dataTypes";
+import {
+  PostgresClient,
+  WordUpdate,
+  Word,
+  WordNote,
+  Score,
+} from "../types/dataTypes";
 import {
   getNextAt,
   getLearnedAt,
   getMasteredAt,
 } from "../utils/progress.utils";
 import { withDbClient } from "../utils/database.utils";
+import config from "../config/config";
 
 /**
  * Return required words for the user from PostgreSQL database.
@@ -13,9 +20,8 @@ export async function getWordsPostgres(
   db: PostgresClient,
   userId: number,
   languageID: number,
-  numWords: number = 20
+  numWords: number = config.block
 ): Promise<Word[]> {
-  // Check if the user exists
   const query = `
     SELECT 
       w.id, 
@@ -23,8 +29,7 @@ export async function getWordsPostgres(
       w.word AS trg, 
       w.pronunciation AS prn,
       w.audio,
-      COALESCE(uw.progress,0) AS progress,
-      uw.learned_at IS NOT NULL AS learned
+      COALESCE(uw.progress,0) AS progress
     FROM words w
     LEFT JOIN user_words uw ON w.id = uw.word_id AND uw.user_id = $1
     WHERE w.language_id = $2
@@ -93,7 +98,7 @@ export async function updateWordsPostgres(
 /**
  * Inserts or updates the user's word notes in a PostgreSQL database.
  */
-export async function insertWordNote(
+export async function insertWordNotePostgres(
   db: PostgresClient,
   word: WordNote
 ): Promise<void> {
@@ -106,5 +111,31 @@ export async function insertWordNote(
 
   await withDbClient(db, async (client) => {
     await client.query(query, values);
+  });
+}
+
+/**
+ * Gets count of learned and mastered words for a user.
+ */
+export async function getScorePostgres(
+  db: PostgresClient,
+  userId: number
+): Promise<Score> {
+  const query = `
+    SELECT 
+      COUNT(CASE WHEN learned_at IS NOT NULL THEN 1 END) AS learned_words,
+      COUNT(CASE WHEN mastered_at IS NOT NULL THEN 1 END) AS mastered_words
+    FROM user_words
+    WHERE user_id = $1;
+  `;
+
+  return await withDbClient(db, async (client) => {
+    const result = await client.query(query, [userId]);
+    const { learned_words, mastered_words } = result.rows[0];
+
+    return {
+      learnedCount: parseInt(learned_words, 10),
+      masteredCount: parseInt(mastered_words, 10),
+    };
   });
 }

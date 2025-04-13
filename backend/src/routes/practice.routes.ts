@@ -1,21 +1,21 @@
 import express from "express";
 import { authenticateTokenMiddleware } from "../middlewares/auth.middleware";
 import {
-  getUserWordsController,
-  updateUserWordsController,
+  getWordsController,
+  updateWordsController,
 } from "../controllers/practice.controller";
 
 const practiceRouter = express.Router();
 
 practiceRouter.get(
-  "/getUserWords",
+  "/getWords",
   authenticateTokenMiddleware,
-  getUserWordsController
+  getWordsController
 );
 practiceRouter.post(
-  "/updateUserWords",
+  "/updateWords",
   authenticateTokenMiddleware,
-  updateUserWordsController
+  updateWordsController
 );
 
 export default practiceRouter;

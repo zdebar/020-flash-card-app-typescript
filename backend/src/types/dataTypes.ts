@@ -58,7 +58,6 @@ export interface User extends UserID {
 }
 
 export interface UserLogin extends User {
-  email: string;
   password: string;
 }
 
@@ -68,4 +67,10 @@ export class UserError extends Error {
     super(message);
     this.name = "UserError";
   }
+}
+
+// User Score Data Types
+export interface Score {
+  learnedCount: number;
+  masteredCount: number;
 }

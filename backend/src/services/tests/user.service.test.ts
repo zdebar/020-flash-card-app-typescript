@@ -2,9 +2,9 @@ import { describe, it, expect, beforeAll, afterAll, beforeEach } from "vitest";
 import {
   registerUserService,
   loginUserService,
-  getUserPreferences,
+  getUserService,
 } from "../user.service";
-import { UserError, UserPreferences } from "../../../../shared/types/dataTypes";
+import { UserError } from "../../types/dataTypes";
 import { postgresDBPool } from "../../config/database.config.postgres";
 import { PoolClient } from "pg";
 
@@ -69,7 +69,7 @@ describe("User Registration, Login, and User Preferences", () => {
   });
 
   it("should login the user and return a token", async () => {
-    token = await loginUserService(postgresDBPool, email, password);
+    const token = await loginUserService(postgresDBPool, email, password);
 
     expect(token).toBeDefined();
     expect(token).toBeTypeOf("string");
@@ -84,13 +84,13 @@ describe("User Registration, Login, and User Preferences", () => {
   });
 
   it("should throw an error when getting userPreferences with wrong ID", async () => {
-    await expect(getUserPreferences(postgresDBPool, 999)).rejects.toThrowError(
+    await expect(getUserService(postgresDBPool, 999)).rejects.toThrowError(
       Error
     );
   });
 
   it("should return userPreferences", async () => {
-    await expect(getUserPreferences(postgresDBPool, 1)).resolves.toEqual({
+    await expect(getUserService(postgresDBPool, 1)).resolves.toEqual({
       email: "myUser@example.cz",
       font_size: 2,
       id: 1,

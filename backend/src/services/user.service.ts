@@ -7,18 +7,27 @@ import {
   insertUserPostgres,
   findUserLoginByEmailPostgres,
   findUserByIdPostgres,
+  checkUserExistsById,
 } from "../repository/user.repository.postgres";
-import { UserError, User, PostgresClient } from "../types/dataTypes";
+import {
+  UserError,
+  User,
+  UserLogin,
+  PostgresClient,
+  WordUpdate,
+  Word,
+  Score,
+} from "../types/dataTypes";
+import {
+  getWordsPostgres,
+  updateWordsPostgres,
+  getScorePostgres,
+} from "../repository/word.repository.postgres";
+import { addAudioPathsToWords } from "../utils/progress.utils";
 
 /**
  * Registers a new user in the system by hashing the provided password
  * and inserting the user details into the PostgreSQL database.
- *
- * @param db - The PostgreSQL client instance used to interact with the database.
- * @param username - The username of the new user.
- * @param email - The email address of the new user.
- * @param password - The plaintext password of the new user, which will be hashed before storage.
- * @returns A promise userID / Error
  */
 export async function registerUserService(
   db: PostgresClient,
@@ -35,19 +44,13 @@ export async function registerUserService(
 
 /**
  * Authenticates a user by verifying their email and password, and generates a JWT token upon successful login.
- *
- * @param db - The Postgres client instance used to query the database.
- * @param email - The email address of the user attempting to log in.
- * @param password - The plaintext password provided by the user for authentication.
- * @returns A promise that resolves to a JWT token string if authentication is successful.
- * @throws {UserError} If the provided password does not match the stored password for the user.
  */
 export async function loginUserService(
   db: PostgresClient,
   email: string,
   password: string
 ): Promise<{ token: string; user: User }> {
-  const userLogin = await findUserLoginByEmailPostgres(db, email);
+  const userLogin: UserLogin = await findUserLoginByEmailPostgres(db, email);
   const passwordMatch = await comparePasswords(password, userLogin.password);
 
   if (!passwordMatch) {
@@ -55,21 +58,50 @@ export async function loginUserService(
   }
 
   const token = createToken(userLogin.id);
-  const { password: passwordToOmit, email: emailToOmit, ...user } = userLogin;
+  const { password: passwordToOmit, ...user } = userLogin;
 
   return { token, user };
 }
 
 /**
  * Retrieves the user preferences for a given user ID from the database.
- *
- * @param db - The Postgres client instance used to query the database.
- * @param email - The unique identifier of the user whose preferences are being retrieved.
- * @returns A promise that resolves to the user's preferences.
+ * TODO: consider deleteing, so far not used
  */
-export async function getUserPreferences(
+export async function getUserService(
   db: PostgresClient,
   userId: number
 ): Promise<User> {
   return await findUserByIdPostgres(db, userId);
+}
+
+/**
+ * Updates the user's word progress in the PostgreSQL database and returns the updated score.
+ */
+export async function updateWordsService(
+  db: PostgresClient,
+  userID: number,
+  words: WordUpdate[]
+): Promise<Score> {
+  updateWordsPostgres(db, userID, words);
+  return await getScorePostgres(db, userID);
+}
+
+/**
+ * Gets a list of words for a given user and language ID from the database.
+ */
+export async function getWordsService(
+  db: PostgresClient,
+  userID: number,
+  languageID: number,
+  numWords?: number
+): Promise<Word[]> {
+  checkUserExistsById(db, userID);
+  const words: Word[] = await getWordsPostgres(
+    db,
+    userID,
+    languageID,
+    numWords
+  );
+
+  return addAudioPathsToWords(words, languageID);
 }

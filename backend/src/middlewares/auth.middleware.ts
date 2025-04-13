@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from "express";
 import { UserID } from "../types/dataTypes";
 import { verifyToken } from "../utils/auth.utils";
 import logger from "../utils/logger.utils";
-import cookieParser from "cookie-parser";
 
 /**
  * Middleware to authenticate and verify JWT token from request headers.

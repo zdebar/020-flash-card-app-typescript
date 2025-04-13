@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach, Mock } from "vitest";
 import {
-  getUserWordsController,
-  updateUserWordsController,
+  getWordsController,
+  updateWordsController,
   getUserProfileController,
 } from "../practice.controller";
 import { Request, Response } from "express";
@@ -41,7 +41,7 @@ describe("User Controller", () => {
       const mockError = new Error("Database error");
       vi.spyOn(wordService, "getWordsPostgres").mockRejectedValue(mockError);
 
-      await getUserWordsController(req as Request, res as Response);
+      await getWordsController(req as Request, res as Response);
 
       expect(res.status).not.toHaveBeenCalledWith(200);
       expect(closeDbConnection).toHaveBeenCalledWith(db);
@@ -52,7 +52,7 @@ describe("User Controller", () => {
     it("should update user words and return 200", async () => {
       req.body = { words: [{ id: 1, word: "updated" }] };
 
-      await updateUserWordsController(req as Request, res as Response);
+      await updateWordsController(req as Request, res as Response);
 
       expect(db.connect).toHaveBeenCalled();
       expect(wordService.updateWordsPostgres).toHaveBeenCalledWith(
@@ -71,7 +71,7 @@ describe("User Controller", () => {
       const mockError = new Error("Update error");
       vi.spyOn(wordService, "updateWordsPostgres").mockRejectedValue(mockError);
 
-      await updateUserWordsController(req as Request, res as Response);
+      await updateWordsController(req as Request, res as Response);
 
       expect(res.status).not.toHaveBeenCalledWith(200);
       expect(closeDbConnection).toHaveBeenCalledWith(db);
@@ -95,7 +95,7 @@ describe("User Controller", () => {
       await getUserProfileController(req as Request, res as Response);
 
       expect(db.connect).toHaveBeenCalled();
-      expect(userService.getUserPreferences).toHaveBeenCalledWith(db, 1);
+      expect(userService.getUserService).toHaveBeenCalledWith(db, 1);
       expect(res.json).toHaveBeenCalledWith(mockPreferences);
       expect(closeDbConnection).toHaveBeenCalledWith(db);
     });
