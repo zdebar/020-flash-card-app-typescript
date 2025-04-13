@@ -31,3 +31,9 @@ def clean_DataFrame(df: pd.DataFrame) -> pd.DataFrame:
     df = df.map(lambda x: str(x).strip() if isinstance(x, str) else x)
     df = df.dropna(how="all")    
     return df
+
+def choose_british(df: pd.DataFrame) -> pd.DataFrame:
+    """Choose British English words from the DataFrame.
+    """
+    df["trg"] = df["trg"].str.replace(r".*/", "", regex=True)  # Remove everything before and including "/"
+    return df

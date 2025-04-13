@@ -22,7 +22,7 @@ import {
   getWordsPostgres,
   updateWordsPostgres,
   getScorePostgres,
-} from "../repository/word.repository.postgres";
+} from "../repository/practice.repository.postgres";
 import { addAudioPathsToWords } from "../utils/progress.utils";
 
 /**
