@@ -1,8 +1,7 @@
 import { UserError } from "../types/dataTypes";
 
 /**
- * Validates that all required environment variables are defined and non-empty.
- * Throws an error if any required variable is missing or empty.
+ * Validates that all required environment variables are defined and non-empty. Error otherwise.
  */
 export function validateEnvVariables(
   requiredVariables: (string | undefined)[]

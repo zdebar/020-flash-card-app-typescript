@@ -62,3 +62,9 @@ export class UserError extends Error {
     this.name = 'UserError';
   }
 }
+
+// Score Data Types
+export interface Score {
+  learnedCount: number;
+  masteredCount: number;
+}

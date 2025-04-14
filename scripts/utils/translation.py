@@ -1,17 +1,25 @@
 import requests
 from googletrans import Translator
+from dotenv import load_dotenv
+import os
 
-def translate_to_czech(text: str, api_key: str) -> str:
+# Load environment variables from .env file
+load_dotenv()
+
+def translate_to_czech(text: str) -> str:
     """
     Translates a given text from English to Czech using the Google Translate API.
 
     Args:
         text (str): The text to translate.
-        api_key (str): Your Google Cloud API key.
 
     Returns:
         str: The translated text in Czech.
     """
+    api_key = os.getenv("GOOGLE_TRANSLATE_API_KEY")
+    if not api_key:
+        raise Exception("GOOGLE_TRANSLATE_API_KEY is not set in the .env file.")
+
     url = "https://translation.googleapis.com/language/translate/v2"
     params = {
         "q": text,

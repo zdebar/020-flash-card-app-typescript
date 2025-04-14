@@ -1,10 +1,11 @@
 import { useState, useEffect, ReactNode } from 'react';
 import { UserContext } from './UserContext';
 import { getAPI } from '../functions/getAPI';
-import { User } from '../types/dataTypes';
+import { User, Score } from '../types/dataTypes';
 
 export function UserProvider({ children }: { children: ReactNode }) {
   const [userInfo, setUserInfo] = useState<User | null>(null);
+  const [userScore, setUserScore] = useState<Score | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -27,8 +28,10 @@ export function UserProvider({ children }: { children: ReactNode }) {
     <UserContext.Provider
       value={{
         userInfo,
+        userScore,
         loading,
         setUserInfo,
+        setUserScore,
         setLoading,
       }}
     >

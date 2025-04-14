@@ -2,7 +2,7 @@ import os
 import pandas as pd
 import asyncio
 from utils.pronunciation import get_IPA_pronunciation
-from utils.translation import translate_to_czech_no_api_key
+from utils.translation import translate_to_czech
 from utils.audio_generation import generate_audio_for_words
 from utils.prepare_words import clean_DataFrame, choose_british
 from utils.helpers import async_save_csv
@@ -18,7 +18,7 @@ async def prepare_english_words(file_name: str, output_folder: str, audio_folder
 
     # Get czech translation for each word
     df["src"] = await asyncio.gather(
-        *[asyncio.to_thread(translate_to_czech_no_api_key, word.replace(",", "")) for word in df["trg"]]
+        *[asyncio.to_thread(translate_to_czech, word.replace(",", "")) for word in df["trg"]]
     )
 
     # Get IPA pronunciation for each word
@@ -28,14 +28,15 @@ async def prepare_english_words(file_name: str, output_folder: str, audio_folder
 
     # Create folders if they don't exist
     os.makedirs(output_folder, exist_ok=True)
-    os.makedirs(audio_folder, exist_ok=True)
+    
 
     # Generate audio files in the subfolder
-    audio_files = await generate_audio_for_words(df, audio_folder, "en")
-    df["audio"] = audio_files
-
-    # Reorder columns
-    final_df = df[["src", "trg", "prn", "cefr", "audio"]]
+    # os.makedirs(audio_folder, exist_ok=True)
+    # audio_files = await generate_audio_for_words(df, audio_folder, "en")
+    # df["audio"] = audio_files
+    # final_df = df[["src", "trg", "prn", "cefr", "audio"]]
+  
+    final_df = df[["src", "trg", "prn", "cefr"]]
 
     # Save the processed CSV file
     output_file = os.path.join(output_folder, os.path.basename("CZ_EN_CEFR.csv"))
