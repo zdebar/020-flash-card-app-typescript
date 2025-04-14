@@ -69,7 +69,7 @@ export class UserError extends Error {
   }
 }
 
-// User Score Data Types
+// Score Data Types
 export interface Score {
   learnedCount: number;
   masteredCount: number;

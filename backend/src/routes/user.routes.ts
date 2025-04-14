@@ -2,7 +2,8 @@ import express from "express";
 import {
   registerUserController,
   loginUserController,
-  getUserProfileController,
+  getUserController,
+  updateUserController,
 } from "../controllers/user.controller";
 import { authenticateTokenMiddleware } from "../middlewares/auth.middleware";
 
@@ -10,12 +11,11 @@ const userRouter = express.Router();
 
 userRouter.post("/register", registerUserController);
 userRouter.post("/login", loginUserController);
+userRouter.get("getUser", authenticateTokenMiddleware, getUserController);
 userRouter.get(
-  // TODO: do I need this, is already done with login
-  "getUser",
+  "/updateUser",
   authenticateTokenMiddleware,
-  getUserProfileController
+  updateUserController
 );
-userRouter.get("/updateUser", authenticateTokenMiddleware); // TODO: implement update preferences
 
 export default userRouter;

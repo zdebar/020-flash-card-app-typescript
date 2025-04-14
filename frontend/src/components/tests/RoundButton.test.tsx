@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import RoundButton from '../RoundButton';
+import RoundButton from '../Button';
 import { BrowserRouter } from 'react-router-dom';
 import { describe, it, expect } from 'vitest';
 

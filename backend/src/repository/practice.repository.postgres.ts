@@ -1,10 +1,4 @@
-import {
-  PostgresClient,
-  WordUpdate,
-  Word,
-  WordNote,
-  Score,
-} from "../types/dataTypes";
+import { PostgresClient, WordUpdate, Word, WordNote } from "../types/dataTypes";
 import {
   getNextAt,
   getLearnedAt,
@@ -12,6 +6,7 @@ import {
 } from "../utils/progress.utils";
 import { withDbClient } from "../utils/database.utils";
 import config from "../config/config";
+import { Score } from "../types/dataTypes";
 
 /**
  * Return required words for the user from PostgreSQL database.

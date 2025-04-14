@@ -44,10 +44,10 @@ async def prepare_english_words(file_name: str, output_folder: str, audio_folder
 
 if __name__ == "__main__":
 
-    input_file = os.path.abspath("data/en-source/ENGLISH_CERF_WORDS.csv")  
-    output_folder = os.path.abspath("data/en-source/output")
-    audio_folder = os.path.abspath("data/en-source/audio/mp3/1")
-    word_number = 1000
+    input_file = os.path.abspath("../data/en-source/ENGLISH_CERF_WORDS.csv")  
+    output_folder = os.path.abspath("../data/en-source/output")
+    audio_folder = os.path.abspath("../data/en-source/audio/mp3/1")
+    word_number = 1000  # Number of words to process
 
     asyncio.run(prepare_english_words(input_file, output_folder, audio_folder, word_number))
 

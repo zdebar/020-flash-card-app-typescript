@@ -8,7 +8,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const API_PATH = `http://localhost:3000/user/getPreferences`;
+    const API_PATH = `http://localhost:3000/user/getUser`;
 
     const fetchUserPreferences = async () => {
       try {
@@ -25,7 +25,12 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
   return (
     <UserContext.Provider
-      value={{ userInfo, loading, setUserInfo, setLoading }}
+      value={{
+        userInfo,
+        loading,
+        setUserInfo,
+        setLoading,
+      }}
     >
       {children}
     </UserContext.Provider>

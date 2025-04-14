@@ -2,29 +2,29 @@
 import { LinkProps, NavLink } from 'react-router-dom';
 import { ReactNode } from 'react';
 
-type RoundButtonProps = {
+type ButtonProps = {
   children: ReactNode;
   to: LinkProps['to'];
   className?: string;
   disabled?: boolean;
 };
 
-export default function RoundButton({
+export default function Button({
   children,
   to,
   className = '',
   disabled = false,
-}: RoundButtonProps) {
+}: ButtonProps) {
   return disabled ? (
     <div
-      className={`color-secondary flex h-12 w-12 items-center justify-center rounded-full ${className}`}
+      className={`color-secondary flex h-12 w-12 items-center justify-center ${className}`}
     >
       {children}
     </div>
   ) : (
     <NavLink to={to} className={className}>
       <button
-        className={`color-primary color-primary-hover flex h-12 w-12 items-center justify-center rounded-full`}
+        className={`color-primary color-primary-hover flex h-12 w-12 items-center justify-center ${className}`}
       >
         {children}
       </button>

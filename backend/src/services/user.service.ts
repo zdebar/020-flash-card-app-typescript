@@ -8,6 +8,7 @@ import {
   findUserLoginByEmailPostgres,
   findUserByIdPostgres,
   checkUserExistsById,
+  updateUserPostgres,
 } from "../repository/user.repository.postgres";
 import {
   UserError,
@@ -34,12 +35,17 @@ export async function registerUserService(
   username: string,
   email: string,
   password: string
-): Promise<{ token: string; user: User }> {
-  const hashedPassword = await hashPassword(password);
-  const user = await insertUserPostgres(db, username, email, hashedPassword);
-
-  const token = createToken(user.id);
-  return { token, user };
+): Promise<{ token: string; user: User; score: Score }> {
+  const hashedPassword: string = await hashPassword(password);
+  const user: User = await insertUserPostgres(
+    db,
+    username,
+    email,
+    hashedPassword
+  );
+  const score: Score = await getScorePostgres(db, user.id);
+  const token: string = createToken(user.id);
+  return { token, user, score };
 }
 
 /**
@@ -51,39 +57,43 @@ export async function loginUserService(
   password: string
 ): Promise<{ token: string; user: User }> {
   const userLogin: UserLogin = await findUserLoginByEmailPostgres(db, email);
-  const passwordMatch = await comparePasswords(password, userLogin.password);
+  const passwordMatch: boolean = await comparePasswords(
+    password,
+    userLogin.password
+  );
 
   if (!passwordMatch) {
     throw new UserError("Zadané heslo je nesprávné");
   }
 
-  const token = createToken(userLogin.id);
+  const token: string = createToken(userLogin.id);
   const { password: passwordToOmit, ...user } = userLogin;
 
   return { token, user };
 }
 
 /**
- * Retrieves the user preferences for a given user ID from the database.
- * TODO: consider deleteing, so far not used
+ * Retrieves the user information and score for a given user ID from the database.
  */
 export async function getUserService(
   db: PostgresClient,
   userId: number
-): Promise<User> {
-  return await findUserByIdPostgres(db, userId);
+): Promise<{ user: User; score: Score }> {
+  const user: User = await findUserByIdPostgres(db, userId);
+  const score: Score = await getScorePostgres(db, userId);
+  return { user, score };
 }
 
 /**
- * Updates the user's word progress in the PostgreSQL database and returns the updated score.
+ * Retrieves the user preferences for a given user ID from the database.
+ * TODO: consider deleteing, so far not used
  */
-export async function updateWordsService(
+export async function updateUserService(
   db: PostgresClient,
-  userID: number,
-  words: WordUpdate[]
-): Promise<Score> {
-  updateWordsPostgres(db, userID, words);
-  return await getScorePostgres(db, userID);
+  user: User
+): Promise<User> {
+  const userUpdated: User = await updateUserPostgres(db, user);
+  return userUpdated;
 }
 
 /**
@@ -104,4 +114,16 @@ export async function getWordsService(
   );
 
   return addAudioPathsToWords(words, languageID);
+}
+
+/**
+ * Updates the user's word progress in the PostgreSQL database and returns the updated score.
+ */
+export async function updateWordsService(
+  db: PostgresClient,
+  userID: number,
+  words: WordUpdate[]
+): Promise<Score> {
+  updateWordsPostgres(db, userID, words);
+  return await getScorePostgres(db, userID);
 }

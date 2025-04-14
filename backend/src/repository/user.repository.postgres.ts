@@ -51,6 +51,41 @@ export async function findUserByIdPostgres(
 }
 
 /**
+ * Updates User Settings.
+ */
+export async function updateUserPostgres(
+  db: PostgresClient,
+  user: User
+): Promise<User> {
+  return withDbClient(db, async (client) => {
+    const updatedUser: QueryResult<User> = await client.query(
+      `
+      UPDATE users
+      SET 
+        username = $1,
+        mode_day = $2,
+        font_size = $3,
+        notifications = $4
+      WHERE id = $5
+      RETURNING id, username, mode_day, font_size, notifications
+      `,
+      [
+        user.username,
+        user.mode_day,
+        user.font_size,
+        user.notifications,
+        user.id,
+      ]
+    );
+
+    if (!updatedUser.rows.length) {
+      throw new Error(`User with id ${user.id} not found!`);
+    }
+    return updatedUser.rows[0];
+  });
+}
+
+/**
  * Finds a user by their email. INCLUDES HASHED PASSWORD! *
  * @throws Will throw a UserError if no user exists with the specified email.
  */

@@ -40,12 +40,12 @@ export async function updateWordsController(
 ): Promise<void> {
   try {
     const userId = (req as any).user.id;
-    const { words } = req.body;
+    const words: WordUpdate[] = req.body;
 
     const score: Score = await updateWordsService(
       postgresDBPool,
       Number(userId),
-      words as WordUpdate[]
+      words
     );
 
     res.status(200).json(score);
