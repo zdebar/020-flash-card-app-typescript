@@ -2,7 +2,7 @@ import logger from "../utils/logger.utils";
 import { Request, Response, NextFunction } from "express";
 
 // Request logger middleware
-export default function requestLogger(
+export default function requestLoggerMiddleware(
   req: Request,
   res: Response,
   next: NextFunction

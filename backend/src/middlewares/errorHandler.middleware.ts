@@ -2,7 +2,7 @@ import { NextFunction, Response, Request } from "express";
 import logger from "../utils/logger.utils";
 import { UserError } from "../types/dataTypes";
 
-export default function errorHandler(
+export default function errorHandlerMiddleware(
   err: Error,
   req: Request,
   res: Response,

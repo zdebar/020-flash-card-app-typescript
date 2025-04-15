@@ -7,7 +7,6 @@ import {
   insertUserPostgres,
   findUserLoginByEmailPostgres,
   findUserByIdPostgres,
-  checkUserExistsById,
   updateUserPostgres,
 } from "../repository/user.repository.postgres";
 import {
@@ -15,16 +14,9 @@ import {
   User,
   UserLogin,
   PostgresClient,
-  WordUpdate,
-  Word,
   Score,
 } from "../types/dataTypes";
-import {
-  getWordsPostgres,
-  updateWordsPostgres,
-  getScorePostgres,
-} from "../repository/practice.repository.postgres";
-import { addAudioPathsToWords } from "../utils/progress.utils";
+import { getScorePostgres } from "../repository/practice.repository.postgres";
 
 /**
  * Registers a new user in the system by hashing the provided password
@@ -94,36 +86,4 @@ export async function updateUserService(
 ): Promise<User> {
   const userUpdated: User = await updateUserPostgres(db, user);
   return userUpdated;
-}
-
-/**
- * Gets a list of words for a given user and language ID from the database.
- */
-export async function getWordsService(
-  db: PostgresClient,
-  userID: number,
-  languageID: number,
-  numWords?: number
-): Promise<Word[]> {
-  checkUserExistsById(db, userID);
-  const words: Word[] = await getWordsPostgres(
-    db,
-    userID,
-    languageID,
-    numWords
-  );
-
-  return addAudioPathsToWords(words, languageID);
-}
-
-/**
- * Updates the user's word progress in the PostgreSQL database and returns the updated score.
- */
-export async function updateWordsService(
-  db: PostgresClient,
-  userID: number,
-  words: WordUpdate[]
-): Promise<Score> {
-  updateWordsPostgres(db, userID, words);
-  return await getScorePostgres(db, userID);
 }

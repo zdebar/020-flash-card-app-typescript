@@ -70,8 +70,8 @@ export async function updateWordsPostgres(
     DO UPDATE SET 
       progress = EXCLUDED.progress, 
       next_at = EXCLUDED.next_at, 
-      learned_at = CASE WHEN EXCLUDED.learned_at IS NOT NULL THEN EXCLUDED.learned_at ELSE user_words.learned_at END, 
-      mastered_at = CASE WHEN EXCLUDED.mastered_at IS NOT NULL THEN EXCLUDED.mastered_at ELSE user_words.mastered_at END;
+      learned_at = CASE WHEN user_words.learned_at IS NULL AND EXCLUDED.learned_at IS NOT NULL THEN EXCLUDED.learned_at ELSE user_words.learned_at END, 
+      mastered_at = CASE WHEN user_words.mastered_at IS NULL AND EXCLUDED.mastered_at IS NOT NULL THEN EXCLUDED.mastered_at ELSE user_words.mastered_at END;
   `;
 
   words.forEach((word) => {
@@ -84,25 +84,6 @@ export async function updateWordsPostgres(
       getMasteredAt(word.progress)
     );
   });
-
-  await withDbClient(db, async (client) => {
-    await client.query(query, values);
-  });
-}
-
-/**
- * Inserts or updates the user's word notes in a PostgreSQL database.
- */
-export async function insertWordNotePostgres(
-  db: PostgresClient,
-  word: WordNote
-): Promise<void> {
-  const query = `
-    INSERT INTO word_notes (user_id, word_id, note)
-    VALUES ($1, $2, $3)
-  `;
-
-  const values = [word.user_id, word.word_id, word.note];
 
   await withDbClient(db, async (client) => {
     await client.query(query, values);
@@ -132,5 +113,24 @@ export async function getScorePostgres(
       learnedCount: parseInt(learned_words, 10),
       masteredCount: parseInt(mastered_words, 10),
     };
+  });
+}
+
+/**
+ * Inserts or updates the user's word notes in a PostgreSQL database.
+ */
+export async function insertWordNotePostgres(
+  db: PostgresClient,
+  word: WordNote
+): Promise<void> {
+  const query = `
+    INSERT INTO word_notes (user_id, word_id, note)
+    VALUES ($1, $2, $3)
+  `;
+
+  const values = [word.user_id, word.word_id, word.note];
+
+  await withDbClient(db, async (client) => {
+    await client.query(query, values);
   });
 }
