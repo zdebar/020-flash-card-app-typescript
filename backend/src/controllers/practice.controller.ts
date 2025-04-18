@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import { postgresDBPool } from "../config/database.config.postgres";
-import { WordUpdate, WordNote } from "../types/dataTypes";
+import { WordUpdate, Note } from "../types/dataTypes";
 import {
   getWordsService,
   updateWordsService,
-  insertNoteService,
 } from "../services/practice.service";
+import { insertNotePostgres } from "../repository/practice.repository.postgres";
 
 import { Score, Word } from "../types/dataTypes";
 
@@ -66,9 +66,9 @@ export async function insertNoteController(
 ): Promise<void> {
   try {
     const userId: string = (req as any).user.id;
-    const noteData: WordNote = req.body;
+    const noteData: Note = req.body;
 
-    const result = await insertNoteService(postgresDBPool, noteData);
+    const result = await insertNotePostgres(postgresDBPool, noteData);
 
     res.status(200).send("Note added successfully");
   } catch (err) {

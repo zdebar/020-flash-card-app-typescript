@@ -1,4 +1,4 @@
-import { PostgresClient, WordUpdate, Word, WordNote } from "../types/dataTypes";
+import { PostgresClient, WordUpdate, Word, Note } from "../types/dataTypes";
 import {
   getNextAt,
   getLearnedAt,
@@ -119,9 +119,9 @@ export async function getScorePostgres(
 /**
  * Inserts or updates the user's word notes in a PostgreSQL database.
  */
-export async function insertWordNotePostgres(
+export async function insertNotePostgres(
   db: PostgresClient,
-  word: WordNote
+  word: Note
 ): Promise<void> {
   const query = `
     INSERT INTO word_notes (user_id, word_id, note)

@@ -4,7 +4,7 @@ import { Client, Pool } from "pg";
 export type PostgresClient = Pick<Client | Pool, "query" | "connect" | "end">;
 
 // Word Note Data Types
-export interface WordNote {
+export interface Note {
   user_id: number;
   word_id: number;
   note: string;

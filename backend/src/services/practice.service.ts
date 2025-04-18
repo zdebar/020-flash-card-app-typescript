@@ -4,13 +4,12 @@ import {
   WordUpdate,
   Word,
   Score,
-  WordNote,
+  Note,
 } from "../types/dataTypes";
 import {
   getWordsPostgres,
   updateWordsPostgres,
   getScorePostgres,
-  insertWordNotePostgres,
 } from "../repository/practice.repository.postgres";
 import { addAudioPathsToWords } from "../utils/progress.utils";
 
@@ -38,11 +37,4 @@ export async function updateWordsService(
 ): Promise<Score> {
   updateWordsPostgres(db, userID, words);
   return await getScorePostgres(db, userID);
-}
-
-export async function insertNoteService(
-  db: PostgresClient,
-  noteData: WordNote
-): Promise<void> {
-  insertWordNotePostgres(db, noteData);
 }
