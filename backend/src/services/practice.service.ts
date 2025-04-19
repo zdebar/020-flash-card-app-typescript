@@ -23,7 +23,6 @@ export async function getWordsService(
 ): Promise<Word[]> {
   checkUserExistsById(db, userID); // TODO: for development only, consider removing
   const words: Word[] = await getWordsPostgres(db, userID, languageID);
-
   return addAudioPathsToWords(words, languageID);
 }
 

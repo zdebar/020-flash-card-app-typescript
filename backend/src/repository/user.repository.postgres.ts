@@ -28,20 +28,25 @@ export async function checkUserExistsById(
 export async function findUserByIdPostgres(
   db: PostgresClient,
   userId: number
-): Promise<User> {
+): Promise<User & { languages: string[] }> {
   return withDbClient(db, async (client) => {
-    const user: QueryResult<User> = await client.query(
-      `
+    const user: QueryResult<User & { languages: string[] }> =
+      await client.query(
+        `
       SELECT 
-        id,
-        username, 
-        mode_day,
-        font_size,
-        notifications
+        users.id,
+        users.username, 
+        users.mode_day,
+        users.font_size,
+        users.notifications,
+        ARRAY_AGG(languages.language) AS languages
       FROM users
-      WHERE id = $1`,
-      [userId]
-    );
+      LEFT JOIN user_languages ON users.id = user_languages.user_id
+      LEFT JOIN languages ON user_languages.language_id = languages.id
+      WHERE users.id = $1
+      GROUP BY users.id`,
+        [userId]
+      );
 
     if (!user.rows.length) {
       throw new Error(`User with id ${userId} not found!`);

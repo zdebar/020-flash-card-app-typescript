@@ -21,6 +21,7 @@ export interface Word extends WordUpdate {
   trg: string;
   prn: string | null;
   audio: string | null;
+  started: boolean;
   learned: boolean;
 }
 
@@ -55,6 +56,7 @@ export interface User extends UserID {
   mode_day: ModeDay;
   font_size: FontSize;
   notifications: boolean;
+  languages: string[];
 }
 
 export interface UserLogin extends User {

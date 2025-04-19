@@ -24,7 +24,9 @@ export async function getWordsPostgres(
       w.word AS trg, 
       w.pronunciation AS prn,
       w.audio,
-      COALESCE(uw.progress,0) AS progress
+      COALESCE(uw.progress,0) AS progress,
+      uw.next_at IS NOT NULL AS started,
+      uw.learned_at IS NOT NULL AS learned      
     FROM words w
     LEFT JOIN user_words uw ON w.id = uw.word_id AND uw.user_id = $1
     WHERE w.language_id = $2
@@ -35,7 +37,7 @@ export async function getWordsPostgres(
         WHEN uw.progress > 0 THEN 1
         ELSE 2
       END ASC,
-      w.sequence ASC
+      w.position ASC
     LIMIT $3;
   `;
 

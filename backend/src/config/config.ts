@@ -19,7 +19,7 @@ validateEnvVariables([
 const config = {
   block: 20, // The size of repetition block
   learnedAt: 10, // Card learned at progress
-  masteredAt: 16, // Card mastered at progress
+  masteredAt: 22, // Card mastered at progress, TOOD: consider substituting with SRS.length
   SRS: [
     // Precomputed repetition algorithm in seconds, should have 20 elements
     0, // 0m
@@ -45,6 +45,7 @@ const config = {
     1728000, // 20d
     3456000, // 40d
   ],
+
   JWT_SECRET:
     process.env.NODE_ENV === "test" ? "test-password" : process.env.JWT_SECRET,
   JWT_EXPIRES_IN:
