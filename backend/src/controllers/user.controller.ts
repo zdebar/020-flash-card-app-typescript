@@ -21,12 +21,12 @@ export async function registerUserController(
     const { username, email, password } = req.body;
     validateRequiredUserFields({ username, email, password });
 
-    const { token, user, score } = await registerUserService(
-      postgresDBPool,
-      username,
-      email,
-      password
-    );
+    const {
+      token,
+      user,
+      score,
+    }: { token: string; user: User; score: Score[] } =
+      await registerUserService(postgresDBPool, username, email, password);
 
     res.cookie("token", token, {
       httpOnly: true,
@@ -54,7 +54,11 @@ export async function loginUserController(
     const { email, password } = req.body;
     validateRequiredUserFields({ email, password });
 
-    const { token, user } = await loginUserService(
+    const {
+      token,
+      user,
+      score,
+    }: { token: string; user: User; score: Score[] } = await loginUserService(
       postgresDBPool,
       email,
       password

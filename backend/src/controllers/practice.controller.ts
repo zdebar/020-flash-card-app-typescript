@@ -60,10 +60,9 @@ export async function insertNoteController(
   next: Function
 ): Promise<void> {
   try {
-    const userId: string = (req as any).user.id;
     const noteData: Note = req.body;
 
-    const result = await insertNotePostgres(postgresDBPool, noteData);
+    await insertNotePostgres(postgresDBPool, noteData);
 
     res.status(200).send("Note added successfully");
   } catch (err) {

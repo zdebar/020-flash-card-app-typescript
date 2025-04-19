@@ -27,7 +27,7 @@ export async function registerUserService(
   username: string,
   email: string,
   password: string
-): Promise<{ token: string; user: User; score: Score }> {
+): Promise<{ token: string; user: User; score: Score[] }> {
   const hashedPassword: string = await hashPassword(password);
   const user: User = await insertUserPostgres(
     db,
@@ -35,7 +35,7 @@ export async function registerUserService(
     email,
     hashedPassword
   );
-  const score: Score = await getScorePostgres(db, user.id);
+  const score: Score[] = await getScorePostgres(db, user.id);
   const token: string = createToken(user.id);
   return { token, user, score };
 }
@@ -47,21 +47,22 @@ export async function loginUserService(
   db: PostgresClient,
   email: string,
   password: string
-): Promise<{ token: string; user: User }> {
+): Promise<{ token: string; user: User; score: Score[] }> {
   const userLogin: UserLogin = await findUserLoginByEmailPostgres(db, email);
   const passwordMatch: boolean = await comparePasswords(
     password,
-    userLogin.password
+    userLogin.hashed_password
   );
 
   if (!passwordMatch) {
     throw new UserError("Zadané heslo je nesprávné");
   }
 
-  const token: string = createToken(userLogin.id);
-  const { password: passwordToOmit, ...user } = userLogin;
+  const { hashed_password: passwordToOmit, ...user } = userLogin;
+  const score: Score[] = await getScorePostgres(db, user.id);
+  const token: string = createToken(user.id);
 
-  return { token, user };
+  return { token, user, score };
 }
 
 /**
