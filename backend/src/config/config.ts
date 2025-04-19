@@ -19,7 +19,6 @@ validateEnvVariables([
 const config = {
   block: 20, // The size of repetition block
   learnedAt: 10, // Card learned at progress
-  masteredAt: 22, // Card mastered at progress, TOOD: consider substituting with SRS.length
   SRS: [
     // Precomputed repetition algorithm in seconds, should have 20 elements
     0, // 0m

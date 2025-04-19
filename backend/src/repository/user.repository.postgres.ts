@@ -28,65 +28,23 @@ export async function checkUserExistsById(
 export async function findUserByIdPostgres(
   db: PostgresClient,
   userId: number
-): Promise<User & { languages: string[] }> {
+): Promise<User> {
   return withDbClient(db, async (client) => {
-    const user: QueryResult<User & { languages: string[] }> =
-      await client.query(
-        `
+    const user: QueryResult<User> = await client.query(
+      `
       SELECT 
         users.id,
-        users.username, 
-        users.mode_day,
-        users.font_size,
-        users.notifications,
-        ARRAY_AGG(languages.language) AS languages
+        users.username
       FROM users
-      LEFT JOIN user_languages ON users.id = user_languages.user_id
-      LEFT JOIN languages ON user_languages.language_id = languages.id
       WHERE users.id = $1
-      GROUP BY users.id`,
-        [userId]
-      );
+      `,
+      [userId]
+    );
 
     if (!user.rows.length) {
       throw new Error(`User with id ${userId} not found!`);
     }
     return user.rows[0];
-  });
-}
-
-/**
- * Updates User Settings.
- */
-export async function updateUserPostgres(
-  db: PostgresClient,
-  user: User
-): Promise<User> {
-  return withDbClient(db, async (client) => {
-    const updatedUser: QueryResult<User> = await client.query(
-      `
-      UPDATE users
-      SET 
-        username = $1,
-        mode_day = $2,
-        font_size = $3,
-        notifications = $4
-      WHERE id = $5
-      RETURNING id, username, mode_day, font_size, notifications
-      `,
-      [
-        user.username,
-        user.mode_day,
-        user.font_size,
-        user.notifications,
-        user.id,
-      ]
-    );
-
-    if (!updatedUser.rows.length) {
-      throw new Error(`User with id ${user.id} not found!`);
-    }
-    return updatedUser.rows[0];
   });
 }
 
@@ -104,10 +62,7 @@ export async function findUserLoginByEmailPostgres(
       SELECT 
         id,
         username, 
-        password,
-        mode_day, 
-        font_size,
-        notifications
+        hashed_password
       FROM users
       WHERE email = $1`,
       [email]
@@ -136,7 +91,7 @@ export async function insertUserPostgres(
   return withDbClient(db, async (client) => {
     try {
       const user = await client.query(
-        "INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING id, username, mode_day, font_size, notifications",
+        "INSERT INTO users (username, email, hashed_password) VALUES ($1, $2, $3) RETURNING id, username",
         [username, email, hashedPassword]
       );
 
@@ -152,5 +107,34 @@ export async function insertUserPostgres(
       }
       throw err;
     }
+  });
+}
+
+/**
+ * Updates User Settings.
+ */
+export async function updateUserPostgres(
+  db: PostgresClient,
+  user: User
+): Promise<User> {
+  return withDbClient(db, async (client) => {
+    const updatedUser: QueryResult<User> = await client.query(
+      `
+      UPDATE users
+      SET 
+        username = $1,
+        mode_day = $2,
+        font_size = $3,
+        notifications = $4
+      WHERE id = $5
+      RETURNING id, username, mode_day, font_size, notifications
+      `,
+      [user.username, user.id]
+    );
+
+    if (!updatedUser.rows.length) {
+      throw new Error(`User with id ${user.id} not found!`);
+    }
+    return updatedUser.rows[0];
   });
 }

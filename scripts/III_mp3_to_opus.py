@@ -1,5 +1,6 @@
 import os
 from pydub import AudioSegment
+# This script converts MP3 files to Opus format with a lower bitrate.
 
 # Define the source and output folders
 source_folder = os.path.abspath("data/en-source/audio/mp3/1")

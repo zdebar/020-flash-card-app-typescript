@@ -13,36 +13,35 @@ import { Score } from "../types/dataTypes";
  */
 export async function getWordsPostgres(
   db: PostgresClient,
-  userId: number,
-  languageID: number,
-  numWords: number = config.block
+  userId: number
 ): Promise<Word[]> {
+  const numWords: number = config.block;
   const query = `
     SELECT 
       w.id, 
-      w.czech AS src, 
-      w.word AS trg, 
-      w.pronunciation AS prn,
+      w.czech, 
+      w.english, 
+      w.pronunciation,
       w.audio,
       COALESCE(uw.progress,0) AS progress,
-      uw.next_at IS NOT NULL AS started,
+      uw.started_at IS NOT NULL AS started,
       uw.learned_at IS NOT NULL AS learned      
     FROM words w
     LEFT JOIN user_words uw ON w.id = uw.word_id AND uw.user_id = $1
-    WHERE w.language_id = $2
-      AND uw.mastered_at IS NULL
+    WHERE uw.mastered_at IS NULL
+      AND w.category = 'word'
       AND (uw.next_at IS NULL OR uw.next_at < NOW())
     ORDER BY 
       CASE 
         WHEN uw.progress > 0 THEN 1
         ELSE 2
       END ASC,
-      w.position ASC
-    LIMIT $3;
+      w.word_order ASC
+    LIMIT $2;
   `;
 
   return await withDbClient(db, async (client) => {
-    const res = await client.query(query, [userId, languageID, numWords]);
+    const res = await client.query(query, [userId, numWords]);
     return res.rows;
   });
 }
@@ -93,28 +92,40 @@ export async function updateWordsPostgres(
 }
 
 /**
- * Gets count of learned and mastered words for a user.
+ * Gets count of learned and mastered words for a user grouped by cefr_level.
  */
 export async function getScorePostgres(
   db: PostgresClient,
-  userId: number
-): Promise<Score> {
+  userId: number,
+  userTimezone: string = "Europe/Prague"
+): Promise<Score[]> {
   const query = `
     SELECT 
-      COUNT(CASE WHEN learned_at IS NOT NULL THEN 1 END) AS learned_words,
-      COUNT(CASE WHEN mastered_at IS NOT NULL THEN 1 END) AS mastered_words
-    FROM user_words
-    WHERE user_id = $1;
+      w.cefr_level,
+      COUNT(*) AS "Count",
+      COUNT(CASE WHEN uw.started_at IS NOT NULL AND DATE(uw.started_at AT TIME ZONE $2) = DATE(NOW() AT TIME ZONE $2) THEN 1 END) AS "startedCountToday",
+      COUNT(CASE WHEN uw.started_at IS NOT NULL AND DATE(uw.started_at AT TIME ZONE $2) != DATE(NOW() AT TIME ZONE $2) THEN 1 END) AS "startedCount",
+      COUNT(CASE WHEN uw.learned_at IS NOT NULL AND DATE(uw.learned_at AT TIME ZONE $2) = DATE(NOW() AT TIME ZONE $2) THEN 1 END) AS "learnedCountToday",
+      COUNT(CASE WHEN uw.learned_at IS NOT NULL AND DATE(uw.learned_at AT TIME ZONE $2) != DATE(NOW() AT TIME ZONE $2) THEN 1 END) AS "learnedCount",
+      COUNT(CASE WHEN uw.mastered_at IS NOT NULL AND DATE(uw.mastered_at AT TIME ZONE $2) = DATE(NOW() AT TIME ZONE $2) THEN 1 END) AS "masteredCountToday",
+      COUNT(CASE WHEN uw.mastered_at IS NOT NULL AND DATE(uw.mastered_at AT TIME ZONE $2) != DATE(NOW() AT TIME ZONE $2) THEN 1 END) AS "masteredCount"
+    FROM words w
+    LEFT JOIN user_words uw ON w.id = uw.word_id AND uw.user_id = $1
+    GROUP BY w.cefr_level;
   `;
 
   return await withDbClient(db, async (client) => {
-    const result = await client.query(query, [userId]);
-    const { learned_words, mastered_words } = result.rows[0];
-
-    return {
-      learnedCount: parseInt(learned_words, 10),
-      masteredCount: parseInt(mastered_words, 10),
-    };
+    const result = await client.query(query, [userId, userTimezone]);
+    return result.rows.map((row) => ({
+      cefr_level: row.cefr_level,
+      Count: parseInt(row.Count, 10),
+      startedCountToday: parseInt(row.startedCountToday, 10),
+      startedCount: parseInt(row.startedCount, 10),
+      learnedCountToday: parseInt(row.learnedCountToday, 10),
+      learnedCount: parseInt(row.learnedCount, 10),
+      masteredCountToday: parseInt(row.masteredCountToday, 10),
+      masteredCount: parseInt(row.masteredCount, 10),
+    }));
   });
 }
 
@@ -123,14 +134,14 @@ export async function getScorePostgres(
  */
 export async function insertNotePostgres(
   db: PostgresClient,
-  word: Note
+  note: Note
 ): Promise<void> {
   const query = `
     INSERT INTO word_notes (user_id, word_id, note)
     VALUES ($1, $2, $3)
   `;
 
-  const values = [word.user_id, word.word_id, word.note];
+  const values = [note.user_id, note.word_id, note.note];
 
   await withDbClient(db, async (client) => {
     await client.query(query, values);

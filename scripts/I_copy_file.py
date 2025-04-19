@@ -1,5 +1,7 @@
 import csv
 
+# This script copies the first column of the first 20,000 rows from a CSV file to a new CSV file.
+
 def copy_csv_rows(input_file: str, output_file: str):
     with open(input_file, 'r', newline='', encoding='utf-8') as infile, open(output_file, 'w', newline='', encoding='utf-8') as outfile:
         reader = csv.reader(infile)

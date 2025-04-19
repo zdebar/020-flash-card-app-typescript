@@ -20,13 +20,8 @@ export async function getWordsController(
 ): Promise<void> {
   try {
     const userId: string = (req as any).user.id;
-    const languageID: string = req.query.languageID as string;
 
-    const words: Word[] = await getWordsService(
-      postgresDBPool,
-      Number(userId),
-      Number(languageID)
-    );
+    const words: Word[] = await getWordsService(postgresDBPool, Number(userId));
 
     res.status(200).json(words);
   } catch (err) {
@@ -47,7 +42,7 @@ export async function updateWordsController(
     const userId: string = (req as any).user.id;
     const words: WordUpdate[] = req.body;
 
-    const score: Score = await updateWordsService(
+    const score: Score[] = await updateWordsService(
       postgresDBPool,
       Number(userId),
       words

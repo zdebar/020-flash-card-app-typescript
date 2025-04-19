@@ -11,11 +11,11 @@ const userRouter = express.Router();
 
 userRouter.post("/register", registerUserController);
 userRouter.post("/login", loginUserController);
-userRouter.get("getUser", authenticateTokenMiddleware, getUserController);
-userRouter.get(
-  "/updateUser",
-  authenticateTokenMiddleware,
-  updateUserController
-);
+userRouter.get("/getUser", authenticateTokenMiddleware, getUserController);
+// userRouter.get(
+//   "/updateUser",
+//   authenticateTokenMiddleware,
+//   updateUserController
+// );
 
 export default userRouter;

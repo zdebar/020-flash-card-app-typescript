@@ -70,9 +70,9 @@ export async function loginUserService(
 export async function getUserService(
   db: PostgresClient,
   userId: number
-): Promise<{ user: User; score: Score }> {
+): Promise<{ user: User; score: Score[] }> {
   const user: User = await findUserByIdPostgres(db, userId);
-  const score: Score = await getScorePostgres(db, userId);
+  const score: Score[] = await getScorePostgres(db, userId);
   return { user, score };
 }
 

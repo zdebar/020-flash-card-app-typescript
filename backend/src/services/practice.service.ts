@@ -18,12 +18,10 @@ import { addAudioPathsToWords } from "../utils/progress.utils";
  */
 export async function getWordsService(
   db: PostgresClient,
-  userID: number,
-  languageID: number
+  userID: number
 ): Promise<Word[]> {
-  checkUserExistsById(db, userID); // TODO: for development only, consider removing
-  const words: Word[] = await getWordsPostgres(db, userID, languageID);
-  return addAudioPathsToWords(words, languageID);
+  const words: Word[] = await getWordsPostgres(db, userID);
+  return addAudioPathsToWords(words);
 }
 
 /**
@@ -33,7 +31,7 @@ export async function updateWordsService(
   db: PostgresClient,
   userID: number,
   words: WordUpdate[]
-): Promise<Score> {
+): Promise<Score[]> {
   updateWordsPostgres(db, userID, words);
   return await getScorePostgres(db, userID);
 }

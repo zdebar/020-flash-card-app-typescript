@@ -17,18 +17,18 @@ export interface WordUpdate {
 }
 
 export interface Word extends WordUpdate {
-  src: string;
-  trg: string;
-  prn: string | null;
+  czech: string;
+  english: string;
+  pronunciation: string | null;
   audio: string | null;
   started: boolean;
   learned: boolean;
 }
 
 export interface WordOverview extends WordUpdate {
-  src: string;
-  trg: string;
-  prn: string | null;
+  czech: string;
+  english: string;
+  pronunciation: string | null;
   audio: string | null;
   learned_at: string | null;
   mastered_at: string | null;
@@ -47,20 +47,13 @@ export enum FontSize {
   LARGE = "large",
 }
 
-export interface UserID {
+export interface User {
   id: number;
-}
-
-export interface User extends UserID {
   username: string;
-  mode_day: ModeDay;
-  font_size: FontSize;
-  notifications: boolean;
-  languages: string[];
 }
 
 export interface UserLogin extends User {
-  password: string;
+  hashed_password: string;
 }
 
 // Error Data Types
@@ -73,6 +66,12 @@ export class UserError extends Error {
 
 // Score Data Types
 export interface Score {
-  learnedCount: number;
-  masteredCount: number;
+  cefr_level: string; // CEFR level (A1, A2, B1, B2, C1, C2)
+  startedCountToday: number; // Number of words started today
+  startedCount: number; // Number of words started (not today)
+  learnedCountToday: number; // Number of words learned today
+  learnedCount: number; // Number of words learned (not today)
+  masteredCountToday: number; // Number of words mastered today
+  masteredCount: number; // Number of words mastered (not today)
+  Count: number; // Number of words by cefr_level
 }
