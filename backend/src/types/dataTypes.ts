@@ -47,8 +47,11 @@ export enum FontSize {
   LARGE = "large",
 }
 
-export interface User {
+export interface UserID {
   id: number;
+}
+
+export interface User extends UserID {
   username: string;
 }
 

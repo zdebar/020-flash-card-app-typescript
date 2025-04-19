@@ -4,6 +4,7 @@ import {
   loginUserController,
   getUserController,
   updateUserController,
+  refreshTokenController,
 } from "../controllers/user.controller";
 import { authenticateTokenMiddleware } from "../middlewares/auth.middleware";
 
@@ -17,5 +18,6 @@ userRouter.get("/getUser", authenticateTokenMiddleware, getUserController);
 //   authenticateTokenMiddleware,
 //   updateUserController
 // );
+userRouter.post("/refresh-token", refreshTokenController);
 
 export default userRouter;

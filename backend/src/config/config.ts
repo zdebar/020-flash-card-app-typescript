@@ -47,6 +47,10 @@ const config = {
 
   JWT_SECRET:
     process.env.NODE_ENV === "test" ? "test-password" : process.env.JWT_SECRET,
+  JWT_REFRESH_SECRET:
+    process.env.NODE_ENV === "test"
+      ? "test-password"
+      : process.env.JWT_REFRESH_SECRET,
   JWT_EXPIRES_IN:
     process.env.NODE_ENV === "test" ? "1h" : process.env.JWT_EXPIRES_IN,
 };

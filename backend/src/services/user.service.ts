@@ -2,6 +2,8 @@ import {
   hashPassword,
   comparePasswords,
   createToken,
+  createRefreshToken,
+  verifyRefreshToken,
 } from "../utils/auth.utils";
 import {
   insertUserPostgres,
@@ -11,6 +13,7 @@ import {
 } from "../repository/user.repository.postgres";
 import {
   UserError,
+  UserID,
   User,
   UserLogin,
   PostgresClient,
@@ -27,7 +30,12 @@ export async function registerUserService(
   username: string,
   email: string,
   password: string
-): Promise<{ token: string; user: User; score: Score[] }> {
+): Promise<{
+  token: string;
+  refreshToken: string;
+  user: User;
+  score: Score[];
+}> {
   const hashedPassword: string = await hashPassword(password);
   const user: User = await insertUserPostgres(
     db,
@@ -37,7 +45,8 @@ export async function registerUserService(
   );
   const score: Score[] = await getScorePostgres(db, user.id);
   const token: string = createToken(user.id);
-  return { token, user, score };
+  const refreshToken: string = createRefreshToken(user.id);
+  return { token, refreshToken, user, score };
 }
 
 /**
@@ -47,7 +56,12 @@ export async function loginUserService(
   db: PostgresClient,
   email: string,
   password: string
-): Promise<{ token: string; user: User; score: Score[] }> {
+): Promise<{
+  token: string;
+  refreshToken: string;
+  user: User;
+  score: Score[];
+}> {
   const userLogin: UserLogin = await findUserLoginByEmailPostgres(db, email);
   const passwordMatch: boolean = await comparePasswords(
     password,
@@ -61,8 +75,9 @@ export async function loginUserService(
   const { hashed_password: passwordToOmit, ...user } = userLogin;
   const score: Score[] = await getScorePostgres(db, user.id);
   const token: string = createToken(user.id);
+  const refreshToken: string = createRefreshToken(user.id);
 
-  return { token, user, score };
+  return { token, refreshToken, user, score };
 }
 
 /**
@@ -87,4 +102,22 @@ export async function updateUserService(
 ): Promise<User> {
   const userUpdated: User = await updateUserPostgres(db, user);
   return userUpdated;
+}
+
+/**
+ * Refreshes the user's token using a valid refresh token.
+ */
+export async function refreshTokenService(
+  db: PostgresClient,
+  refreshToken: string
+): Promise<string> {
+  const userId: UserID = verifyRefreshToken(refreshToken);
+  const user: User = await findUserByIdPostgres(db, Number(userId.id));
+
+  if (!user) {
+    throw new UserError("User not found.");
+  }
+
+  const newToken: string = createToken(user.id, "1h");
+  return newToken;
 }

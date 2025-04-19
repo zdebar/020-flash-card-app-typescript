@@ -28,8 +28,23 @@ export async function comparePasswords(
  * Creates a JSON Web Token with key and expiration time from environment variables.
  *
  */
-export function createToken(userID: number): string {
-  const expirationTime = config.JWT_EXPIRES_IN as jwt.SignOptions["expiresIn"];
+export function createToken(
+  userID: number,
+  expirationTime: jwt.SignOptions["expiresIn"] = "1h"
+): string {
+  return jwt.sign({ id: userID.toString() }, config.JWT_SECRET as string, {
+    expiresIn: expirationTime,
+  });
+}
+
+/**
+ * Creates a JSON Web Token with key and expiration time from environment variables.
+ *
+ */
+export function createRefreshToken(
+  userID: number,
+  expirationTime: jwt.SignOptions["expiresIn"] = "30d"
+): string {
   return jwt.sign({ id: userID.toString() }, config.JWT_SECRET as string, {
     expiresIn: expirationTime,
   });
@@ -43,5 +58,19 @@ export function createToken(userID: number): string {
  */
 export function verifyToken(token: string): UserID {
   const decoded = jwt.verify(token, config.JWT_SECRET as string) as UserID;
+  return decoded;
+}
+
+/**
+ * Verifies a refresh token and decodes its payload.
+ *
+ * @param refreshToken - The refresh token string to be verified.
+ * @returns `UserID` if valid, otherwise throws an error.
+ */
+export function verifyRefreshToken(refreshToken: string): UserID {
+  const decoded = jwt.verify(
+    refreshToken,
+    config.JWT_REFRESH_SECRET as string
+  ) as UserID;
   return decoded;
 }
