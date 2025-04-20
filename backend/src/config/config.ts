@@ -5,6 +5,7 @@ import { validateEnvVariables } from "../utils/validate.utils";
 dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 validateEnvVariables([
   "JWT_SECRET",
+  "JWT_REFRESH_SECRET",
   "JWT_EXPIRES_IN",
   "LOGGER_LEVEL",
   "NODE_ENV",

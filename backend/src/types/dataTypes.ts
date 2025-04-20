@@ -5,7 +5,6 @@ export type PostgresClient = Pick<Client | Pool, "query" | "connect" | "end">;
 
 // Word Note Data Types
 export interface Note {
-  user_id: number;
   word_id: number;
   note: string;
 }
@@ -47,16 +46,16 @@ export enum FontSize {
   LARGE = "large",
 }
 
-export interface UserID {
-  id: number;
+export enum PlanType {
+  FREE = "free",
+  PREMIUM = "premium",
 }
 
-export interface User extends UserID {
-  username: string;
-}
-
-export interface UserLogin extends User {
-  hashed_password: string;
+export interface User {
+  uid: string; // Firebase UID
+  mode_day: ModeDay;
+  font_size: FontSize;
+  plan_type: PlanType;
 }
 
 // Error Data Types

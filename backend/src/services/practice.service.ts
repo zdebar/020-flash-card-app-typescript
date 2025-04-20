@@ -1,11 +1,4 @@
-import { checkUserExistsById } from "../repository/user.repository.postgres";
-import {
-  PostgresClient,
-  WordUpdate,
-  Word,
-  Score,
-  Note,
-} from "../types/dataTypes";
+import { PostgresClient, WordUpdate, Word, Score } from "../types/dataTypes";
 import {
   getWordsPostgres,
   updateWordsPostgres,
@@ -18,9 +11,9 @@ import { addAudioPathsToWords } from "../utils/progress.utils";
  */
 export async function getWordsService(
   db: PostgresClient,
-  userID: number
+  uid: string
 ): Promise<Word[]> {
-  const words: Word[] = await getWordsPostgres(db, userID);
+  const words: Word[] = await getWordsPostgres(db, uid);
   return addAudioPathsToWords(words);
 }
 
@@ -29,9 +22,9 @@ export async function getWordsService(
  */
 export async function updateWordsService(
   db: PostgresClient,
-  userID: number,
+  uid: string,
   words: WordUpdate[]
 ): Promise<Score[]> {
-  updateWordsPostgres(db, userID, words);
-  return await getScorePostgres(db, userID);
+  updateWordsPostgres(db, uid, words);
+  return await getScorePostgres(db, uid);
 }

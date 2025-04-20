@@ -1,112 +1,39 @@
-import logger from "../utils/logger.utils";
-import { UserLogin, User, UserError, PostgresClient } from "../types/dataTypes";
+import { User, PostgresClient } from "../types/dataTypes";
 import { QueryResult } from "pg";
 import { withDbClient } from "../utils/database.utils";
 
 /**
- * Checks if a user exists in the database.
+ * Finds User by userUid. Creates a new user if not found.
  * @throws Error if the user does not exist.
  */
-export async function checkUserExistsById(
+export async function getUserByUidPostgres(
   db: PostgresClient,
-  userId: number
-): Promise<void> {
-  const userCheckQuery = `SELECT 1 FROM users WHERE id = $1`;
-
-  await withDbClient(db, async (client) => {
-    const userCheckResult = await client.query(userCheckQuery, [userId]);
-    if (userCheckResult.rowCount === 0) {
-      throw new Error(`User with ID ${userId} does not exist.`);
-    }
-  });
-}
-
-/**
- * Finds User by userID. *
- * @throws Error if the user does not exist.
- */
-export async function findUserByIdPostgres(
-  db: PostgresClient,
-  userId: number
+  uid: string
 ): Promise<User> {
   return withDbClient(db, async (client) => {
-    const user: QueryResult<User> = await client.query(
+    const existingUser: QueryResult<User> = await client.query(
       `
-      SELECT 
-        users.id,
-        users.username
+      SELECT uid, mode_day, font_size, plan_type
       FROM users
-      WHERE users.id = $1
+      WHERE uid = $1;
       `,
-      [userId]
+      [uid]
     );
 
-    if (!user.rows.length) {
-      throw new Error(`User with id ${userId} not found!`);
+    if (existingUser.rows.length) {
+      return existingUser.rows[0];
     }
-    return user.rows[0];
-  });
-}
 
-/**
- * Finds a user by their email. INCLUDES HASHED PASSWORD! *
- * @throws Will throw a UserError if no user exists with the specified email.
- */
-export async function findUserLoginByEmailPostgres(
-  db: PostgresClient,
-  email: string
-): Promise<UserLogin> {
-  return withDbClient(db, async (client) => {
-    const user: QueryResult<UserLogin> = await client.query(
+    const newUser: QueryResult<User> = await client.query(
       `
-      SELECT 
-        id,
-        username, 
-        hashed_password
-      FROM users
-      WHERE email = $1`,
-      [email]
+      INSERT INTO users (uid)
+      VALUES ($1)
+      RETURNING uid, mode_day, font_size, plan_type;
+      `,
+      [uid]
     );
 
-    if (!user.rows.length) {
-      throw new UserError(`Uživatel nebyl nalezen!`);
-    }
-    return user.rows[0];
-  });
-}
-
-/**
- * Inserts a new user into the PostgreSQL database along with their default preferences.
- *
- * @throws {UserError} If the username or email is already taken. Specifies the error message for user feedback.
- * @throws {Error} Any other error.
- *
- */
-export async function insertUserPostgres(
-  db: PostgresClient,
-  username: string,
-  email: string,
-  hashedPassword: string
-): Promise<User> {
-  return withDbClient(db, async (client) => {
-    try {
-      const user = await client.query(
-        "INSERT INTO users (username, email, hashed_password) VALUES ($1, $2, $3) RETURNING id, username",
-        [username, email, hashedPassword]
-      );
-
-      return user.rows[0];
-    } catch (err: any) {
-      if (err.code === "23505") {
-        if (err.detail.includes("username")) {
-          throw new UserError("Uživatelské jméno je již obsazeno.");
-        } else if (err.detail.includes("email")) {
-          throw new UserError("Email je již obsazen.");
-        }
-        logger.error("Unexpected error: ", err.detail);
-      }
-      throw err;
-    }
+    return newUser.rows[0];
   });
 }
 
@@ -122,18 +49,17 @@ export async function updateUserPostgres(
       `
       UPDATE users
       SET 
-        username = $1,
         mode_day = $2,
-        font_size = $3,
-        notifications = $4
-      WHERE id = $5
-      RETURNING id, username, mode_day, font_size, notifications
+        font_size = $3
+        plan_type = $4
+      WHERE uid = $1
+      RETURNING uid, mode_day, font_size, plan_type
       `,
-      [user.username, user.id]
+      [user.uid, user.mode_day, user.font_size, user.plan_type]
     );
 
     if (!updatedUser.rows.length) {
-      throw new Error(`User with id ${user.id} not found!`);
+      throw new Error(`User with id ${user.uid} not found!`);
     }
     return updatedUser.rows[0];
   });

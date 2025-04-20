@@ -1,5 +1,5 @@
 import express from "express";
-import { authenticateTokenMiddleware } from "../middlewares/auth.middleware";
+import { authenticate } from "../middlewares/auth.middleware";
 import {
   getWordsController,
   updateWordsController,
@@ -8,20 +8,8 @@ import {
 
 const practiceRouter = express.Router();
 
-practiceRouter.get(
-  "/getWords",
-  authenticateTokenMiddleware,
-  getWordsController
-);
-practiceRouter.post(
-  "/updateWords",
-  authenticateTokenMiddleware,
-  updateWordsController
-);
-practiceRouter.post(
-  "/insertNote",
-  authenticateTokenMiddleware,
-  insertNoteController
-);
+practiceRouter.get("/getWords", authenticate, getWordsController);
+practiceRouter.post("/updateWords", authenticate, updateWordsController);
+practiceRouter.post("/insertNote", authenticate, insertNoteController);
 
 export default practiceRouter;

@@ -1,23 +1,13 @@
 import express from "express";
 import {
-  registerUserController,
-  loginUserController,
-  getUserController,
+  getUserProfileController,
   updateUserController,
-  refreshTokenController,
 } from "../controllers/user.controller";
-import { authenticateTokenMiddleware } from "../middlewares/auth.middleware";
+import { authenticate } from "../middlewares/auth.middleware";
 
 const userRouter = express.Router();
 
-userRouter.post("/register", registerUserController);
-userRouter.post("/login", loginUserController);
-userRouter.get("/getUser", authenticateTokenMiddleware, getUserController);
-// userRouter.get(
-//   "/updateUser",
-//   authenticateTokenMiddleware,
-//   updateUserController
-// );
-userRouter.post("/refresh-token", refreshTokenController);
+userRouter.get("/getUser", authenticate, getUserProfileController);
+userRouter.get("/updateUser", authenticate, updateUserController);
 
 export default userRouter;

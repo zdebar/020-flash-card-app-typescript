@@ -13,7 +13,7 @@ import { Score } from "../types/dataTypes";
  */
 export async function getWordsPostgres(
   db: PostgresClient,
-  userId: number
+  uid: string
 ): Promise<Word[]> {
   const numWords: number = config.block;
   const query = `
@@ -27,7 +27,7 @@ export async function getWordsPostgres(
       uw.started_at IS NOT NULL AS started,
       uw.learned_at IS NOT NULL AS learned      
     FROM words w
-    LEFT JOIN user_words uw ON w.id = uw.word_id AND uw.user_id = $1
+    LEFT JOIN user_words uw ON w.id = uw.word_id AND uw.user_id = (SELECT id FROM users WHERE uid = $1)
     WHERE uw.mastered_at IS NULL
       AND w.category = 'word'
       AND (uw.next_at IS NULL OR uw.next_at < NOW())
@@ -41,7 +41,7 @@ export async function getWordsPostgres(
   `;
 
   return await withDbClient(db, async (client) => {
-    const res = await client.query(query, [userId, numWords]);
+    const res = await client.query(query, [uid, numWords]);
     return res.rows;
   });
 }
@@ -51,20 +51,23 @@ export async function getWordsPostgres(
  */
 export async function updateWordsPostgres(
   db: PostgresClient,
-  userId: number,
+  uid: string,
   words: WordUpdate[]
 ): Promise<void> {
   const values: unknown[] = [];
 
   const query = `
+    WITH user_id_cte AS (
+      SELECT id AS user_id FROM users WHERE uid = $1
+    )
     INSERT INTO user_words (user_id, word_id, progress, next_at, learned_at, mastered_at)
     VALUES 
     ${words
       .map(
         (_, index) =>
-          `($${index * 6 + 1}, $${index * 6 + 2}, $${index * 6 + 3}, $${
-            index * 6 + 4
-          }, $${index * 6 + 5}, $${index * 6 + 6})`
+          `((SELECT user_id FROM user_id_cte), $${index * 5 + 2}, $${
+            index * 5 + 3
+          }, $${index * 5 + 4}, $${index * 5 + 5}, $${index * 5 + 6})`
       )
       .join(", ")}
     ON CONFLICT(user_id, word_id) 
@@ -77,7 +80,6 @@ export async function updateWordsPostgres(
 
   words.forEach((word) => {
     values.push(
-      userId,
       word.id,
       word.progress,
       getNextAt(word.progress),
@@ -87,7 +89,7 @@ export async function updateWordsPostgres(
   });
 
   await withDbClient(db, async (client) => {
-    await client.query(query, values);
+    await client.query(query, [uid, ...values]);
   });
 }
 
@@ -96,7 +98,7 @@ export async function updateWordsPostgres(
  */
 export async function getScorePostgres(
   db: PostgresClient,
-  userId: number,
+  uid: string,
   userTimezone: string = "Europe/Prague"
 ): Promise<Score[]> {
   const query = `
@@ -110,12 +112,12 @@ export async function getScorePostgres(
       COUNT(CASE WHEN uw.mastered_at IS NOT NULL AND DATE(uw.mastered_at AT TIME ZONE $2) = DATE(NOW() AT TIME ZONE $2) THEN 1 END) AS "masteredCountToday",
       COUNT(CASE WHEN uw.mastered_at IS NOT NULL AND DATE(uw.mastered_at AT TIME ZONE $2) != DATE(NOW() AT TIME ZONE $2) THEN 1 END) AS "masteredCount"
     FROM words w
-    LEFT JOIN user_words uw ON w.id = uw.word_id AND uw.user_id = $1
+    LEFT JOIN user_words uw ON w.id = uw.word_id AND uw.user_id = (SELECT id FROM users WHERE uid = $1)
     GROUP BY w.cefr_level;
   `;
 
   return await withDbClient(db, async (client) => {
-    const result = await client.query(query, [userId, userTimezone]);
+    const result = await client.query(query, [uid, userTimezone]);
     return result.rows.map((row) => ({
       cefr_level: row.cefr_level,
       Count: parseInt(row.Count, 10),
@@ -134,14 +136,15 @@ export async function getScorePostgres(
  */
 export async function insertNotePostgres(
   db: PostgresClient,
+  uid: string,
   note: Note
 ): Promise<void> {
   const query = `
     INSERT INTO word_notes (user_id, word_id, note)
-    VALUES ($1, $2, $3)
+    VALUES ((SELECT id FROM users WHERE uid = $1), $2, $3)
   `;
 
-  const values = [note.user_id, note.word_id, note.note];
+  const values = [uid, note.word_id, note.note];
 
   await withDbClient(db, async (client) => {
     await client.query(query, values);

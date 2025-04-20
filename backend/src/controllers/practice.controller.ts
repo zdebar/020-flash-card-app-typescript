@@ -19,13 +19,12 @@ export async function getWordsController(
   next: Function
 ): Promise<void> {
   try {
-    const userId: string = (req as any).user.id;
+    const uid: string = (req as any).user.uid;
 
-    const words: Word[] = await getWordsService(postgresDBPool, Number(userId));
+    const words: Word[] = await getWordsService(postgresDBPool, uid);
 
     res.status(200).json(words);
   } catch (err) {
-    console.log("In practice controller", err);
     next(err);
   }
 }
@@ -39,14 +38,10 @@ export async function updateWordsController(
   next: Function
 ): Promise<void> {
   try {
-    const userId: string = (req as any).user.id;
+    const uid: string = (req as any).user.uid;
     const words: WordUpdate[] = req.body;
 
-    const score: Score[] = await updateWordsService(
-      postgresDBPool,
-      Number(userId),
-      words
-    );
+    const score: Score[] = await updateWordsService(postgresDBPool, uid, words);
 
     res.status(200).json(score);
   } catch (err) {
@@ -60,9 +55,10 @@ export async function insertNoteController(
   next: Function
 ): Promise<void> {
   try {
-    const noteData: Note = req.body;
+    const uid: string = (req as any).user.uid;
+    const note: Note = req.body;
 
-    await insertNotePostgres(postgresDBPool, noteData);
+    await insertNotePostgres(postgresDBPool, uid, note);
 
     res.status(200).send("Note added successfully");
   } catch (err) {

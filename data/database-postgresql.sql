@@ -5,11 +5,11 @@ CREATE EXTENSION IF NOT EXISTS citext;
 
 CREATE TABLE IF NOT EXISTS users (
   id SERIAL PRIMARY KEY,
-  username VARCHAR(255) NOT NULL UNIQUE,
-  email CITEXT NOT NULL UNIQUE,
-  hashed_password VARCHAR(255) NOT NULL,
+  uid VARCHAR(255) NOT NULL UNIQUE,
+  mode_day VARCHAR(10) DEFAULT 'default' CHECK (mode_day IN ('default', 'day', 'night')),
+  font_size VARCHAR(10) DEFAULT 'medium' CHECK (font_size IN ('small', 'medium', 'large')),
   created_at TIMESTAMPTZ DEFAULT NOW(),
-  plan_type TEXT DEFAULT 'non-paid' CHECK (plan_type IN ('non-paid', 'paid'))
+  plan_type TEXT DEFAULT 'free' CHECK (plan_type IN ('free', 'premium'))
 );
 
 CREATE TABLE IF NOT EXISTS words (
@@ -18,10 +18,10 @@ CREATE TABLE IF NOT EXISTS words (
   english TEXT NOT NULL, 
   pronunciation TEXT,
   audio TEXT,
-  order INTEGER, 
+  "order" INTEGER, 
   category TEXT CHECK (category IN ('word', 'grammar', 'phrase')),
   block_number INTEGER,
-  cefr_level TEXT CHECK (cefr_level IN ('A1', 'A2', 'B1', 'B2', 'C1', 'C2')),
+  cefr_level TEXT CHECK (cefr_level IN ('A1', 'A2', 'B1', 'B2', 'C1', 'C2'))
 );
 
 CREATE TABLE IF NOT EXISTS word_notes (
