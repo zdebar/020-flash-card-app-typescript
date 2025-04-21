@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
+import cookieParser from "cookie-parser";
 import logger from "../utils/logger.utils";
-import { firebaseAuth } from "../config/firebase.config";
+import { firebaseAuth, firebaseConfig } from "../config/firebase.config";
 
 /**
  * Middleware to authenticate requests using Firebase ID tokens.
@@ -10,20 +11,37 @@ export async function authenticate(
   res: Response,
   next: NextFunction
 ): Promise<void> {
-  const authHeader = req.headers.authorization;
-
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    res.status(401).send("Unauthorized");
-    return;
-  }
-
-  const idToken = authHeader.split(" ")[1];
-
   try {
-    const decodedToken = await firebaseAuth.verifyIdToken(idToken);
-    const { uid, email, name, picture } = decodedToken;
+    const idToken = req.cookies?.idToken;
+    if (!idToken) {
+      res.status(401).send("Unauthorized");
+      return;
+    }
 
-    (req as any).user = { uid, email, name, picture }; // Will these be null if empty?
+    const decodedToken = await firebaseAuth
+      .verifyIdToken(idToken)
+      .catch((error: any) => {
+        if (error.code === "auth/id-token-expired") {
+          res.status(401).send("Unauthorized: Token has expired");
+        } else {
+          logger.error("Authentication failed:", error);
+          res.status(401).send("Unauthorized");
+        }
+        throw error;
+      });
+
+    if (!decodedToken) return;
+
+    const projectId = firebaseConfig.projectId;
+    if (decodedToken.aud !== projectId) {
+      res
+        .status(401)
+        .send("Unauthorized: Token does not belong to this project");
+      return;
+    }
+
+    const { uid, email, name, picture } = decodedToken;
+    (req as any).user = { uid, email, name, picture };
     next();
   } catch (error) {
     logger.error("Authentication failed:", error);

@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from "express";
-import { getUserService, updateUserService } from "../services/user.service";
+import { getUserService } from "../services/user.service";
 import { postgresDBPool } from "../config/database.config.postgres";
 import { User, Score } from "../types/dataTypes";
+import { updateUserPostgres } from "../repository/user.repository.postgres";
 
 /**
  *
@@ -10,27 +11,22 @@ import { User, Score } from "../types/dataTypes";
  * @param next
  * @returns
  */
-export async function getUserProfileController(
+export async function getUserController(
   req: Request,
   res: Response,
   next: NextFunction
 ) {
   try {
-    const userFirebase = (req as any).user;
-    if (!userFirebase) {
-      res.status(401).send("Unauthorized");
-      return;
-    }
-
+    const { uid, email, name, picture } = (req as any).user;
     const { user, score }: { user: User; score: Score[] } =
-      await getUserService(postgresDBPool, userFirebase.uid);
+      await getUserService(postgresDBPool, uid);
 
     res.status(200).json({
-      user: user,
-      email: userFirebase.email,
-      name: userFirebase.name,
-      picture: userFirebase.picture,
-      score: score,
+      user,
+      email,
+      name,
+      picture,
+      score,
     });
   } catch (error) {
     console.error("Error in getUserController:", error);
@@ -44,8 +40,8 @@ export async function updateUserController(
   next: Function
 ): Promise<void> {
   try {
-    const user: User = (req as any).user;
-    const userUpdated: User = await updateUserService(postgresDBPool, user);
+    const user: User = req.body as User;
+    const userUpdated: User = await updateUserPostgres(postgresDBPool, user);
     res.json(userUpdated);
   } catch (err) {
     next(err);

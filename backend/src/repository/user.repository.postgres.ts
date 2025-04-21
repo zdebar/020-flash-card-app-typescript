@@ -6,7 +6,7 @@ import { withDbClient } from "../utils/database.utils";
  * Finds User by userUid. Creates a new user if not found.
  * @throws Error if the user does not exist.
  */
-export async function getUserByUidPostgres(
+export async function getUserPostgres(
   db: PostgresClient,
   uid: string
 ): Promise<User> {

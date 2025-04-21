@@ -1,13 +1,10 @@
--- Enable the UUID extension
-CREATE EXTENSION IF NOT EXISTS citext;
-
 -- Create tables
 
 CREATE TABLE IF NOT EXISTS users (
   id SERIAL PRIMARY KEY,
-  uid VARCHAR(255) NOT NULL UNIQUE,
-  mode_day VARCHAR(10) DEFAULT 'default' CHECK (mode_day IN ('default', 'day', 'night')),
-  font_size VARCHAR(10) DEFAULT 'medium' CHECK (font_size IN ('small', 'medium', 'large')),
+  uid VARCHAR(255) UNIQUE,
+  mode_day TEXT DEFAULT 'default' CHECK (mode_day IN ('default', 'day', 'night')),
+  font_size TEXT DEFAULT 'medium' CHECK (font_size IN ('small', 'medium', 'large')),
   created_at TIMESTAMPTZ DEFAULT NOW(),
   plan_type TEXT DEFAULT 'free' CHECK (plan_type IN ('free', 'premium'))
 );
@@ -18,7 +15,7 @@ CREATE TABLE IF NOT EXISTS words (
   english TEXT NOT NULL, 
   pronunciation TEXT,
   audio TEXT,
-  "order" INTEGER, 
+  item_order INTEGER, 
   category TEXT CHECK (category IN ('word', 'grammar', 'phrase')),
   block_number INTEGER,
   cefr_level TEXT CHECK (cefr_level IN ('A1', 'A2', 'B1', 'B2', 'C1', 'C2'))
@@ -26,12 +23,12 @@ CREATE TABLE IF NOT EXISTS words (
 
 CREATE TABLE IF NOT EXISTS word_notes (
   id SERIAL PRIMARY KEY,
-  word_id INTEGER NOT NULL, 
-  user_id INTEGER NOT NULL,
+  word_id INTEGER, 
+  user_id INTEGER,
   user_note TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW(),
-  FOREIGN KEY (word_id) REFERENCES words(id) ON DELETE CASCADE,
-  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+  FOREIGN KEY (word_id) REFERENCES words(id) ON DELETE SET NULL,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS user_words (
@@ -57,9 +54,11 @@ CREATE TABLE IF NOT EXISTS user_word_history(
 );
 
 -- Indexes
-CREATE INDEX idx_user_words_user_word ON user_words (user_id, word_id);
+CREATE INDEX idx_user_words_user_id_word_id ON user_words (user_id, word_id);
+CREATE INDEX idx_users_uid ON users (uid);
 CREATE INDEX idx_user_words_next_at ON user_words (next_at);
-CREATE INDEX idx_history_user_word ON user_word_history (user_word_id);
+CREATE INDEX idx_user_words_progress ON user_words (progress);
+CREATE INDEX idx_history_user_word_id ON user_word_history (user_word_id);
 
 -- Trigger to log progress updates
 CREATE OR REPLACE FUNCTION log_user_word_history() 

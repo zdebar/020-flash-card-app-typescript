@@ -6,3 +6,7 @@ admin.initializeApp({
 });
 
 export const firebaseAuth = admin.auth();
+
+export const firebaseConfig = {
+  projectId: serviceAccount.project_id,
+};

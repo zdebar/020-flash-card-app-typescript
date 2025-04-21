@@ -1,8 +1,5 @@
-import {
-  getUserByUidPostgres,
-  updateUserPostgres,
-} from "../repository/user.repository.postgres";
-import { UserError, User, PostgresClient, Score } from "../types/dataTypes";
+import { getUserPostgres } from "../repository/user.repository.postgres";
+import { User, PostgresClient, Score } from "../types/dataTypes";
 import { getScorePostgres } from "../repository/practice.repository.postgres";
 
 /**
@@ -12,19 +9,7 @@ export async function getUserService(
   db: PostgresClient,
   uid: string
 ): Promise<{ user: User; score: Score[] }> {
-  const user: User = await getUserByUidPostgres(db, uid);
+  const user: User = await getUserPostgres(db, uid);
   const score: Score[] = await getScorePostgres(db, uid);
   return { user, score };
-}
-
-/**
- * Retrieves the user preferences for a given user ID from the database.
- * TODO: consider deleteing, so far not used
- */
-export async function updateUserService(
-  db: PostgresClient,
-  user: User
-): Promise<User> {
-  const userUpdated: User = await updateUserPostgres(db, user);
-  return userUpdated;
 }
