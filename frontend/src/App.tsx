@@ -1,11 +1,12 @@
 import './App.css';
 import Header from './components/Header';
 import LoginCard from './components/LoginCard';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Link } from 'react-router-dom';
 import { useUser } from './hooks/useUser';
 import PracticeCard from './components/PracticeCard';
 import UserSettings from './components/UserSettings';
 import UserDashboard from './components/UserDashboard';
+import Button from './components/Button';
 
 export default function App() {
   const { userInfo, loading } = useUser();
@@ -21,9 +22,17 @@ export default function App() {
               loading ? (
                 <p>Loading...</p>
               ) : userInfo ? (
-                <h1>Hello {userInfo.name}</h1> // what if name is null?
+                <div>
+                  <h1>Welcome back, {userInfo.name}!</h1>
+                </div>
               ) : (
-                <Navigate to="/login" />
+                <div className="w-full">
+                  <h1 className="text-center">Sem dej nějaký úvod!</h1>
+                  <Button isActive={true}>
+                    <Link to="/login">Přihlášení / Registrace</Link>
+                  </Button>
+                  <h1 className="text-center">A sem nějaké vysvětlení!</h1>
+                </div>
               )
             }
           />

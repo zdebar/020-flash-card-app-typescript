@@ -3,6 +3,7 @@ import AuthForm from './AuthForm';
 import { useUser } from '../hooks/useUser';
 import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { fetchWithAuth } from '../utils/firebase.utils';
+import Button from './Button';
 
 export default function LoginCard() {
   const { setUserInfo, setUserSettings, setUserScore, setLoading } = useUser();
@@ -23,14 +24,12 @@ export default function LoginCard() {
 
       const { userSetting, score: userScore } = await response.json();
 
-      // Set user info in context
       setUserInfo({
         uid: userInfo.uid,
         name: userInfo.displayName,
         email: userInfo.email,
         picture: userInfo.photoURL,
       });
-
       setUserSettings(userSetting);
       setUserScore(userScore);
 
@@ -44,7 +43,7 @@ export default function LoginCard() {
 
   return (
     <AuthForm title="Přihlášení" onSubmit={handleGoogleLogin}>
-      <button type="submit">Google Login</button>
+      <Button type="submit">Google Login</Button>
     </AuthForm>
   );
 }

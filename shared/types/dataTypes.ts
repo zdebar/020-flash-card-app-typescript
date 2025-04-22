@@ -54,9 +54,9 @@ export enum PlanType {
 
 export interface UserInfo {
   uid: string; // Firebase UID
-  mode_day: ModeDay;
-  font_size: FontSize;
-  plan_type: PlanType;
+  name: string | null; // User's name
+  email: string | null; // User's email
+  picture: string | null; // User's profile picture URL
 }
 
 export interface UserSettings {

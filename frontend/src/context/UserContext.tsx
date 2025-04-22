@@ -1,14 +1,18 @@
 import { createContext } from 'react';
-import { Score, UserSettings, UserInfo } from '../types/dataTypes';
+import {
+  UserScore,
+  UserSettings,
+  UserInfo,
+} from '../../../shared/types/dataTypes';
 
 export interface UserContextType {
   userInfo: UserInfo | null;
   userSettings: UserSettings | null;
-  userScore: Score | null;
+  userScore: UserScore | null;
   loading: boolean;
   setUserInfo: (user: UserInfo | null) => void;
   setUserSettings: (settings: UserSettings | null) => void;
-  setUserScore: (score: Score | null) => void;
+  setUserScore: (score: UserScore | null) => void;
   setLoading: (loading: boolean) => void;
 }
 

@@ -1,5 +1,5 @@
 import { useUser } from '../hooks/useUser';
-import Button from './Button';
+import Button from './RoundButton';
 import { AcademicCapIcon } from '@heroicons/react/24/outline';
 
 export default function UserDashboard() {

@@ -1,33 +1,26 @@
-// components/RoundButton.tsx
-import { LinkProps, NavLink } from 'react-router-dom';
-import { ReactNode } from 'react';
+import { ButtonHTMLAttributes, ReactNode } from 'react';
 
-type ButtonProps = {
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
-  to: LinkProps['to'];
-  className?: string;
-  disabled?: boolean;
-};
+  isActive?: boolean;
+}
 
 export default function Button({
   children,
-  to,
-  className = '',
-  disabled = false,
+  isActive = true,
+  ...props
 }: ButtonProps) {
-  return disabled ? (
-    <div
-      className={`color-secondary flex h-12 w-12 items-center justify-center ${className}`}
+  return (
+    <button
+      className={`flex h-10 w-full items-center justify-center rounded-md ${
+        isActive
+          ? 'color-primary color-primary-hover'
+          : 'color-secondary shadow-none'
+      }`}
+      disabled={!isActive}
+      {...props}
     >
       {children}
-    </div>
-  ) : (
-    <NavLink to={to} className={className}>
-      <button
-        className={`color-primary color-primary-hover flex h-12 w-12 items-center justify-center ${className}`}
-      >
-        {children}
-      </button>
-    </NavLink>
+    </button>
   );
 }

@@ -1,7 +1,5 @@
-import { initializeApp } from 'firebase/app';
+import { initializeApp, getApps } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
 
 const firebaseConfig = {
   apiKey: 'AIzaSyD1wLbXeu8Zbv2JQn6w3ILGNmBgp-uphfI',
@@ -13,5 +11,6 @@ const firebaseConfig = {
   measurementId: 'G-KJLRVM505W',
 };
 
-const app = initializeApp(firebaseConfig);
+const app =
+  getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 export const auth = getAuth(app);

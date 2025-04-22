@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../hooks/useUser';
-import SubmitButton from './SubmitButton';
+import Button from './Button';
 
 export default function UserSettings() {
   const { userInfo, setUserInfo, setLoading } = useUser();
@@ -15,9 +15,9 @@ export default function UserSettings() {
 
   return (
     <div className="w-[320px]">
-      <SubmitButton onClick={handleLogout} isActive={isActive}>
+      <Button onClick={handleLogout} isActive={isActive}>
         Logout
-      </SubmitButton>
+      </Button>
     </div>
   );
 }

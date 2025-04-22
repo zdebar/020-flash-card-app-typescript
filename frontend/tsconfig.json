@@ -12,7 +12,7 @@
       "@shared/*": ["../shared/*"]
     }
   },
-  "include": ["src", "types"],
+  "include": ["src", "types", "../archive/RegisterLink.tsx"],
   "files": [],
   "references": [
     { "path": "./tsconfig.app.json" },

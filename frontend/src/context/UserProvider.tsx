@@ -1,25 +1,29 @@
 import { useState, useEffect, ReactNode } from 'react';
 import { UserContext } from './UserContext';
-import { Score, UserInfo, UserSettings } from '../types/dataTypes';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import {
+  UserScore,
+  UserInfo,
+  UserSettings,
+} from '../../../shared/types/dataTypes';
+import { onAuthStateChanged } from 'firebase/auth';
+import { fetchWithAuth } from '../utils/firebase.utils';
+import { auth } from '../config/firebase.config';
 
 export function UserProvider({ children }: { children: ReactNode }) {
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [userSettings, setUserSettings] = useState<UserSettings | null>(null);
-  const [userScore, setUserScore] = useState<Score | null>(null);
+  const [userScore, setUserScore] = useState<UserScore | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const auth = getAuth();
-
-    const fetchUserPreferences = async (token: string) => {
+    const fetchUserPreferences = async () => {
       try {
-        const response = await fetch('http://localhost:3000/user/getUser', {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await fetchWithAuth(
+          'http://localhost:3000/user/getUser',
+          {
+            method: 'GET',
+          }
+        );
 
         if (response.ok) {
           const data = await response.json();
@@ -38,8 +42,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        const token = await user.getIdToken();
-        fetchUserPreferences(token);
+        fetchUserPreferences();
       } else {
         setUserInfo(null);
         setUserScore(null);
