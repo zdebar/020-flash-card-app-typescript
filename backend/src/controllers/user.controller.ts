@@ -21,7 +21,7 @@ export async function getUserController(
     const {
       userSettings,
       userScore,
-    }: { userSettings: UserSettings; userScore: UserScore[] } =
+    }: { userSettings: UserSettings; userScore: UserScore } =
       await getUserService(postgresDBPool, uid);
     res.status(200).json({
       userSettings,

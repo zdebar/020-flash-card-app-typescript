@@ -18,29 +18,26 @@ export function UserProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const fetchUserPreferences = async () => {
       try {
-        console.log('Fetching user preferences...in Provider');
-        const response = await fetchWithAuth(
-          'http://localhost:3000/user/getUser'
-        );
+        const response = await fetchWithAuth('http://localhost:3000/api/users');
 
-        if (response.ok) {
-          const { userSettings, userScore } = await response.json();
-
-          if (auth.currentUser) {
-            const { uid, email, displayName, photoURL } = auth.currentUser;
-            setUserInfo({
-              uid,
-              email,
-              name: displayName || '',
-              picture: photoURL || '',
-            });
-          }
-
-          setUserScore(userScore);
-          setUserSettings(userSettings);
-        } else {
-          console.error('Failed to fetch user preferences');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
+
+        const { userSettings, userScore } = await response.json();
+
+        if (auth.currentUser) {
+          const { uid, email, displayName, photoURL } = auth.currentUser;
+          setUserInfo({
+            uid,
+            email,
+            name: displayName || 'Bez jména',
+            picture: photoURL || 'Bez emailu',
+          });
+        }
+
+        setUserScore(userScore);
+        setUserSettings(userSettings);
       } catch (error) {
         console.error('Error fetching user preferences:', error);
       } finally {

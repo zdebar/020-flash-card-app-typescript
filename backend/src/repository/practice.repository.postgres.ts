@@ -105,21 +105,22 @@ export async function getScorePostgres(
   db: PostgresClient,
   uid: string,
   userTimezone: string = "Europe/Prague"
-): Promise<UserScore[]> {
+): Promise<UserScore> {
   const query = `
     SELECT 
       COUNT(CASE WHEN uw.learned_at IS NOT NULL AND DATE(uw.learned_at AT TIME ZONE $2) = DATE(NOW() AT TIME ZONE $2) THEN 1 END) AS "learnedCountToday",
-      COUNT(CASE WHEN uw.learned_at IS NOT NULL AND DATE(uw.learned_at AT TIME ZONE $2) != DATE(NOW() AT TIME ZONE $2) THEN 1 END) AS "learnedCount",
+      COUNT(CASE WHEN uw.learned_at IS NOT NULL THEN 1 END) AS "learnedCount"
     FROM words w
     LEFT JOIN user_words uw ON w.id = uw.word_id AND uw.user_id = (SELECT id FROM users WHERE uid = $1)
   `;
 
   return await withDbClient(db, async (client) => {
     const result = await client.query(query, [uid, userTimezone]);
-    return result.rows.map((row) => ({
+    const row = result.rows[0];
+    return {
       learnedCountToday: parseInt(row.learnedCountToday, 10),
       learnedCount: parseInt(row.learnedCount, 10),
-    }));
+    };
   });
 }
 

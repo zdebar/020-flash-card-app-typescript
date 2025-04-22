@@ -1,5 +1,4 @@
 import { useNavigate } from 'react-router-dom';
-import AuthForm from './AuthForm';
 import { useUser } from '../hooks/useUser';
 import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { fetchWithAuth } from '../utils/firebase.utils';
@@ -15,35 +14,39 @@ export default function LoginCard() {
 
     try {
       setLoading(true);
-      const result = await signInWithPopup(auth, provider);
-      const userInfo = result.user;
+      await signInWithPopup(auth, provider);
 
-      const response = await fetchWithAuth(
-        'http://localhost:3000/user/getUser'
-      );
+      const response = await fetchWithAuth('http://localhost:3000/api/users');
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
       const { userSettings, userScore } = await response.json();
 
-      setUserInfo({
-        uid: userInfo.uid,
-        name: userInfo.displayName,
-        email: userInfo.email,
-        picture: userInfo.photoURL,
-      });
+      if (auth.currentUser) {
+        const { uid, email, displayName, photoURL } = auth.currentUser;
+        setUserInfo({
+          uid,
+          email,
+          name: displayName || 'Bez jména',
+          picture: photoURL || 'Bez emailu',
+        });
+      }
+
       setUserSettings(userSettings);
       setUserScore(userScore);
-
-      navigate('/');
     } catch (error) {
       console.error('Google login failed:', error);
     } finally {
       setLoading(false);
     }
+    navigate('/');
   };
 
   return (
-    <AuthForm title="Přihlášení" onSubmit={handleGoogleLogin}>
-      <Button type="submit">Google Login</Button>
-    </AuthForm>
+    <div className="w-full p-4">
+      <Button onClick={handleGoogleLogin}>Google Login</Button>
+    </div>
   );
 }

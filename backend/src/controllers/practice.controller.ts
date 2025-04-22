@@ -45,7 +45,7 @@ export async function updateWordsController(
     const uid: string = (req as any).user.uid;
     const words: WordProgress[] = req.body;
 
-    const score: UserScore[] = await updateWordsService(
+    const score: UserScore = await updateWordsService(
       postgresDBPool,
       uid,
       words

@@ -29,7 +29,7 @@ export async function updateWordsService(
   db: PostgresClient,
   uid: string,
   words: WordProgress[]
-): Promise<UserScore[]> {
+): Promise<UserScore> {
   updateWordsPostgres(db, uid, words);
   return await getScorePostgres(db, uid);
 }

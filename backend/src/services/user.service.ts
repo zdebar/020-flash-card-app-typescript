@@ -9,8 +9,8 @@ import { getScorePostgres } from "../repository/practice.repository.postgres";
 export async function getUserService(
   db: PostgresClient,
   uid: string
-): Promise<{ userSettings: UserSettings; userScore: UserScore[] }> {
+): Promise<{ userSettings: UserSettings; userScore: UserScore }> {
   const userSettings: UserSettings = await getUserPostgres(db, uid);
-  const userScore: UserScore[] = await getScorePostgres(db, uid);
+  const userScore: UserScore = await getScorePostgres(db, uid);
   return { userSettings, userScore };
 }

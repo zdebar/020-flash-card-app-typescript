@@ -24,15 +24,13 @@ export default function App() {
                 <p>Loading...</p>
               ) : userInfo ? (
                 <div>
-                  <h1>Welcome back, {userInfo.name}!</h1>
+                  <h1>Ahoj, {userInfo.name}!</h1>
                 </div>
               ) : (
-                <div className="w-full">
-                  <h1 className="text-center">Sem dej nějaký úvod!</h1>
+                <div className="w-full p-4">
                   <Button isActive={true}>
                     <Link to="/login">Přihlášení / Registrace</Link>
                   </Button>
-                  <h1 className="text-center">A sem nějaké vysvětlení!</h1>
                 </div>
               )
             }
