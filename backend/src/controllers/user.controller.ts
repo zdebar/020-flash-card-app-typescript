@@ -1,15 +1,15 @@
 import { Request, Response, NextFunction } from "express";
 import { getUserService } from "../services/user.service";
 import { postgresDBPool } from "../config/database.config.postgres";
-import { User, Score } from "../types/dataTypes";
+import {
+  UserSettings,
+  UserScore,
+  UserInfo,
+} from "../../../shared/types/dataTypes";
 import { updateUserPostgres } from "../repository/user.repository.postgres";
 
 /**
- *
- * @param req
- * @param res
- * @param next
- * @returns
+ * Gets user profile and score from the database. If the user is not found, it creates a new user.
  */
 export async function getUserController(
   req: Request,
@@ -17,16 +17,16 @@ export async function getUserController(
   next: NextFunction
 ) {
   try {
-    const { uid, email, name, picture } = (req as any).user;
-    const { user, score }: { user: User; score: Score[] } =
+    const uid: string = (req as any).user.uid;
+    const {
+      userSettings,
+      userScore,
+    }: { userSettings: UserSettings; userScore: UserScore[] } =
       await getUserService(postgresDBPool, uid);
 
     res.status(200).json({
-      user,
-      email,
-      name,
-      picture,
-      score,
+      userSettings,
+      userScore,
     });
   } catch (error) {
     console.error("Error in getUserController:", error);
@@ -34,14 +34,22 @@ export async function getUserController(
   }
 }
 
+/**
+ *  Updates user profile in the database.
+ */
 export async function updateUserController(
   req: Request,
   res: Response,
   next: Function
 ): Promise<void> {
   try {
-    const user: User = req.body as User;
-    const userUpdated: User = await updateUserPostgres(postgresDBPool, user);
+    const uid: string = (req as any).user.uid;
+    const userSettings: UserSettings = req.body as UserSettings;
+    const userUpdated: UserSettings = await updateUserPostgres(
+      postgresDBPool,
+      uid,
+      userSettings
+    );
     res.json(userUpdated);
   } catch (err) {
     next(err);

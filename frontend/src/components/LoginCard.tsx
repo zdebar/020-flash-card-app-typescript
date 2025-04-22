@@ -1,55 +1,50 @@
-import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import InputForm from './InputForm';
-import SubmitButton from './SubmitButton';
 import AuthForm from './AuthForm';
-import RegisterLink from './RegisterLink';
 import { useUser } from '../hooks/useUser';
-import { postAuth } from '../utils/login.utils';
+import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import { fetchWithAuth } from '../utils/firebase.utils';
 
 export default function LoginCard() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [userError, setUserError] = useState('');
-  const { setUserInfo, setLoading } = useUser();
+  const { setUserInfo, setUserSettings, setUserScore, setLoading } = useUser();
   const navigate = useNavigate();
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleGoogleLogin = async () => {
+    const auth = getAuth();
+    const provider = new GoogleAuthProvider();
 
-    console.log('Register form submitted with:', { email, password });
+    try {
+      setLoading(true);
+      const result = await signInWithPopup(auth, provider);
+      const userInfo = result.user;
 
-    // const API_PATH = `${process.env.REACT_APP_API_URL}/auth/login`;
-    const API_PATH = `http://localhost:3000/user/login`;
+      const response = await fetchWithAuth(
+        'http://localhost:3000/user/getUser'
+      );
 
-    await postAuth(
-      { email, password },
-      setUserInfo,
-      setLoading,
-      navigate,
-      setUserError,
-      API_PATH
-    );
+      const { userSetting, score: userScore } = await response.json();
+
+      // Set user info in context
+      setUserInfo({
+        uid: userInfo.uid,
+        name: userInfo.displayName,
+        email: userInfo.email,
+        picture: userInfo.photoURL,
+      });
+
+      setUserSettings(userSetting);
+      setUserScore(userScore);
+
+      navigate('/');
+    } catch (error) {
+      console.error('Google login failed:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <AuthForm title="Přihlášení" onSubmit={handleLogin} error={userError}>
-      <InputForm
-        type="email"
-        label="Email"
-        placeholder="Zadejte svůj e-mail"
-        value={email}
-        onChange={setEmail}
-      />
-      <InputForm
-        type="password"
-        label="Heslo"
-        placeholder="Zadejte svoje heslo"
-        value={password}
-        onChange={setPassword}
-      />
-      <SubmitButton>Přihlásit se</SubmitButton>
-      <RegisterLink />
+    <AuthForm title="Přihlášení" onSubmit={handleGoogleLogin}>
+      <button type="submit">Google Login</button>
     </AuthForm>
   );
 }

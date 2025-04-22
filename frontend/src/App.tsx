@@ -1,7 +1,6 @@
 import './App.css';
 import Header from './components/Header';
 import LoginCard from './components/LoginCard';
-import RegisterCard from './components/RegisterCard';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useUser } from './hooks/useUser';
 import PracticeCard from './components/PracticeCard';
@@ -22,14 +21,13 @@ export default function App() {
               loading ? (
                 <p>Loading...</p>
               ) : userInfo ? (
-                <h1>Hello {userInfo.username}</h1>
+                <h1>Hello {userInfo.name}</h1> // what if name is null?
               ) : (
                 <Navigate to="/login" />
               )
             }
           />
           <Route path="/login" element={<LoginCard />} />
-          <Route path="/register" element={<RegisterCard />} />
           <Route path="/practice" element={<PracticeCard />} />
           <Route path="/userSettings" element={<UserSettings />} />
           <Route path="/userDashboard" element={<UserDashboard />} />

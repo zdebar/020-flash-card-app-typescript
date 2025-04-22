@@ -1,13 +1,16 @@
 import { Request, Response } from "express";
 import { postgresDBPool } from "../config/database.config.postgres";
-import { WordUpdate, Note } from "../types/dataTypes";
+import {
+  WordProgress,
+  Note,
+  UserScore,
+  WordPractice,
+} from "../../../shared/types/dataTypes";
 import {
   getWordsService,
   updateWordsService,
 } from "../services/practice.service";
 import { insertNotePostgres } from "../repository/practice.repository.postgres";
-
-import { Score, Word } from "../types/dataTypes";
 
 /**
  * Controller function to retrieve user-specific words based on source and target languages.
@@ -21,7 +24,7 @@ export async function getWordsController(
   try {
     const uid: string = (req as any).user.uid;
 
-    const words: Word[] = await getWordsService(postgresDBPool, uid);
+    const words: WordPractice[] = await getWordsService(postgresDBPool, uid);
 
     res.status(200).json(words);
   } catch (err) {
@@ -39,9 +42,13 @@ export async function updateWordsController(
 ): Promise<void> {
   try {
     const uid: string = (req as any).user.uid;
-    const words: WordUpdate[] = req.body;
+    const words: WordProgress[] = req.body;
 
-    const score: Score[] = await updateWordsService(postgresDBPool, uid, words);
+    const score: UserScore[] = await updateWordsService(
+      postgresDBPool,
+      uid,
+      words
+    );
 
     res.status(200).json(score);
   } catch (err) {

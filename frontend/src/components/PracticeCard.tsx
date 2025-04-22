@@ -1,12 +1,12 @@
 import { RefreshIcon, CheckIcon } from './Icons';
 import { getAPI } from '../functions/getAPI';
 import { useState, useEffect, useRef } from 'react';
-import { Word } from '../types/dataTypes';
+import { WordPractice } from '../types/dataTypes';
 import { upgradeWords } from '../utils/upgradeWords';
 import { useLocation } from 'react-router-dom';
 
 export default function PracticeCard() {
-  const [wordArray, setWordArray] = useState<Word[] | null>(null);
+  const [wordArray, setWordArray] = useState<WordPractice[] | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [revealed, setRevealed] = useState(false);
   const [firstRound, setFirstRound] = useState(true);
@@ -17,7 +17,7 @@ export default function PracticeCard() {
     const fetchAndStoreWords = async () => {
       const API_PATH = `http://localhost:3000/practice/getUserWords?srcLanguage=2&trgLanguage=1`;
       try {
-        const userWords = await getAPI<Word[]>(API_PATH, setWordArray);
+        const userWords = await getAPI<WordPractice[]>(API_PATH, setWordArray);
         setWordArray(userWords);
         setFirstRound(true);
         setCurrentIndex(0);

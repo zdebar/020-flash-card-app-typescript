@@ -1,4 +1,9 @@
-import { PostgresClient, WordUpdate, Word, Score } from "../types/dataTypes";
+import { PostgresClient } from "../types/dataTypes";
+import {
+  WordPractice,
+  WordProgress,
+  UserScore,
+} from "../../../shared/types/dataTypes";
 import {
   getWordsPostgres,
   updateWordsPostgres,
@@ -12,8 +17,8 @@ import { addAudioPathsToWords } from "../utils/progress.utils";
 export async function getWordsService(
   db: PostgresClient,
   uid: string
-): Promise<Word[]> {
-  const words: Word[] = await getWordsPostgres(db, uid);
+): Promise<WordPractice[]> {
+  const words: WordPractice[] = await getWordsPostgres(db, uid);
   return addAudioPathsToWords(words);
 }
 
@@ -23,8 +28,8 @@ export async function getWordsService(
 export async function updateWordsService(
   db: PostgresClient,
   uid: string,
-  words: WordUpdate[]
-): Promise<Score[]> {
+  words: WordProgress[]
+): Promise<UserScore[]> {
   updateWordsPostgres(db, uid, words);
   return await getScorePostgres(db, uid);
 }

@@ -5,8 +5,8 @@ CREATE TABLE IF NOT EXISTS users (
   uid VARCHAR(255) UNIQUE,
   mode_day TEXT DEFAULT 'default' CHECK (mode_day IN ('default', 'day', 'night')),
   font_size TEXT DEFAULT 'medium' CHECK (font_size IN ('small', 'medium', 'large')),
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  plan_type TEXT DEFAULT 'free' CHECK (plan_type IN ('free', 'premium'))
+  plan_type TEXT DEFAULT 'free' CHECK (plan_type IN ('free', 'premium')),
+  created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS words (

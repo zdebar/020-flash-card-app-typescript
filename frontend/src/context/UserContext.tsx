@@ -1,13 +1,15 @@
 import { createContext } from 'react';
-import { User, Score } from '../types/dataTypes';
+import { Score, UserSettings, UserInfo } from '../types/dataTypes';
 
 export interface UserContextType {
-  userInfo: User | null;
-  loading: boolean;
+  userInfo: UserInfo | null;
+  userSettings: UserSettings | null;
   userScore: Score | null;
-  setUserInfo: (user: User | null) => void;
-  setLoading: (loading: boolean) => void;
+  loading: boolean;
+  setUserInfo: (user: UserInfo | null) => void;
+  setUserSettings: (settings: UserSettings | null) => void;
   setUserScore: (score: Score | null) => void;
+  setLoading: (loading: boolean) => void;
 }
 
 export const UserContext = createContext<UserContextType | undefined>(

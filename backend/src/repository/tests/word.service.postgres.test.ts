@@ -4,7 +4,7 @@ import {
   updateWordsPostgres,
 } from "../practice.repository.postgres";
 import { postgresDBPool } from "../../config/database.config.postgres";
-import { Word, WordUpdate } from "../../types/dataTypes";
+import { Word, WordProgress } from "../../types/dataTypes";
 import { PoolClient } from "pg";
 import config from "../../config/config";
 
@@ -162,7 +162,7 @@ describe("updateWordsPostgres tests", () => {
   const userId = 1;
   const wordIdToUpdate = 1080;
 
-  const wordToUpdateValid: WordUpdate[] = [
+  const wordToUpdateValid: WordProgress[] = [
     {
       id: wordIdToUpdate,
       progress: 5,
@@ -190,7 +190,7 @@ describe("updateWordsPostgres tests", () => {
   });
 
   it("should throw Error on update for a nonexistent word_id", async () => {
-    const wordToUpdateInvalid: WordUpdate[] = [
+    const wordToUpdateInvalid: WordProgress[] = [
       {
         id: 999999,
         progress: 5,
@@ -215,7 +215,7 @@ describe("updateWordsPostgres tests", () => {
   });
 
   it("should update user_word progress with valid progress range", async () => {
-    const wordToUpdateNew: WordUpdate[] = [
+    const wordToUpdateNew: WordProgress[] = [
       {
         id: wordIdToUpdate,
         progress: 8,
@@ -234,7 +234,7 @@ describe("updateWordsPostgres tests", () => {
   });
 
   it("should update user_word progress with invalid progress range", async () => {
-    const wordToUpdateNew: WordUpdate[] = [
+    const wordToUpdateNew: WordProgress[] = [
       {
         id: wordIdToUpdate,
         progress: 0,
@@ -253,7 +253,7 @@ describe("updateWordsPostgres tests", () => {
   });
 
   it("should update multiple words in a single call", async () => {
-    const wordsToUpdate: WordUpdate[] = [
+    const wordsToUpdate: WordProgress[] = [
       {
         id: 88,
         progress: 3,
@@ -279,7 +279,7 @@ describe("updateWordsPostgres tests", () => {
   });
 
   it("should mark a word as learned if progress is equal learnedAt limit", async () => {
-    const wordToUpdate: WordUpdate[] = [
+    const wordToUpdate: WordProgress[] = [
       {
         id: wordIdToUpdate,
         progress: config.learnedAt,
@@ -301,7 +301,7 @@ describe("updateWordsPostgres tests", () => {
   });
 
   it("should mark a word as mastered if progress is over SRS.length", async () => {
-    const wordToUpdate: WordUpdate[] = [
+    const wordToUpdate: WordProgress[] = [
       {
         id: wordIdToUpdate,
         progress: 250,
@@ -322,7 +322,7 @@ describe("updateWordsPostgres tests", () => {
   });
 
   it("should erase date at learned_at a mastered_at", async () => {
-    const wordToUpdate: WordUpdate[] = [
+    const wordToUpdate: WordProgress[] = [
       {
         id: wordIdToUpdate,
         progress: 15,

@@ -1,4 +1,4 @@
-import { PostgresClient, WordUpdate, Word, Note } from "../types/dataTypes";
+import { PostgresClient } from "../types/dataTypes";
 import {
   getNextAt,
   getLearnedAt,
@@ -6,7 +6,12 @@ import {
 } from "../utils/progress.utils";
 import { withDbClient } from "../utils/database.utils";
 import config from "../config/config";
-import { Score } from "../types/dataTypes";
+import {
+  UserScore,
+  WordProgress,
+  WordPractice,
+  Note,
+} from "../../../shared/types/dataTypes";
 
 /**
  * Return required words for the user from PostgreSQL database.
@@ -14,7 +19,7 @@ import { Score } from "../types/dataTypes";
 export async function getWordsPostgres(
   db: PostgresClient,
   uid: string
-): Promise<Word[]> {
+): Promise<WordPractice[]> {
   const numWords: number = config.block;
   const query = `
     SELECT 
@@ -52,7 +57,7 @@ export async function getWordsPostgres(
 export async function updateWordsPostgres(
   db: PostgresClient,
   uid: string,
-  words: WordUpdate[]
+  words: WordProgress[]
 ): Promise<void> {
   const values: unknown[] = [];
 
@@ -100,7 +105,7 @@ export async function getScorePostgres(
   db: PostgresClient,
   uid: string,
   userTimezone: string = "Europe/Prague"
-): Promise<Score[]> {
+): Promise<UserScore[]> {
   const query = `
     SELECT 
       w.cefr_level,

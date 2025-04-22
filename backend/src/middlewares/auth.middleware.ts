@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from "express";
-import cookieParser from "cookie-parser";
 import logger from "../utils/logger.utils";
 import { firebaseAuth, firebaseConfig } from "../config/firebase.config";
 
@@ -12,11 +11,13 @@ export async function authenticate(
   next: NextFunction
 ): Promise<void> {
   try {
-    const idToken = req.cookies?.idToken;
-    if (!idToken) {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
       res.status(401).send("Unauthorized");
       return;
     }
+
+    const idToken = authHeader.split(" ")[1];
 
     const decodedToken = await firebaseAuth
       .verifyIdToken(idToken)
@@ -40,8 +41,8 @@ export async function authenticate(
       return;
     }
 
-    const { uid, email, name, picture } = decodedToken;
-    (req as any).user = { uid, email, name, picture };
+    const { uid } = decodedToken;
+    (req as any).user = { uid };
     next();
   } catch (error) {
     logger.error("Authentication failed:", error);
