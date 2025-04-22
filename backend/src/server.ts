@@ -1,10 +1,8 @@
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
-import userRouter from "./routes/user.routes";
-import practiceRouter from "./routes/practice.routes";
+import apiRouter from "./routes/api.routes";
 import errorHandlerMiddleware from "./middlewares/errorHandler.middleware";
-import requestLoggerMiddleware from "./middlewares/requestLogger.middleware";
 import "./config/config";
 import { checkDatabaseConnection } from "./utils/database.utils";
 import path from "path";
@@ -21,7 +19,6 @@ app.use(
   })
 );
 app.use(express.json());
-app.use(requestLoggerMiddleware);
 app.use(
   helmet({
     crossOriginOpenerPolicy: { policy: "same-origin" },
@@ -41,10 +38,7 @@ app.use(
 );
 
 // Authentication Routes
-app.use("/user", userRouter);
-
-// Protected Route
-app.use("/practice", practiceRouter);
+app.use("/api", apiRouter);
 
 // Error Handling Middleware
 app.use(errorHandlerMiddleware);

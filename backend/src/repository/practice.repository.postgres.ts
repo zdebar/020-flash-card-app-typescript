@@ -108,30 +108,17 @@ export async function getScorePostgres(
 ): Promise<UserScore[]> {
   const query = `
     SELECT 
-      w.cefr_level,
-      COUNT(*) AS "Count",
-      COUNT(CASE WHEN uw.started_at IS NOT NULL AND DATE(uw.started_at AT TIME ZONE $2) = DATE(NOW() AT TIME ZONE $2) THEN 1 END) AS "startedCountToday",
-      COUNT(CASE WHEN uw.started_at IS NOT NULL AND DATE(uw.started_at AT TIME ZONE $2) != DATE(NOW() AT TIME ZONE $2) THEN 1 END) AS "startedCount",
       COUNT(CASE WHEN uw.learned_at IS NOT NULL AND DATE(uw.learned_at AT TIME ZONE $2) = DATE(NOW() AT TIME ZONE $2) THEN 1 END) AS "learnedCountToday",
       COUNT(CASE WHEN uw.learned_at IS NOT NULL AND DATE(uw.learned_at AT TIME ZONE $2) != DATE(NOW() AT TIME ZONE $2) THEN 1 END) AS "learnedCount",
-      COUNT(CASE WHEN uw.mastered_at IS NOT NULL AND DATE(uw.mastered_at AT TIME ZONE $2) = DATE(NOW() AT TIME ZONE $2) THEN 1 END) AS "masteredCountToday",
-      COUNT(CASE WHEN uw.mastered_at IS NOT NULL AND DATE(uw.mastered_at AT TIME ZONE $2) != DATE(NOW() AT TIME ZONE $2) THEN 1 END) AS "masteredCount"
     FROM words w
     LEFT JOIN user_words uw ON w.id = uw.word_id AND uw.user_id = (SELECT id FROM users WHERE uid = $1)
-    GROUP BY w.cefr_level;
   `;
 
   return await withDbClient(db, async (client) => {
     const result = await client.query(query, [uid, userTimezone]);
     return result.rows.map((row) => ({
-      cefr_level: row.cefr_level,
-      Count: parseInt(row.Count, 10),
-      startedCountToday: parseInt(row.startedCountToday, 10),
-      startedCount: parseInt(row.startedCount, 10),
       learnedCountToday: parseInt(row.learnedCountToday, 10),
       learnedCount: parseInt(row.learnedCount, 10),
-      masteredCountToday: parseInt(row.masteredCountToday, 10),
-      masteredCount: parseInt(row.masteredCount, 10),
     }));
   });
 }

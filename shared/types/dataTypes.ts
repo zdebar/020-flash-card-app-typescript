@@ -66,14 +66,8 @@ export interface UserSettings {
 }
 
 export interface UserScore {
-  cefr_level: string; // CEFR level (A1, A2, B1, B2, C1, C2)
-  startedCountToday: number; // Number of words started today
-  startedCount: number; // Number of words started (not today)
-  learnedCountToday: number; // Number of words learned today
-  learnedCount: number; // Number of words learned (not today)
-  masteredCountToday: number; // Number of words mastered today
-  masteredCount: number; // Number of words mastered (not today)
-  Count: number; // Number of words by cefr_level
+  learnedCountToday: number;
+  learnedCount: number;
 }
 
 export class UserError extends Error {
