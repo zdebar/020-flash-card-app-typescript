@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import helmet from "helmet";
 import userRouter from "./routes/user.routes";
 import practiceRouter from "./routes/practice.routes";
 import errorHandlerMiddleware from "./middlewares/errorHandler.middleware";
@@ -21,6 +22,12 @@ app.use(
 );
 app.use(express.json());
 app.use(requestLoggerMiddleware);
+app.use(
+  helmet({
+    crossOriginOpenerPolicy: { policy: "same-origin" },
+    crossOriginEmbedderPolicy: true,
+  })
+);
 
 // Home route
 app.get("/", (req, res) => {

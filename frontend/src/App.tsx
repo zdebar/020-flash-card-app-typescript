@@ -7,6 +7,7 @@ import PracticeCard from './components/PracticeCard';
 import UserSettings from './components/UserSettings';
 import UserDashboard from './components/UserDashboard';
 import Button from './components/Button';
+import GrammarCard from './components/GrammarCard';
 
 export default function App() {
   const { userInfo, loading } = useUser();
@@ -38,6 +39,7 @@ export default function App() {
           />
           <Route path="/login" element={<LoginCard />} />
           <Route path="/practice" element={<PracticeCard />} />
+          <Route path="/grammar" element={<GrammarCard />} />
           <Route path="/userSettings" element={<UserSettings />} />
           <Route path="/userDashboard" element={<UserDashboard />} />
         </Routes>

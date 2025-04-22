@@ -22,7 +22,7 @@ export default function LoginCard() {
         'http://localhost:3000/user/getUser'
       );
 
-      const { userSetting, score: userScore } = await response.json();
+      const { userSettings, userScore } = await response.json();
 
       setUserInfo({
         uid: userInfo.uid,
@@ -30,7 +30,7 @@ export default function LoginCard() {
         email: userInfo.email,
         picture: userInfo.photoURL,
       });
-      setUserSettings(userSetting);
+      setUserSettings(userSettings);
       setUserScore(userScore);
 
       navigate('/');

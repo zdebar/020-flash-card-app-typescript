@@ -23,6 +23,7 @@ export async function getWordsController(
 ): Promise<void> {
   try {
     const uid: string = (req as any).user.uid;
+    console.log("uid", uid);
 
     const words: WordPractice[] = await getWordsService(postgresDBPool, uid);
 

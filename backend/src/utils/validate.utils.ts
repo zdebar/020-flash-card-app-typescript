@@ -1,5 +1,3 @@
-import { UserError } from "../types/dataTypes";
-
 /**
  * Validates that all required environment variables are defined and non-empty. Error otherwise.
  */

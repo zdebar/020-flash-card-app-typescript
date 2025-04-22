@@ -12,24 +12,32 @@ import { auth } from '../config/firebase.config';
 export function UserProvider({ children }: { children: ReactNode }) {
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [userSettings, setUserSettings] = useState<UserSettings | null>(null);
-  const [userScore, setUserScore] = useState<UserScore | null>(null);
+  const [userScore, setUserScore] = useState<UserScore[] | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUserPreferences = async () => {
       try {
+        console.log('Fetching user preferences...in Provider');
         const response = await fetchWithAuth(
-          'http://localhost:3000/user/getUser',
-          {
-            method: 'GET',
-          }
+          'http://localhost:3000/user/getUser'
         );
 
         if (response.ok) {
-          const data = await response.json();
-          setUserInfo(data.userProfile);
-          setUserScore(data.score);
-          setUserSettings(data.settings);
+          const { userSettings, userScore } = await response.json();
+
+          if (auth.currentUser) {
+            const { uid, email, displayName, photoURL } = auth.currentUser;
+            setUserInfo({
+              uid,
+              email,
+              name: displayName || '',
+              picture: photoURL || '',
+            });
+          }
+
+          setUserScore(userScore);
+          setUserSettings(userSettings);
         } else {
           console.error('Failed to fetch user preferences');
         }

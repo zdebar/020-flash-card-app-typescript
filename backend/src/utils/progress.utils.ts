@@ -1,5 +1,5 @@
 import config from "../config/config";
-import { Word } from "../types/dataTypes";
+import { WordPractice } from "../../../shared/types/dataTypes";
 
 /**
  * Returns the next review date based on the progress and SRS intervals.
@@ -35,8 +35,8 @@ export function getMasteredAt(progress: number): string | null {
 /**
  * Adds audio file paths to a list of words based on the language ID.
  */
-export function addAudioPathsToWords(words: Word[]): Word[] {
-  return words.map((word: Word) => ({
+export function addAudioPathsToWords(words: WordPractice[]): WordPractice[] {
+  return words.map((word: WordPractice) => ({
     ...word,
     audio: `/${word.audio}.opus`,
   }));

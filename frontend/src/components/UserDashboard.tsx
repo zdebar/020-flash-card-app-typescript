@@ -1,16 +1,12 @@
-import { useUser } from '../hooks/useUser';
-import Button from './RoundButton';
-import { AcademicCapIcon } from '@heroicons/react/24/outline';
+import RectangularButton from './RectangularButton';
+import Dashboard from './Dashboard';
 
 export default function UserDashboard() {
-  const { userInfo, setUserInfo, setLoading } = useUser();
-
   return (
     <div className="w-[320px]">
-      <Button to="/practice" disabled={!userInfo} className="rounded-full">
-        <AcademicCapIcon className="size-5.5" />
-      </Button>
-      <p></p>
+      <RectangularButton to="/practice">slovíčka</RectangularButton>
+      <RectangularButton to="/grammar">gramatika</RectangularButton>
+      <Dashboard></Dashboard>
       <p></p>
     </div>
   );

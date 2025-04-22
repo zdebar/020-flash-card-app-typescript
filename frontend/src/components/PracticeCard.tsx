@@ -1,9 +1,8 @@
 import { RefreshIcon, CheckIcon } from './Icons';
-import { getAPI } from '../functions/getAPI';
+import { fetchWithAuth } from '../utils/firebase.utils';
 import { useState, useEffect, useRef } from 'react';
-import { WordPractice } from '../types/dataTypes';
+import { WordPractice } from '../../../shared/types/dataTypes';
 import { upgradeWords } from '../utils/upgradeWords';
-import { useLocation } from 'react-router-dom';
 
 export default function PracticeCard() {
   const [wordArray, setWordArray] = useState<WordPractice[] | null>(null);
@@ -11,33 +10,33 @@ export default function PracticeCard() {
   const [revealed, setRevealed] = useState(false);
   const [firstRound, setFirstRound] = useState(true);
   const audioCache = useRef<{ [key: string]: string }>({});
-  const location = useLocation();
 
   useEffect(() => {
     const fetchAndStoreWords = async () => {
-      const API_PATH = `http://localhost:3000/practice/getUserWords?srcLanguage=2&trgLanguage=1`;
       try {
-        const userWords = await getAPI<WordPractice[]>(API_PATH, setWordArray);
-        setWordArray(userWords);
-        setFirstRound(true);
-        setCurrentIndex(0);
-        setRevealed(false);
+        const response = await fetchWithAuth(
+          `http://localhost:3000/practice/getWords`
+        );
+        if (response.ok) {
+          const words: WordPractice[] = await response.json();
+          setCurrentIndex(0);
+          setWordArray(words);
+          // setFirstRound(true);
+          // setRevealed(false);
+        }
       } catch (error) {
-        console.error('Error fetching or loading words:', error);
+        console.error('Practice Card - fetchAndStoreWords:', error);
       }
     };
 
-    if (location.pathname === '/practice') {
-      fetchAndStoreWords();
-      setFirstRound(true);
-    }
-  }, [location]);
+    fetchAndStoreWords();
+  }, []);
 
   if (!wordArray || wordArray.length === 0) {
     return <p>No words to practice</p>;
   }
 
-  const handleReveal = async () => {
+  const handleCard = async () => {
     setRevealed(true);
 
     if (wordArray[currentIndex]?.audio) {
@@ -117,17 +116,17 @@ export default function PracticeCard() {
     <div className="w-[320px]">
       <button
         name="note"
-        onClick={handleReveal}
+        onClick={handleCard}
         className="color-secondary color-secondary-hover flex h-[120px] w-full flex-col items-center justify-evenly rounded-t-md py-4"
       >
         <p className="font-bold">
           {wordArray[currentIndex]
-            ? wordArray[currentIndex].src
+            ? wordArray[currentIndex].czech
             : 'For more words press practice'}
         </p>
         <>
-          <p>{revealed ? wordArray[currentIndex]?.trg : '\u00A0'}</p>
-          <p>{revealed ? wordArray[currentIndex]?.prn : '\u00A0'}</p>
+          <p>{revealed ? wordArray[currentIndex]?.english : '\u00A0'}</p>
+          <p>{revealed ? wordArray[currentIndex]?.pronunciation : '\u00A0'}</p>
         </>
       </button>
       <div className="my-1 grid h-10 w-full grid-cols-2 gap-1">

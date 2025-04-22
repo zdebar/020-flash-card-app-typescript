@@ -1,6 +1,6 @@
 import { NextFunction, Response, Request } from "express";
 import logger from "../utils/logger.utils";
-import { UserError } from "../types/dataTypes";
+import { UserError } from "../../../shared/types/dataTypes";
 
 export default function errorHandlerMiddleware(
   err: Error,

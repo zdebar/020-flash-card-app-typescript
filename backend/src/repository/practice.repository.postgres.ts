@@ -41,7 +41,7 @@ export async function getWordsPostgres(
         WHEN uw.progress > 0 THEN 1
         ELSE 2
       END ASC,
-      w.word_order ASC
+      w.item_order ASC
     LIMIT $2;
   `;
 
