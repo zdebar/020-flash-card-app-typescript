@@ -6,11 +6,12 @@ import {
   AudioIcon,
 } from './Icons';
 import { fetchWithAuth } from '../utils/firebase.utils';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { WordTransfer, WordPractice } from '../../../shared/types/dataTypes';
 import { endPracticeSession } from '../utils/upgradeWords';
 import RoundButton from './RoundButton';
+import { supabase } from '../utils/supabase.utils';
 
 export default function PracticeCard() {
   const [wordArray, setWordArray] = useState<WordPractice[]>([]);
@@ -19,7 +20,6 @@ export default function PracticeCard() {
   const [count, setCount] = useState(0);
   const [direction, setDirection] = useState(true); // true = czech to english, false = english to czech
   const [revealed, setRevealed] = useState(false);
-  const audioCache = useRef<{ [key: string]: string }>({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -34,6 +34,27 @@ export default function PracticeCard() {
           }));
           setCount(wordsWithDone.length);
           setWordArray(wordsWithDone);
+
+          // Pre-fetch and cache audio files
+          const cache = await caches.open('audio-cache');
+          for (const word of wordsWithDone) {
+            if (word.audio) {
+              const audioPath = word.audio;
+              const cachedResponse = await cache.match(audioPath);
+              if (!cachedResponse) {
+                const { data } = supabase.storage
+                  .from('audio-files')
+                  .getPublicUrl(audioPath);
+
+                if (data.publicUrl) {
+                  const response = await fetch(data.publicUrl);
+                  if (response.ok) {
+                    cache.put(audioPath, response.clone());
+                  }
+                }
+              }
+            }
+          }
         }
       } catch (error) {
         console.error('Error in fetchAndStoreWords:', error);
@@ -42,6 +63,58 @@ export default function PracticeCard() {
 
     fetchAndStoreWords();
   }, []);
+
+  const playAudio = useCallback(async () => {
+    if (wordArray[currentIndex]?.audio) {
+      const audioPath = wordArray[currentIndex].audio;
+
+      try {
+        // Open the browser cache
+        const cache = await caches.open('audio-cache');
+
+        // Check if the audio file is already cached
+        const cachedResponse = await cache.match(audioPath);
+        if (cachedResponse) {
+          const audioBlob = await cachedResponse.blob();
+          const audioUrl = URL.createObjectURL(audioBlob);
+          const audio = new Audio(audioUrl);
+          audio.play().catch((error) => {
+            console.error('Error playing cached audio:', error);
+          });
+          return;
+        }
+
+        // If not cached, fetch the audio file from Supabase
+        const { data } = supabase.storage
+          .from('audio-files')
+          .getPublicUrl(audioPath);
+
+        const audioUrl = data.publicUrl;
+
+        // Fetch the audio file and cache it
+        const response = await fetch(audioUrl);
+        if (response.ok) {
+          cache.put(audioPath, response.clone());
+          const audioBlob = await response.blob();
+          const audioUrl = URL.createObjectURL(audioBlob);
+          const audio = new Audio(audioUrl);
+          audio.play().catch((error) => {
+            console.error('Error playing audio:', error);
+          });
+        } else {
+          console.error('Failed to fetch audio file:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error fetching or playing audio:', error);
+      }
+    }
+  }, [wordArray, currentIndex]);
+
+  useEffect(() => {
+    if (!direction) {
+      setTimeout(() => playAudio(), 200);
+    }
+  }, [direction, playAudio]);
 
   if (wordArray.length === 0) {
     return <p>No words to practice</p>;
@@ -110,37 +183,7 @@ export default function PracticeCard() {
     playAudio();
   }
 
-  async function playAudio() {
-    if (wordArray[currentIndex]?.audio) {
-      const audioPath = wordArray[currentIndex].audio;
-      try {
-        const cache = await caches.open('audio-cache');
-
-        let response = await cache.match(audioPath);
-        if (!response) {
-          response = await fetchWithAuth(
-            `http://localhost:3000/audio${audioPath}`
-          );
-          if (!response.ok) {
-            throw new Error(`Failed to fetch audio: ${response.statusText}`);
-          }
-          await cache.put(audioPath, response.clone());
-        }
-
-        const audioBlob = await response.blob();
-        const audioUrl = URL.createObjectURL(audioBlob);
-
-        audioCache.current[audioPath] = audioUrl;
-
-        const audio = new Audio(audioUrl);
-        audio.play().catch((error) => {
-          console.error('Error playing audio:', error);
-        });
-      } catch (error) {
-        console.error('Error fetching or playing audio:', error);
-      }
-    }
-  }
+  function handleNote() {}
 
   return (
     <div className="flex h-120 w-[320px] flex-col justify-between">
@@ -163,9 +206,7 @@ export default function PracticeCard() {
             {doneCount} / {count}
           </p>
           <p className="font-bold">
-            {wordArray[currentIndex]
-              ? wordArray[currentIndex].czech
-              : 'For more words press practice'}
+            {direction || revealed ? wordArray[currentIndex].czech : undefined}
           </p>
           <>
             <p>{revealed ? wordArray[currentIndex]?.english : '\u00A0'}</p>
@@ -209,7 +250,7 @@ export default function PracticeCard() {
         </button>
       </div>
       <div className="flex justify-end p-4">
-        <RoundButton to="/note">
+        <RoundButton onClick={handleNote}>
           <NoteIcon></NoteIcon>
         </RoundButton>
       </div>

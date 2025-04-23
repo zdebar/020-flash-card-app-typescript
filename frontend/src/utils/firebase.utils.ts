@@ -7,7 +7,6 @@ export const fetchWithAuth = async (url: string, options: RequestInit = {}) => {
   if (!user) {
     throw new Error('User is not logged in');
   }
-  console.log('User is logged in:', user.email);
 
   const token = await user.getIdToken();
 

@@ -38,6 +38,6 @@ export function getMasteredAt(progress: number): string | null {
 export function addAudioPathsToWords(words: WordPractice[]): WordPractice[] {
   return words.map((word: WordPractice) => ({
     ...word,
-    audio: `/${word.audio}.opus`,
+    audio: `${word.audio}.opus`,
   }));
 }
