@@ -7,7 +7,7 @@ export default function Header(): ReactNode {
   const { userInfo } = useUser();
 
   return (
-    <header className="flex w-full justify-between gap-4 p-6">
+    <header className="flex w-full justify-between p-4">
       <RoundButton to="/">
         <HomeIcon />
       </RoundButton>

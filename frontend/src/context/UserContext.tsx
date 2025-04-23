@@ -8,11 +8,11 @@ import {
 export interface UserContextType {
   userInfo: UserInfo | null;
   userSettings: UserSettings | null;
-  userScore: UserScore[] | null;
+  userScore: UserScore | null;
   loading: boolean;
   setUserInfo: (user: UserInfo | null) => void;
   setUserSettings: (settings: UserSettings | null) => void;
-  setUserScore: (score: UserScore[] | null) => void;
+  setUserScore: (score: UserScore | null) => void;
   setLoading: (loading: boolean) => void;
 }
 

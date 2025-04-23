@@ -109,7 +109,9 @@ export async function getScorePostgres(
   const query = `
     SELECT 
       COUNT(CASE WHEN uw.learned_at IS NOT NULL AND DATE(uw.learned_at AT TIME ZONE $2) = DATE(NOW() AT TIME ZONE $2) THEN 1 END) AS "learnedCountToday",
-      COUNT(CASE WHEN uw.learned_at IS NOT NULL THEN 1 END) AS "learnedCount"
+      COUNT(CASE WHEN uw.learned_at IS NOT NULL THEN 1 END) AS "learnedCount",
+      COUNT(CASE WHEN uw.started_at IS NOT NULL AND DATE(uw.started_at AT TIME ZONE $2) = DATE(NOW() AT TIME ZONE $2) THEN 1 END) AS "startedCountToday",
+      COUNT(CASE WHEN uw.started_at IS NOT NULL THEN 1 END) AS "startedCount"
     FROM words w
     LEFT JOIN user_words uw ON w.id = uw.word_id AND uw.user_id = (SELECT id FROM users WHERE uid = $1)
   `;
@@ -120,6 +122,8 @@ export async function getScorePostgres(
     return {
       learnedCountToday: parseInt(row.learnedCountToday, 10),
       learnedCount: parseInt(row.learnedCount, 10),
+      startedCountToday: parseInt(row.startedCountToday, 10),
+      startedCount: parseInt(row.startedCount, 10),
     };
   });
 }

@@ -12,6 +12,10 @@
   Button.color-primary {
     @apply shadow-[2px_2px_4px_rgba(0,0,0,0.35)] active:shadow-none;
   }
+
+  h1 {
+    @apply text-black dark:text-white;
+  }
 }
 
 @layer components {

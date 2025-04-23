@@ -12,7 +12,7 @@ import { auth } from '../config/firebase.config';
 export function UserProvider({ children }: { children: ReactNode }) {
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [userSettings, setUserSettings] = useState<UserSettings | null>(null);
-  const [userScore, setUserScore] = useState<UserScore[] | null>(null);
+  const [userScore, setUserScore] = useState<UserScore | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

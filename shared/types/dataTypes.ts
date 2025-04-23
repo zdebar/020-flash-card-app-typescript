@@ -12,7 +12,7 @@ export interface WordProgress {
   progress: number;
 }
 
-export interface WordPractice extends WordProgress {
+export interface WordTransfer extends WordProgress {
   // Word extractred from database send to frontend
   czech: string;
   english: string;
@@ -20,6 +20,11 @@ export interface WordPractice extends WordProgress {
   audio: string | null;
   started: boolean;
   learned: boolean;
+}
+
+export interface WordPractice extends WordTransfer {
+  // Word type used in practice card
+  done: boolean;
 }
 
 export interface WordUpdate extends WordProgress {
@@ -68,6 +73,8 @@ export interface UserSettings {
 export interface UserScore {
   learnedCountToday: number;
   learnedCount: number;
+  startedCountToday: number;
+  startedCount: number;
 }
 
 export class UserError extends Error {

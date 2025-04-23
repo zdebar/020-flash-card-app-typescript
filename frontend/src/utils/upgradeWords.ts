@@ -1,7 +1,7 @@
-import { WordUpdate } from '../types/dataTypes';
+import { WordProgress } from '../../../shared/types/dataTypes';
 
-export async function upgradeWords(words: WordUpdate[]): Promise<boolean> {
-  const API_PATH = `http://localhost:3000/practice/updateUserWords`;
+export async function upgradeWords(words: WordProgress[]): Promise<boolean> {
+  const API_PATH = `http://localhost:3000/api/words`;
 
   try {
     const response = await fetch(API_PATH, {

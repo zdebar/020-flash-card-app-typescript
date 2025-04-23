@@ -24,8 +24,8 @@ export default function UserSettings() {
   };
 
   return (
-    <div className="w-[320px]">
-      {userInfo && <p>Uživatel: {userInfo.name}</p>}
+    <div className="w-full p-4">
+      {userInfo && <h1>uživatel: {userInfo.name}</h1>}
       <Button onClick={handleLogout} isActive={isActive}>
         Logout
       </Button>

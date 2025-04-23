@@ -8,25 +8,26 @@ export default function Dashboard() {
   }
 
   return (
-    <div>
-      <table>
-        <thead>
+    <div className="flex w-full flex-col justify-center px-4 pb-4">
+      <table className="w-full table-auto text-right">
+        {/* <thead>
           <tr>
-            <th>CEFR</th>
-            <th>Today</th>
-            <th>Total</th>
-            <th>Count</th>
+            <th></th>
+            <th>dnes</th>
+            <th>celkem</th>
           </tr>
-        </thead>
+        </thead> */}
         <tbody>
-          {userScore.map((item, index) => (
-            <tr key={index}>
-              <td>{item.cefr_level}</td>
-              <td>{item.startedCountToday}</td>
-              <td>{item.startedCount}</td>
-              <td>{item.Count}</td>
-            </tr>
-          ))}
+          <tr>
+            <td className="text-left font-bold">započato</td>
+            <td>{userScore.startedCountToday}</td>
+            <td>{userScore.startedCount}</td>
+          </tr>
+          <tr>
+            <td className="text-left font-bold">naučeno</td>
+            <td>{userScore.learnedCountToday}</td>
+            <td>{userScore.learnedCount}</td>
+          </tr>
         </tbody>
       </table>
     </div>
