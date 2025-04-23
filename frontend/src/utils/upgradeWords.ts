@@ -1,6 +1,8 @@
 import { WordProgress } from '../../../shared/types/dataTypes';
 
-export async function upgradeWords(words: WordProgress[]): Promise<boolean> {
+export async function endPracticeSession(
+  words: WordProgress[]
+): Promise<boolean> {
   const API_PATH = `http://localhost:3000/api/words`;
 
   try {

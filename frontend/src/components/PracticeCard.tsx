@@ -9,7 +9,7 @@ import { fetchWithAuth } from '../utils/firebase.utils';
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { WordTransfer, WordPractice } from '../../../shared/types/dataTypes';
-import { upgradeWords } from '../utils/upgradeWords';
+import { endPracticeSession } from '../utils/upgradeWords';
 import RoundButton from './RoundButton';
 
 export default function PracticeCard() {
@@ -43,53 +43,52 @@ export default function PracticeCard() {
     fetchAndStoreWords();
   }, []);
 
-  useEffect(() => {
-    if (wordArray.length > 0) {
-      const doneLength = wordArray.filter((word) => word.done).length;
-      setDoneCount(doneLength);
+  if (wordArray.length === 0) {
+    return <p>No words to practice</p>;
+  }
 
-      if (doneLength >= wordArray.length) {
-        upgradeWords(
-          wordArray.map((word) => ({
+  function changeWordProgress(progress: number, done: boolean) {
+    setWordArray((prevWordArray) => {
+      const updatedWordArray = [...prevWordArray];
+      updatedWordArray[currentIndex] = {
+        ...updatedWordArray[currentIndex],
+        progress: progress,
+        done: done,
+      };
+      prepareNextWord(updatedWordArray);
+      return updatedWordArray;
+    });
+  }
+
+  function prepareNextWord(updatedWordArray = wordArray) {
+    if (updatedWordArray.length > 0) {
+      const doneLength = updatedWordArray.filter((word) => word.done).length;
+
+      if (doneLength >= updatedWordArray.length) {
+        endPracticeSession(
+          updatedWordArray.map((word) => ({
             id: word.id,
             progress: word.progress,
           }))
         );
         setWordArray([]);
-        // navigate('/userDashboard');
-      } else if (wordArray[currentIndex]?.done) {
-        setCurrentIndex((prevIndex) => (prevIndex + 1) % wordArray.length);
+        navigate('/userDashboard');
+        return;
       }
 
-      setDirection(wordArray[currentIndex]?.progress % 2 === 0);
+      setDoneCount(doneLength);
+      let newIndex = currentIndex;
+      do {
+        newIndex = (newIndex + 1) % updatedWordArray.length;
+      } while (updatedWordArray[newIndex]?.done);
+      setCurrentIndex(newIndex);
+      setDirection(updatedWordArray[newIndex]?.progress % 2 === 0);
       setRevealed(false);
     }
-  }, [wordArray, currentIndex]);
-
-  if (wordArray.length === 0) {
-    return <p>No words to practice</p>;
-  }
-
-  function increaseCurrentIndexByOne() {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % wordArray.length);
-  }
-
-  /**
-   * Change word progress and done status
-   */
-  function changeWordProgress(progress: number, done: boolean) {
-    const updatedWordArray = [...wordArray];
-    updatedWordArray[currentIndex] = {
-      ...updatedWordArray[currentIndex],
-      progress: progress,
-      done: done,
-    };
-    setWordArray(updatedWordArray);
   }
 
   function handleSkip() {
     changeWordProgress(100, true);
-    increaseCurrentIndexByOne();
   }
 
   function handleCard() {
@@ -100,13 +99,11 @@ export default function PracticeCard() {
   function handlePlus() {
     const newProgress = wordArray[currentIndex].progress + 1;
     changeWordProgress(newProgress, true);
-    increaseCurrentIndexByOne();
   }
 
   function handleMinus() {
     const newProgress = Math.max(wordArray[currentIndex].progress - 2, 0);
     changeWordProgress(newProgress, false);
-    increaseCurrentIndexByOne();
   }
 
   function handleAudio() {
