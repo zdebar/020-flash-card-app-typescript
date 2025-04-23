@@ -8,11 +8,12 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 export default function Button({
   children,
   isActive = true,
+  className,
   ...props
 }: ButtonProps) {
   return (
     <button
-      className={`my-2 flex h-10 w-full items-center justify-center rounded-md ${
+      className={`my-2 flex h-10 w-full items-center justify-center ${className} ${
         isActive
           ? 'color-primary color-primary-hover'
           : 'color-secondary shadow-none'

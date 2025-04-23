@@ -16,14 +16,14 @@ export default function RectangularButton({
 }: ButtonProps) {
   return disabled ? (
     <div
-      className={`color-secondary my-2 flex h-12 w-full items-center justify-center rounded-md ${className}`}
+      className={`color-secondary my-2 flex h-10 w-full items-center justify-center rounded-md ${className}`}
     >
       {children}
     </div>
   ) : (
     <NavLink to={to} className={className}>
       <button
-        className={`color-primary color-primary-hover my-2 flex h-12 w-full items-center justify-center rounded-md ${className}`}
+        className={`color-primary color-primary-hover my-2 flex h-10 w-full items-center justify-center rounded-md ${className}`}
       >
         {children}
       </button>

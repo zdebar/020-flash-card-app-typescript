@@ -8,10 +8,15 @@ import {
 import { fetchWithAuth } from '../utils/firebase.utils';
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { WordTransfer, WordPractice } from '../../../shared/types/dataTypes';
-import { endPracticeSession } from '../utils/upgradeWords';
-import RoundButton from './RoundButton';
+import {
+  WordTransfer,
+  WordPractice,
+  Note,
+} from '../../../shared/types/dataTypes';
+import { postWords } from '../utils/postWords.utils';
 import { supabase } from '../utils/supabase.utils';
+import NoteCard from './NoteCard';
+import { useUser } from '../hooks/useUser';
 
 export default function PracticeCard() {
   const [wordArray, setWordArray] = useState<WordPractice[]>([]);
@@ -20,6 +25,10 @@ export default function PracticeCard() {
   const [count, setCount] = useState(0);
   const [direction, setDirection] = useState(true); // true = czech to english, false = english to czech
   const [revealed, setRevealed] = useState(false);
+  const [showNoteCard, setShowNoteCard] = useState(false);
+  const [navigateToDashboard, setNavigateToDashboard] = useState(false);
+  const { setUserScore } = useUser();
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -63,6 +72,12 @@ export default function PracticeCard() {
 
     fetchAndStoreWords();
   }, []);
+
+  useEffect(() => {
+    if (navigateToDashboard) {
+      navigate('/userDashboard');
+    }
+  }, [navigateToDashboard, navigate]);
 
   const playAudio = useCallback(async () => {
     if (wordArray[currentIndex]?.audio) {
@@ -111,8 +126,9 @@ export default function PracticeCard() {
   }, [wordArray, currentIndex]);
 
   useEffect(() => {
+    // TODO: Spouští se i na konci když nemá
     if (!direction) {
-      setTimeout(() => playAudio(), 200);
+      setTimeout(() => playAudio(), 100);
     }
   }, [direction, playAudio]);
 
@@ -138,14 +154,20 @@ export default function PracticeCard() {
       const doneLength = updatedWordArray.filter((word) => word.done).length;
 
       if (doneLength >= updatedWordArray.length) {
-        endPracticeSession(
+        setWordArray([]); // Clear the word array immediately
+        setNavigateToDashboard(true); // Trigger navigation immediately
+
+        // Post words in the background
+        postWords(
           updatedWordArray.map((word) => ({
             id: word.id,
             progress: word.progress,
-          }))
-        );
-        setWordArray([]);
-        navigate('/userDashboard');
+          })),
+          setUserScore
+        ).catch((error) => {
+          console.error('Error posting words:', error);
+        });
+
         return;
       }
 
@@ -166,7 +188,7 @@ export default function PracticeCard() {
 
   function handleCard() {
     setRevealed(true);
-    playAudio();
+    if (direction) playAudio();
   }
 
   function handlePlus() {
@@ -183,7 +205,34 @@ export default function PracticeCard() {
     playAudio();
   }
 
-  function handleNote() {}
+  function handleNote() {
+    setShowNoteCard(true);
+  }
+
+  function handleNoteClose() {
+    setShowNoteCard(false);
+  }
+
+  async function handleNoteSend(note: Note) {
+    try {
+      const response = await fetchWithAuth(`http://localhost:3000/api/notes`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(note),
+      });
+
+      if (!response.ok) {
+        console.error('Failed to send note:', response.statusText);
+      } else {
+        console.log('Note sent successfully:', note);
+      }
+    } catch (error) {
+      console.error('Error sending note:', error);
+    }
+    setShowNoteCard(false);
+  }
 
   return (
     <div className="flex h-120 w-[320px] flex-col justify-between">
@@ -198,14 +247,14 @@ export default function PracticeCard() {
         <button
           name="card"
           onClick={!revealed ? handleCard : undefined}
-          className={`color-secondary flex h-[150px] w-full flex-col items-center justify-evenly py-6 ${
+          className={`color-secondary flex h-[150px] w-full flex-col justify-start py-2 ${
             !revealed ? 'color-secondary-hover' : 'shadow-none'
           } `}
         >
           <p className="flex w-full justify-end pr-4 text-sm">
             {doneCount} / {count}
           </p>
-          <p className="font-bold">
+          <p className="pt-4 font-bold">
             {direction || revealed ? wordArray[currentIndex].czech : undefined}
           </p>
           <>
@@ -219,7 +268,7 @@ export default function PracticeCard() {
           <button
             name="minus"
             onClick={revealed ? handleMinus : undefined}
-            className={`color-secondary flex h-12 w-full items-center justify-center rounded-bl-md ${
+            className={`color-secondary flex h-12 w-full items-center justify-center ${
               revealed ? 'color-secondary-hover' : 'shadow-none'
             }`}
           >
@@ -228,7 +277,7 @@ export default function PracticeCard() {
           <button
             name="plus"
             onClick={revealed ? handlePlus : undefined}
-            className={`flex h-12 w-full items-center justify-center rounded-br-md ${
+            className={`flex h-12 w-full items-center justify-center ${
               revealed
                 ? 'color-primary color-primary-hover'
                 : 'color-secondary shadow-none'
@@ -250,10 +299,20 @@ export default function PracticeCard() {
         </button>
       </div>
       <div className="flex justify-end p-4">
-        <RoundButton onClick={handleNote}>
+        <button
+          onClick={handleNote}
+          className="color-secondary color-secondary-hover flex h-12 w-12 items-center justify-center rounded-full"
+        >
           <NoteIcon></NoteIcon>
-        </RoundButton>
+        </button>
       </div>
+      {showNoteCard && (
+        <NoteCard
+          onClose={handleNoteClose}
+          onSend={handleNoteSend}
+          wordId={wordArray[currentIndex].id}
+        />
+      )}
     </div>
   );
 }

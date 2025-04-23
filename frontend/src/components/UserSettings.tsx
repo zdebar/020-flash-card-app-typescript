@@ -26,7 +26,7 @@ export default function UserSettings() {
   return (
     <div className="w-full p-4">
       {userInfo && <h1>uživatel: {userInfo.name}</h1>}
-      <Button onClick={handleLogout} isActive={isActive}>
+      <Button onClick={handleLogout} isActive={isActive} className="rounded-md">
         Logout
       </Button>
     </div>

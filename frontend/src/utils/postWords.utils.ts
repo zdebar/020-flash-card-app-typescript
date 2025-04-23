@@ -1,16 +1,18 @@
 import { WordProgress } from '../../../shared/types/dataTypes';
+import { fetchWithAuth } from './firebase.utils';
+import { UserScore } from '../../../shared/types/dataTypes';
 
-export async function endPracticeSession(
-  words: WordProgress[]
+export async function postWords(
+  words: WordProgress[],
+  setScore: (score: UserScore) => void
 ): Promise<boolean> {
   const API_PATH = `http://localhost:3000/api/words`;
 
   try {
-    const response = await fetch(API_PATH, {
+    const response = await fetchWithAuth(API_PATH, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ words }),
-      credentials: 'include',
+      body: JSON.stringify(words),
     });
 
     if (!response.ok) {
@@ -28,7 +30,12 @@ export async function endPracticeSession(
 
     try {
       const data = await response.json();
-      console.log('Words upgraded successfully:', data);
+      console.log('Response data:', data); // Debugging line
+
+      if (data) {
+        setScore(data);
+      }
+
       return true;
     } catch {
       console.warn('Upgrade succeeded, but response could not be parsed.');

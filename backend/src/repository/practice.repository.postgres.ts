@@ -12,6 +12,7 @@ import {
   WordPractice,
   Note,
 } from "../../../shared/types/dataTypes";
+import logger from "../utils/logger.utils";
 
 /**
  * Return required words for the user from PostgreSQL database.
@@ -137,7 +138,7 @@ export async function insertNotePostgres(
   note: Note
 ): Promise<void> {
   const query = `
-    INSERT INTO word_notes (user_id, word_id, note)
+    INSERT INTO word_notes (user_id, word_id, user_note)
     VALUES ((SELECT id FROM users WHERE uid = $1), $2, $3)
   `;
 
