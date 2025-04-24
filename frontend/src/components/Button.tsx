@@ -13,7 +13,7 @@ export default function Button({
 }: ButtonProps) {
   return (
     <button
-      className={`my-2 flex h-10 w-full items-center justify-center ${className} ${
+      className={`flex h-10 w-full items-center justify-center ${className} ${
         isActive
           ? 'color-primary color-primary-hover'
           : 'color-secondary shadow-none'

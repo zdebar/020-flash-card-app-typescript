@@ -22,11 +22,6 @@ export interface WordTransfer extends WordProgress {
   learned: boolean;
 }
 
-export interface WordPractice extends WordTransfer {
-  // Word type used in practice card
-  done: boolean;
-}
-
 export interface WordUpdate extends WordProgress {
   // Prepared word data for update in database
   czech: string;

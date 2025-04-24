@@ -7,7 +7,10 @@ import { WordPractice } from "../../../shared/types/dataTypes";
 export function getNextAt(progress: number): string | null {
   const interval = config.SRS[progress - 1] ?? null;
   if (interval) {
-    return new Date(Date.now() + interval * 1000).toISOString();
+    const randomFactor =
+      1 + (Math.random() * 2 * config.srsRandomness - config.srsRandomness);
+    const randomizedInterval = Math.round(interval * randomFactor);
+    return new Date(Date.now() + randomizedInterval * 1000).toISOString();
   }
   return null;
 }

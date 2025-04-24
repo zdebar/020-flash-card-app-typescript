@@ -6,47 +6,43 @@ import {
   AudioIcon,
 } from './Icons';
 import { fetchWithAuth } from '../utils/firebase.utils';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  WordTransfer,
-  WordPractice,
-  Note,
-} from '../../../shared/types/dataTypes';
+import { WordTransfer, Note } from '../../../shared/types/dataTypes';
 import { postWords } from '../utils/postWords.utils';
 import { supabase } from '../utils/supabase.utils';
 import NoteCard from './NoteCard';
 import { useUser } from '../hooks/useUser';
+import config from '../config/config';
 
 export default function PracticeCard() {
-  const [wordArray, setWordArray] = useState<WordPractice[]>([]);
+  const [wordArray, setWordArray] = useState<WordTransfer[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [doneCount, setDoneCount] = useState(0);
-  const [count, setCount] = useState(0);
   const [direction, setDirection] = useState(true); // true = czech to english, false = english to czech
   const [revealed, setRevealed] = useState(false);
   const [showNoteCard, setShowNoteCard] = useState(false);
   const [navigateToDashboard, setNavigateToDashboard] = useState(false);
   const { setUserScore } = useUser();
-
+  const audioCacheRef = useRef<Map<string, HTMLAudioElement>>(new Map()); // Store Audio objects
   const navigate = useNavigate();
+
+  function saveAudioToRef(audioPath: string, audioBlob: Blob | MediaSource) {
+    const audioUrl = URL.createObjectURL(audioBlob);
+    const audio = new Audio(audioUrl);
+    audioCacheRef.current.set(audioPath, audio);
+  }
 
   useEffect(() => {
     const fetchAndStoreWords = async () => {
       try {
-        const response = await fetchWithAuth(`http://localhost:3000/api/words`);
+        const response = await fetchWithAuth(`${config.Url}/api/words`);
         if (response.ok) {
           const words: WordTransfer[] = await response.json();
-          const wordsWithDone: WordPractice[] = words.map((word) => ({
-            ...word,
-            done: false,
-          }));
-          setCount(wordsWithDone.length);
-          setWordArray(wordsWithDone);
+          setWordArray(words);
 
-          // Pre-fetch and cache audio files
           const cache = await caches.open('audio-cache');
-          for (const word of wordsWithDone) {
+
+          for (const word of words) {
             if (word.audio) {
               const audioPath = word.audio;
               const cachedResponse = await cache.match(audioPath);
@@ -58,9 +54,15 @@ export default function PracticeCard() {
                 if (data.publicUrl) {
                   const response = await fetch(data.publicUrl);
                   if (response.ok) {
-                    cache.put(audioPath, response.clone());
+                    const clonedResponse = response.clone();
+                    const audioBlob = await response.blob();
+                    cache.put(audioPath, clonedResponse);
+                    saveAudioToRef(audioPath, audioBlob);
                   }
                 }
+              } else {
+                const audioBlob = await cachedResponse.blob();
+                saveAudioToRef(audioPath, audioBlob);
               }
             }
           }
@@ -71,6 +73,11 @@ export default function PracticeCard() {
     };
 
     fetchAndStoreWords();
+    const currentRef = audioCacheRef.current;
+
+    return () => {
+      currentRef.clear();
+    };
   }, []);
 
   useEffect(() => {
@@ -79,56 +86,25 @@ export default function PracticeCard() {
     }
   }, [navigateToDashboard, navigate]);
 
-  const playAudio = useCallback(async () => {
+  const playAudio = useCallback(() => {
     if (wordArray[currentIndex]?.audio) {
       const audioPath = wordArray[currentIndex].audio;
+      const audio = audioCacheRef.current.get(audioPath);
 
-      try {
-        // Open the browser cache
-        const cache = await caches.open('audio-cache');
-
-        // Check if the audio file is already cached
-        const cachedResponse = await cache.match(audioPath);
-        if (cachedResponse) {
-          const audioBlob = await cachedResponse.blob();
-          const audioUrl = URL.createObjectURL(audioBlob);
-          const audio = new Audio(audioUrl);
-          audio.play().catch((error) => {
-            console.error('Error playing cached audio:', error);
-          });
-          return;
-        }
-
-        // If not cached, fetch the audio file from Supabase
-        const { data } = supabase.storage
-          .from('audio-files')
-          .getPublicUrl(audioPath);
-
-        const audioUrl = data.publicUrl;
-
-        // Fetch the audio file and cache it
-        const response = await fetch(audioUrl);
-        if (response.ok) {
-          cache.put(audioPath, response.clone());
-          const audioBlob = await response.blob();
-          const audioUrl = URL.createObjectURL(audioBlob);
-          const audio = new Audio(audioUrl);
-          audio.play().catch((error) => {
-            console.error('Error playing audio:', error);
-          });
-        } else {
-          console.error('Failed to fetch audio file:', response.statusText);
-        }
-      } catch (error) {
-        console.error('Error fetching or playing audio:', error);
+      if (audio) {
+        audio.currentTime = 0;
+        audio.play().catch((error) => {
+          console.error('Error playing audio:', error);
+        });
+      } else {
+        console.error('Audio file not preloaded:', audioPath);
       }
     }
   }, [wordArray, currentIndex]);
 
   useEffect(() => {
-    // TODO: Spouští se i na konci když nemá
     if (!direction) {
-      setTimeout(() => playAudio(), 100);
+      setTimeout(() => playAudio(), 200);
     }
   }, [direction, playAudio]);
 
@@ -136,54 +112,43 @@ export default function PracticeCard() {
     return <p>No words to practice</p>;
   }
 
-  function changeWordProgress(progress: number, done: boolean) {
+  function updateWordProgressAndNavigate(progress: number) {
+    progress = Math.max(0, Math.min(progress, 100));
     setWordArray((prevWordArray) => {
       const updatedWordArray = [...prevWordArray];
       updatedWordArray[currentIndex] = {
         ...updatedWordArray[currentIndex],
         progress: progress,
-        done: done,
       };
-      prepareNextWord(updatedWordArray);
+
+      if (updatedWordArray.length > 0) {
+        if (currentIndex + 1 >= updatedWordArray.length) {
+          setWordArray([]);
+          setNavigateToDashboard(true);
+
+          postWords(
+            updatedWordArray.map((word) => ({
+              id: word.id,
+              progress: word.progress,
+            })),
+            setUserScore
+          ).catch((error) => {
+            console.error('Error posting words:', error);
+          });
+        } else {
+          const newIndex = currentIndex + 1;
+          setCurrentIndex(newIndex);
+          setDirection(updatedWordArray[newIndex]?.progress % 2 === 0);
+          setRevealed(false);
+        }
+      }
+
       return updatedWordArray;
     });
   }
 
-  function prepareNextWord(updatedWordArray = wordArray) {
-    if (updatedWordArray.length > 0) {
-      const doneLength = updatedWordArray.filter((word) => word.done).length;
-
-      if (doneLength >= updatedWordArray.length) {
-        setWordArray([]); // Clear the word array immediately
-        setNavigateToDashboard(true); // Trigger navigation immediately
-
-        // Post words in the background
-        postWords(
-          updatedWordArray.map((word) => ({
-            id: word.id,
-            progress: word.progress,
-          })),
-          setUserScore
-        ).catch((error) => {
-          console.error('Error posting words:', error);
-        });
-
-        return;
-      }
-
-      setDoneCount(doneLength);
-      let newIndex = currentIndex;
-      do {
-        newIndex = (newIndex + 1) % updatedWordArray.length;
-      } while (updatedWordArray[newIndex]?.done);
-      setCurrentIndex(newIndex);
-      setDirection(updatedWordArray[newIndex]?.progress % 2 === 0);
-      setRevealed(false);
-    }
-  }
-
   function handleSkip() {
-    changeWordProgress(100, true);
+    updateWordProgressAndNavigate(config.skipProgress);
   }
 
   function handleCard() {
@@ -192,13 +157,13 @@ export default function PracticeCard() {
   }
 
   function handlePlus() {
-    const newProgress = wordArray[currentIndex].progress + 1;
-    changeWordProgress(newProgress, true);
+    const newProgress = wordArray[currentIndex].progress + config.plusProgress;
+    updateWordProgressAndNavigate(newProgress);
   }
 
   function handleMinus() {
-    const newProgress = Math.max(wordArray[currentIndex].progress - 2, 0);
-    changeWordProgress(newProgress, false);
+    const newProgress = wordArray[currentIndex].progress + config.minusProgress;
+    updateWordProgressAndNavigate(newProgress);
   }
 
   function handleAudio() {
@@ -247,22 +212,23 @@ export default function PracticeCard() {
         <button
           name="card"
           onClick={!revealed ? handleCard : undefined}
-          className={`color-secondary flex h-[150px] w-full flex-col justify-start py-2 ${
+          className={`color-secondary flex h-[150px] w-full flex-col justify-between py-3 ${
             !revealed ? 'color-secondary-hover' : 'shadow-none'
           } `}
         >
           <p className="flex w-full justify-end pr-4 text-sm">
-            {doneCount} / {count}
+            {currentIndex + 1} / {wordArray.length}
           </p>
-          <p className="pt-4 font-bold">
+          <p className="pt-1 font-bold">
             {direction || revealed ? wordArray[currentIndex].czech : undefined}
           </p>
-          <>
-            <p>{revealed ? wordArray[currentIndex]?.english : '\u00A0'}</p>
-            <p>
-              {revealed ? wordArray[currentIndex]?.pronunciation : '\u00A0'}
-            </p>
-          </>
+          <p>{revealed ? wordArray[currentIndex]?.english : '\u00A0'}</p>
+          <p className="pb-1">
+            {revealed ? wordArray[currentIndex]?.pronunciation : '\u00A0'}
+          </p>
+          <p className="flex w-full justify-start pl-6 text-sm">
+            {revealed ? wordArray[currentIndex]?.progress : '\u00A0'}
+          </p>
         </button>
         <div className="my-1 grid h-12 w-full grid-cols-2 gap-1">
           <button
@@ -277,10 +243,8 @@ export default function PracticeCard() {
           <button
             name="plus"
             onClick={revealed ? handlePlus : undefined}
-            className={`flex h-12 w-full items-center justify-center ${
-              revealed
-                ? 'color-primary color-primary-hover'
-                : 'color-secondary shadow-none'
+            className={`color-secondary flex h-12 w-full items-center justify-center ${
+              revealed ? 'color-secondary-hover' : 'shadow-none'
             }`}
           >
             <PlusIcon></PlusIcon>

@@ -3,6 +3,7 @@ import { useUser } from '../hooks/useUser';
 import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { fetchWithAuth } from '../utils/firebase.utils';
 import Button from './Button';
+import config from '../config/config';
 
 export default function LoginCard() {
   const { setUserInfo, setUserSettings, setUserScore, setLoading } = useUser();
@@ -16,7 +17,7 @@ export default function LoginCard() {
       setLoading(true);
       await signInWithPopup(auth, provider);
 
-      const response = await fetchWithAuth('http://localhost:3000/api/users');
+      const response = await fetchWithAuth(`${config.Url}/api/users`);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

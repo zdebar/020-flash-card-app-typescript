@@ -9,7 +9,7 @@ import {
   updateWordsPostgres,
   getScorePostgres,
 } from "../repository/practice.repository.postgres";
-import { addAudioPathsToWords } from "../utils/progress.utils";
+import { addAudioPathsToWords } from "../utils/update.utils";
 
 /**
  * Gets a list of words for a given user and language ID from the database.

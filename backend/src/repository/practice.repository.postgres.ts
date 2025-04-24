@@ -1,9 +1,5 @@
 import { PostgresClient } from "../types/dataTypes";
-import {
-  getNextAt,
-  getLearnedAt,
-  getMasteredAt,
-} from "../utils/progress.utils";
+import { getNextAt, getLearnedAt, getMasteredAt } from "../utils/update.utils";
 import { withDbClient } from "../utils/database.utils";
 import config from "../config/config";
 import {
@@ -41,7 +37,7 @@ export async function getWordsPostgres(
         WHEN uw.progress > 0 THEN 1
         ELSE 2
       END ASC,
-      w.item_order ASC
+      uw.next_at ASC NULLS FIRST
     LIMIT $2;
   `;
 

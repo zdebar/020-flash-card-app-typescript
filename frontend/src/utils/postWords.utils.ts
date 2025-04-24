@@ -1,12 +1,13 @@
 import { WordProgress } from '../../../shared/types/dataTypes';
 import { fetchWithAuth } from './firebase.utils';
 import { UserScore } from '../../../shared/types/dataTypes';
+import config from '../config/config';
 
 export async function postWords(
   words: WordProgress[],
   setScore: (score: UserScore) => void
 ): Promise<boolean> {
-  const API_PATH = `http://localhost:3000/api/words`;
+  const API_PATH = `${config.Url}/api/words`;
 
   try {
     const response = await fetchWithAuth(API_PATH, {

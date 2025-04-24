@@ -8,6 +8,7 @@ import {
 import { onAuthStateChanged } from 'firebase/auth';
 import { fetchWithAuth } from '../utils/firebase.utils';
 import { auth } from '../config/firebase.config';
+import config from '../config/config';
 
 export function UserProvider({ children }: { children: ReactNode }) {
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
@@ -18,7 +19,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const fetchUserPreferences = async () => {
       try {
-        const response = await fetchWithAuth('http://localhost:3000/api/users');
+        const response = await fetchWithAuth(`${config.Url}/api/users`);
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
