@@ -8,10 +8,6 @@ export default function UserDashboard() {
         <RectangularButton to="/practice">Slovíčka</RectangularButton>
         <Dashboard></Dashboard>
       </div>
-      {/* <div className="color-secondary w-full rounded-md">
-        <RectangularButton to="/grammar">Gramatika</RectangularButton>
-        <Dashboard></Dashboard>
-      </div> */}
     </div>
   );
 }

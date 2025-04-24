@@ -12,7 +12,6 @@ import {
   WordPractice,
   Note,
 } from "../../../shared/types/dataTypes";
-import logger from "../utils/logger.utils";
 
 /**
  * Return required words for the user from PostgreSQL database.

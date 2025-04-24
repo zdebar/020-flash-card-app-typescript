@@ -28,8 +28,7 @@ export async function getUserController(
       userScore,
     });
   } catch (error) {
-    console.error("Error in getUserController:", error);
-    res.status(500).send("Internal Server Error");
+    next(error);
   }
 }
 

@@ -16,7 +16,7 @@ export function getNextAt(progress: number): string | null {
  * Returns the learned date if the progress is equal to the learnedAt threshold.
  */
 export function getLearnedAt(progress: number): string | null {
-  if (progress === config.learnedAt) {
+  if (progress >= config.learnedAt) {
     return new Date(Date.now()).toISOString();
   }
   return null;
