@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { Response, Request, NextFunction } from "express";
 import { getUserService } from "../services/user.service";
 import { postgresDBPool } from "../config/database.config.postgres";
 import { UserSettings, UserScore } from "../../../shared/types/dataTypes";
@@ -13,7 +13,7 @@ export async function getUserController(
   next: NextFunction
 ): Promise<void> {
   try {
-    const uid: string = req.user.uid;
+    const uid: string = (req as any).user.uid;
     const {
       userSettings,
       userScore,
@@ -38,7 +38,7 @@ export async function updateUserController(
   next: Function
 ): Promise<void> {
   try {
-    const uid: string = req.user.uid;
+    const uid: string = (req as any).user.uid;
     const userSettings: UserSettings = req.body as UserSettings;
     const userUpdated: UserSettings = await updateUserPostgres(
       postgresDBPool,
