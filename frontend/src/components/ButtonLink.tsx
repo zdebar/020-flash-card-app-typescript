@@ -8,7 +8,7 @@ type ButtonProps = {
   disabled?: boolean;
 };
 
-export default function RectangularButton({
+export default function ButtonLink({
   children,
   to,
   className = '',

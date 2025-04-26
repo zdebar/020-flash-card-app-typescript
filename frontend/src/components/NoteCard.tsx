@@ -24,7 +24,7 @@ export default function NoteCard({ onClose, onSend, wordId }: NoteCardProps) {
   };
 
   return (
-    <div className="color-secondary absolute top-[290px] left-1/2 z-50 flex w-[320px] -translate-x-1/2 flex-col justify-end gap-1 rounded-b-md p-1">
+    <div className="color-secondary absolute top-[285px] left-1/2 z-50 flex w-[320px] -translate-x-1/2 flex-col justify-end gap-1 rounded-b-md p-1">
       <textarea
         value={note}
         onChange={(e) => setNote(e.target.value)}

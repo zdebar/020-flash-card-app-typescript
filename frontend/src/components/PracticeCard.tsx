@@ -14,23 +14,27 @@ import { supabase } from '../utils/supabase.utils';
 import NoteCard from './NoteCard';
 import { useUser } from '../hooks/useUser';
 import config from '../config/config';
+import ButtonOnClick from './ButtonOnClick';
 
 export default function PracticeCard() {
   const [wordArray, setWordArray] = useState<WordTransfer[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [direction, setDirection] = useState(true); // true = czech to english, false = english to czech
+  const [direction, setDirection] = useState(false); // true = czech to english, false = english to czech
   const [revealed, setRevealed] = useState(false);
   const [showNoteCard, setShowNoteCard] = useState(false);
   const [navigateToDashboard, setNavigateToDashboard] = useState(false);
   const { setUserScore } = useUser();
-  const audioCacheRef = useRef<Map<string, HTMLAudioElement>>(new Map()); // Store Audio objects
+  const audioCacheRef = useRef<Map<string, HTMLAudioElement>>(new Map());
   const navigate = useNavigate();
 
-  function saveAudioToRef(audioPath: string, audioBlob: Blob | MediaSource) {
-    const audioUrl = URL.createObjectURL(audioBlob);
-    const audio = new Audio(audioUrl);
-    audioCacheRef.current.set(audioPath, audio);
-  }
+  const saveAudioToUseRef = useCallback(
+    (audioPath: string, audioBlob: Blob | MediaSource) => {
+      const audioUrl = URL.createObjectURL(audioBlob);
+      const audio = new Audio(audioUrl);
+      audioCacheRef.current.set(audioPath, audio);
+    },
+    [audioCacheRef]
+  );
 
   useEffect(() => {
     const fetchAndStoreWords = async () => {
@@ -39,6 +43,7 @@ export default function PracticeCard() {
         if (response.ok) {
           const words: WordTransfer[] = await response.json();
           setWordArray(words);
+          // setDirection(words[0]?.progress % 2 === 0);
 
           const cache = await caches.open('audio-cache');
 
@@ -57,12 +62,12 @@ export default function PracticeCard() {
                     const clonedResponse = response.clone();
                     const audioBlob = await response.blob();
                     cache.put(audioPath, clonedResponse);
-                    saveAudioToRef(audioPath, audioBlob);
+                    saveAudioToUseRef(audioPath, audioBlob);
                   }
                 }
               } else {
                 const audioBlob = await cachedResponse.blob();
-                saveAudioToRef(audioPath, audioBlob);
+                saveAudioToUseRef(audioPath, audioBlob);
               }
             }
           }
@@ -78,7 +83,7 @@ export default function PracticeCard() {
     return () => {
       currentRef.clear();
     };
-  }, []);
+  }, [saveAudioToUseRef]);
 
   useEffect(() => {
     if (navigateToDashboard) {
@@ -104,7 +109,7 @@ export default function PracticeCard() {
 
   useEffect(() => {
     if (!direction) {
-      setTimeout(() => playAudio(), 200);
+      setTimeout(() => playAudio(), 100);
     }
   }, [direction, playAudio]);
 
@@ -113,7 +118,7 @@ export default function PracticeCard() {
   }
 
   function updateWordProgressAndNavigate(progress: number) {
-    progress = Math.max(0, Math.min(progress, 100));
+    progress = Math.max(1, Math.min(progress, 100));
     setWordArray((prevWordArray) => {
       const updatedWordArray = [...prevWordArray];
       updatedWordArray[currentIndex] = {
@@ -200,20 +205,21 @@ export default function PracticeCard() {
   }
 
   return (
-    <div className="flex h-120 w-[320px] flex-col justify-between">
-      <div className="">
-        <button
-          name="skip"
+    <div className="w-[320px]">
+      <div className="flex flex-col gap-1">
+        <ButtonOnClick
           onClick={handleSkip}
-          className="color-secondary color-secondary-hover my-1 flex h-12 w-full items-center justify-center rounded-tr-md"
+          className={`color-secondary color-secondary-hover rounded-tr-md`}
         >
           <SlashBookmarkIcon></SlashBookmarkIcon>
-        </button>
+        </ButtonOnClick>
         <button
           name="card"
           onClick={!revealed ? handleCard : undefined}
           className={`color-secondary flex h-[150px] w-full flex-col justify-between py-3 ${
-            !revealed ? 'color-secondary-hover' : 'shadow-none'
+            !revealed
+              ? 'color-secondary-hover'
+              : 'color-secondary-disabled shadow-none'
           } `}
         >
           <p className="flex w-full justify-end pr-4 text-sm">
@@ -230,39 +236,35 @@ export default function PracticeCard() {
             {revealed ? wordArray[currentIndex]?.progress : '\u00A0'}
           </p>
         </button>
-        <div className="my-1 grid h-12 w-full grid-cols-2 gap-1">
-          <button
-            name="minus"
-            onClick={revealed ? handleMinus : undefined}
-            className={`color-secondary flex h-12 w-full items-center justify-center ${
-              revealed ? 'color-secondary-hover' : 'shadow-none'
-            }`}
+        <div className="flex w-full gap-1">
+          <ButtonOnClick
+            onClick={handleMinus}
+            disabled={!revealed}
+            className={`color-secondary ${revealed ? 'color-secondary-hover' : 'color-secondary-disabled shadow-none'}`}
           >
             <MinusIcon></MinusIcon>
-          </button>
-          <button
-            name="plus"
-            onClick={revealed ? handlePlus : undefined}
-            className={`color-secondary flex h-12 w-full items-center justify-center ${
-              revealed ? 'color-secondary-hover' : 'shadow-none'
-            }`}
+          </ButtonOnClick>
+          <ButtonOnClick
+            onClick={handlePlus}
+            disabled={!revealed}
+            className={`color-secondary ${revealed ? 'color-secondary-hover' : 'color-secondary-disabled shadow-none'}`}
           >
             <PlusIcon></PlusIcon>
-          </button>
+          </ButtonOnClick>
         </div>
-        <button
-          name="audio"
-          onClick={!direction || revealed ? handleAudio : undefined}
-          className={`color-primary flex h-12 w-full items-center justify-center rounded-b-md ${
+        <ButtonOnClick
+          onClick={handleAudio}
+          disabled={direction && !revealed}
+          className={`rounded-b-md ${
             !direction || revealed
               ? 'color-primary color-primary-hover'
-              : 'color-secondary shadow-none'
-          } `}
+              : 'color-secondary-disabled shadow-none'
+          }`}
         >
           <AudioIcon></AudioIcon>
-        </button>
+        </ButtonOnClick>
       </div>
-      <div className="flex justify-end p-4">
+      <div className="mt-20 flex justify-end p-4">
         <button
           onClick={handleNote}
           className="color-secondary color-secondary-hover flex h-12 w-12 items-center justify-center rounded-full"

@@ -5,8 +5,8 @@ import config from "../config/config";
 import {
   UserScore,
   WordProgress,
-  WordPractice,
   Note,
+  WordTransfer,
 } from "../../../shared/types/dataTypes";
 
 /**
@@ -15,7 +15,7 @@ import {
 export async function getWordsPostgres(
   db: PostgresClient,
   uid: string
-): Promise<WordPractice[]> {
+): Promise<WordTransfer[]> {
   const numWords: number = config.block;
   const query = `
     SELECT 

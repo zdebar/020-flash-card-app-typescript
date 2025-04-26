@@ -31,7 +31,6 @@ export async function postWords(
 
     try {
       const data = await response.json();
-      console.log('Response data:', data); // Debugging line
 
       if (data) {
         setScore(data);

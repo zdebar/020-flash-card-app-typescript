@@ -4,7 +4,7 @@ import {
   WordProgress,
   Note,
   UserScore,
-  WordPractice,
+  WordTransfer,
 } from "../../../shared/types/dataTypes";
 import {
   getWordsService,
@@ -24,7 +24,7 @@ export async function getWordsController(
   try {
     const uid: string = (req as any).user.uid;
 
-    const words: WordPractice[] = await getWordsService(postgresDBPool, uid);
+    const words: WordTransfer[] = await getWordsService(postgresDBPool, uid);
 
     res.status(200).json(words);
   } catch (err) {
