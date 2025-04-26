@@ -12,10 +12,10 @@ import {
 
 const apiRouter = express.Router();
 
-apiRouter.get("/users", authenticate, getUserController);
-apiRouter.post("/users", authenticate, updateUserController);
-apiRouter.get("/words", authenticate, getWordsController);
-apiRouter.post("/words", authenticate, updateWordsController);
-apiRouter.post("/notes", authenticate, insertNoteController);
+apiRouter.get("/users", authenticate, getUserController); // returns user settings and user score
+apiRouter.put("/users", authenticate, updateUserController); // post user settings
+apiRouter.get("/words", authenticate, getWordsController); // returns words for practice
+apiRouter.patch("/words", authenticate, updateWordsController); // update words after practice, returns user score
+apiRouter.post("/notes", authenticate, insertNoteController); // post notes for developers
 
 export default apiRouter;

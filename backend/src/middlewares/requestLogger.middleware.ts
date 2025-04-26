@@ -9,15 +9,17 @@ export default function requestLoggerMiddleware(
 ): void {
   const { method, url } = req;
   const startTime = Date.now();
+  const clientIp = req.ip;
 
   // Log the request details
-  logger.info(`Incoming request: ${method} ${url}`);
+  logger.info(`Incoming request: ${method} ${url} from ${clientIp}`);
 
   // Log the response details after the request is handled
   res.on("finish", () => {
     const responseTime = Date.now() - startTime;
+    const contentLength = res.get("Content-Length") || "0";
     logger.info(
-      `Response: ${method} ${url} ${res.statusCode} - ${responseTime}ms`
+      `Response: ${method} ${url} ${res.statusCode} - ${responseTime}ms - ${contentLength} bytes`
     );
   });
 

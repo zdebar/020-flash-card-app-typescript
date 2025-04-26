@@ -1,5 +1,5 @@
 import { PostgresClient } from "../types/dataTypes";
-import { getNextAt, getLearnedAt, getMasteredAt } from "../utils/update.utils";
+import { getNextAt, getMasteredAt } from "../utils/update.utils";
 import { withDbClient } from "../utils/database.utils";
 import config from "../config/config";
 import {
@@ -25,12 +25,13 @@ export async function getWordsPostgres(
       w.pronunciation,
       w.audio,
       COALESCE(uw.progress,0) AS progress,
-      uw.started_at IS NOT NULL AS started,
-      uw.learned_at IS NOT NULL AS learned      
+      uw.started_at IS NOT NULL AS started,  
+      uw.skipped AS skipped
     FROM words w
     LEFT JOIN user_words uw ON w.id = uw.word_id AND uw.user_id = (SELECT id FROM users WHERE uid = $1)
     WHERE uw.mastered_at IS NULL
       AND w.category = 'word'
+      AND uw.skipped = false
       AND (uw.next_at IS NULL OR uw.next_at < NOW())
     ORDER BY 
       CASE 
@@ -61,7 +62,7 @@ export async function updateWordsPostgres(
     WITH user_id_cte AS (
       SELECT id AS user_id FROM users WHERE uid = $1
     )
-    INSERT INTO user_words (user_id, word_id, progress, next_at, learned_at, mastered_at)
+    INSERT INTO user_words (user_id, word_id, progress, next_at, mastered_at, skipped)
     VALUES 
     ${words
       .map(
@@ -75,16 +76,16 @@ export async function updateWordsPostgres(
     DO UPDATE SET 
       progress = EXCLUDED.progress, 
       next_at = EXCLUDED.next_at, 
-      learned_at = CASE WHEN user_words.learned_at IS NULL AND EXCLUDED.learned_at IS NOT NULL THEN EXCLUDED.learned_at ELSE user_words.learned_at END, 
-      mastered_at = CASE WHEN user_words.mastered_at IS NULL AND EXCLUDED.mastered_at IS NOT NULL THEN EXCLUDED.mastered_at ELSE user_words.mastered_at END;
+      mastered_at = CASE WHEN user_words.mastered_at IS NULL AND EXCLUDED.mastered_at IS NOT NULL THEN EXCLUDED.mastered_at ELSE user_words.mastered_at END,
+      skipped = EXCLUDED.skipped;
   `;
 
   words.forEach((word) => {
     values.push(
       word.id,
       word.progress,
+      word.skipped,
       getNextAt(word.progress),
-      getLearnedAt(word.progress),
       getMasteredAt(word.progress)
     );
   });
@@ -99,27 +100,28 @@ export async function updateWordsPostgres(
  */
 export async function getScorePostgres(
   db: PostgresClient,
-  uid: string,
-  userTimezone: string = "Europe/Prague"
+  uid: string
 ): Promise<UserScore> {
   const query = `
+    WITH user_id_cte AS (
+      SELECT id AS user_id FROM users WHERE uid = $1
+    )
     SELECT 
-      COUNT(CASE WHEN uw.learned_at IS NOT NULL AND DATE(uw.learned_at AT TIME ZONE $2) = DATE(NOW() AT TIME ZONE $2) THEN 1 END) AS "learnedCountToday",
-      COUNT(CASE WHEN uw.learned_at IS NOT NULL THEN 1 END) AS "learnedCount",
-      COUNT(CASE WHEN uw.started_at IS NOT NULL AND DATE(uw.started_at AT TIME ZONE $2) = DATE(NOW() AT TIME ZONE $2) THEN 1 END) AS "startedCountToday",
-      COUNT(CASE WHEN uw.started_at IS NOT NULL THEN 1 END) AS "startedCount"
+      COUNT(CASE WHEN uw.started_at IS NOT NULL AND DATE(uw.started_at) = CURRENT_DATE THEN 1 END) AS "startedCountToday",
+      COUNT(CASE WHEN uw.started_at IS NOT NULL THEN 1 END) AS "startedCount",
+      dp.progress_sum AS "progressToday"
     FROM words w
-    LEFT JOIN user_words uw ON w.id = uw.word_id AND uw.user_id = (SELECT id FROM users WHERE uid = $1)
+    LEFT JOIN user_words uw ON w.id = uw.word_id AND uw.user_id = (SELECT user_id FROM user_id_cte)
+    LEFT JOIN daily_progress dp ON dp.user_id = (SELECT user_id FROM user_id_cte) AND dp.progress_date = CURRENT_DATE
   `;
 
   return await withDbClient(db, async (client) => {
-    const result = await client.query(query, [uid, userTimezone]);
+    const result = await client.query(query, [uid]);
     const row = result.rows[0];
     return {
-      learnedCountToday: parseInt(row.learnedCountToday, 10),
-      learnedCount: parseInt(row.learnedCount, 10),
       startedCountToday: parseInt(row.startedCountToday, 10),
       startedCount: parseInt(row.startedCount, 10),
+      progressToday: row.progressSum || 0, // Default to 0 if no record exists
     };
   });
 }

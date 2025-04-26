@@ -19,7 +19,6 @@ validateEnvVariables([
 
 const config = {
   block: 10, // The size of repetition block
-  learnedAt: 6, // Card learned at progress
   SRS: [
     0, // Precomputed repetition algorithm in seconds, should have 20 elements
     120, // 2m
@@ -31,9 +30,8 @@ const config = {
     345600, // 4d
     691200, // 8d
     1036800, // 12d
-    2073600, // 24d
   ],
-  srsRandomness: 0.2, // Randomness of SRS algorithm 0.2 (20%)
+  srsRandomness: 0.1, // Randomness of SRS algorithm 0.1 (10%); uniform distribution; to ensure that words are not repeated in blocks, but are are mixed out
 
   JWT_SECRET:
     process.env.NODE_ENV === "test" ? "test-password" : process.env.JWT_SECRET,

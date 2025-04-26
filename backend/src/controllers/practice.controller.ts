@@ -23,10 +23,12 @@ export async function getWordsController(
 ): Promise<void> {
   try {
     const uid: string = (req as any).user.uid;
-
     const words: WordTransfer[] = await getWordsService(postgresDBPool, uid);
 
-    res.status(200).json(words);
+    res.status(200).json({
+      message: "User words retrieved successfully.",
+      words,
+    });
   } catch (err) {
     next(err);
   }
@@ -50,7 +52,10 @@ export async function updateWordsController(
       words
     );
 
-    res.status(200).json(score);
+    res.status(200).json({
+      message: "User words updated successfully.",
+      score,
+    });
   } catch (err) {
     next(err);
   }
@@ -67,7 +72,9 @@ export async function insertNoteController(
 
     await insertNotePostgres(postgresDBPool, uid, note);
 
-    res.status(200).send("Note added successfully");
+    res.status(200).send({
+      message: "Note added successfully.",
+    });
   } catch (err) {
     next(err);
   }

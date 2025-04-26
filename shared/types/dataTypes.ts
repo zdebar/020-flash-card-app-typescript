@@ -10,6 +10,7 @@ export interface WordProgress {
   // Minimized word data send back from frontend
   id: number;
   progress: number;
+  skipped: boolean;
 }
 
 export interface WordTransfer extends WordProgress {
@@ -19,7 +20,6 @@ export interface WordTransfer extends WordProgress {
   pronunciation: string | null;
   audio: string | null;
   started: boolean;
-  learned: boolean;
 }
 
 export interface WordUpdate extends WordProgress {
@@ -66,10 +66,9 @@ export interface UserSettings {
 }
 
 export interface UserScore {
-  learnedCountToday: number;
-  learnedCount: number;
   startedCountToday: number;
   startedCount: number;
+  progressToday: number;
 }
 
 export class UserError extends Error {

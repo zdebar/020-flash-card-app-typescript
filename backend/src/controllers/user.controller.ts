@@ -1,11 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { getUserService } from "../services/user.service";
 import { postgresDBPool } from "../config/database.config.postgres";
-import {
-  UserSettings,
-  UserScore,
-  UserInfo,
-} from "../../../shared/types/dataTypes";
+import { UserSettings, UserScore } from "../../../shared/types/dataTypes";
 import { updateUserPostgres } from "../repository/user.repository.postgres";
 
 /**
@@ -15,15 +11,16 @@ export async function getUserController(
   req: Request,
   res: Response,
   next: NextFunction
-) {
+): Promise<void> {
   try {
-    const uid: string = (req as any).user.uid;
+    const uid: string = req.user.uid;
     const {
       userSettings,
       userScore,
     }: { userSettings: UserSettings; userScore: UserScore } =
       await getUserService(postgresDBPool, uid);
     res.status(200).json({
+      message: "User settings and score retrieved successfully.",
       userSettings,
       userScore,
     });
@@ -41,14 +38,17 @@ export async function updateUserController(
   next: Function
 ): Promise<void> {
   try {
-    const uid: string = (req as any).user.uid;
+    const uid: string = req.user.uid;
     const userSettings: UserSettings = req.body as UserSettings;
     const userUpdated: UserSettings = await updateUserPostgres(
       postgresDBPool,
       uid,
       userSettings
     );
-    res.json(userUpdated);
+    res.status(200).json({
+      message: "User settings updates successfully.",
+      userUpdated,
+    });
   } catch (err) {
     next(err);
   }

@@ -3,15 +3,16 @@ import cors from "cors";
 import helmet from "helmet";
 import apiRouter from "./routes/api.routes";
 import errorHandlerMiddleware from "./middlewares/errorHandler.middleware";
+import requestLoggerMiddleware from "./middlewares/requestLogger.middleware";
 import "./config/config";
 import { checkDatabaseConnection } from "./utils/database.utils";
-import path from "path";
 
 const PORT = process.env.BACKEND_PORT || 3000;
 const allowedOrigin = process.env.FRONTEND_URL || "http://localhost:5173";
 export const app = express();
 
 // Middleware
+app.use(requestLoggerMiddleware);
 app.use(
   cors({
     origin: allowedOrigin,
@@ -30,12 +31,6 @@ app.use(
 app.get("/", (req, res) => {
   res.send("Server running!");
 });
-
-// Static files
-app.use(
-  "/audio",
-  express.static(path.join(__dirname, "..", "..", "public", "audio"))
-);
 
 // Authentication Routes
 app.use("/api", apiRouter);

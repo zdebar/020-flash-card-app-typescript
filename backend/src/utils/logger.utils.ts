@@ -10,7 +10,12 @@ dotenv.config({ path: envPath });
 const logger = winston.createLogger({
   level: process.env.LOGGER_LEVEL || "info",
   format: combine(timestamp(), json()),
-  transports: [new winston.transports.Console()],
+  transports: [
+    new winston.transports.Console(),
+    new winston.transports.File({
+      filename: path.join(__dirname, "../../logs/app.log"),
+    }),
+  ],
 });
 
 export default logger;
