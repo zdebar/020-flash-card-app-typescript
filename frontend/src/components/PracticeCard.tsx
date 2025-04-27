@@ -14,8 +14,7 @@ import { supabase } from '../utils/supabase.utils';
 import NoteCard from './NoteCard';
 import { useUser } from '../hooks/useUser';
 import config from '../config/config';
-import PracticeButton from './common/PracticeButton';
-import RoundButtonOnClick from './common/RoundButtonOnClick';
+import Button from './common/Button';
 
 export default function PracticeCard() {
   const [wordArray, setWordArray] = useState<WordTransfer[]>([]);
@@ -126,12 +125,15 @@ export default function PracticeCard() {
     progressIncrement: number = 0,
     skipped: boolean = false
   ) {
-    progressIncrement = Math.max(1, Math.min(progressIncrement, 100));
+    const updatedProgress = Math.max(
+      1,
+      Math.min(wordArray[currentIndex].progress + progressIncrement, 100)
+    );
 
     const updatedWordArray = [...wordArray];
     updatedWordArray[currentIndex] = {
       ...updatedWordArray[currentIndex],
-      progress: wordArray[currentIndex].progress + progressIncrement,
+      progress: updatedProgress,
       skipped: skipped,
     };
 
@@ -215,12 +217,13 @@ export default function PracticeCard() {
   return (
     <div className="w-[320px]">
       <div className="flex flex-col gap-1">
-        <PracticeButton
+        <Button
           onClick={handleSkip}
-          className={`color-secondary color-secondary-hover rounded-tr-md`}
+          className={`rounded-tr-md`}
+          color="secondary"
         >
           <SlashBookmarkIcon></SlashBookmarkIcon>
-        </PracticeButton>
+        </Button>
         <button
           name="PracticeCard"
           onClick={!revealed ? handleCard : undefined}
@@ -245,37 +248,25 @@ export default function PracticeCard() {
           </p>
         </button>
         <div className="flex w-full gap-1">
-          <PracticeButton
-            onClick={handleMinus}
-            disabled={!revealed}
-            className={`color-secondary ${revealed ? 'color-secondary-hover' : 'color-secondary-disabled shadow-none'}`}
-          >
+          <Button onClick={handleMinus} isActive={revealed} color="secondary">
             <MinusIcon></MinusIcon>
-          </PracticeButton>
-          <PracticeButton
-            onClick={handlePlus}
-            disabled={!revealed}
-            className={`color-secondary ${revealed ? 'color-secondary-hover' : 'color-secondary-disabled shadow-none'}`}
-          >
+          </Button>
+          <Button onClick={handlePlus} isActive={revealed} color="secondary">
             <PlusIcon></PlusIcon>
-          </PracticeButton>
+          </Button>
         </div>
-        <PracticeButton
+        <Button
           onClick={handleAudio}
-          disabled={direction && !revealed}
-          className={`rounded-b-md ${
-            !direction || revealed
-              ? 'color-primary color-primary-hover'
-              : 'color-secondary-disabled shadow-none'
-          }`}
+          isActive={!direction || revealed}
+          className={`rounded-b-md`}
         >
           <AudioIcon></AudioIcon>
-        </PracticeButton>
+        </Button>
       </div>
       <div className="mt-20 flex justify-end p-4">
-        <RoundButtonOnClick onClick={handleNote}>
+        <Button onClick={handleNote} shape="round" color="secondary">
           <NoteIcon></NoteIcon>
-        </RoundButtonOnClick>
+        </Button>
       </div>
       {showNoteCard && (
         <NoteCard

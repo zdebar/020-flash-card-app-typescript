@@ -6,7 +6,7 @@ import { useUser } from './hooks/useUser';
 import PracticeCard from './components/PracticeCard';
 import UserSettingsCard from './components/UserSettingsCard';
 import UserDashboardCard from './components/UserDashboardCard';
-import RectangularButtonOnClick from './components/common/RectangularButtonOnClick';
+import Button from './components/common/Button';
 
 export default function App() {
   const { userInfo, loading } = useUser();
@@ -27,9 +27,9 @@ export default function App() {
                 </div>
               ) : (
                 <div className="w-full p-4">
-                  <RectangularButtonOnClick className="rounded-md">
+                  <Button className="rounded-md">
                     <Link to="/login">Přihlášení / Registrace</Link>
-                  </RectangularButtonOnClick>
+                  </Button>
                 </div>
               )
             }

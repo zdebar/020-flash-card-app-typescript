@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../hooks/useUser';
-import RectangularButtonOnClick from './common/RectangularButtonOnClick';
 import { getAuth, signOut } from 'firebase/auth';
+import Button from './common/Button';
 
 export default function UserSettingsCard() {
   const { userInfo, setUserInfo, setUserSettings, setUserScore, setLoading } =
@@ -25,9 +25,9 @@ export default function UserSettingsCard() {
   return (
     <div className="w-full p-4">
       {userInfo && <h1>uživatel: {userInfo.name}</h1>}
-      <RectangularButtonOnClick onClick={handleLogout} className="rounded-md">
+      <Button onClick={handleLogout} className="rounded-md">
         Logout
-      </RectangularButtonOnClick>
+      </Button>
     </div>
   );
 }

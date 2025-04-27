@@ -2,8 +2,8 @@ import { useNavigate } from 'react-router-dom';
 import { useUser } from '../hooks/useUser';
 import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { fetchWithAuth } from '../utils/firebase.utils';
-import RectangularButtonOnClick from './common/RectangularButtonOnClick';
 import config from '../config/config';
+import Button from './common/Button';
 
 export default function LoginCard() {
   const { setUserInfo, setUserSettings, setUserScore, setLoading } = useUser();
@@ -47,12 +47,9 @@ export default function LoginCard() {
 
   return (
     <div className="w-full p-4">
-      <RectangularButtonOnClick
-        onClick={handleGoogleLogin}
-        className="rounded-md"
-      >
+      <Button onClick={handleGoogleLogin} className="rounded-md">
         Google Login
-      </RectangularButtonOnClick>
+      </Button>
     </div>
   );
 }

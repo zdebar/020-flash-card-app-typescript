@@ -1,22 +1,26 @@
 import { ButtonHTMLAttributes, ReactNode } from 'react';
+import { buttonShapes, buttonColors } from './buttonStyles';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
   isActive?: boolean;
   className?: string;
+  color?: keyof typeof buttonColors;
+  shape?: keyof typeof buttonShapes;
 }
 
-export default function RectangularButtonOnClick({
+export default function Button({
   children,
   isActive = true,
   className = '',
+  shape = 'rectangular',
+  color = 'primary',
   ...props
 }: ButtonProps) {
-  const buttonClass = `flex items-center justify-center h-12 w-12 rounded-full ${className} ${
-    isActive
-      ? 'color-primary color-primary-hover'
-      : 'color-secondary-disabled shadow-none'
-  }`;
+  const shapeClass = buttonShapes[shape];
+  const colorClass = isActive ? buttonColors[color] : buttonColors.inactive;
+
+  const buttonClass = `flex items-center justify-center ${shapeClass} ${colorClass} ${className}`;
 
   return (
     <button
