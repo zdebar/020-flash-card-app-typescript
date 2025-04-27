@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Note } from '../../../shared/types/dataTypes';
-import Button from './common/Button';
+import RectangularButtonOnClick from './common/RectangularButtonOnClick';
 
 interface NoteCardProps {
   onClose: () => void;
@@ -33,12 +33,18 @@ export default function NoteCard({ onClose, onSend, wordId }: NoteCardProps) {
         className="h-32 w-full rounded-md border bg-white p-1"
       />
       <div className="flex w-full justify-between gap-1 p-0">
-        <Button onClick={onClose} className="rounded-l-md">
+        <RectangularButtonOnClick
+          onClick={onClose}
+          className="flex-grow rounded-l-md"
+        >
           Cancel
-        </Button>
-        <Button onClick={handleSend} className="rounded-r-md">
+        </RectangularButtonOnClick>
+        <RectangularButtonOnClick
+          onClick={handleSend}
+          className="flex-grow rounded-r-md"
+        >
           Send
-        </Button>
+        </RectangularButtonOnClick>
       </div>
     </div>
   );

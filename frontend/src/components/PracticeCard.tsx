@@ -15,7 +15,7 @@ import NoteCard from './NoteCard';
 import { useUser } from '../hooks/useUser';
 import config from '../config/config';
 import PracticeButton from './common/PracticeButton';
-import RoundButton from './common/RoundButton';
+import RoundButtonOnClick from './common/RoundButtonOnClick';
 
 export default function PracticeCard() {
   const [wordArray, setWordArray] = useState<WordTransfer[]>([]);
@@ -46,8 +46,7 @@ export default function PracticeCard() {
       try {
         const response = await fetchWithAuth(`${config.Url}/api/words`);
         if (response.ok) {
-          const responseJson = await response.json();
-          const words: WordTransfer[] = responseJson.words;
+          const { words }: { words: WordTransfer[] } = await response.json();
           setWordArray(words);
           setDirection(decideDirection(words, 0));
 
@@ -223,7 +222,7 @@ export default function PracticeCard() {
           <SlashBookmarkIcon></SlashBookmarkIcon>
         </PracticeButton>
         <button
-          name="card"
+          name="PracticeCard"
           onClick={!revealed ? handleCard : undefined}
           className={`color-secondary flex h-[150px] w-full flex-col justify-between py-3 ${
             !revealed
@@ -274,9 +273,9 @@ export default function PracticeCard() {
         </PracticeButton>
       </div>
       <div className="mt-20 flex justify-end p-4">
-        <RoundButton onClick={handleNote}>
+        <RoundButtonOnClick onClick={handleNote}>
           <NoteIcon></NoteIcon>
-        </RoundButton>
+        </RoundButtonOnClick>
       </div>
       {showNoteCard && (
         <NoteCard

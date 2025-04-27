@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useUser } from '../hooks/useUser';
 import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { fetchWithAuth } from '../utils/firebase.utils';
-import RectangularButton from './common/RectangularButton';
+import RectangularButtonOnClick from './common/RectangularButtonOnClick';
 import config from '../config/config';
 
 export default function LoginCard() {
@@ -47,9 +47,12 @@ export default function LoginCard() {
 
   return (
     <div className="w-full p-4">
-      <RectangularButton onClick={handleGoogleLogin} className="rounded-md">
+      <RectangularButtonOnClick
+        onClick={handleGoogleLogin}
+        className="rounded-md"
+      >
         Google Login
-      </RectangularButton>
+      </RectangularButtonOnClick>
     </div>
   );
 }

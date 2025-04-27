@@ -4,9 +4,9 @@ import LoginCard from './components/LoginCard';
 import { Routes, Route, Link } from 'react-router-dom';
 import { useUser } from './hooks/useUser';
 import PracticeCard from './components/PracticeCard';
-import UserSettings from './components/UserSettingsCard';
-import UserDashboard from './components/UserDashboard';
-import RectangularButton from './components/common/RectangularButton';
+import UserSettingsCard from './components/UserSettingsCard';
+import UserDashboardCard from './components/UserDashboardCard';
+import RectangularButtonOnClick from './components/common/RectangularButtonOnClick';
 
 export default function App() {
   const { userInfo, loading } = useUser();
@@ -27,17 +27,17 @@ export default function App() {
                 </div>
               ) : (
                 <div className="w-full p-4">
-                  <RectangularButton className="rounded-md">
+                  <RectangularButtonOnClick className="rounded-md">
                     <Link to="/login">Přihlášení / Registrace</Link>
-                  </RectangularButton>
+                  </RectangularButtonOnClick>
                 </div>
               )
             }
           />
           <Route path="/login" element={<LoginCard />} />
           <Route path="/practice" element={<PracticeCard />} />
-          <Route path="/userSettings" element={<UserSettings />} />
-          <Route path="/userDashboard" element={<UserDashboard />} />
+          <Route path="/userSettings" element={<UserSettingsCard />} />
+          <Route path="/userDashboard" element={<UserDashboardCard />} />
         </Routes>
       </div>
     </div>

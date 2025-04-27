@@ -1,13 +1,13 @@
 import Dashboard from './common/Dashboard';
-import RectangularButton from './common/RectangularButton';
+import RectangularButtonLink from './common/RectangularButtonLink';
 
-export default function UserDashboard() {
+export default function UserDashboardCard() {
   return (
     <div className="w-full p-4">
       <div className="color-secondary w-full rounded-md">
-        <RectangularButton to="/practice" className="rounded-md">
+        <RectangularButtonLink to="/practice" className="rounded-md">
           Slovíčka
-        </RectangularButton>
+        </RectangularButtonLink>
         <Dashboard></Dashboard>
       </div>
     </div>

@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import { UserIcon, HomeIcon, AcademicCapIcon } from './common/Icons';
-import RoundButton from './common/RoundButton';
+import RoundButtonLink from './common/RoundButtonLink';
 import { useUser } from '../hooks/useUser';
 
 export default function Header(): ReactNode {
@@ -8,16 +8,16 @@ export default function Header(): ReactNode {
 
   return (
     <header className="flex w-full justify-between p-4">
-      <RoundButton to="/">
+      <RoundButtonLink to="/">
         <HomeIcon />
-      </RoundButton>
+      </RoundButtonLink>
       <div className="flex gap-4">
-        <RoundButton to="/userDashboard" isActive={!!userInfo}>
+        <RoundButtonLink to="/userDashboard" isActive={!!userInfo}>
           <AcademicCapIcon />
-        </RoundButton>
-        <RoundButton to="/userSettings" isActive={!!userInfo}>
+        </RoundButtonLink>
+        <RoundButtonLink to="/userSettings" isActive={!!userInfo}>
           <UserIcon />
-        </RoundButton>
+        </RoundButtonLink>
       </div>
     </header>
   );
