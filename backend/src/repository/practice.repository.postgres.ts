@@ -26,13 +26,13 @@ export async function getWordsPostgres(
       w.audio,
       COALESCE(uw.progress,0) AS progress,
       uw.started_at IS NOT NULL AS started,  
-      uw.skipped AS skipped
+      uw.skipped
     FROM words w
     LEFT JOIN user_words uw ON w.id = uw.word_id AND uw.user_id = (SELECT id FROM users WHERE uid = $1)
     WHERE uw.mastered_at IS NULL
       AND w.category = 'word'
-      AND uw.skipped = false
-      AND (uw.next_at IS NULL OR uw.next_at < NOW())
+      AND COALESCE(uw.skipped, false) = false
+      AND (uw.next_at IS NULL OR uw.next_at < NOW() AT TIME ZONE 'UTC')
     ORDER BY 
       CASE 
         WHEN uw.progress > 0 THEN 1
@@ -56,42 +56,54 @@ export async function updateWordsPostgres(
   uid: string,
   words: WordProgress[]
 ): Promise<void> {
-  const values: unknown[] = [];
+  if (words.length === 0) {
+    return; // No words to update
+  }
+
+  // Prepare data for unnest
+  const wordIds = words.map((word) => word.id);
+  const progresses = words.map((word) => word.progress);
+  const nextAts = words.map((word) => getNextAt(word.progress) || null);
+  const masteredAts = words.map((word) => getMasteredAt(word.progress) || null);
+  const skippedFlags = words.map((word) => word.skipped);
 
   const query = `
     WITH user_id_cte AS (
       SELECT id AS user_id FROM users WHERE uid = $1
+    ),
+    word_data AS (
+      SELECT 
+        unnest($2::int[]) AS word_id,
+        unnest($3::int[]) AS progress,
+        unnest($4::timestamptz[]) AS next_at,
+        unnest($5::timestamptz[]) AS mastered_at,
+        unnest($6::boolean[]) AS skipped
     )
     INSERT INTO user_words (user_id, word_id, progress, next_at, mastered_at, skipped)
-    VALUES 
-    ${words
-      .map(
-        (_, index) =>
-          `((SELECT user_id FROM user_id_cte), $${index * 5 + 2}, $${
-            index * 5 + 3
-          }, $${index * 5 + 4}, $${index * 5 + 5}, $${index * 5 + 6})`
-      )
-      .join(", ")}
+    SELECT 
+      (SELECT user_id FROM user_id_cte),
+      wd.word_id,
+      wd.progress,
+      wd.next_at,
+      wd.mastered_at,
+      wd.skipped
+    FROM word_data wd
     ON CONFLICT(user_id, word_id) 
     DO UPDATE SET 
       progress = EXCLUDED.progress, 
       next_at = EXCLUDED.next_at, 
-      mastered_at = CASE WHEN user_words.mastered_at IS NULL AND EXCLUDED.mastered_at IS NOT NULL THEN EXCLUDED.mastered_at ELSE user_words.mastered_at END,
+      mastered_at = CASE 
+        WHEN user_words.mastered_at IS NULL AND EXCLUDED.mastered_at IS NOT NULL 
+        THEN EXCLUDED.mastered_at 
+        ELSE user_words.mastered_at 
+      END,
       skipped = EXCLUDED.skipped;
   `;
 
-  words.forEach((word) => {
-    values.push(
-      word.id,
-      word.progress,
-      word.skipped,
-      getNextAt(word.progress),
-      getMasteredAt(word.progress)
-    );
-  });
+  const values = [uid, wordIds, progresses, nextAts, masteredAts, skippedFlags];
 
   await withDbClient(db, async (client) => {
-    await client.query(query, [uid, ...values]);
+    await client.query(query, values);
   });
 }
 
@@ -107,9 +119,9 @@ export async function getScorePostgres(
       SELECT id AS user_id FROM users WHERE uid = $1
     )
     SELECT 
-      COUNT(CASE WHEN uw.started_at IS NOT NULL AND DATE(uw.started_at) = CURRENT_DATE THEN 1 END) AS "startedCountToday",
+      COUNT(CASE WHEN uw.started_at IS NOT NULL AND DATE(uw.started_at AT TIME ZONE 'UTC') = CURRENT_DATE THEN 1 END) AS "startedCountToday",
       COUNT(CASE WHEN uw.started_at IS NOT NULL THEN 1 END) AS "startedCount",
-      dp.progress_sum AS "progressToday"
+      COALESCE(MAX(dp.progress_sum), 0) AS "progressToday" 
     FROM words w
     LEFT JOIN user_words uw ON w.id = uw.word_id AND uw.user_id = (SELECT user_id FROM user_id_cte)
     LEFT JOIN daily_progress dp ON dp.user_id = (SELECT user_id FROM user_id_cte) AND dp.progress_date = CURRENT_DATE
@@ -118,10 +130,11 @@ export async function getScorePostgres(
   return await withDbClient(db, async (client) => {
     const result = await client.query(query, [uid]);
     const row = result.rows[0];
+
     return {
       startedCountToday: parseInt(row.startedCountToday, 10),
       startedCount: parseInt(row.startedCount, 10),
-      progressToday: row.progressSum || 0, // Default to 0 if no record exists
+      progressToday: parseInt(row.progressToday, 10),
     };
   });
 }

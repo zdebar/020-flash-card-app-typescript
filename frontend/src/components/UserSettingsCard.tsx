@@ -1,13 +1,12 @@
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../hooks/useUser';
-import Button from './Button';
+import RectangularButton from './common/RectangularButton';
 import { getAuth, signOut } from 'firebase/auth';
 
 export default function UserSettings() {
   const { userInfo, setUserInfo, setUserSettings, setUserScore, setLoading } =
     useUser();
   const navigate = useNavigate();
-  const isActive = userInfo !== null;
 
   const handleLogout = async () => {
     const auth = getAuth();
@@ -26,9 +25,9 @@ export default function UserSettings() {
   return (
     <div className="w-full p-4">
       {userInfo && <h1>uživatel: {userInfo.name}</h1>}
-      <Button onClick={handleLogout} isActive={isActive} className="rounded-md">
+      <RectangularButton onClick={handleLogout} className="rounded-md">
         Logout
-      </Button>
+      </RectangularButton>
     </div>
   );
 }

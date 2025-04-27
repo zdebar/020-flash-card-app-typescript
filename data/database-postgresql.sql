@@ -94,13 +94,13 @@ BEGIN
   BEGIN
     -- Update the progress_sum in daily_progress
     UPDATE daily_progress
-    SET progress_sum = progress_sum + (NEW.progress - OLD.progress)
+    SET progress_sum = progress_sum + (COALESCE(NEW.progress, 0) - COALESCE(OLD.progress, 0))
     WHERE user_id = NEW.user_id AND progress_date = NOW()::DATE;
 
     -- If no record exists for today, insert a new one
     IF NOT FOUND THEN
       INSERT INTO daily_progress (user_id, progress_sum, progress_date)
-      VALUES (NEW.user_id, NEW.progress - OLD.progress, NOW()::DATE);
+      VALUES (NEW.user_id, COALESCE(NEW.progress, 0), NOW()::DATE);
     END IF;
   EXCEPTION WHEN OTHERS THEN
     RAISE NOTICE 'Error updating daily progress: %', SQLERRM;
@@ -111,8 +111,13 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Trigger to call the function after progress update
+-- Trigger to call the function after progress update and insert
 CREATE TRIGGER update_progress_sum
 AFTER UPDATE OF progress ON user_words
+FOR EACH ROW
+EXECUTE FUNCTION update_daily_progress();
+
+CREATE TRIGGER insert_progress_sum
+AFTER INSERT ON user_words
 FOR EACH ROW
 EXECUTE FUNCTION update_daily_progress();

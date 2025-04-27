@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Note } from '../../../shared/types/dataTypes';
-import Button from './Button';
+import Button from './common/Button';
 
 interface NoteCardProps {
   onClose: () => void;

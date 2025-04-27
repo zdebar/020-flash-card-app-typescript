@@ -4,9 +4,9 @@ import LoginCard from './components/LoginCard';
 import { Routes, Route, Link } from 'react-router-dom';
 import { useUser } from './hooks/useUser';
 import PracticeCard from './components/PracticeCard';
-import UserSettings from './components/UserSettings';
+import UserSettings from './components/UserSettingsCard';
 import UserDashboard from './components/UserDashboard';
-import Button from './components/Button';
+import RectangularButton from './components/common/RectangularButton';
 
 export default function App() {
   const { userInfo, loading } = useUser();
@@ -27,9 +27,9 @@ export default function App() {
                 </div>
               ) : (
                 <div className="w-full p-4">
-                  <Button isActive={true}>
+                  <RectangularButton className="rounded-md">
                     <Link to="/login">Přihlášení / Registrace</Link>
-                  </Button>
+                  </RectangularButton>
                 </div>
               )
             }

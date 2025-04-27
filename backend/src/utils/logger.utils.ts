@@ -18,4 +18,20 @@ const logger = winston.createLogger({
   ],
 });
 
+/**
+ * Custom logging function to include function name and parameters.
+ */
+export function logErrorWithDetails(
+  error: Error,
+  functionName: string,
+  params: Record<string, unknown>
+): void {
+  logger.error({
+    message: error.message,
+    stack: error.stack,
+    functionName,
+    params,
+  });
+}
+
 export default logger;

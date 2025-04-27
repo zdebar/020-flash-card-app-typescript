@@ -6,7 +6,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   onClick?: () => void;
 }
 
-export default function ButtonOnClick({
+export default function PracticeButton({
   children,
   className,
   onClick,

@@ -4,17 +4,18 @@ import {
   PlusIcon,
   MinusIcon,
   AudioIcon,
-} from './Icons';
+} from './common/Icons';
 import { fetchWithAuth } from '../utils/firebase.utils';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { WordTransfer, Note } from '../../../shared/types/dataTypes';
+import { WordTransfer, Note, UserScore } from '../../../shared/types/dataTypes';
 import { postWords } from '../utils/postWords.utils';
 import { supabase } from '../utils/supabase.utils';
 import NoteCard from './NoteCard';
 import { useUser } from '../hooks/useUser';
 import config from '../config/config';
-import ButtonOnClick from './ButtonOnClick';
+import PracticeButton from './common/PracticeButton';
+import RoundButton from './common/RoundButton';
 
 export default function PracticeCard() {
   const [wordArray, setWordArray] = useState<WordTransfer[]>([]);
@@ -36,14 +37,19 @@ export default function PracticeCard() {
     [audioCacheRef]
   );
 
+  function decideDirection(words: WordTransfer[], index: number = 0) {
+    return words[index]?.progress % 2 === 0;
+  }
+
   useEffect(() => {
     const fetchAndStoreWords = async () => {
       try {
         const response = await fetchWithAuth(`${config.Url}/api/words`);
         if (response.ok) {
-          const words: WordTransfer[] = await response.json();
+          const responseJson = await response.json();
+          const words: WordTransfer[] = responseJson.words;
           setWordArray(words);
-          // setDirection(words[0]?.progress % 2 === 0);
+          setDirection(decideDirection(words, 0));
 
           const cache = await caches.open('audio-cache');
 
@@ -117,43 +123,48 @@ export default function PracticeCard() {
     return <p>No words to practice</p>;
   }
 
-  function updateWordProgressAndNavigate(progress: number) {
-    progress = Math.max(1, Math.min(progress, 100));
-    setWordArray((prevWordArray) => {
-      const updatedWordArray = [...prevWordArray];
-      updatedWordArray[currentIndex] = {
-        ...updatedWordArray[currentIndex],
-        progress: progress,
-      };
+  async function updateWordArray(
+    progressIncrement: number = 0,
+    skipped: boolean = false
+  ) {
+    progressIncrement = Math.max(1, Math.min(progressIncrement, 100));
 
-      if (updatedWordArray.length > 0) {
-        if (currentIndex + 1 >= updatedWordArray.length) {
-          setWordArray([]);
-          setNavigateToDashboard(true);
+    const updatedWordArray = [...wordArray];
+    updatedWordArray[currentIndex] = {
+      ...updatedWordArray[currentIndex],
+      progress: wordArray[currentIndex].progress + progressIncrement,
+      skipped: skipped,
+    };
 
-          postWords(
+    if (updatedWordArray.length > 0) {
+      if (currentIndex + 1 >= updatedWordArray.length) {
+        setWordArray([]);
+
+        try {
+          const newUserScore: UserScore | null = await postWords(
             updatedWordArray.map((word) => ({
               id: word.id,
               progress: word.progress,
-            })),
-            setUserScore
-          ).catch((error) => {
-            console.error('Error posting words:', error);
-          });
-        } else {
-          const newIndex = currentIndex + 1;
-          setCurrentIndex(newIndex);
-          setDirection(updatedWordArray[newIndex]?.progress % 2 === 0);
-          setRevealed(false);
-        }
-      }
+              skipped: word.skipped,
+            }))
+          );
 
-      return updatedWordArray;
-    });
+          setUserScore(newUserScore);
+          setNavigateToDashboard(true);
+        } catch (error) {
+          console.error('Error posting words:', error);
+        }
+      } else {
+        setCurrentIndex(currentIndex + 1);
+        setDirection(decideDirection(updatedWordArray, currentIndex + 1));
+        setRevealed(false);
+        setWordArray(updatedWordArray);
+      }
+    }
   }
 
   function handleSkip() {
-    updateWordProgressAndNavigate(config.skipProgress);
+    updateWordArray(0, true);
   }
 
   function handleCard() {
@@ -162,13 +173,11 @@ export default function PracticeCard() {
   }
 
   function handlePlus() {
-    const newProgress = wordArray[currentIndex].progress + config.plusProgress;
-    updateWordProgressAndNavigate(newProgress);
+    updateWordArray(config.plusProgress);
   }
 
   function handleMinus() {
-    const newProgress = wordArray[currentIndex].progress + config.minusProgress;
-    updateWordProgressAndNavigate(newProgress);
+    updateWordArray(config.minusProgress);
   }
 
   function handleAudio() {
@@ -207,12 +216,12 @@ export default function PracticeCard() {
   return (
     <div className="w-[320px]">
       <div className="flex flex-col gap-1">
-        <ButtonOnClick
+        <PracticeButton
           onClick={handleSkip}
           className={`color-secondary color-secondary-hover rounded-tr-md`}
         >
           <SlashBookmarkIcon></SlashBookmarkIcon>
-        </ButtonOnClick>
+        </PracticeButton>
         <button
           name="card"
           onClick={!revealed ? handleCard : undefined}
@@ -237,22 +246,22 @@ export default function PracticeCard() {
           </p>
         </button>
         <div className="flex w-full gap-1">
-          <ButtonOnClick
+          <PracticeButton
             onClick={handleMinus}
             disabled={!revealed}
             className={`color-secondary ${revealed ? 'color-secondary-hover' : 'color-secondary-disabled shadow-none'}`}
           >
             <MinusIcon></MinusIcon>
-          </ButtonOnClick>
-          <ButtonOnClick
+          </PracticeButton>
+          <PracticeButton
             onClick={handlePlus}
             disabled={!revealed}
             className={`color-secondary ${revealed ? 'color-secondary-hover' : 'color-secondary-disabled shadow-none'}`}
           >
             <PlusIcon></PlusIcon>
-          </ButtonOnClick>
+          </PracticeButton>
         </div>
-        <ButtonOnClick
+        <PracticeButton
           onClick={handleAudio}
           disabled={direction && !revealed}
           className={`rounded-b-md ${
@@ -262,15 +271,12 @@ export default function PracticeCard() {
           }`}
         >
           <AudioIcon></AudioIcon>
-        </ButtonOnClick>
+        </PracticeButton>
       </div>
       <div className="mt-20 flex justify-end p-4">
-        <button
-          onClick={handleNote}
-          className="color-secondary color-secondary-hover flex h-12 w-12 items-center justify-center rounded-full"
-        >
+        <RoundButton onClick={handleNote}>
           <NoteIcon></NoteIcon>
-        </button>
+        </RoundButton>
       </div>
       {showNoteCard && (
         <NoteCard

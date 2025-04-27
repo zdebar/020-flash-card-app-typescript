@@ -1,6 +1,7 @@
 import { NextFunction, Response, Request } from "express";
-import logger from "../utils/logger.utils";
+import logger, { logErrorWithDetails } from "../utils/logger.utils";
 import { UserError } from "../../../shared/types/dataTypes";
+import { log } from "console";
 
 export default function errorHandlerMiddleware(
   err: Error,
@@ -9,13 +10,13 @@ export default function errorHandlerMiddleware(
   next: NextFunction
 ): void {
   // Log the error
-  if (process.env.NODE_ENV !== "production") {
-    logger.error("Error occurred", {
-      message: err.message,
-    });
-  } else {
-    logger.error("Error occurred", { message: err.message });
-  }
+  logErrorWithDetails(err, "errorHandlerMiddleware", {
+    method: req.method,
+    url: req.originalUrl,
+    body: req.body,
+    query: req.query,
+    params: req.params,
+  });
 
   // Send the response
   if (err instanceof UserError) {

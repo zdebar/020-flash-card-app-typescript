@@ -1,11 +1,15 @@
-import { ReactNode } from 'react';
+import { ReactNode, SVGProps } from 'react';
 
-type IconWrapperProps = {
+interface IconWrapperProps extends SVGProps<SVGSVGElement> {
   children: ReactNode;
   className?: string;
-};
+}
 
-export default function IconWrapper({ children, className }: IconWrapperProps) {
+export default function IconWrapper({
+  children,
+  className,
+  ...svgProps
+}: IconWrapperProps) {
   return (
     <div className={`rounded-full p-1`}>
       <svg
@@ -13,6 +17,7 @@ export default function IconWrapper({ children, className }: IconWrapperProps) {
         viewBox="0 0 24 24"
         fill="currentColor"
         className={`${className}`}
+        {...svgProps}
       >
         {children}
       </svg>

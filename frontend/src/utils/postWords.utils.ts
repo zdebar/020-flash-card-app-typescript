@@ -4,14 +4,13 @@ import { UserScore } from '../../../shared/types/dataTypes';
 import config from '../config/config';
 
 export async function postWords(
-  words: WordProgress[],
-  setScore: (score: UserScore) => void
-): Promise<boolean> {
+  words: WordProgress[]
+): Promise<UserScore | null> {
   const API_PATH = `${config.Url}/api/words`;
 
   try {
     const response = await fetchWithAuth(API_PATH, {
-      method: 'POST',
+      method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(words),
     });
@@ -31,18 +30,13 @@ export async function postWords(
 
     try {
       const data = await response.json();
-
-      if (data) {
-        setScore(data);
-      }
-
-      return true;
+      return data.score;
     } catch {
-      console.warn('Upgrade succeeded, but response could not be parsed.');
-      return true;
+      console.warn('Response succeeded, but data could not be parsed.');
+      return null;
     }
   } catch (error) {
-    console.error('Error posting upgrade words:', error);
-    return false;
+    console.error('Error posting words:', error);
+    return null;
   }
 }
