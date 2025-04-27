@@ -30,16 +30,6 @@ CREATE TABLE IF NOT EXISTS words (
   cefr_level TEXT NOT NULL CHECK (cefr_level IN ('A1', 'A2', 'B1', 'B2', 'C1', 'C2'))
 );
 
-CREATE TABLE IF NOT EXISTS word_notes (
-  id SERIAL PRIMARY KEY,
-  word_id INTEGER, 
-  user_id INTEGER,
-  user_note TEXT,
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  FOREIGN KEY (word_id) REFERENCES words(id) ON DELETE SET NULL,
-  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
-);
-
 CREATE TABLE IF NOT EXISTS user_words (
   user_id INTEGER NOT NULL, 
   word_id INTEGER NOT NULL,

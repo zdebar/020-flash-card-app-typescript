@@ -9,7 +9,7 @@ export default function Dashboard() {
 
   return (
     <div className="flex w-full justify-between p-4 pt-2">
-      <p>denní progres</p>
+      <p>progres</p>
       <div>{userScore.progressToday}</div>
       <p>započato</p>
       <p>{userScore.startedCount}</p>

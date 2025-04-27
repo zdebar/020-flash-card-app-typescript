@@ -46,7 +46,7 @@ export default function LoginCard() {
   };
 
   return (
-    <div className="w-full p-4">
+    <div className="w-[320px] py-4">
       <Button onClick={handleGoogleLogin} className="rounded-md">
         Google Login
       </Button>

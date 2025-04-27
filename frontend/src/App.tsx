@@ -26,7 +26,7 @@ export default function App() {
                   <h1>Ahoj, {userInfo.name}!</h1>
                 </div>
               ) : (
-                <div className="w-full p-4">
+                <div className="w-[320px] p-4">
                   <Button className="rounded-md">
                     <Link to="/login">Přihlášení / Registrace</Link>
                   </Button>

@@ -23,7 +23,7 @@ export default function UserSettingsCard() {
   };
 
   return (
-    <div className="w-full p-4">
+    <div className="w-[320px] py-4">
       {userInfo && <h1>uživatel: {userInfo.name}</h1>}
       <Button onClick={handleLogout} className="rounded-md">
         Logout

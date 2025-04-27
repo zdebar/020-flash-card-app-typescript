@@ -1,6 +1,5 @@
 import {
   SlashBookmarkIcon,
-  NoteIcon,
   PlusIcon,
   MinusIcon,
   AudioIcon,
@@ -8,10 +7,10 @@ import {
 import { fetchWithAuth } from '../utils/firebase.utils';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { WordTransfer, Note, UserScore } from '../../../shared/types/dataTypes';
+import { WordTransfer, UserScore } from '../../../shared/types/dataTypes';
 import { postWords } from '../utils/postWords.utils';
 import { supabase } from '../utils/supabase.utils';
-import NoteCard from './NoteCard';
+
 import { useUser } from '../hooks/useUser';
 import config from '../config/config';
 import Button from './common/Button';
@@ -21,7 +20,6 @@ export default function PracticeCard() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(false); // true = czech to english, false = english to czech
   const [revealed, setRevealed] = useState(false);
-  const [showNoteCard, setShowNoteCard] = useState(false);
   const [navigateToDashboard, setNavigateToDashboard] = useState(false);
   const { setUserScore } = useUser();
   const audioCacheRef = useRef<Map<string, HTMLAudioElement>>(new Map());
@@ -185,37 +183,8 @@ export default function PracticeCard() {
     playAudio();
   }
 
-  function handleNote() {
-    setShowNoteCard(true);
-  }
-
-  function handleNoteClose() {
-    setShowNoteCard(false);
-  }
-
-  async function handleNoteSend(note: Note) {
-    try {
-      const response = await fetchWithAuth(`http://localhost:3000/api/notes`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(note),
-      });
-
-      if (!response.ok) {
-        console.error('Failed to send note:', response.statusText);
-      } else {
-        console.log('Note sent successfully:', note);
-      }
-    } catch (error) {
-      console.error('Error sending note:', error);
-    }
-    setShowNoteCard(false);
-  }
-
   return (
-    <div className="w-[320px]">
+    <div className="flex w-[320px] flex-col justify-center py-4 landscape:h-screen">
       <div className="flex flex-col gap-1">
         <Button
           onClick={handleSkip}
@@ -263,18 +232,6 @@ export default function PracticeCard() {
           <AudioIcon></AudioIcon>
         </Button>
       </div>
-      <div className="mt-20 flex justify-end p-4">
-        <Button onClick={handleNote} shape="round" color="secondary">
-          <NoteIcon></NoteIcon>
-        </Button>
-      </div>
-      {showNoteCard && (
-        <NoteCard
-          onClose={handleNoteClose}
-          onSend={handleNoteSend}
-          wordId={wordArray[currentIndex].id}
-        />
-      )}
     </div>
   );
 }
