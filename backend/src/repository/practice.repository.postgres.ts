@@ -5,7 +5,6 @@ import config from "../config/config";
 import {
   UserScore,
   WordProgress,
-  Note,
   WordTransfer,
 } from "../../../shared/types/dataTypes";
 
@@ -136,25 +135,5 @@ export async function getScorePostgres(
       startedCount: parseInt(row.startedCount, 10),
       progressToday: parseInt(row.progressToday, 10),
     };
-  });
-}
-
-/**
- * Inserts or updates the user's word notes in a PostgreSQL database.
- */
-export async function insertNotePostgres(
-  db: PostgresClient,
-  uid: string,
-  note: Note
-): Promise<void> {
-  const query = `
-    INSERT INTO word_notes (user_id, word_id, user_note)
-    VALUES ((SELECT id FROM users WHERE uid = $1), $2, $3)
-  `;
-
-  const values = [uid, note.word_id, note.note];
-
-  await withDbClient(db, async (client) => {
-    await client.query(query, values);
   });
 }

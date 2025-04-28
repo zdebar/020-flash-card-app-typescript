@@ -1,10 +1,3 @@
-// Word Note Data Types
-export interface Note {
-  // Notes from users to developers
-  word_id: number;
-  note: string;
-}
-
 // Word Data Types
 export interface WordProgress {
   // Minimized word data send back from frontend

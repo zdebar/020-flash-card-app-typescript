@@ -3,7 +3,6 @@ import { authenticate } from "../middlewares/auth.middleware";
 import {
   getWordsController,
   updateWordsController,
-  insertNoteController,
 } from "../controllers/practice.controller";
 import {
   getUserController,
@@ -16,6 +15,5 @@ apiRouter.get("/users", authenticate, getUserController); // returns user settin
 apiRouter.put("/users", authenticate, updateUserController); // post user settings
 apiRouter.get("/words", authenticate, getWordsController); // returns words for practice
 apiRouter.patch("/words", authenticate, updateWordsController); // update words after practice, returns user score
-apiRouter.post("/notes", authenticate, insertNoteController); // post notes for developers
 
 export default apiRouter;

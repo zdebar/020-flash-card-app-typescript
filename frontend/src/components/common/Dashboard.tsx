@@ -11,7 +11,7 @@ export default function Dashboard() {
     <div className="flex w-full justify-between p-4 pt-2">
       <p>progres</p>
       <div>{userScore.progressToday}</div>
-      <p>započato</p>
+      <p>slovíček</p>
       <p>{userScore.startedCount}</p>
     </div>
   );
