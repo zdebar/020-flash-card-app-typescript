@@ -7,7 +7,7 @@ import {
 import { fetchWithAuth } from '../utils/firebase.utils';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { WordTransfer, UserScore } from '../../../shared/types/dataTypes';
+import { ItemTransfer, UserScore } from '../../../shared/types/dataTypes';
 import { postWords } from '../utils/postWords.utils';
 import { supabase } from '../utils/supabase.utils';
 
@@ -16,7 +16,7 @@ import config from '../config/config';
 import Button from './common/Button';
 
 export default function PracticeCard() {
-  const [wordArray, setWordArray] = useState<WordTransfer[]>([]);
+  const [wordArray, setWordArray] = useState<ItemTransfer[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(false); // true = czech to english, false = english to czech
   const [revealed, setRevealed] = useState(false);
@@ -34,7 +34,7 @@ export default function PracticeCard() {
     [audioCacheRef]
   );
 
-  function decideDirection(words: WordTransfer[], index: number = 0) {
+  function decideDirection(words: ItemTransfer[], index: number = 0) {
     return words[index]?.progress % 2 === 0;
   }
 
@@ -43,7 +43,7 @@ export default function PracticeCard() {
       try {
         const response = await fetchWithAuth(`${config.Url}/api/words`);
         if (response.ok) {
-          const { words }: { words: WordTransfer[] } = await response.json();
+          const { words }: { words: ItemTransfer[] } = await response.json();
           setWordArray(words);
           setDirection(decideDirection(words, 0));
 

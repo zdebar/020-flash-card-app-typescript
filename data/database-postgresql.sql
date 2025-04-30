@@ -39,6 +39,7 @@ CREATE TABLE IF NOT EXISTS block_items (
   block_id INTEGER NOT NULL,
   item_id INTEGER NOT NULL,
   item_order INTEGER DEFAULT 0 CHECK (item_order >= 0),
+  group INTEGER DEFAULT 0 CHECK (group >= 0),
   FOREIGN KEY (block_id) REFERENCES blocks(id) ON DELETE CASCADE,
   FOREIGN KEY (item_id) REFERENCES items(id) ON DELETE CASCADE,
   PRIMARY KEY (block_id, item_id)
@@ -56,3 +57,10 @@ CREATE TABLE IF NOT EXISTS user_blocks (
   FOREIGN KEY (block_id) REFERENCES blocks(id) ON DELETE CASCADE,
   PRIMARY KEY (user_id, block_id)
 );
+
+-- Create indexes
+CREATE UNIQUE INDEX user_items_user_id_item_id_idx ON user_items(user_id, item_id);
+CREATE INDEX idx_user_items_user_id_item_id ON user_items(user_id, item_id);
+CREATE INDEX idx_block_items_block_id_item_id ON block_items(block_id, item_id); -- maybe only block_id is needed
+CREATE INDEX idx_blocks_category ON blocks(category);
+CREATE INDEX idx_user_blocks_next_at ON user_blocks(next_at);

@@ -1,10 +1,6 @@
 import { Request, Response } from "express";
 import { postgresDBPool } from "../config/database.config.postgres";
-import {
-  WordProgress,
-  UserScore,
-  WordTransfer,
-} from "../../../shared/types/dataTypes";
+import { WordProgress, UserScore, Item } from "../../../shared/types/dataTypes";
 import {
   getWordsService,
   updateWordsService,
@@ -21,7 +17,7 @@ export async function getWordsController(
 ): Promise<void> {
   try {
     const uid: string = (req as any).user.uid;
-    const words: WordTransfer[] = await getWordsService(postgresDBPool, uid);
+    const words: Item[] = await getWordsService(postgresDBPool, uid);
 
     res.status(200).json({
       message: "User words retrieved successfully.",

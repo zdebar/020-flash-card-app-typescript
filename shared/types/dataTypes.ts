@@ -6,14 +6,13 @@ export interface WordProgress {
   skipped: boolean;
 }
 
-export interface WordTransfer extends WordProgress {
+export interface Word extends WordProgress {
   // Word extractred from database send to frontend
   czech: string;
   english: string;
   pronunciation: string | null;
   audio: string | null;
   started: boolean;
-  skipped: boolean;
 }
 
 export interface WordUpdate extends WordProgress {
@@ -26,22 +25,59 @@ export interface WordUpdate extends WordProgress {
   mastered_at: string | null;
 }
 
-// User Data Types
-export enum ModeDay {
-  DEFAULT = "default",
-  LIGHT = "light",
-  DARK = "dark",
+// Grammar Data Types
+export interface GrammarWord {
+  // Individual word data extracted as a part of grammar lecture
+  id: number;
+  czech: string;
+  english: string;
+  pronunciation: string | null;
+  audio: string | null;
 }
 
-export enum FontSize {
-  SMALL = "small",
-  NORMAL = "normal",
-  LARGE = "large",
+export interface GrammarUpdate {
+  // Minimized word data for database update  send back from frontend
+  block_id: number;
+  progress: number;
+  skipped: boolean;
 }
 
-export enum PlanType {
-  FREE = "free",
-  PREMIUM = "premium",
+export interface GrammarLecture extends GrammarUpdate {
+  // Prepared grammar lecture data send to frontend
+  block_name: string;
+  block_explanation: string;
+  items: GrammarWord[];
+}
+
+// Pronunciation Data Types
+export interface PronunciationWord {
+  // Individual word data extracted as a part of pronunciation lecture
+  id: number;
+  czech: string;
+  english: string;
+  pronunciation: string | null;
+  audio: string | null;
+  group: number;
+}
+
+export interface PronunciationUpdate {
+  // Minimized word data for database update send back from frontend
+  block_id: number;
+  progress: number;
+  skipped: boolean;
+}
+
+export interface PronunciationLecture extends PronunciationUpdate {
+  // Prepared pronunciation lecture data send to frontend
+  block_name: string;
+  block_explanation: string;
+  items: [PronunciationWord[]];
+}
+
+export interface PronunciationList {
+  // List of pronunciation blocks extracted from database
+  id: number;
+  block_name: string;
 }
 
 // User Types
@@ -53,16 +89,10 @@ export interface UserInfo {
   picture: string | null; // User's profile picture URL
 }
 
-export interface UserSettings {
-  mode_day: ModeDay;
-  font_size: FontSize;
-  plan_type: PlanType;
-}
-
 export interface UserScore {
   startedCountToday: number;
   startedCount: number;
-  progressToday: number;
+  nextGrammarDate: Date | null;
 }
 
 export class UserError extends Error {

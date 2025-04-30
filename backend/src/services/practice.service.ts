@@ -1,14 +1,10 @@
 import { PostgresClient } from "../types/dataTypes";
+import { WordProgress, UserScore, Item } from "../../../shared/types/dataTypes";
 import {
-  WordProgress,
-  UserScore,
-  WordTransfer,
-} from "../../../shared/types/dataTypes";
-import {
-  getWordsPostgres,
-  updateWordsPostgres,
-  getScorePostgres,
-} from "../repository/practice.repository.postgres";
+  getWords,
+  updateWords,
+  getScore,
+} from "../repository/vocabulary.repository.postgres";
 import { addAudioPathsToWords } from "../utils/update.utils";
 
 /**
@@ -17,8 +13,8 @@ import { addAudioPathsToWords } from "../utils/update.utils";
 export async function getWordsService(
   db: PostgresClient,
   uid: string
-): Promise<WordTransfer[]> {
-  const words: WordTransfer[] = await getWordsPostgres(db, uid);
+): Promise<Item[]> {
+  const words: Item[] = await getWords(db, uid);
   return addAudioPathsToWords(words);
 }
 
@@ -30,6 +26,6 @@ export async function updateWordsService(
   uid: string,
   words: WordProgress[]
 ): Promise<UserScore> {
-  await updateWordsPostgres(db, uid, words);
-  return await getScorePostgres(db, uid);
+  await updateWords(db, uid, words);
+  return await getScore(db, uid);
 }

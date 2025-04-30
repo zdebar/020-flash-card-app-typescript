@@ -6,7 +6,7 @@ import {
 } from "../practice.controller";
 import { Request, Response } from "express";
 import db from "../../config/database.config.postgres";
-import * as wordService from "../../repository/practice.repository.postgres";
+import * as wordService from "../../repository/vocabulary.repository.postgres";
 import * as userService from "../../services/user.service";
 import { closeDbConnection } from "../../utils/database.utils";
 
@@ -55,7 +55,7 @@ describe("User Controller", () => {
       await updateWordsController(req as Request, res as Response);
 
       expect(db.connect).toHaveBeenCalled();
-      expect(wordService.updateWordsPostgres).toHaveBeenCalledWith(
+      expect(wordService.updateWords).toHaveBeenCalledWith(
         db,
         1,
         req.body.words

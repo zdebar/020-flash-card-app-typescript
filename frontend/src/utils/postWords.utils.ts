@@ -1,10 +1,10 @@
-import { WordProgress } from '../../../shared/types/dataTypes';
+import { ItemProgress } from '../../../shared/types/dataTypes';
 import { fetchWithAuth } from './firebase.utils';
 import { UserScore } from '../../../shared/types/dataTypes';
 import config from '../config/config';
 
 export async function postWords(
-  words: WordProgress[]
+  words: ItemProgress[]
 ): Promise<UserScore | null> {
   const API_PATH = `${config.Url}/api/words`;
 
