@@ -37,32 +37,3 @@ export async function getUserPostgres(
     return newUser.rows[0];
   });
 }
-
-/**
- * Updates User Settings.
- */
-export async function updateUserPostgres(
-  db: PostgresClient,
-  uid: string,
-  user: UserSettings
-): Promise<UserSettings> {
-  return withDbClient(db, async (client) => {
-    const updatedUser: QueryResult<UserSettings> = await client.query(
-      `
-      UPDATE users
-      SET 
-        mode_day = $2,
-        font_size = $3
-        plan_type = $4
-      WHERE uid = $1
-      RETURNING uid, mode_day, font_size, plan_type
-      `,
-      [uid, user.mode_day, user.font_size, user.plan_type]
-    );
-
-    if (!updatedUser.rows.length) {
-      throw new Error(`User with id ${uid} not found!`);
-    }
-    return updatedUser.rows[0];
-  });
-}

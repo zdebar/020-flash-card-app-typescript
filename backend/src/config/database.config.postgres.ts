@@ -9,7 +9,7 @@ if (process.env.NODE_ENV === "test") {
   postgresDBPool = new Pool({
     host: "localhost",
     port: 5432,
-    database: "EnglishAppV2",
+    database: "EnglishAppV3",
     user: "postgres",
     password: "mbc299748",
     max: 20,

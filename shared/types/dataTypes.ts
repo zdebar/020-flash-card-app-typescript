@@ -13,6 +13,7 @@ export interface WordTransfer extends WordProgress {
   pronunciation: string | null;
   audio: string | null;
   started: boolean;
+  skipped: boolean;
 }
 
 export interface WordUpdate extends WordProgress {

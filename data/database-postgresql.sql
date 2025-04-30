@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS items (
   czech TEXT NOT NULL, 
   english TEXT NOT NULL, 
   pronunciation TEXT,
-  audio TEXT,
+  audio TEXT
 );
 
 CREATE TABLE IF NOT EXISTS user_items (
@@ -29,10 +29,10 @@ CREATE TABLE IF NOT EXISTS user_items (
 CREATE TABLE IF NOT EXISTS blocks (
   id SERIAL PRIMARY KEY,
   block_name TEXT NOT NULL,
-  explanation JSONB,
+  explanation TEXT,
   unlock_at INTEGER CHECK (unlock_at >= 0),
   block_order INTEGER DEFAULT 0 CHECK (block_order >= 0),
-  category TEXT CHECK (category IN ('grammar', 'pronunciation')),
+  category TEXT CHECK (category IN ('grammar', 'pronunciation', 'vocabulary'))
 );
 
 CREATE TABLE IF NOT EXISTS block_items (
