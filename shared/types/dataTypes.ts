@@ -35,14 +35,14 @@ export interface GrammarWord {
   audio: string | null;
 }
 
-export interface GrammarUpdate {
+export interface GrammarProgress {
   // Minimized word data for database update  send back from frontend
   block_id: number;
   progress: number;
   skipped: boolean;
 }
 
-export interface GrammarLecture extends GrammarUpdate {
+export interface GrammarLecture extends GrammarProgress {
   // Prepared grammar lecture data send to frontend
   block_name: string;
   block_explanation: string;
@@ -71,10 +71,10 @@ export interface PronunciationLecture extends PronunciationUpdate {
   // Prepared pronunciation lecture data send to frontend
   block_name: string;
   block_explanation: string;
-  items: [PronunciationWord[]];
+  items: PronunciationWord[][];
 }
 
-export interface PronunciationList {
+export interface PronunciationItem {
   // List of pronunciation blocks extracted from database
   id: number;
   block_name: string;

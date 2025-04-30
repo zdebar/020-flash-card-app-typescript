@@ -7,9 +7,9 @@ import {
   Word,
   WordProgress,
   GrammarLecture,
-  GrammarUpdate,
+  GrammarProgress,
   PronunciationLecture,
-  PronunciationList,
+  PronunciationItem,
 } from "../../../shared/types/dataTypes";
 
 /**
@@ -183,7 +183,7 @@ export async function getScore(
 /**
  * Gets grammar lecture words from PostgreSQL database.
  */
-export async function getGrammarLecture(
+export async function getGrammar(
   db: PostgresClient,
   uid: string
 ): Promise<GrammarLecture | null> {
@@ -240,10 +240,10 @@ export async function getGrammarLecture(
 /**
  * Updates the user's grammar lecture progress in a PostgreSQL database.
  */
-export async function updateGrammarLecture(
+export async function updateGrammar(
   db: PostgresClient,
   uid: string,
-  grammarUpdate: GrammarUpdate
+  grammarUpdate: GrammarProgress
 ): Promise<void> {
   const { block_id, progress, skipped } = grammarUpdate;
 
@@ -275,7 +275,7 @@ export async function updateGrammarLecture(
  */
 export async function getPronunciationList(
   db: PostgresClient
-): Promise<PronunciationList[]> {
+): Promise<PronunciationItem[]> {
   const query = `
     SELECT 
       b.id,
@@ -290,7 +290,7 @@ export async function getPronunciationList(
   });
 }
 
-export async function getPronunciationLecture(
+export async function getPronunciation(
   db: PostgresClient,
   block_id: number
 ): Promise<PronunciationLecture> {

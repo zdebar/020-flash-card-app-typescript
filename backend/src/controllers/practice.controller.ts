@@ -1,10 +1,22 @@
 import { Request, Response } from "express";
 import { postgresDBPool } from "../config/database.config.postgres";
-import { WordProgress, UserScore, Item } from "../../../shared/types/dataTypes";
+import {
+  WordProgress,
+  UserScore,
+  Word,
+  GrammarProgress,
+  GrammarLecture,
+  PronunciationItem,
+  PronunciationLecture,
+} from "../../../shared/types/dataTypes";
 import {
   getWordsService,
   updateWordsService,
+  getGrammarService,
+  getPronunciationService,
+  updateGrammarService,
 } from "../services/practice.service";
+import { getPronunciationList } from "../repository/practice.repository.postgres";
 
 /**
  * Controller function to retrieve user-specific words based on source and target languages.
@@ -17,7 +29,7 @@ export async function getWordsController(
 ): Promise<void> {
   try {
     const uid: string = (req as any).user.uid;
-    const words: Item[] = await getWordsService(postgresDBPool, uid);
+    const words: Word[] = await getWordsService(postgresDBPool, uid);
 
     res.status(200).json({
       message: "User words retrieved successfully.",
@@ -49,6 +61,92 @@ export async function updateWordsController(
     res.status(200).json({
       message: "User words updated successfully.",
       score,
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function getGrammarController(
+  req: Request,
+  res: Response,
+  next: Function
+): Promise<void> {
+  try {
+    const uid: string = (req as any).user.uid;
+
+    const grammar: GrammarLecture | null = await getGrammarService(
+      postgresDBPool,
+      uid
+    );
+
+    res.status(200).json({
+      message: "User grammar lecture retrieved successfully.",
+      grammar,
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function updateGrammarController(
+  req: Request,
+  res: Response,
+  next: Function
+): Promise<void> {
+  try {
+    const uid: string = (req as any).user.uid;
+    const progress: GrammarProgress = req.body;
+
+    const score: UserScore = await updateGrammarService(
+      postgresDBPool,
+      uid,
+      progress
+    );
+
+    res.status(200).json({
+      message: "User grammar lecture updated successfully.",
+      score,
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function getPronunciationListController(
+  req: Request,
+  res: Response,
+  next: Function
+): Promise<void> {
+  try {
+    const list: PronunciationItem[] = await getPronunciationList(
+      postgresDBPool
+    );
+
+    res.status(200).json({
+      message: "Pronunciation list retrieved successfully.",
+      list,
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function getPronunciationController(
+  req: Request,
+  res: Response,
+  next: Function
+): Promise<void> {
+  try {
+    const block_id: number = req.body;
+    const pronunciation: PronunciationLecture = await getPronunciationService(
+      postgresDBPool,
+      block_id
+    );
+
+    res.status(200).json({
+      message: "Pronunciation lecture retrieved successfully.",
+      pronunciation,
     });
   } catch (err) {
     next(err);

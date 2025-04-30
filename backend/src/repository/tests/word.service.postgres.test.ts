@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll, vi } from "vitest";
-import { getWords, updateWords } from "../vocabulary.repository.postgres";
+import { getWords, updateWords } from "../practice.repository.postgres";
 import { postgresDBPool } from "../../config/database.config.postgres";
 import { Word, WordProgress } from "../../types/dataTypes";
 import { PoolClient } from "pg";
