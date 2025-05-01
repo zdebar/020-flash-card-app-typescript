@@ -1,5 +1,5 @@
 import { PostgresClient } from "../types/dataTypes";
-import { UserSettings, UserInfo } from "../../../shared/types/dataTypes";
+import { UserSettings } from "../../../shared/types/dataTypes";
 import { QueryResult } from "pg";
 import { withDbClient } from "../utils/database.utils";
 
@@ -7,14 +7,14 @@ import { withDbClient } from "../utils/database.utils";
  * Finds User by userUid. Creates a new user if not found.
  * @throws Error if the user does not exist.
  */
-export async function getUserPostgres(
+export async function getUserRepository(
   db: PostgresClient,
   uid: string
 ): Promise<UserSettings> {
   return withDbClient(db, async (client) => {
     const existingUser: QueryResult<UserSettings> = await client.query(
       `
-      SELECT mode_day, font_size, plan_type
+      SELECT id
       FROM users
       WHERE uid = $1;
       `,
@@ -29,7 +29,7 @@ export async function getUserPostgres(
       `
       INSERT INTO users (uid)
       VALUES ($1)
-      RETURNING mode_day, font_size, plan_type;
+      RETURNING id;
       `,
       [uid]
     );

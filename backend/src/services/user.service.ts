@@ -1,6 +1,7 @@
 import { PostgresClient } from "../types/dataTypes";
-import { UserScore } from "../../../shared/types/dataTypes";
-import { getScore } from "../repository/practice.repository.postgres";
+import { UserScore, UserSettings } from "../../../shared/types/dataTypes";
+import { getScoreRepository } from "../repository/practice.repository.postgres";
+import { getUserRepository } from "../repository/user.repository.postgres";
 
 /**
  * Retrieves the user information and score for a given user ID from the database.
@@ -8,7 +9,8 @@ import { getScore } from "../repository/practice.repository.postgres";
 export async function getUserService(
   db: PostgresClient,
   uid: string
-): Promise<{ userScore: UserScore }> {
-  const userScore: UserScore = await getScore(db, uid);
-  return { userScore };
+): Promise<{ userSettings: UserSettings; userScore: UserScore }> {
+  const userSettings = await getUserRepository(db, uid);
+  const userScore: UserScore = await getScoreRepository(db, uid);
+  return { userSettings, userScore };
 }

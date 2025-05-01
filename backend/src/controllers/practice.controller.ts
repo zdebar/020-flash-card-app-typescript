@@ -16,7 +16,7 @@ import {
   getPronunciationService,
   updateGrammarService,
 } from "../services/practice.service";
-import { getPronunciationList } from "../repository/practice.repository.postgres";
+import { getPronunciationListRepository } from "../repository/practice.repository.postgres";
 
 /**
  * Controller function to retrieve user-specific words based on source and target languages.
@@ -67,6 +67,9 @@ export async function updateWordsController(
   }
 }
 
+/**
+ * Retrieves the grammar lecture for a user. If no lecture is found, returns null.
+ */
 export async function getGrammarController(
   req: Request,
   res: Response,
@@ -89,6 +92,9 @@ export async function getGrammarController(
   }
 }
 
+/**
+ * Updates the lecture grammar progress for a user in the database. Sends back the updated user score.
+ */
 export async function updateGrammarController(
   req: Request,
   res: Response,
@@ -113,13 +119,16 @@ export async function updateGrammarController(
   }
 }
 
+/**
+ * Retrieves a list of pronunciation lectures from the database.
+ */
 export async function getPronunciationListController(
   req: Request,
   res: Response,
   next: Function
 ): Promise<void> {
   try {
-    const list: PronunciationItem[] = await getPronunciationList(
+    const list: PronunciationItem[] = await getPronunciationListRepository(
       postgresDBPool
     );
 
@@ -132,13 +141,16 @@ export async function getPronunciationListController(
   }
 }
 
+/**
+ * Retrieves a specific pronunciation lecture based on the block ID.
+ */
 export async function getPronunciationController(
   req: Request,
   res: Response,
   next: Function
 ): Promise<void> {
   try {
-    const block_id: number = req.body;
+    const block_id: number = req.body; // should this be a query parameter instead?
     const pronunciation: PronunciationLecture = await getPronunciationService(
       postgresDBPool,
       block_id

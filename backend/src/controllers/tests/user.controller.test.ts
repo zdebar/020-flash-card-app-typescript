@@ -55,7 +55,7 @@ describe("User Controller", () => {
       await updateWordsController(req as Request, res as Response);
 
       expect(db.connect).toHaveBeenCalled();
-      expect(wordService.updateWords).toHaveBeenCalledWith(
+      expect(wordService.updateWordsRepository).toHaveBeenCalledWith(
         db,
         1,
         req.body.words

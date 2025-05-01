@@ -82,6 +82,10 @@ export interface PronunciationItem {
 
 // User Types
 
+export interface UserSettings {
+  id: number; // User ID in the database
+}
+
 export interface UserInfo {
   uid: string; // Firebase UID
   name: string | null; // User's name

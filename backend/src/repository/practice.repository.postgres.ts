@@ -15,7 +15,7 @@ import {
 /**
  * Return required words for the user from PostgreSQL database.
  */
-export async function getWords(
+export async function getWordsRepository(
   db: PostgresClient,
   uid: string
 ): Promise<Word[]> {
@@ -27,9 +27,9 @@ export async function getWords(
       i.english,
       i.pronunciation,
       i.audio,
-        COALESCE(ui.progress,0) AS progress,
-        ui.started_at IS NOT NULL AS started,  
-        ui.skipped IS TRUE AS skipped
+      COALESCE(ui.progress,0) AS progress,
+      ui.started_at IS NOT NULL AS started,  
+      ui.skipped IS TRUE AS skipped
     FROM items i
     LEFT JOIN user_items ui ON i.id = ui.item_id AND ui.user_id = (SELECT id FROM users WHERE uid = $1)
     JOIN block_items bi ON i.id = bi.item_id
@@ -52,7 +52,7 @@ export async function getWords(
 /**
  * Updates the user's word progress in a PostgreSQL database. --- learned_at a mastered_at se mění pouze při hraničním času
  */
-export async function updateWords(
+export async function updateWordsRepository(
   db: PostgresClient,
   uid: string,
   items: WordProgress[]
@@ -147,7 +147,7 @@ export async function updateWords(
 /**
  * Gets count of learned words, and next grammar practice date from PostgreSQL database.
  */
-export async function getScore(
+export async function getScoreRepository(
   db: PostgresClient,
   uid: string
 ): Promise<UserScore> {
@@ -183,7 +183,7 @@ export async function getScore(
 /**
  * Gets grammar lecture words from PostgreSQL database.
  */
-export async function getGrammar(
+export async function getGrammarRepository(
   db: PostgresClient,
   uid: string
 ): Promise<GrammarLecture | null> {
@@ -240,7 +240,7 @@ export async function getGrammar(
 /**
  * Updates the user's grammar lecture progress in a PostgreSQL database.
  */
-export async function updateGrammar(
+export async function updateGrammarRepository(
   db: PostgresClient,
   uid: string,
   grammarUpdate: GrammarProgress
@@ -273,7 +273,7 @@ export async function updateGrammar(
 /**
  * Gets the list of pronunciation blocks from PostgreSQL database.
  */
-export async function getPronunciationList(
+export async function getPronunciationListRepository(
   db: PostgresClient
 ): Promise<PronunciationItem[]> {
   const query = `
@@ -290,7 +290,7 @@ export async function getPronunciationList(
   });
 }
 
-export async function getPronunciation(
+export async function getPronunciationRepository(
   db: PostgresClient,
   block_id: number
 ): Promise<PronunciationLecture> {

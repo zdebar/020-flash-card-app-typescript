@@ -5,7 +5,7 @@ import { firebaseAuth, firebaseConfig } from "../config/firebase.config";
 /**
  * Middleware to authenticate requests using Firebase ID tokens.
  */
-export async function authenticate(
+export async function authenticateMiddleware(
   req: Request,
   res: Response,
   next: NextFunction

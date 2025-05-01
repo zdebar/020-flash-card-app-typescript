@@ -8,12 +8,12 @@ import {
   GrammarProgress,
 } from "../../../shared/types/dataTypes";
 import {
-  getWords,
-  updateWords,
-  getScore,
-  getGrammar,
-  getPronunciation,
-  updateGrammar,
+  getWordsRepository,
+  updateWordsRepository,
+  getScoreRepository,
+  getGrammarRepository,
+  getPronunciationRepository,
+  updateGrammarRepository,
 } from "../repository/practice.repository.postgres";
 import { addAudioPath } from "../utils/update.utils";
 
@@ -24,7 +24,7 @@ export async function getWordsService(
   db: PostgresClient,
   uid: string
 ): Promise<Word[]> {
-  const words: Word[] = await getWords(db, uid);
+  const words: Word[] = await getWordsRepository(db, uid);
   return words.map((word) => ({
     ...word,
     audio: addAudioPath(word.audio),
@@ -39,8 +39,8 @@ export async function updateWordsService(
   uid: string,
   words: WordProgress[]
 ): Promise<UserScore> {
-  await updateWords(db, uid, words);
-  return await getScore(db, uid);
+  await updateWordsRepository(db, uid, words);
+  return await getScoreRepository(db, uid);
 }
 
 /**
@@ -50,7 +50,7 @@ export async function getGrammarService(
   db: PostgresClient,
   uid: string
 ): Promise<GrammarLecture | null> {
-  const grammar: GrammarLecture | null = await getGrammar(db, uid);
+  const grammar: GrammarLecture | null = await getGrammarRepository(db, uid);
 
   if (!grammar) {
     return null;
@@ -66,20 +66,26 @@ export async function getGrammarService(
   return grammarWithPaths;
 }
 
+/**
+ * Updates the user's grammar progress in the PostgreSQL database and returns the updated score.
+ */
 export async function updateGrammarService(
   db: PostgresClient,
   uid: string,
   progress: GrammarProgress
 ): Promise<UserScore> {
-  await updateGrammar(db, uid, progress);
-  return await getScore(db, uid);
+  await updateGrammarRepository(db, uid, progress);
+  return await getScoreRepository(db, uid);
 }
 
+/**
+ * Gets the pronunciation lecture for a given block ID from the database.
+ */
 export async function getPronunciationService(
   db: PostgresClient,
   block_id: number
 ): Promise<PronunciationLecture> {
-  const pronunciation: PronunciationLecture = await getPronunciation(
+  const pronunciation: PronunciationLecture = await getPronunciationRepository(
     db,
     block_id
   );

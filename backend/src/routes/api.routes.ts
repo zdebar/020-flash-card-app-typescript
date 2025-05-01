@@ -1,5 +1,5 @@
 import express from "express";
-import { authenticate } from "../middlewares/auth.middleware";
+import { authenticateMiddleware } from "../middlewares/auth.middleware";
 import {
   getWordsController,
   updateWordsController,
@@ -12,16 +12,20 @@ import { getUserController } from "../controllers/user.controller";
 
 const apiRouter = express.Router();
 
-apiRouter.get("/users", authenticate, getUserController); // returns user settings and user score
-apiRouter.get("/words", authenticate, getWordsController); // returns words for practice
-apiRouter.patch("/words", authenticate, updateWordsController); // update words after practice, returns user score
-apiRouter.get("/grammar", authenticate, getGrammarController); // returns grammar lecture for practice
-apiRouter.patch("/grammar", authenticate, updateGrammarController); // update grammar after practice
+apiRouter.get("/users", authenticateMiddleware, getUserController); // sends user settings and user score
+apiRouter.get("/words", authenticateMiddleware, getWordsController); // sends words
+apiRouter.patch("/words", authenticateMiddleware, updateWordsController); // updates user words, sends user score
+apiRouter.get("/grammar", authenticateMiddleware, getGrammarController); // sends grammar lecture
+apiRouter.patch("/grammar", authenticateMiddleware, updateGrammarController); // updates user grammar
 apiRouter.get(
   "/pronunciation/list",
-  authenticate,
+  authenticateMiddleware,
   getPronunciationListController
-); // returns list of pronunciation lectures
-apiRouter.get("/pronunciation", authenticate, getPronunciationController); // update pronunciation lecture after practice
+); // sends list of pronunciation lectures
+apiRouter.get(
+  "/pronunciation",
+  authenticateMiddleware,
+  getPronunciationController
+); // sends pronunciation lecture
 
 export default apiRouter;
