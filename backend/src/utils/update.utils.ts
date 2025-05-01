@@ -4,7 +4,7 @@ import config from "../config/config";
  * Returns the next review date based on the progress and SRS intervals.
  */
 export function getNextAt(progress: number): string | null {
-  const interval = config.SRS[progress - 1] ?? null;
+  const interval = config.SRS[progress] ?? null;
   if (interval) {
     const randomFactor =
       1 + (Math.random() * 2 * config.srsRandomness - config.srsRandomness);

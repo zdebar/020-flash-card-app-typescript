@@ -35,7 +35,9 @@ export default function App() {
             }
           />
           <Route path="/login" element={<LoginCard />} />
-          <Route path="/practice" element={<PracticeCard />} />
+          <Route path="/pronunciation" element={<PracticeCard />} />
+          <Route path="/vocabulary" element={<PracticeCard />} />
+          <Route path="/grammar" element={<PracticeCard />} />
           <Route path="/userSettings" element={<UserSettingsCard />} />
           <Route path="/userDashboard" element={<UserDashboardCard />} />
         </Routes>

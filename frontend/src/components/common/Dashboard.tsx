@@ -9,9 +9,9 @@ export default function Dashboard() {
 
   return (
     <div className="flex w-full justify-between p-4 pt-2">
-      <p>progres</p>
-      <div>{userScore.progressToday}</div>
-      <p>slovíček</p>
+      <p>dnes:</p>
+      <div>{userScore.startedCountToday}</div>
+      <p>celkem:</p>
       <p>{userScore.startedCount}</p>
     </div>
   );

@@ -68,79 +68,99 @@ export async function updateWordsRepository(
   const masteredAts = items.map((item) => getMasteredAt(item.progress));
   const skippedFlags = items.map((item) => item.skipped);
 
-  const query = `
-    WITH user_id_cte AS (
-      SELECT id AS user_id FROM users WHERE uid = $1
-    ),
-
-    word_data AS (
-      SELECT 
-        unnest($2::int[]) AS item_id,
-        unnest($3::int[]) AS progress,
-        unnest($4::timestamptz[]) AS next_at,
-        unnest($5::timestamptz[]) AS mastered_at,
-        unnest($6::boolean[]) AS skipped
-    ),
-
-    -- Insert or update user_items table
-    insert_or_update AS (
-      INSERT INTO user_items (user_id, item_id, progress, next_at, mastered_at, skipped)
-      SELECT 
-        (SELECT user_id FROM user_id_cte),
-        wd.item_id,
-        wd.progress,
-        wd.next_at,
-        wd.mastered_at,
-        wd.skipped
-      FROM word_data wd
-      ON CONFLICT(user_id, item_id) 
-      DO UPDATE SET 
-        progress = EXCLUDED.progress, 
-        next_at = EXCLUDED.next_at, 
-        mastered_at = CASE 
-          WHEN user_items.mastered_at IS NULL AND EXCLUDED.mastered_at IS NOT NULL 
-          THEN EXCLUDED.mastered_at 
-          ELSE user_items.mastered_at 
-        END,
-        skipped = EXCLUDED.skipped
-      RETURNING user_id
-    ),
-
-    -- Count the number of items in user_items for the given user
-    item_count AS (    
-    SELECT COUNT(*) AS total_items
-    FROM user_items
-    WHERE user_id = (SELECT user_id FROM user_id_cte)
-    ),
-
-    -- Find blocks where unlock_at <= total_items and not already in user_blocks
-    unlocked_blocks AS (
-    SELECT b.id AS block_id
-    FROM blocks b
-    CROSS JOIN item_count
-    WHERE b.unlock_at <= item_count.total_items
-      AND NOT EXISTS (
-        SELECT 1
-        FROM user_blocks ub
-        WHERE ub.user_id = (SELECT user_id FROM user_id_cte)
-          AND ub.block_id = b.id
-      )
-    ),
-
-    -- Insert missing blocks into user_blocks
-    INSERT INTO user_blocks (user_id, block_id, started_at, next_at)
-    SELECT 
-      (SELECT user_id FROM user_id_cte),
-      ub.block_id,
-      NOW(),
-      NOW()
-    FROM unlocked_blocks ub;
-  `;
-
-  const values = [uid, itemIds, progresses, nextAts, masteredAts, skippedFlags];
-
   await withDbClient(db, async (client) => {
-    await client.query(query, values);
+    try {
+      await client.query("BEGIN");
+
+      const userIdQuery = "SELECT id AS user_id FROM users WHERE uid = $1";
+      const userIdResult = await client.query(userIdQuery, [uid]);
+      const userId = userIdResult.rows[0]?.user_id;
+
+      if (!userId) {
+        throw new Error("User not found");
+      }
+
+      const wordDataQuery = `
+        WITH word_data_cte AS (
+          SELECT 
+            unnest($1::int[]) AS item_id,
+            unnest($2::int[]) AS progress,
+            unnest($3::timestamptz[]) AS next_at,
+            unnest($4::timestamptz[]) AS mastered_at,
+            unnest($5::boolean[]) AS skipped
+        )
+        INSERT INTO user_items (user_id, item_id, progress, next_at, mastered_at, skipped)
+        SELECT 
+          $6,
+          wd.item_id,
+          wd.progress,
+          wd.next_at,
+          wd.mastered_at,
+          wd.skipped
+        FROM word_data_cte wd
+        ON CONFLICT(user_id, item_id) 
+        DO UPDATE SET 
+          progress = EXCLUDED.progress, 
+          next_at = EXCLUDED.next_at, 
+          mastered_at = CASE 
+            WHEN user_items.mastered_at IS NULL AND EXCLUDED.mastered_at IS NOT NULL 
+            THEN EXCLUDED.mastered_at 
+            ELSE user_items.mastered_at 
+          END,
+          skipped = EXCLUDED.skipped;
+      `;
+
+      await client.query(wordDataQuery, [
+        itemIds,
+        progresses,
+        nextAts,
+        masteredAts,
+        skippedFlags,
+        userId,
+      ]);
+
+      const itemCountQuery = `
+        SELECT COUNT(*) AS total_items
+        FROM user_items
+        WHERE user_id = $1
+      `;
+      const itemCountResult = await client.query(itemCountQuery, [userId]);
+      const totalItems = itemCountResult.rows[0]?.total_items;
+
+      const unlockedBlocksQuery = `
+        SELECT b.id AS block_id
+        FROM blocks b
+        WHERE b.unlock_at <= $1
+          AND NOT EXISTS (
+            SELECT 1
+            FROM user_blocks ub
+            WHERE ub.user_id = $2
+              AND ub.block_id = b.id
+          )
+      `;
+      const unlockedBlocksResult = await client.query(unlockedBlocksQuery, [
+        totalItems,
+        userId,
+      ]);
+
+      const unlockedBlocks = unlockedBlocksResult.rows;
+
+      if (unlockedBlocks.length > 0) {
+        const insertBlocksQuery = `
+          INSERT INTO user_blocks (user_id, block_id, started_at, next_at)
+          VALUES ($1, $2, NOW(), NOW())
+        `;
+
+        for (const block of unlockedBlocks) {
+          await client.query(insertBlocksQuery, [userId, block.block_id]);
+        }
+      }
+
+      await client.query("COMMIT");
+    } catch (error) {
+      await client.query("ROLLBACK");
+      throw error;
+    }
   });
 }
 
@@ -160,10 +180,10 @@ export async function getScoreRepository(
       COUNT(CASE WHEN ui.started_at IS NOT NULL THEN 1 END) AS "startedCount",
       MIN(ub.next_at) AS "nextGrammarDate"
     FROM user_items ui
-    LEFT JOIN user_blocks ub ON ub.user_id = (SELECT user_id FROM user_id_cte)
-    WHERE ub.block_id IN (
-      SELECT id FROM blocks WHERE category = 'grammar'
-    );
+    LEFT JOIN user_blocks ub ON ub.user_id = (SELECT user_id FROM user_id_cte) AND ub.block_id IN (
+        SELECT id FROM blocks WHERE category = 'grammar'
+      )
+    WHERE ui.user_id = (SELECT user_id FROM user_id_cte);
   `;
 
   return await withDbClient(db, async (client) => {
@@ -290,6 +310,9 @@ export async function getPronunciationListRepository(
   });
 }
 
+/**
+ * Gets pronunciation lecture words from PostgreSQL database.
+ */
 export async function getPronunciationRepository(
   db: PostgresClient,
   block_id: number

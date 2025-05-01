@@ -18,6 +18,8 @@ export async function getUserController(
       userScore,
     }: { userSettings: UserSettings; userScore: UserScore } =
       await getUserService(postgresDBPool, uid);
+
+    console.log(userSettings, userScore);
     res.status(200).json({
       message: "User settings and score retrieved successfully.",
       userSettings,

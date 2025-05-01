@@ -3,24 +3,28 @@ import {
   PlusIcon,
   MinusIcon,
   AudioIcon,
+  MicrophoneIcon,
+  EyeIcon,
 } from './common/Icons';
 import { fetchWithAuth } from '../utils/firebase.utils';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ItemTransfer, UserScore } from '../../../shared/types/dataTypes';
+import { Word, UserScore } from '../../../shared/types/dataTypes';
 import { postWords } from '../utils/postWords.utils';
 import { supabase } from '../utils/supabase.utils';
 
 import { useUser } from '../hooks/useUser';
 import config from '../config/config';
 import Button from './common/Button';
+import SkipWindow from './common/SkipWindow';
 
 export default function PracticeCard() {
-  const [wordArray, setWordArray] = useState<ItemTransfer[]>([]);
+  const [wordArray, setWordArray] = useState<Word[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(false); // true = czech to english, false = english to czech
   const [revealed, setRevealed] = useState(false);
   const [navigateToDashboard, setNavigateToDashboard] = useState(false);
+  const [showSkipWindow, setShowSkipWindow] = useState(false);
   const { setUserScore } = useUser();
   const audioCacheRef = useRef<Map<string, HTMLAudioElement>>(new Map());
   const navigate = useNavigate();
@@ -34,7 +38,7 @@ export default function PracticeCard() {
     [audioCacheRef]
   );
 
-  function decideDirection(words: ItemTransfer[], index: number = 0) {
+  function decideDirection(words: Word[], index: number = 0) {
     return words[index]?.progress % 2 === 0;
   }
 
@@ -43,7 +47,7 @@ export default function PracticeCard() {
       try {
         const response = await fetchWithAuth(`${config.Url}/api/words`);
         if (response.ok) {
-          const { words }: { words: ItemTransfer[] } = await response.json();
+          const { words }: { words: Word[] } = await response.json();
           setWordArray(words);
           setDirection(decideDirection(words, 0));
 
@@ -116,7 +120,7 @@ export default function PracticeCard() {
   }, [direction, playAudio]);
 
   if (wordArray.length === 0) {
-    return <p>No words to practice</p>;
+    return <p></p>;
   }
 
   async function updateWordArray(
@@ -124,7 +128,7 @@ export default function PracticeCard() {
     skipped: boolean = false
   ) {
     const updatedProgress = Math.max(
-      1,
+      0,
       Math.min(wordArray[currentIndex].progress + progressIncrement, 100)
     );
 
@@ -163,10 +167,19 @@ export default function PracticeCard() {
   }
 
   function handleSkip() {
+    setShowSkipWindow(true);
+  }
+
+  function confirmSkip() {
+    setShowSkipWindow(false);
     updateWordArray(0, true);
   }
 
-  function handleCard() {
+  function cancelSkip() {
+    setShowSkipWindow(false);
+  }
+
+  function handleReveal() {
     setRevealed(true);
     if (direction) playAudio();
   }
@@ -185,22 +198,20 @@ export default function PracticeCard() {
 
   return (
     <div className="flex w-[320px] flex-col justify-center py-4 landscape:h-screen">
+      {showSkipWindow && (
+        <SkipWindow
+          message={`Chcete skutečně vyřadit slovo "${wordArray[currentIndex].czech}"?`}
+          onConfirm={confirmSkip}
+          onCancel={cancelSkip}
+        />
+      )}
       <div className="flex flex-col gap-1">
-        <Button
-          onClick={handleSkip}
-          className={`rounded-tr-md`}
-          color="secondary"
-        >
+        <Button onClick={handleSkip} color="secondary">
           <SlashBookmarkIcon></SlashBookmarkIcon>
         </Button>
         <button
           name="PracticeCard"
-          onClick={!revealed ? handleCard : undefined}
-          className={`color-secondary flex h-[150px] w-full flex-col justify-between py-3 ${
-            !revealed
-              ? 'color-secondary-hover'
-              : 'color-secondary-disabled shadow-none'
-          } `}
+          className={`color-secondary flex h-[150px] w-full flex-col justify-between py-3 shadow-none`}
         >
           <p className="flex w-full justify-end pr-4 text-sm">
             {currentIndex + 1} / {wordArray.length}
@@ -216,21 +227,35 @@ export default function PracticeCard() {
             {revealed ? wordArray[currentIndex]?.progress : '\u00A0'}
           </p>
         </button>
-        <div className="flex w-full gap-1">
-          <Button onClick={handleMinus} isActive={revealed} color="secondary">
-            <MinusIcon></MinusIcon>
-          </Button>
-          <Button onClick={handlePlus} isActive={revealed} color="secondary">
-            <PlusIcon></PlusIcon>
-          </Button>
+        <div className="flex w-full justify-between gap-1">
+          <div className="flex w-full flex-col gap-1">
+            <Button>
+              <MicrophoneIcon></MicrophoneIcon>
+            </Button>
+            <Button onClick={handleAudio} isActive={!direction || revealed}>
+              <AudioIcon></AudioIcon>
+            </Button>
+          </div>
+          {!revealed ? (
+            <div className="flex w-full flex-col gap-1">
+              <Button onClick={handleReveal}>
+                <EyeIcon></EyeIcon>
+              </Button>
+              <Button isActive={false}>
+                <MinusIcon></MinusIcon>
+              </Button>
+            </div>
+          ) : (
+            <div className="flex w-full flex-col gap-1">
+              <Button onClick={handlePlus} isActive={revealed}>
+                <PlusIcon></PlusIcon>
+              </Button>
+              <Button onClick={handleMinus} isActive={revealed}>
+                <MinusIcon></MinusIcon>
+              </Button>
+            </div>
+          )}
         </div>
-        <Button
-          onClick={handleAudio}
-          isActive={!direction || revealed}
-          className={`rounded-b-md`}
-        >
-          <AudioIcon></AudioIcon>
-        </Button>
       </div>
     </div>
   );

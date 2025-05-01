@@ -1,14 +1,15 @@
-import { ItemProgress } from '../../../shared/types/dataTypes';
+import { WordProgress } from '../../../shared/types/dataTypes';
 import { fetchWithAuth } from './firebase.utils';
 import { UserScore } from '../../../shared/types/dataTypes';
 import config from '../config/config';
 
 export async function postWords(
-  words: ItemProgress[]
+  words: WordProgress[]
 ): Promise<UserScore | null> {
   const API_PATH = `${config.Url}/api/words`;
 
   try {
+    console.log('Posting words:', words);
     const response = await fetchWithAuth(API_PATH, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },

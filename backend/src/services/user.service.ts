@@ -10,7 +10,7 @@ export async function getUserService(
   db: PostgresClient,
   uid: string
 ): Promise<{ userSettings: UserSettings; userScore: UserScore }> {
-  const userSettings = await getUserRepository(db, uid);
+  const userSettings: UserSettings = await getUserRepository(db, uid);
   const userScore: UserScore = await getScoreRepository(db, uid);
   return { userSettings, userScore };
 }
