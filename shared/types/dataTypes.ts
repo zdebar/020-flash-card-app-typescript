@@ -60,18 +60,12 @@ export interface PronunciationWord {
   group: number;
 }
 
-export interface PronunciationUpdate {
-  // Minimized word data for database update send back from frontend
-  block_id: number;
-  progress: number;
-  skipped: boolean;
-}
-
-export interface PronunciationLecture extends PronunciationUpdate {
+export interface PronunciationLecture {
   // Prepared pronunciation lecture data send to frontend
+  block_id: number;
   block_name: string;
   block_explanation: string;
-  items: PronunciationWord[][];
+  items: PronunciationWord[][]; // Grouped by group into subarrays
 }
 
 export interface PronunciationItem {

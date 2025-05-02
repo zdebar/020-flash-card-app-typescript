@@ -7,6 +7,9 @@ import PracticeCard from './components/PracticeCard';
 import UserSettingsCard from './components/UserSettingsCard';
 import UserDashboardCard from './components/UserDashboardCard';
 import Button from './components/common/Button';
+import PronunciationListCard from './components/PronunciationListCard';
+import PronunciationCard from './components/Pronunciation';
+import GrammarCard from './components/GrammarCard';
 
 export default function App() {
   const { userInfo, loading } = useUser();
@@ -35,9 +38,13 @@ export default function App() {
             }
           />
           <Route path="/login" element={<LoginCard />} />
-          <Route path="/pronunciation" element={<PracticeCard />} />
+          <Route
+            path="/pronunciationList"
+            element={<PronunciationListCard />}
+          />
+          <Route path="/pronunciation/:id" element={<PronunciationCard />} />
           <Route path="/vocabulary" element={<PracticeCard />} />
-          <Route path="/grammar" element={<PracticeCard />} />
+          <Route path="/grammar" element={<GrammarCard />} />
           <Route path="/userSettings" element={<UserSettingsCard />} />
           <Route path="/userDashboard" element={<UserDashboardCard />} />
         </Routes>

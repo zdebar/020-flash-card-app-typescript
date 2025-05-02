@@ -6,6 +6,7 @@ import {
   GrammarLecture,
   PronunciationLecture,
   GrammarProgress,
+  PronunciationWord,
 } from "../../../shared/types/dataTypes";
 import {
   getWordsRepository,
@@ -99,5 +100,6 @@ export async function getPronunciationService(
       }))
     ),
   };
+
   return pronunciationWithPaths;
 }

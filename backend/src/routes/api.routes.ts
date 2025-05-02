@@ -23,7 +23,7 @@ apiRouter.get(
   getPronunciationListController
 ); // sends list of pronunciation lectures
 apiRouter.get(
-  "/pronunciation",
+  "/pronunciation/:id", // Add :id to the route path
   authenticateMiddleware,
   getPronunciationController
 ); // sends pronunciation lecture

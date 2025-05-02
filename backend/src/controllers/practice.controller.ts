@@ -150,7 +150,7 @@ export async function getPronunciationController(
   next: Function
 ): Promise<void> {
   try {
-    const block_id: number = req.body; // should this be a query parameter instead?
+    const block_id: number = parseInt(req.params.id, 10); // Extract id from URL params
     const pronunciation: PronunciationLecture = await getPronunciationService(
       postgresDBPool,
       block_id

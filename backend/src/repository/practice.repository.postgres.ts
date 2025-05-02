@@ -174,16 +174,27 @@ export async function getScoreRepository(
   const query = `
     WITH user_id_cte AS (
       SELECT id AS user_id FROM users WHERE uid = $1
+    ),
+    started_items AS (
+      SELECT 
+        COUNT(CASE WHEN ui.started_at IS NOT NULL AND DATE(ui.started_at AT TIME ZONE 'UTC') = CURRENT_DATE THEN 1 END) AS "startedCountToday",
+        COUNT(CASE WHEN ui.started_at IS NOT NULL THEN 1 END) AS "startedCount"
+      FROM user_items ui
+      WHERE ui.user_id = (SELECT user_id FROM user_id_cte)
+    ),
+    grammar_date AS (
+      SELECT 
+        MIN(ub.next_at) AS "nextGrammarDate"
+      FROM user_blocks ub
+      JOIN blocks b ON ub.block_id = b.id
+      WHERE ub.user_id = (SELECT user_id FROM user_id_cte)
+        AND b.category = 'grammar'
     )
     SELECT 
-      COUNT(CASE WHEN ui.started_at IS NOT NULL AND DATE(ui.started_at AT TIME ZONE 'UTC') = CURRENT_DATE THEN 1 END) AS "startedCountToday",
-      COUNT(CASE WHEN ui.started_at IS NOT NULL THEN 1 END) AS "startedCount",
-      MIN(ub.next_at) AS "nextGrammarDate"
-    FROM user_items ui
-    LEFT JOIN user_blocks ub ON ub.user_id = (SELECT user_id FROM user_id_cte) AND ub.block_id IN (
-        SELECT id FROM blocks WHERE category = 'grammar'
-      )
-    WHERE ui.user_id = (SELECT user_id FROM user_id_cte);
+      si."startedCountToday",
+      si."startedCount",
+      gd."nextGrammarDate"
+    FROM started_items si, grammar_date gd;
   `;
 
   return await withDbClient(db, async (client) => {
@@ -248,7 +259,7 @@ export async function getGrammarRepository(
     LEFT JOIN block_items bi ON ob.block_id = bi.block_id
     LEFT JOIN items i ON bi.item_id = i.id
     LEFT JOIN user_items ui ON i.id = ui.item_id AND ui.user_id = (SELECT user_id FROM user_id_cte)
-    GROUP BY ob.block_id, ob.block_name, ob.block_explanation;
+    GROUP BY ob.block_id, ob.block_name, ob.block_explanation, ob.progress, ob.skipped;
   `;
 
   return await withDbClient(db, async (client) => {
@@ -318,38 +329,51 @@ export async function getPronunciationRepository(
   block_id: number
 ): Promise<PronunciationLecture> {
   const query = `
-    WITH block_data AS (
-      SELECT 
-        b.id AS block_id,
-        b.block_name,
-        b.explanation AS block_explanation
-      FROM blocks b
-      WHERE b.id = $1
-    )
     SELECT 
-      bd.block_id,
-      bd.block_name,
-      bd.block_explanation,
-      JSON_AGG(
-        JSON_AGG(
-          JSON_BUILD_OBJECT(
-            'id', i.id,
-            'czech', i.czech,
-            'english', i.english,
-            'pronunciation', i.pronunciation,
-            'audio', i.audio
+      JSON_BUILD_OBJECT(
+        'block_id', b.id,
+        'block_name', b.block_name,
+        'block_explanation', b.explanation,
+        'items', (
+          SELECT JSON_AGG(
+            JSON_BUILD_OBJECT(
+              'id', i.id,
+              'czech', i.czech,
+              'english', i.english,
+              'pronunciation', i.pronunciation,
+              'audio', i.audio,
+              'group', bi.group,
+              'item_order', bi.item_order
+            )
+            ORDER BY bi.item_order ASC -- Ensure ordering is inside JSON_AGG
           )
+          FROM items i
+          JOIN block_items bi ON i.id = bi.item_id
+          WHERE bi.block_id = b.id
         )
-      ) AS items
-    FROM block_data bd
-    JOIN block_items bi ON bd.block_id = bi.block_id
-    JOIN items i ON bi.item_id = i.id
-    LEFT JOIN user_items ui ON i.id = ui.item_id
-    GROUP BY bd.block_id, bd.block_name, bd.block_explanation, bi."group";
+      ) AS block_data
+    FROM blocks b
+    WHERE b.id = $1;
   `;
 
   return await withDbClient(db, async (client) => {
     const res = await client.query(query, [block_id]);
-    return res.rows[0] as PronunciationLecture;
+    const blockData = res.rows[0].block_data;
+
+    const groupedItems: any[][] = [];
+    let currentGroup = -1;
+
+    blockData.items.forEach((item: any) => {
+      if (item.group !== currentGroup) {
+        currentGroup = item.group;
+        groupedItems.push([]);
+      }
+      groupedItems[groupedItems.length - 1].push(item);
+    });
+
+    blockData.items = groupedItems;
+    console.log("Grouped items:", groupedItems);
+
+    return blockData;
   });
 }

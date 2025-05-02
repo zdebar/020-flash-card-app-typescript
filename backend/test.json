@@ -1,0 +1,63 @@
+{
+  "block_id": 4,
+  "block_name": "\"e\" vs  \"ae\"",
+  "block_explanation": "<p>Výslovnost \"e\" vs \"ae\"</p>",
+  "items": [
+    {
+      "id": 102,
+      "czech": "hlava",
+      "english": "head",
+      "pronunciation": "hˈɛd",
+      "audio": "head"
+    },
+    {
+      "id": 104,
+      "czech": "měl",
+      "english": "had",
+      "pronunciation": "hˈæd",
+      "audio": "had"
+    },
+    {
+      "id": 736,
+      "czech": "pero",
+      "english": "pen",
+      "pronunciation": "pˈɛn",
+      "audio": "pen"
+    },
+    {
+      "id": 1044,
+      "czech": "špatný",
+      "english": "bad",
+      "pronunciation": "bˈæd",
+      "audio": "bad"
+    },
+    {
+      "id": 1061,
+      "czech": "postel",
+      "english": "bed",
+      "pronunciation": "bˈɛd",
+      "audio": "bed"
+    },
+    {
+      "id": 1635,
+      "czech": "poslat",
+      "english": "send",
+      "pronunciation": "sˈɛnd",
+      "audio": "send"
+    },
+    {
+      "id": 2248,
+      "czech": "pánev",
+      "english": "pan",
+      "pronunciation": "pˈæn",
+      "audio": "pan"
+    },
+    {
+      "id": 3414,
+      "czech": "písek",
+      "english": "sand",
+      "pronunciation": "sˈænd",
+      "audio": "sand"
+    }
+  ]
+}

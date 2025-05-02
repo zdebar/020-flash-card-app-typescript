@@ -6,40 +6,29 @@ export default function UserDashboardCard() {
   const { userScore } = useUser();
 
   return (
-    <div className="flex w-[320px] flex-col gap-4 py-4">
-      <div className="color-secondary w-full rounded-md">
-        <ButtonLink
-          to="/pronunciation"
-          className="rounded-t-md"
-          shape="rectangular"
-        >
+    <div className="flex w-[320px] flex-col gap-1 py-4">
+      <div className="color-secondary w-full">
+        <ButtonLink to="/pronunciationList" shape="rectangular">
           Výslovnost
         </ButtonLink>
-        <Dashboard></Dashboard>
       </div>
-      <div className="color-secondary w-full rounded-md">
-        <ButtonLink
-          to="/vocabulary"
-          className="rounded-t-md"
-          shape="rectangular"
-        >
+      <div className="color-secondary w-full">
+        <ButtonLink to="/vocabulary" shape="rectangular">
           Slovíčka
         </ButtonLink>
         <Dashboard></Dashboard>
       </div>
-      <div className="color-secondary w-full rounded-md">
+      <div className="color-secondary w-full">
         <ButtonLink
           to="/grammar"
-          className="rounded-t-md"
           shape="rectangular"
           isActive={
             !!userScore?.nextGrammarDate &&
-            userScore.nextGrammarDate < new Date()
+            new Date(userScore.nextGrammarDate).getTime() < Date.now()
           }
         >
           Gramatika
         </ButtonLink>
-        <Dashboard></Dashboard>
       </div>
     </div>
   );

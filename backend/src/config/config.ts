@@ -21,6 +21,7 @@ const config = {
   block: 10, // The size of repetition block
   SRS: [
     10, // Precomputed repetition algorithm in seconds
+    10, // 10s
     120, // 2m
     900, // 15m
     3600, // 1h
