@@ -39,7 +39,7 @@ export default function Card({
         {currentIndex + 1} / {wordArray.length}
       </p>
       <p className="pt-1 font-bold">
-        {direction || revealed ? wordArray[currentIndex].czech : undefined}
+        {direction || revealed ? wordArray[currentIndex].czech : '\u00A0'}
       </p>
       <p
         style={{

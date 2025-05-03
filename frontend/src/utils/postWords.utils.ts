@@ -1,15 +1,13 @@
 import { WordProgress } from '../../../shared/types/dataTypes';
 import { fetchWithAuth } from './firebase.utils';
 import { UserScore } from '../../../shared/types/dataTypes';
-import config from '../config/config';
 
-export async function postWords(
-  words: WordProgress[]
+export async function patchWords(
+  words: WordProgress[],
+  patchPath: string
 ): Promise<UserScore | null> {
-  const API_PATH = `${config.Url}/api/words`;
-
   try {
-    const response = await fetchWithAuth(API_PATH, {
+    const response = await fetchWithAuth(patchPath, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(words),
