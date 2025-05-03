@@ -1,18 +1,24 @@
-import { useUser } from '../../hooks/useUser';
-
-export default function Dashboard() {
-  const { userScore } = useUser();
-
-  if (!userScore) {
-    return <div>No data available</div>;
+export default function Dashboard({
+  today,
+  total,
+}: {
+  today?: number;
+  total?: number;
+}) {
+  if (today === undefined || total === undefined) {
+    return (
+      <div className="flex h-12 w-full justify-between p-4 pt-2">
+        data nejsou k dispozici
+      </div>
+    );
   }
 
   return (
-    <div className="flex w-full justify-between p-4 pt-2">
+    <div className="flex h-12 w-full justify-between p-4 pt-2">
       <p>dnes:</p>
-      <div>{userScore.startedCountToday}</div>
+      <div>{today}</div>
       <p>celkem:</p>
-      <p>{userScore.startedCount}</p>
+      <p>{total}</p>
     </div>
   );
 }

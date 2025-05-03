@@ -7,11 +7,11 @@ export default function Header(): ReactNode {
   const { userInfo } = useUser();
 
   return (
-    <header className="flex w-full justify-between p-4 landscape:fixed landscape:top-0 landscape:right-0 landscape:left-0 landscape:z-10 landscape:h-0">
+    <header className="flex w-full justify-between p-4">
       <ButtonLink to="/">
         <HomeIcon />
       </ButtonLink>
-      <div className="lanscape:z-12 flex gap-4 landscape:flex-col">
+      <div className="flex gap-4">
         <ButtonLink to="/userDashboard" isActive={!!userInfo}>
           <AcademicCapIcon />
         </ButtonLink>

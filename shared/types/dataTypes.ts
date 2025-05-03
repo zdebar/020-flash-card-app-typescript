@@ -6,12 +6,15 @@ export interface WordProgress {
   skipped: boolean;
 }
 
-export interface Word extends WordProgress {
+export interface Word {
   // Word extractred from database send to frontend
+  id: number;
   czech: string;
   english: string;
   pronunciation: string | null;
   audio: string | null;
+  progress: number;
+  skipped: boolean;
   started: boolean;
 }
 

@@ -1,6 +1,5 @@
 import { Word } from '../../../shared/types/dataTypes';
 import { supabase } from '../utils/supabase.utils';
-import { fetchWithAuth } from './firebase.utils';
 
 export function alternateDirection(words: Word[], index: number = 0) {
   return words[index]?.progress % 2 === 0;
@@ -91,18 +90,4 @@ export function updateWordProgress(
   };
 
   return updatedWordArray;
-}
-
-export async function fetchWordsAndCacheAudio(
-  apiUrl: string,
-  saveAudioToUseRef: (audioPath: string, audioBlob: Blob | MediaSource) => void
-): Promise<Word[]> {
-  const response = await fetchWithAuth(apiUrl);
-  if (!response.ok) {
-    throw new Error('Failed to fetch words');
-  }
-
-  const { words }: { words: Word[] } = await response.json();
-  await cacheAudioFiles(words, saveAudioToUseRef);
-  return words;
 }

@@ -1,46 +1,45 @@
-import { SlashBookmarkIcon } from './common/Icons';
-import { fetchWordsAndCacheAudio } from '../utils/practice.utils';
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { fetchWithAuth } from '../utils/firebase.utils';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Word, UserScore } from '../../../shared/types/dataTypes';
+
 import { postWords } from '../utils/postWords.utils';
 import {
   alternateDirection,
-  playAudioFromCache,
   convertToWordProgress,
   updateWordProgress,
 } from '../utils/practice.utils';
 import PracticeControls from './common/PracticeControls';
 import { useUser } from '../hooks/useUser';
 import config from '../config/config';
-import Button from './common/Button';
+import SkipControl from './common/SkipControl';
 import Card from './common/Card';
+import { useHint } from '../hooks/useHint';
+import { useAudioManager } from '../hooks/useAudioManager';
 
 export default function PracticeCard() {
   const [wordArray, setWordArray] = useState<Word[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(false); // true = czech to english, false = english to czech
   const [revealed, setRevealed] = useState(false);
-  const { setUserScore } = useUser(); // n
-  const audioCacheRef = useRef<Map<string, HTMLAudioElement>>(new Map());
+
   const navigate = useNavigate();
 
-  const saveAudioToUseRef = useCallback(
-    (audioPath: string, audioBlob: Blob | MediaSource) => {
-      const audioUrl = URL.createObjectURL(audioBlob);
-      const audio = new Audio(audioUrl);
-      audioCacheRef.current.set(audioPath, audio);
-    },
-    [audioCacheRef]
-  );
+  const { setUserScore } = useUser();
+  const { hintIndex, handleHint, resetHint } = useHint();
+  const { playAudio } = useAudioManager(wordArray);
+
+  const currentAudio = wordArray[currentIndex]?.audio || null;
 
   useEffect(() => {
     const fetchAndStoreWords = async () => {
       try {
-        const words = await fetchWordsAndCacheAudio(
-          `${config.Url}/api/words`,
-          saveAudioToUseRef
-        );
+        const response = await fetchWithAuth(`${config.Url}/api/words`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch words');
+        }
+
+        const { words }: { words: Word[] } = await response.json();
         setWordArray(words);
         setDirection(alternateDirection(words, 0));
       } catch (error) {
@@ -49,22 +48,13 @@ export default function PracticeCard() {
     };
 
     fetchAndStoreWords();
-    const currentRef = audioCacheRef.current;
-    return () => {
-      currentRef.clear();
-    };
-  }, [saveAudioToUseRef]);
-
-  const playAudio = useCallback(() => {
-    const audioPath = wordArray[currentIndex]?.audio || null;
-    playAudioFromCache(audioCacheRef.current, audioPath);
-  }, [wordArray, currentIndex]);
+  }, []);
 
   useEffect(() => {
     if (!direction) {
-      setTimeout(() => playAudio(), 100);
+      setTimeout(() => playAudio(currentAudio), 100);
     }
-  }, [direction, playAudio]);
+  }, [direction, playAudio, currentAudio]);
 
   if (wordArray.length === 0) {
     return <p>Loading..</p>;
@@ -101,34 +91,35 @@ export default function PracticeCard() {
         setDirection(alternateDirection(updatedWordArray, currentIndex + 1));
         setRevealed(false);
         setWordArray(updatedWordArray);
+        resetHint();
       }
     }
   }
 
   function handleReveal() {
     setRevealed(true);
-    if (direction) playAudio();
+    if (direction) playAudio(currentAudio);
   }
 
   return (
-    <div className="flex w-[320px] flex-col justify-center py-4 landscape:h-screen">
+    <div className="flex w-[320px] flex-col justify-center py-4">
       <div className="flex flex-col gap-1">
-        <Button onClick={() => updateWordArray(0, true)} color="secondary">
-          <SlashBookmarkIcon></SlashBookmarkIcon>
-        </Button>
+        <SkipControl handleSkip={() => updateWordArray(0, true)} />
         <Card
           currentIndex={currentIndex}
           wordArray={wordArray}
           direction={direction}
           revealed={revealed}
+          hintIndex={hintIndex}
         ></Card>
         <PracticeControls
           revealed={revealed}
           direction={direction}
-          handleAudio={() => playAudio()}
+          handleAudio={() => playAudio(currentAudio)}
           handleReveal={handleReveal}
           handlePlus={() => updateWordArray(config.plusProgress)}
           handleMinus={() => updateWordArray(config.minusProgress)}
+          handleHint={() => handleHint()}
         />
       </div>
     </div>

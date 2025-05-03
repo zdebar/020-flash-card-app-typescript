@@ -5,6 +5,7 @@ import {
   EyeIcon,
   PlusIcon,
   MinusIcon,
+  HintIcon,
 } from './Icons';
 
 interface PracticeControlsProps {
@@ -14,6 +15,7 @@ interface PracticeControlsProps {
   handleReveal: () => void;
   handlePlus: () => void;
   handleMinus: () => void;
+  handleHint: () => void;
 }
 
 export default function PracticeControls({
@@ -23,6 +25,7 @@ export default function PracticeControls({
   handleReveal,
   handlePlus,
   handleMinus,
+  handleHint,
 }: PracticeControlsProps) {
   return (
     <div className="flex w-full justify-between gap-1">
@@ -39,8 +42,8 @@ export default function PracticeControls({
           <Button onClick={handleReveal}>
             <EyeIcon></EyeIcon>
           </Button>
-          <Button isActive={false}>
-            <MinusIcon></MinusIcon>
+          <Button onClick={handleHint}>
+            <HintIcon></HintIcon>
           </Button>
         </div>
       ) : (

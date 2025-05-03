@@ -11,12 +11,16 @@ export default function UserDashboardCard() {
         <ButtonLink to="/pronunciationList" shape="rectangular">
           Výslovnost
         </ButtonLink>
+        <Dashboard />
       </div>
       <div className="color-secondary w-full">
         <ButtonLink to="/vocabulary" shape="rectangular">
           Slovíčka
         </ButtonLink>
-        <Dashboard></Dashboard>
+        <Dashboard
+          today={userScore?.startedCountToday}
+          total={userScore?.startedCount}
+        />
       </div>
       <div className="color-secondary w-full">
         <ButtonLink
@@ -29,6 +33,7 @@ export default function UserDashboardCard() {
         >
           Gramatika
         </ButtonLink>
+        <Dashboard />
       </div>
     </div>
   );

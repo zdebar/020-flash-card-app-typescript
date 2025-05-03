@@ -9,7 +9,6 @@ export async function postWords(
   const API_PATH = `${config.Url}/api/words`;
 
   try {
-    console.log('Posting words:', words); // Debugging line
     const response = await fetchWithAuth(API_PATH, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
