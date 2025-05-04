@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach, Mock } from "vitest";
 import {
-  getWordsController,
-  updateWordsController,
+  getItemsController,
+  updateItemsController,
   getUserProfileController,
 } from "../practice.controller";
 import { Request, Response } from "express";
@@ -41,7 +41,7 @@ describe("User Controller", () => {
       const mockError = new Error("Database error");
       vi.spyOn(wordService, "getWordsPostgres").mockRejectedValue(mockError);
 
-      await getWordsController(req as Request, res as Response);
+      await getItemsController(req as Request, res as Response);
 
       expect(res.status).not.toHaveBeenCalledWith(200);
       expect(closeDbConnection).toHaveBeenCalledWith(db);
@@ -52,10 +52,10 @@ describe("User Controller", () => {
     it("should update user words and return 200", async () => {
       req.body = { words: [{ id: 1, word: "updated" }] };
 
-      await updateWordsController(req as Request, res as Response);
+      await updateItemsController(req as Request, res as Response);
 
       expect(db.connect).toHaveBeenCalled();
-      expect(wordService.updateWordsRepository).toHaveBeenCalledWith(
+      expect(wordService.updateItemsRepository).toHaveBeenCalledWith(
         db,
         1,
         req.body.words
@@ -71,7 +71,7 @@ describe("User Controller", () => {
       const mockError = new Error("Update error");
       vi.spyOn(wordService, "updateWordsPostgres").mockRejectedValue(mockError);
 
-      await updateWordsController(req as Request, res as Response);
+      await updateItemsController(req as Request, res as Response);
 
       expect(res.status).not.toHaveBeenCalledWith(200);
       expect(closeDbConnection).toHaveBeenCalledWith(db);

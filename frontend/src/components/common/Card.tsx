@@ -1,9 +1,9 @@
-import { Word } from '../../../../shared/types/dataTypes';
+import { Item } from '../../../../shared/types/dataTypes';
 import { useState, useEffect, useRef } from 'react';
 
 interface CardProps {
   currentIndex: number;
-  wordArray: Word[];
+  wordArray: Item[];
   direction: boolean;
   revealed: boolean;
   hintIndex?: number;
@@ -19,6 +19,7 @@ export default function Card({
   const [textWidth, setTextWidth] = useState(0);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
+  // Canvas is purely for visual
   useEffect(() => {
     if (!canvasRef.current) {
       canvasRef.current = document.createElement('canvas');

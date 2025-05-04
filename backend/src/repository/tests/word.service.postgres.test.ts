@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll, vi } from "vitest";
 import {
-  getWordsRepository,
-  updateWordsRepository,
+  getItemsRepository,
+  updateItemsRepository,
 } from "../practice.repository.postgres";
 import { postgresDBPool } from "../../config/database.config.postgres";
 import { Word, WordProgress } from "../../types/dataTypes";
@@ -23,7 +23,7 @@ describe("getWordsPostgres tests", () => {
   const numWords = 10;
 
   it("should return specific words for a user", async () => {
-    const words = await getWordsRepository(
+    const words = await getItemsRepository(
       postgresDBPool,
       userId,
       languageID,
@@ -125,12 +125,12 @@ describe("getWordsPostgres tests", () => {
 
   it("should throw error for nonexistent user", async () => {
     await expect(
-      getWordsRepository(postgresDBPool, 999, languageID, numWords)
+      getItemsRepository(postgresDBPool, 999, languageID, numWords)
     ).rejects.toThrowError();
   });
 
   it("should return empty array when numWord 0", async () => {
-    const words = await getWordsRepository(
+    const words = await getItemsRepository(
       postgresDBPool,
       userId,
       languageID,
@@ -140,7 +140,7 @@ describe("getWordsPostgres tests", () => {
   });
 
   it("should return empty array for nonexistent srcLanguage", async () => {
-    const words = await getWordsRepository(
+    const words = await getItemsRepository(
       postgresDBPool,
       userId,
       999,
@@ -150,7 +150,7 @@ describe("getWordsPostgres tests", () => {
   });
 
   it("should return empty array for nonexistent trgLanguage", async () => {
-    const words = await getWordsRepository(
+    const words = await getItemsRepository(
       postgresDBPool,
       userId,
       999,
@@ -200,7 +200,7 @@ describe("updateWordsPostgres tests", () => {
 
   it("should throw Error on update for a nonexistent user_id", async () => {
     await expect(
-      updateWordsRepository(postgresDBPool, 999, wordToUpdateValid)
+      updateItemsRepository(postgresDBPool, 999, wordToUpdateValid)
     ).rejects.toThrowError(Error);
   });
 
@@ -212,12 +212,12 @@ describe("updateWordsPostgres tests", () => {
       },
     ];
     await expect(
-      updateWordsRepository(postgresDBPool, userId, wordToUpdateInvalid)
+      updateItemsRepository(postgresDBPool, userId, wordToUpdateInvalid)
     ).rejects.toThrowError(Error);
   });
 
   it("should create new user_word", async () => {
-    await updateWordsRepository(postgresDBPool, userId, wordToUpdateValid);
+    await updateItemsRepository(postgresDBPool, userId, wordToUpdateValid);
     const client = (await postgresDBPool.connect()) as PoolClient;
     const result = await client.query(
       "SELECT * FROM user_words WHERE user_id = $1 AND word_id = $2",
@@ -236,7 +236,7 @@ describe("updateWordsPostgres tests", () => {
         progress: 8,
       },
     ];
-    await updateWordsRepository(postgresDBPool, userId, wordToUpdateNew);
+    await updateItemsRepository(postgresDBPool, userId, wordToUpdateNew);
 
     const client = (await postgresDBPool.connect()) as PoolClient;
     const result = await client.query(
@@ -255,7 +255,7 @@ describe("updateWordsPostgres tests", () => {
         progress: 0,
       },
     ];
-    await updateWordsRepository(postgresDBPool, userId, wordToUpdateNew);
+    await updateItemsRepository(postgresDBPool, userId, wordToUpdateNew);
 
     const client = (await postgresDBPool.connect()) as PoolClient;
     const result = await client.query(
@@ -279,7 +279,7 @@ describe("updateWordsPostgres tests", () => {
       },
     ];
 
-    await updateWordsRepository(postgresDBPool, userId, wordsToUpdate);
+    await updateItemsRepository(postgresDBPool, userId, wordsToUpdate);
 
     const client = (await postgresDBPool.connect()) as PoolClient;
     const result = await client.query(
@@ -301,7 +301,7 @@ describe("updateWordsPostgres tests", () => {
       },
     ];
 
-    await updateWordsRepository(postgresDBPool, userId, wordToUpdate);
+    await updateItemsRepository(postgresDBPool, userId, wordToUpdate);
 
     const client = (await postgresDBPool.connect()) as PoolClient;
     const result = await client.query(
@@ -323,7 +323,7 @@ describe("updateWordsPostgres tests", () => {
       },
     ];
 
-    await updateWordsRepository(postgresDBPool, userId, wordToUpdate);
+    await updateItemsRepository(postgresDBPool, userId, wordToUpdate);
 
     const client = (await postgresDBPool.connect()) as PoolClient;
     const result = await client.query(
@@ -344,7 +344,7 @@ describe("updateWordsPostgres tests", () => {
       },
     ];
 
-    await updateWordsRepository(postgresDBPool, userId, wordToUpdate);
+    await updateItemsRepository(postgresDBPool, userId, wordToUpdate);
 
     const client = (await postgresDBPool.connect()) as PoolClient;
     const result = await client.query(

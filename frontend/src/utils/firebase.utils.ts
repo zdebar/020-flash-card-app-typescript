@@ -11,10 +11,11 @@ export const fetchWithAuth = async (url: string, options: RequestInit = {}) => {
   const token = await user.getIdToken();
 
   return fetch(url, {
+    method: 'GET',
     ...options,
     headers: {
-      ...options.headers,
       Authorization: `Bearer ${token}`,
+      ...options.headers,
     },
   });
 };

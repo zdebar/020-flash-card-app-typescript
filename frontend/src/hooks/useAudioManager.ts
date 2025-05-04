@@ -2,12 +2,12 @@ import { useCallback, useEffect, useRef } from 'react';
 import {
   GrammarWord,
   PronunciationWord,
-  Word,
+  Item,
 } from '../../../shared/types/dataTypes';
 import { cacheAudioFiles, playAudioFromCache } from '../utils/practice.utils';
 
 export function useAudioManager(
-  wordArray: Word[] | GrammarWord[] | PronunciationWord[]
+  wordArray: Item[] | GrammarWord[] | PronunciationWord[]
 ) {
   const audioCacheRef = useRef<Map<string, HTMLAudioElement>>(new Map());
 

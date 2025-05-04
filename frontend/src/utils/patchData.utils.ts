@@ -1,9 +1,9 @@
-import { WordProgress } from '../../../shared/types/dataTypes';
+import { ItemProgress } from '../../../shared/types/dataTypes';
 import { fetchWithAuth } from './firebase.utils';
 import { UserScore } from '../../../shared/types/dataTypes';
 
-export async function patchWords(
-  words: WordProgress[],
+export async function patchData(
+  words: ItemProgress[],
   patchPath: string
 ): Promise<UserScore | null> {
   try {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import PracticeControls from './common/PracticeControls';
-
+import { Item } from '../../../shared/types/dataTypes';
 import config from '../config/config';
 import SkipControl from './common/SkipControl';
 import Card from './common/Card';
@@ -9,23 +9,34 @@ import { useHint } from '../hooks/useHint';
 import { useAudioManager } from '../hooks/useAudioManager';
 import { useWordArray } from '../hooks/useWordArray';
 
-export default function PracticeCard() {
-  const { wordArray, currentIndex, direction, updateWordArray } = useWordArray(
-    `${config.Url}/api/words`,
-    `${config.Url}/api/words`
-  );
+const PATH = `${config.Url}/api/words`;
+
+export default function PracticeCard({ inArray: words }: { inArray: Item[] }) {
+  const { wordArray, setWordArray, currentIndex, direction, updateWordArray } =
+    useWordArray(PATH);
   const { hintIndex, handleHint, resetHint } = useHint();
   const { playAudio } = useAudioManager(wordArray);
   const [revealed, setRevealed] = useState(false);
 
   const currentAudio = wordArray[currentIndex]?.audio || null;
 
+  // Fetch words from the server when the component mounts
+  useEffect(() => {
+    const fetchWords = async () => {
+      setWordArray(words);
+    };
+
+    fetchWords();
+  }, [words, setWordArray]);
+
+  // Play audio when en to cz card direction is started
   useEffect(() => {
     if (!direction && currentAudio) {
       setTimeout(() => playAudio(currentAudio), 100);
     }
   }, [direction, playAudio, currentAudio]);
 
+  // Handler to reveal button
   function handleReveal() {
     setRevealed(true);
     if (direction) playAudio(currentAudio);

@@ -1,7 +1,7 @@
-import { Word } from '../../../shared/types/dataTypes';
+import { Item } from '../../../shared/types/dataTypes';
 import { supabase } from '../utils/supabase.utils';
 
-export function alternateDirection(words: Word[], index: number = 0) {
+export function alternateDirection(words: Item[], index: number = 0) {
   return words[index]?.progress % 2 === 0;
 }
 
@@ -60,7 +60,7 @@ export function playAudioFromCache(
 /**
  * Converts an array of Word objects to an array of objects containing only the id, progress, and skipped properties.
  */
-export function convertToWordProgress(words: Word[]) {
+export function convertToWordProgress(words: Item[]) {
   return words.map((word) => ({
     id: word.id,
     progress: word.progress,
@@ -72,11 +72,11 @@ export function convertToWordProgress(words: Word[]) {
  * Updates the progress of a word in the word array.
  */
 export function updateWordProgress(
-  wordArray: Word[],
+  wordArray: Item[],
   currentIndex: number,
   progressIncrement: number,
   skipped: boolean
-): Word[] {
+): Item[] {
   const updatedProgress = Math.max(
     0,
     Math.min(wordArray[currentIndex].progress + progressIncrement, 100)

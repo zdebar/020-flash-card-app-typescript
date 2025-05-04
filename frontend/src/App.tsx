@@ -3,13 +3,13 @@ import Header from './components/Header';
 import LoginCard from './components/LoginCard';
 import { Routes, Route, Link } from 'react-router-dom';
 import { useUser } from './hooks/useUser';
-import PracticeCard from './components/PracticeCard';
 import UserSettingsCard from './components/UserSettingsCard';
 import UserDashboardCard from './components/UserDashboardCard';
 import Button from './components/common/Button';
 import PronunciationListCard from './components/PronunciationListCard';
 import PronunciationCard from './components/Pronunciation';
 import GrammarCard from './components/GrammarCard';
+import VocabularyCard from './components/VocabularyCard';
 
 export default function App() {
   const { userInfo, loading } = useUser();
@@ -43,7 +43,7 @@ export default function App() {
             element={<PronunciationListCard />}
           />
           <Route path="/pronunciation/:id" element={<PronunciationCard />} />
-          <Route path="/vocabulary" element={<PracticeCard />} />
+          <Route path="/vocabulary" element={<VocabularyCard />} />
           <Route path="/grammar" element={<GrammarCard />} />
           <Route path="/userSettings" element={<UserSettingsCard />} />
           <Route path="/userDashboard" element={<UserDashboardCard />} />

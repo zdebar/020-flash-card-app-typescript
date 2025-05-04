@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Word, UserScore } from '../../../shared/types/dataTypes';
-import { fetchWithAuth } from '../utils/firebase.utils';
-import { patchWords } from '../utils/postWords.utils';
+import { Item, UserScore } from '../../../shared/types/dataTypes';
+import { patchData } from '../utils/patchData.utils';
 import {
   alternateDirection,
   convertToWordProgress,
@@ -10,8 +9,8 @@ import {
 import { useUser } from '../hooks/useUser';
 import { useNavigate } from 'react-router-dom';
 
-export function useWordArray(fetchPath: string, patchPath: string) {
-  const [wordArray, setWordArray] = useState<Word[]>([]);
+export function useWordArray(patchPath: string) {
+  const [wordArray, setWordArray] = useState<Item[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(false); // true = czech to english, false = english to czech
 
@@ -19,23 +18,8 @@ export function useWordArray(fetchPath: string, patchPath: string) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchAndStoreWords = async () => {
-      try {
-        const response = await fetchWithAuth(fetchPath);
-        if (!response.ok) {
-          throw new Error('Failed to fetch words');
-        }
-
-        const { words }: { words: Word[] } = await response.json();
-        setWordArray(words);
-        setDirection(alternateDirection(words, 0));
-      } catch (error) {
-        console.error('Error in fetching data:', error);
-      }
-    };
-
-    fetchAndStoreWords();
-  }, [fetchPath]);
+    setDirection(alternateDirection(wordArray, 0));
+  }, [wordArray]);
 
   const updateWordArray = useCallback(
     async (progressIncrement: number = 0, skipped: boolean = false) => {
@@ -51,7 +35,7 @@ export function useWordArray(fetchPath: string, patchPath: string) {
           setWordArray([]);
 
           try {
-            const newUserScore: UserScore | null = await patchWords(
+            const newUserScore: UserScore | null = await patchData(
               convertToWordProgress(updatedWordArray),
               patchPath
             );
@@ -69,11 +53,12 @@ export function useWordArray(fetchPath: string, patchPath: string) {
         }
       }
     },
-    [wordArray, currentIndex, navigate, setUserScore]
+    [wordArray, currentIndex, navigate, setUserScore, patchPath]
   );
 
   return {
     wordArray,
+    setWordArray,
     currentIndex,
     direction,
     updateWordArray,

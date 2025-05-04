@@ -1,21 +1,20 @@
 import { useEffect } from 'react';
-import { fetchWithAuth } from '../utils/firebase.utils';
+import { Lecture } from '../../../shared/types/dataTypes';
 import config from '../config/config';
+import getData from '../utils/getData';
+
+const PATH = `${config.Url}/api/words`;
 
 export default function GrammarCard() {
+  // Fetch words from the server when the component mounts
   useEffect(() => {
-    const fetchPronunciationList = async () => {
-      try {
-        const response = await fetchWithAuth(`${config.Url}/api/grammar`);
-        const { grammar } = await response.json();
-        console.log('Grammar List:', grammar);
-      } catch (error) {
-        console.error('Error fetching pronunciation list:', error);
-      }
+    const fetchWords = async () => {
+      const { grammar }: { grammar: Lecture } = await getData(PATH);
+      setWordArray(grammar.items);
     };
 
-    fetchPronunciationList();
-  }, []);
+    fetchWords();
+  }, [setWordArray]);
 
   return <p>Details about the card will go here.</p>;
 }
