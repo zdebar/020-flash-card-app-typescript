@@ -14,12 +14,19 @@ CREATE TABLE IF NOT EXISTS items (
   item_order INTEGER CHECK (item_order >= 0) -- learning order of words; INTEGER for words, NULL for grammar
 );
 
+CREATE TABLE IF NOT EXISTS categories (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL, 
+  explanation TEXT
+);
+
 CREATE TABLE IF NOT EXISTS blocks (
   id INTEGER PRIMARY KEY, -- 10-99 for pronunciation, 100-999 for grammar
   block_name TEXT NOT NULL, 
   explanation TEXT, -- html code
   block_order INTEGER CHECK (block_order >= 0), -- after whick item_order will the block be shown
-  category TEXT CHECK (category IN ('grammar', 'pronunciation')) 
+  category_id INTEGER, 
+  FOREIGN KEY (category_id) REFERENCES category(id) ON DELETE SET NULL,
 );
 
 CREATE TABLE IF NOT EXISTS user_items (
@@ -47,4 +54,4 @@ CREATE TABLE IF NOT EXISTS block_items (
 CREATE UNIQUE INDEX user_items_user_id_item_id_idx ON user_items(user_id, item_id);
 CREATE INDEX idx_user_items_user_id_item_id ON user_items(user_id, item_id);
 CREATE INDEX idx_blocks_category ON blocks(category);
-
+s

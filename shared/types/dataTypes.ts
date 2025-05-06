@@ -43,3 +43,12 @@ export class UserError extends Error {
     this.name = "UserError";
   }
 }
+
+// Item info
+export interface ItemInfo {
+  block_id: number;
+  block_name: string;
+  block_explanation: string;
+  block_category: string;
+  items: Item[];
+}

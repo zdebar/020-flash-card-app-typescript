@@ -1,5 +1,4 @@
 import { Item } from '../../../../shared/types/dataTypes';
-import { useState, useEffect, useRef } from 'react';
 
 interface CardProps {
   currentIndex: number;
@@ -16,22 +15,6 @@ export default function Card({
   revealed,
   hintIndex = 0,
 }: CardProps) {
-  const [textWidth, setTextWidth] = useState(0);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-
-  // Canvas is purely for visual
-  useEffect(() => {
-    if (!canvasRef.current) {
-      canvasRef.current = document.createElement('canvas');
-    }
-    const context = canvasRef.current.getContext('2d');
-    if (context) {
-      const word = wordArray[currentIndex]?.english || '';
-      const measuredWidth = context.measureText(word).width;
-      setTextWidth(measuredWidth);
-    }
-  }, [currentIndex, wordArray]);
-
   return (
     <div
       className={`color-secondary-disabled flex h-[150px] w-full flex-col items-center justify-between py-3 shadow-none`}
@@ -42,13 +25,7 @@ export default function Card({
       <p className="pt-1 font-bold">
         {direction || revealed ? wordArray[currentIndex].czech : '\u00A0'}
       </p>
-      <p
-        style={{
-          transform: 'translateX(-30%)',
-          width: `${textWidth}px`,
-          whiteSpace: 'pre',
-        }}
-      >
+      <p>
         {revealed
           ? wordArray[currentIndex]?.english
           : wordArray[currentIndex]?.english

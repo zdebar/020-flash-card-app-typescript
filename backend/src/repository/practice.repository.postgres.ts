@@ -2,7 +2,12 @@ import { PostgresClient } from "../types/dataTypes";
 import { getNextAt, getMasteredAt } from "../utils/update.utils";
 import { withDbClient } from "../utils/database.utils";
 import config from "../config/config";
-import { UserScore, Item, ItemProgress } from "../../../shared/types/dataTypes";
+import {
+  UserScore,
+  Item,
+  ItemProgress,
+  ItemInfo,
+} from "../../../shared/types/dataTypes";
 
 /**
  * Return required words for the user from PostgreSQL database.
@@ -29,13 +34,14 @@ export async function getItemsRepository(
   FROM items i
   LEFT JOIN user_items ui ON i.id = ui.item_id AND ui.user_id = (SELECT user_id FROM user_cte)
   LEFT JOIN block_items bi ON i.id = bi.item_id
-  LEFT JOIN blocks b ON bi.block_id = b.id	
+  LEFT JOIN blocks b ON bi.block_id = b.id
+  LEFT JOIN categories c ON b.category_id = c.id AND (c.id = 1 OR c.id IS NULL)
   WHERE ui.mastered_at IS NULL
     AND COALESCE(ui.skipped, false) = false
     AND (ui.next_at IS NULL OR ui.next_at < NOW())
   ORDER BY 
-    ui.next_at ASC NULLS LAST,
-    COALESCE(i.item_order, b.block_order, 0)
+    COALESCE(ui.next_at, NOW() + INTERVAL '1 day') ASC NULLS LAST,
+    COALESCE(i.item_order, b.block_order, 0),
     i.id ASC
   LIMIT $2;
 `;
@@ -55,23 +61,23 @@ export async function updateItemsRepository(
   items: ItemProgress[]
 ): Promise<void> {
   if (items.length === 0) {
-    return; // No words to update
+    return; // No items to update
   }
 
   // Prepare data for unnest
-  const wordIds = items.map((word) => word.id);
-  const progresses = items.map((word) => word.progress);
-  const nextAts = items.map((word) => getNextAt(word.progress) || null);
-  const masteredAts = items.map((word) => getMasteredAt(word.progress) || null);
-  const skippedFlags = items.map((word) => word.skipped);
+  const itemIds = items.map((item) => item.id);
+  const progresses = items.map((item) => item.progress);
+  const nextAts = items.map((item) => getNextAt(item.progress) || null);
+  const masteredAts = items.map((item) => getMasteredAt(item.progress) || null);
+  const skippedFlags = items.map((item) => item.skipped);
 
   const query = `
     WITH user_id_cte AS (
       SELECT id AS user_id FROM users WHERE uid = $1
     ),
-    word_data AS (
+    item_data AS (
       SELECT 
-        unnest($2::int[]) AS word_id,
+        unnest($2::int[]) AS item_id,
         unnest($3::int[]) AS progress,
         unnest($4::timestamptz[]) AS next_at,
         unnest($5::timestamptz[]) AS mastered_at,
@@ -80,25 +86,25 @@ export async function updateItemsRepository(
     INSERT INTO user_items (user_id, item_id, progress, next_at, mastered_at, skipped)
     SELECT 
       user_id,
-      wd.word_id,
+      wd.item_id,
       wd.progress,
       wd.next_at,
       wd.mastered_at,
       wd.skipped
-    FROM user_id_cte, word_data wd
-    ON CONFLICT(user_id, word_id) 
+    FROM user_id_cte, item_data wd
+    ON CONFLICT(user_id, item_id) 
     DO UPDATE SET 
       progress = EXCLUDED.progress, 
       next_at = EXCLUDED.next_at, 
       mastered_at = CASE 
-        WHEN user_words.mastered_at IS NULL AND EXCLUDED.mastered_at IS NOT NULL 
+        WHEN user_items.mastered_at IS NULL AND EXCLUDED.mastered_at IS NOT NULL 
         THEN EXCLUDED.mastered_at 
-        ELSE user_words.mastered_at 
+        ELSE user_items.mastered_at 
       END,
       skipped = EXCLUDED.skipped;
   `;
 
-  const values = [uid, wordIds, progresses, nextAts, masteredAts, skippedFlags];
+  const values = [uid, itemIds, progresses, nextAts, masteredAts, skippedFlags];
 
   await withDbClient(db, async (client) => {
     await client.query(query, values);
@@ -131,5 +137,51 @@ export async function getScoreRepository(
       startedCountToday: parseInt(row.startedCountToday, 10),
       startedCount: parseInt(row.startedCount, 10),
     };
+  });
+}
+
+/**
+ * Gets info relevant to the given items from PostgreSQL database.
+ */
+export async function getInfoRepository(
+  db: PostgresClient,
+  item_id: number
+): Promise<ItemInfo[]> {
+  const query = `
+    SELECT 
+      b.id,
+      b.block_name,
+      b.explanation,
+      c.name AS category_name,
+      CASE 
+        WHEN b.category_id IN (3, 4) THEN (
+          SELECT json_agg(
+            json_build_object(
+              'id', i_sub.id,
+              'czech', i_sub.czech,
+              'english', i_sub.english,
+              'pronunciation', i_sub.pronunciation,
+              'audio', i_sub.audio,
+              'progress', 0,
+              'skipped', false,
+              'started', false
+            )
+          )
+          FROM items i_sub
+          JOIN block_items bi_sub ON i_sub.id = bi_sub.item_id
+          WHERE bi_sub.block_id = b.id
+        )
+        ELSE NULL
+      END AS relevant_words
+    FROM blocks b
+    JOIN categories c ON c.id = b.category_id
+    JOIN block_items bi ON b.id = bi.block_id
+    LEFT JOIN items i ON i.id = bi.item_id
+    WHERE i.id = $1; 
+  `;
+
+  return await withDbClient(db, async (client) => {
+    const result = await client.query(query, [item_id]);
+    return result.rows[0];
   });
 }

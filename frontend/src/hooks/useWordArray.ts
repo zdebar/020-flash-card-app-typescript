@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Item, UserScore } from '../../../shared/types/dataTypes';
+import { fetchWithAuth } from '../utils/firebase.utils';
 import { patchData } from '../utils/patchData.utils';
 import {
   alternateDirection,
@@ -9,7 +10,7 @@ import {
 import { useUser } from '../hooks/useUser';
 import { useNavigate } from 'react-router-dom';
 
-export function useWordArray(patchPath: string) {
+export function useWordArray(apiPath: string) {
   const [wordArray, setWordArray] = useState<Item[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(false); // true = czech to english, false = english to czech
@@ -18,8 +19,22 @@ export function useWordArray(patchPath: string) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setDirection(alternateDirection(wordArray, 0));
-  }, [wordArray]);
+    const fetchAndStoreWords = async () => {
+      try {
+        const response = await fetchWithAuth(apiPath);
+        if (!response.ok) {
+          throw new Error('Failed to fetch words');
+        }
+        const { items }: { items: Item[] } = await response.json();
+        setWordArray(items);
+        setDirection(alternateDirection(items, 0));
+      } catch (error) {
+        console.error('Error in fetching data:', error);
+      }
+    };
+
+    fetchAndStoreWords();
+  }, [apiPath]);
 
   const updateWordArray = useCallback(
     async (progressIncrement: number = 0, skipped: boolean = false) => {
@@ -37,7 +52,7 @@ export function useWordArray(patchPath: string) {
           try {
             const newUserScore: UserScore | null = await patchData(
               convertToWordProgress(updatedWordArray),
-              patchPath
+              apiPath
             );
 
             setUserScore(newUserScore);
@@ -53,12 +68,11 @@ export function useWordArray(patchPath: string) {
         }
       }
     },
-    [wordArray, currentIndex, navigate, setUserScore, patchPath]
+    [wordArray, currentIndex, navigate, setUserScore, apiPath]
   );
 
   return {
     wordArray,
-    setWordArray,
     currentIndex,
     direction,
     updateWordArray,

@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react';
-
 import PracticeControls from './common/PracticeControls';
-import { Item } from '../../../shared/types/dataTypes';
 import config from '../config/config';
 import SkipControl from './common/SkipControl';
 import Card from './common/Card';
@@ -9,25 +7,16 @@ import { useHint } from '../hooks/useHint';
 import { useAudioManager } from '../hooks/useAudioManager';
 import { useWordArray } from '../hooks/useWordArray';
 
-const PATH = `${config.Url}/api/words`;
+const apiPath = `${config.Url}/api/items`;
 
-export default function PracticeCard({ inArray: words }: { inArray: Item[] }) {
-  const { wordArray, setWordArray, currentIndex, direction, updateWordArray } =
-    useWordArray(PATH);
+export default function PracticeCard() {
+  const { wordArray, currentIndex, direction, updateWordArray } =
+    useWordArray(apiPath);
   const { hintIndex, handleHint, resetHint } = useHint();
   const { playAudio } = useAudioManager(wordArray);
   const [revealed, setRevealed] = useState(false);
 
-  const currentAudio = wordArray[currentIndex]?.audio || null;
-
-  // Fetch words from the server when the component mounts
-  useEffect(() => {
-    const fetchWords = async () => {
-      setWordArray(words);
-    };
-
-    fetchWords();
-  }, [words, setWordArray]);
+  const currentAudio = wordArray?.[currentIndex]?.audio || null;
 
   // Play audio when en to cz card direction is started
   useEffect(() => {
@@ -43,7 +32,7 @@ export default function PracticeCard({ inArray: words }: { inArray: Item[] }) {
     resetHint();
   }
 
-  if (wordArray.length === 0) {
+  if (wordArray?.length === 0) {
     return <p>Loading..</p>;
   }
 

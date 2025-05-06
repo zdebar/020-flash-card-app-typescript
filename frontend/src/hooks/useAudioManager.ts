@@ -1,14 +1,8 @@
 import { useCallback, useEffect, useRef } from 'react';
-import {
-  GrammarWord,
-  PronunciationWord,
-  Item,
-} from '../../../shared/types/dataTypes';
+import { Item } from '../../../shared/types/dataTypes';
 import { cacheAudioFiles, playAudioFromCache } from '../utils/practice.utils';
 
-export function useAudioManager(
-  wordArray: Item[] | GrammarWord[] | PronunciationWord[]
-) {
+export function useAudioManager(wordArray: Item[]) {
   const audioCacheRef = useRef<Map<string, HTMLAudioElement>>(new Map());
 
   const saveAudioToCache = useCallback(
@@ -22,8 +16,12 @@ export function useAudioManager(
 
   useEffect(() => {
     const cacheAudio = async () => {
-      if (wordArray.length > 0) {
-        await cacheAudioFiles(wordArray, saveAudioToCache);
+      try {
+        if (wordArray.length > 0) {
+          await cacheAudioFiles(wordArray, saveAudioToCache);
+        }
+      } catch (error) {
+        console.error('Error caching audio files:', error);
       }
     };
 
@@ -36,8 +34,10 @@ export function useAudioManager(
   }, [wordArray, saveAudioToCache]);
 
   const playAudio = useCallback((audioPath: string | null) => {
-    if (audioPath) {
+    if (audioPath && audioCacheRef.current.has(audioPath)) {
       playAudioFromCache(audioCacheRef.current, audioPath);
+    } else {
+      console.warn(`Audio file not found in cache: ${audioPath}`);
     }
   }, []);
 
