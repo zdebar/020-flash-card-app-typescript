@@ -1,15 +1,13 @@
 import Dashboard from './common/Dashboard';
-import ButtonLink from './common/ButtonLink';
+import ButtonLinkRectangular from './common/ButtonLinkRectangular';
 import { useUser } from '../hooks/useUser';
 
-export default function UserDashboardCard() {
+export default function UserDashboard() {
   const { userScore } = useUser();
 
   return (
     <div className="color-secondary w-[320px]">
-      <ButtonLink to="/practice" shape="rectangular">
-        Slovíčka
-      </ButtonLink>
+      <ButtonLinkRectangular to="/practice">Slovíčka</ButtonLinkRectangular>
       <Dashboard
         today={userScore?.startedCountToday}
         total={userScore?.startedCount}

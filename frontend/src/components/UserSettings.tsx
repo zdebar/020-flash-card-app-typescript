@@ -3,7 +3,7 @@ import { useUser } from '../hooks/useUser';
 import { getAuth, signOut } from 'firebase/auth';
 import Button from './common/Button';
 
-export default function UserSettingsCard() {
+export default function UserSettings() {
   const { userInfo, setUserInfo, setUserSettings, setUserScore, setLoading } =
     useUser();
   const navigate = useNavigate();

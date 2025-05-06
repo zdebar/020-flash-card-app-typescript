@@ -1,16 +1,15 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Item, UserScore } from '../../../shared/types/dataTypes';
-import { fetchWithAuth } from '../utils/firebase.utils';
-import { patchData } from '../utils/patchData.utils';
 import {
   alternateDirection,
-  convertToWordProgress,
-  updateWordProgress,
+  convertToItemProgress,
+  updateItemObject,
 } from '../utils/practice.utils';
-import { useUser } from '../hooks/useUser';
+import { useUser } from './useUser';
 import { useNavigate } from 'react-router-dom';
+import { fetchWithAuthAndParse } from '../utils/auth.utils';
 
-export function useWordArray(apiPath: string) {
+export function useItemArray() {
   const [wordArray, setWordArray] = useState<Item[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(false); // true = czech to english, false = english to czech
@@ -18,14 +17,16 @@ export function useWordArray(apiPath: string) {
   const { setUserScore } = useUser();
   const navigate = useNavigate();
 
+  const apiPath = '/api/items';
+
   useEffect(() => {
     const fetchAndStoreWords = async () => {
       try {
-        const response = await fetchWithAuth(apiPath);
-        if (!response.ok) {
-          throw new Error('Failed to fetch words');
-        }
-        const { items }: { items: Item[] } = await response.json();
+        const data = await fetchWithAuthAndParse<{
+          items: Item[] | null;
+        }>(apiPath);
+
+        const items = data?.items || [];
         setWordArray(items);
         setDirection(alternateDirection(items, 0));
       } catch (error) {
@@ -34,11 +35,11 @@ export function useWordArray(apiPath: string) {
     };
 
     fetchAndStoreWords();
-  }, [apiPath]);
+  }, []);
 
   const updateWordArray = useCallback(
     async (progressIncrement: number = 0, skipped: boolean = false) => {
-      const updatedWordArray = updateWordProgress(
+      const updatedWordArray = updateItemObject(
         wordArray,
         currentIndex,
         progressIncrement,
@@ -50,11 +51,15 @@ export function useWordArray(apiPath: string) {
           setWordArray([]);
 
           try {
-            const newUserScore: UserScore | null = await patchData(
-              convertToWordProgress(updatedWordArray),
-              apiPath
-            );
+            const data = await fetchWithAuthAndParse<{
+              score: UserScore | null;
+            }>(apiPath, {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(convertToItemProgress(updatedWordArray)),
+            });
 
+            const newUserScore = data?.score || null;
             setUserScore(newUserScore);
           } catch (error) {
             console.error('Error posting words:', error);

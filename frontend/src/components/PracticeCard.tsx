@@ -3,18 +3,15 @@ import PracticeControls from './common/PracticeControls';
 import config from '../config/config';
 import SkipControl from './common/SkipControl';
 import Card from './common/Card';
-import { useHint } from '../hooks/useHint';
 import { useAudioManager } from '../hooks/useAudioManager';
-import { useWordArray } from '../hooks/useWordArray';
-
-const apiPath = `${config.Url}/api/items`;
+import { useItemArray } from '../hooks/useItemArray';
 
 export default function PracticeCard() {
   const { wordArray, currentIndex, direction, updateWordArray } =
-    useWordArray(apiPath);
-  const { hintIndex, handleHint, resetHint } = useHint();
+    useItemArray();
   const { playAudio } = useAudioManager(wordArray);
   const [revealed, setRevealed] = useState(false);
+  const [hintIndex, setHintIndex] = useState(0);
 
   const currentAudio = wordArray?.[currentIndex]?.audio || null;
 
@@ -29,7 +26,7 @@ export default function PracticeCard() {
   function handleReveal() {
     setRevealed(true);
     if (direction) playAudio(currentAudio);
-    resetHint();
+    setHintIndex(0);
   }
 
   if (wordArray?.length === 0) {
@@ -60,7 +57,7 @@ export default function PracticeCard() {
             updateWordArray(config.minusProgress);
             setRevealed(false);
           }}
-          handleHint={() => handleHint()}
+          handleHint={() => setHintIndex((prevIndex) => prevIndex + 1)}
         />
       </div>
     </div>

@@ -1,4 +1,3 @@
-import Button from './Button';
 import {
   AudioIcon,
   MicrophoneIcon,
@@ -7,6 +6,7 @@ import {
   MinusIcon,
   HintIcon,
 } from './Icons';
+import Button from './Button';
 
 interface PracticeControlsProps {
   revealed: boolean;
@@ -30,7 +30,7 @@ export default function PracticeControls({
   return (
     <div className="flex w-full justify-between gap-1">
       <div className="flex w-full flex-col gap-1">
-        <Button onClick={handleAudio} isActive={!direction || revealed}>
+        <Button onClick={handleAudio} disabled={direction && !revealed}>
           <AudioIcon></AudioIcon>
         </Button>
         <Button>
@@ -48,10 +48,10 @@ export default function PracticeControls({
         </div>
       ) : (
         <div className="flex w-full flex-col gap-1">
-          <Button onClick={handlePlus} isActive={revealed}>
+          <Button onClick={handlePlus}>
             <PlusIcon></PlusIcon>
           </Button>
-          <Button onClick={handleMinus} isActive={revealed}>
+          <Button onClick={handleMinus}>
             <MinusIcon></MinusIcon>
           </Button>
         </div>

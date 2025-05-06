@@ -1,36 +1,28 @@
 import { ButtonHTMLAttributes, ReactNode } from 'react';
 import { NavLink } from 'react-router-dom';
-import { buttonShapes, buttonColors } from './buttonStyles';
 
 interface ButtonLinkProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  children: ReactNode;
-  isActive?: boolean;
+  children?: ReactNode;
+  disabled?: boolean;
   className?: string;
   to: string;
-  color?: keyof typeof buttonColors;
-  shape?: keyof typeof buttonShapes;
 }
 
 export default function ButtonLink({
   children,
-  isActive = true,
+  disabled = false,
   className = '',
   to,
-  shape = 'round',
-  color = 'primary',
   ...props
 }: ButtonLinkProps) {
-  const shapeClass = buttonShapes[shape];
-  const colorClass = isActive ? buttonColors[color] : buttonColors.inactive;
-
-  const buttonClass = `flex items-center justify-center ${shapeClass} ${colorClass} ${className}`;
+  const buttonClass = `flex items-center justify-center ${className} ${!disabled ? 'button-primary' : 'button-disabled'}`;
 
   return (
     <NavLink to={to}>
       <button
         className={buttonClass}
-        disabled={!isActive}
-        aria-disabled={!isActive}
+        disabled={disabled}
+        aria-disabled={disabled}
         {...props}
       >
         {children}

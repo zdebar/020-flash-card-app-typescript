@@ -1,12 +1,13 @@
 import './App.css';
 import Header from './components/Header';
-import LoginCard from './components/LoginCard';
-import { Routes, Route, Link } from 'react-router-dom';
+import Login from './components/Login';
+import { Routes, Route } from 'react-router-dom';
 import { useUser } from './hooks/useUser';
-import UserSettingsCard from './components/UserSettingsCard';
-import UserDashboardCard from './components/UserDashboardCard';
-import Button from './components/common/Button';
+import UserSettings from './components/UserSettings';
+import UserDashboard from './components/UserDashboard';
+
 import PracticeCard from './components/PracticeCard';
+import ButtonLinkRectangular from './components/common/ButtonLinkRectangular';
 
 export default function App() {
   const { userInfo, loading } = useUser();
@@ -27,17 +28,17 @@ export default function App() {
                 </div>
               ) : (
                 <div className="w-[320px] p-4">
-                  <Button className="rounded-md">
-                    <Link to="/login">Přihlášení / Registrace</Link>
-                  </Button>
+                  <ButtonLinkRectangular to="/login">
+                    Přihlášení / Registrace
+                  </ButtonLinkRectangular>
                 </div>
               )
             }
           />
-          <Route path="/login" element={<LoginCard />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/practice" element={<PracticeCard />} />
-          <Route path="/userSettings" element={<UserSettingsCard />} />
-          <Route path="/userDashboard" element={<UserDashboardCard />} />
+          <Route path="/userSettings" element={<UserSettings />} />
+          <Route path="/userDashboard" element={<UserDashboard />} />
         </Routes>
       </div>
     </div>

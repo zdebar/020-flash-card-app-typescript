@@ -1,15 +1,17 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { Item } from '../../../shared/types/dataTypes';
-import { cacheAudioFiles, playAudioFromCache } from '../utils/practice.utils';
+import {
+  playAudioFromCache,
+  saveAudioToCache,
+  fetchAudioFiles,
+} from '../utils/audio.utils';
 
 export function useAudioManager(wordArray: Item[]) {
   const audioCacheRef = useRef<Map<string, HTMLAudioElement>>(new Map());
 
-  const saveAudioToCache = useCallback(
+  const saveAudioToUseRef = useCallback(
     (audioPath: string, audioBlob: Blob | MediaSource) => {
-      const audioUrl = URL.createObjectURL(audioBlob);
-      const audio = new Audio(audioUrl);
-      audioCacheRef.current.set(audioPath, audio);
+      saveAudioToCache(audioCacheRef.current, audioPath, audioBlob);
     },
     []
   );
@@ -18,7 +20,7 @@ export function useAudioManager(wordArray: Item[]) {
     const cacheAudio = async () => {
       try {
         if (wordArray.length > 0) {
-          await cacheAudioFiles(wordArray, saveAudioToCache);
+          await fetchAudioFiles(wordArray, saveAudioToUseRef);
         }
       } catch (error) {
         console.error('Error caching audio files:', error);
@@ -31,7 +33,7 @@ export function useAudioManager(wordArray: Item[]) {
     return () => {
       currentRef.clear();
     };
-  }, [wordArray, saveAudioToCache]);
+  }, [wordArray, saveAudioToUseRef]);
 
   const playAudio = useCallback((audioPath: string | null) => {
     if (audioPath && audioCacheRef.current.has(audioPath)) {

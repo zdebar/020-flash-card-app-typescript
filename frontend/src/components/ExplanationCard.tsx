@@ -1,4 +1,4 @@
-import Button from './common/Button';
+import ButtonOld from './common/ButtonOld';
 
 export default function ExplanationCard({
   explanation,
@@ -13,9 +13,9 @@ export default function ExplanationCard({
         dangerouslySetInnerHTML={{ __html: explanation }}
         className="py-4"
       ></div>
-      <Button onClick={onNext} className="">
+      <ButtonOld onClick={onNext} className="">
         Procvičovat
-      </Button>
+      </ButtonOld>
     </div>
   );
 }

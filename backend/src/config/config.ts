@@ -18,7 +18,7 @@ validateEnvVariables([
 ]);
 
 const config = {
-  block: 20, // The size of repetition block
+  block: 10, // The size of repetition block
   SRS: [
     10, // Precomputed repetition algorithm in seconds
     10, // 10s
