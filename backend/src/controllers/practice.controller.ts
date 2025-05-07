@@ -11,7 +11,6 @@ import {
   updateItemsService,
   getItemInfoService,
 } from "../services/practice.service";
-import { getItemInfoRepository } from "../repository/practice.repository.postgres";
 
 /**
  * Controller function to retrieve user-specific words based on source and target languages.
@@ -29,7 +28,7 @@ export async function getItemsController(
 
     res.status(200).json({
       message: "User words retrieved successfully.",
-      items: items,
+      items,
     });
   } catch (err) {
     next(err);
@@ -63,6 +62,9 @@ export async function updateItemsController(
   }
 }
 
+/**
+ * Get context information for a specific item.
+ */
 export async function getInfoController(
   req: Request,
   res: Response,

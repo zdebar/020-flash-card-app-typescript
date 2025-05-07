@@ -48,7 +48,7 @@
   }
 
   .button-primary {
-    @apply bg-blue-600 text-white shadow-[2px_2px_4px_rgba(0,0,0,0.35)] hover:bg-blue-800 active:shadow-none dark:bg-blue-800 dark:text-white dark:hover:bg-blue-600;
+    @apply bg-blue-600 text-white shadow-[2px_2px_4px_rgba(0,0,0,0.35)] hover:bg-blue-800 dark:bg-blue-800 dark:text-white dark:hover:bg-blue-600;
   }
 
   .button-secondary {

@@ -10,7 +10,7 @@ import {
 } from "../../../shared/types/dataTypes";
 
 /**
- * Return required words for the user from PostgreSQL database.
+ * Return required items for the user from PostgreSQL database.
  */
 export async function getItemsRepository(
   db: PostgresClient,

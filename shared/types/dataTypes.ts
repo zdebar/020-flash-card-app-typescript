@@ -53,3 +53,18 @@ export interface ItemInfo {
   block_category: string;
   items: Item[];
 }
+
+// Overview Item types
+export interface OverviewItem {
+  item_order: number | null;
+  id: number;
+  czech: string;
+  english: string;
+  pronunciation: string | null;
+  audio: string | null;
+  progress: number;
+  started_at: Date | null;
+  next_at: Date | null;
+  mastered_at: Date | null;
+  skipped: boolean;
+}
