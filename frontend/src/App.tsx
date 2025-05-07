@@ -7,6 +7,8 @@ import UserSettings from './components/UserSettings';
 import UserDashboard from './components/UserDashboard';
 import PracticeCard from './components/PracticeCard';
 import ButtonLinkRectangular from './components/common/ButtonLinkRectangular';
+import GrammarCard from './components/GrammarCard';
+import ItemListCard from './components/ItemListCard';
 
 export default function App() {
   const { userInfo, loading } = useUser();
@@ -38,6 +40,9 @@ export default function App() {
           <Route path="/practice" element={<PracticeCard />} />
           <Route path="/userSettings" element={<UserSettings />} />
           <Route path="/userDashboard" element={<UserDashboard />} />
+          <Route path="/overview/grammar" element={<GrammarCard />} />
+          <Route path="/overview/words" element={<ItemListCard />} />
+          <Route path="/overview/sentences" element={<div>Seznam vět</div>} />
         </Routes>
       </div>
     </div>

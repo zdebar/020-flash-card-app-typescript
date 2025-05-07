@@ -19,17 +19,17 @@ apiRouter.get("/items", authenticateMiddleware, getItemsController); // sends ar
 apiRouter.patch("/items", authenticateMiddleware, updateItemsController); // updates user items, sends user score
 apiRouter.get("/items/:itemId/info", authenticateMiddleware, getInfoController); // sends array of items with info
 apiRouter.get(
-  "/progress/words",
+  "/overview/words",
   authenticateMiddleware,
   getOverviewWordsController
 ); // sends array of words with progress
 apiRouter.get(
-  "/progress/sentences",
+  "/overview/sentences",
   authenticateMiddleware,
   getOverviewSentencesController
 ); // sends array of sentences with progress
 apiRouter.get(
-  "/progress/grammar",
+  "/overview/grammar",
   authenticateMiddleware,
   getOverviewGrammarController
 ); // sends array of grammar with progress

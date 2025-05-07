@@ -21,7 +21,7 @@ export async function getOverviewWordsController(
     const limit: number = parseInt(req.query.limit as string, 10) || 10;
     const offset: number = (page - 1) * limit;
 
-    const wordList: OverviewItem[] = await getOverviewWordsService(
+    const data: OverviewItem[] = await getOverviewWordsService(
       postgresDBPool,
       uid,
       limit,
@@ -30,7 +30,7 @@ export async function getOverviewWordsController(
 
     res.status(200).json({
       message: "User words retrieved successfully.",
-      wordList,
+      data,
       pagination: {
         page,
         limit,
@@ -55,7 +55,7 @@ export async function getOverviewSentencesController(
     const limit: number = parseInt(req.query.limit as string, 10) || 10;
     const offset: number = (page - 1) * limit;
 
-    const sentenceList: OverviewItem[] = await getOverviewSentencesService(
+    const data: OverviewItem[] = await getOverviewSentencesService(
       postgresDBPool,
       uid,
       limit,
@@ -64,7 +64,7 @@ export async function getOverviewSentencesController(
 
     res.status(200).json({
       message: "User sentences retrieved successfully.",
-      sentences: sentenceList,
+      data,
       pagination: {
         page,
         limit,
@@ -89,7 +89,7 @@ export async function getOverviewGrammarController(
     const limit: number = parseInt(req.query.limit as string, 10) || 10;
     const offset: number = (page - 1) * limit;
 
-    const grammarList: OverviewGrammar[] = await getOverviewGrammarRepository(
+    const data: OverviewGrammar[] = await getOverviewGrammarRepository(
       postgresDBPool,
       uid,
       limit,
@@ -98,7 +98,7 @@ export async function getOverviewGrammarController(
 
     res.status(200).json({
       message: "User grammar retrieved successfully.",
-      grammar: grammarList,
+      data,
       pagination: {
         page,
         limit,

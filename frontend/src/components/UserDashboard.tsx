@@ -7,17 +7,28 @@ export default function UserDashboard() {
 
   return (
     <div className="flex h-[320px] w-[320px] flex-col justify-between gap-1">
-      <ButtonLinkRectangular to="/practice">Procvičovat</ButtonLinkRectangular>
+      <ButtonLinkRectangular to="/practice">
+        <span className="w-40">Procvičovat</span>
+      </ButtonLinkRectangular>
       <Dashboard
         className="color-secondary-disabled"
         today={userScore?.startedCountToday}
         total={userScore?.startedCount}
       />
-      <ButtonLinkRectangular to="/" buttonColor="color-secondary">
-        Seznam gramatiky
+      <ButtonLinkRectangular
+        to="/overview/grammar"
+        buttonColor="color-secondary"
+      >
+        <span className="w-42">Seznam gramatiky</span>
       </ButtonLinkRectangular>
-      <ButtonLinkRectangular to="/" buttonColor="color-secondary">
-        Seznam slovíček
+      <ButtonLinkRectangular to="/overview/words" buttonColor="color-secondary">
+        <span className="w-42">Seznam slovíček</span>
+      </ButtonLinkRectangular>
+      <ButtonLinkRectangular
+        to="/overview/sentences"
+        buttonColor="color-secondary"
+      >
+        <span className="w-42">Seznam vět</span>
       </ButtonLinkRectangular>
     </div>
   );

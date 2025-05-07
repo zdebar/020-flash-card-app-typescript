@@ -27,7 +27,10 @@ export function updateItemObject(
   progressIncrement: number,
   skipped: boolean
 ): Item[] {
-  const updatedProgress = wordArray[currentIndex].progress + progressIncrement;
+  const updatedProgress = Math.max(
+    wordArray[currentIndex].progress + progressIncrement,
+    0
+  );
 
   const updatedWordArray = [...wordArray];
   updatedWordArray[currentIndex] = {
