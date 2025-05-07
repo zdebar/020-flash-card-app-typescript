@@ -1,6 +1,6 @@
 import { PostgresClient } from "../types/dataTypes";
 import { withDbClient } from "../utils/database.utils";
-import { OverviewItem, Item, ItemInfo } from "../../../shared/types/dataTypes";
+import { OverviewItem, OverviewGrammar } from "../../../shared/types/dataTypes";
 
 /**
  * Return started words for the user from PostgreSQL database.
@@ -92,20 +92,27 @@ export async function getOverviewGrammarRepository(
   uid: string,
   limit: number,
   offset: number
-): Promise<ItemInfo[]> {
+): Promise<OverviewGrammar[]> {
   let query = `
+    WITH user_cte AS (
+      SELECT id AS user_id FROM users WHERE uid = $1
+    ),
+    started_items_count AS (
+      SELECT COUNT(*) AS count 
+      FROM user_items 
+      WHERE user_id = (SELECT user_id FROM user_cte) 
+        AND started_at IS NOT NULL
+      GROUP BY user_id  
+    )
     SELECT 
-      b.id,
+      b.id AS block_id,
+      b.block_order,
       b.block_name,
-      b.explanation AS block_explanation,
-      c.name AS block_category,
-      COALESCE({}) AS items -- Use an empty array as items
+      b.explanation AS block_explanation
     FROM blocks b
-    JOIN categories c ON c.id = b.category_id
-    JOIN block_items bi ON b.id = bi.block_id
-    LEFT JOIN items i ON i.id = bi.item_id
-    WHERE i.id = $1; 
-`;
+    WHERE b.block_order <= (SELECT count FROM started_items_count) 
+    LIMIT $2 OFFSET $3; 
+  `;
 
   return await withDbClient(db, async (client) => {
     const res = await client.query(query, [uid, limit, offset]);

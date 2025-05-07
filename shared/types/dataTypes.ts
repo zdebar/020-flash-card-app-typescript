@@ -68,3 +68,10 @@ export interface OverviewItem {
   mastered_at: Date | null;
   skipped: boolean;
 }
+
+export interface OverviewGrammar {
+  block_id: number;
+  block_order: number;
+  block_name: string;
+  block_explanation: string;
+}

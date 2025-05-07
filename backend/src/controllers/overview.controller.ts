@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { postgresDBPool } from "../config/database.config.postgres";
-import { OverviewItem, ItemInfo } from "../../../shared/types/dataTypes";
+import { OverviewItem, OverviewGrammar } from "../../../shared/types/dataTypes";
 import {
   getOverviewWordsService,
   getOverviewSentencesService,
@@ -89,7 +89,7 @@ export async function getOverviewGrammarController(
     const limit: number = parseInt(req.query.limit as string, 10) || 10;
     const offset: number = (page - 1) * limit;
 
-    const grammarList: ItemInfo[] = await getOverviewGrammarRepository(
+    const grammarList: OverviewGrammar[] = await getOverviewGrammarRepository(
       postgresDBPool,
       uid,
       limit,
