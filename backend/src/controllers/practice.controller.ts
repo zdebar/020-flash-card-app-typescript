@@ -9,8 +9,9 @@ import {
 import {
   getItemsService,
   updateItemsService,
+  getItemInfoService,
 } from "../services/practice.service";
-import { getInfoRepository } from "../repository/practice.repository.postgres";
+import { getItemInfoRepository } from "../repository/practice.repository.postgres";
 
 /**
  * Controller function to retrieve user-specific words based on source and target languages.
@@ -70,14 +71,15 @@ export async function getInfoController(
   try {
     const itemId: number = parseInt((req as any).params.itemId, 10);
 
-    const itemInfo: ItemInfo[] = await getInfoRepository(
+    const itemInfo: ItemInfo[] = await getItemInfoService(
       postgresDBPool,
       itemId
     );
 
+    console.log("itemInfo", itemInfo); // debug
     res.status(200).json({
       message: "Item info retrieved successfully.",
-      items: itemInfo,
+      itemInfo,
     });
   } catch (err) {
     next(err);

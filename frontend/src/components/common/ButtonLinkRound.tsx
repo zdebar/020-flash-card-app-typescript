@@ -1,24 +1,27 @@
 import ButtonLink from './ButtonLink';
-import { ButtonHTMLAttributes, ReactNode } from 'react';
+import { ReactNode } from 'react';
 
-interface ButtonLinkRoundProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonLinkRoundProps {
   children?: ReactNode;
   disabled?: boolean;
+  buttonColor?: string;
   className?: string;
   to: string;
 }
 
 export default function ButtonLinkRound({
   children,
-  disabled = false,
-  className = '',
+  disabled,
+  buttonColor,
+  className,
   to,
   ...props
 }: ButtonLinkRoundProps) {
   return (
     <ButtonLink
-      className={`button-round ${className}`}
+      className={`h-12 w-12 rounded-full ${className}`}
       disabled={disabled}
+      buttonColor={buttonColor}
       to={to}
       {...props}
     >

@@ -9,6 +9,7 @@ export interface Item {
   progress: number;
   skipped: boolean;
   started: boolean;
+  has_info: boolean;
 }
 
 export interface ItemProgress {

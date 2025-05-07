@@ -1,18 +1,19 @@
 import ButtonLink from './ButtonLink';
-import { ButtonHTMLAttributes, ReactNode } from 'react';
+import { ReactNode } from 'react';
 
-interface ButtonLinkRectangularProps
-  extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonLinkRectangularProps {
   children?: ReactNode;
   disabled?: boolean;
+  buttonColor?: string;
   className?: string;
   to: string;
 }
 
 export default function ButtonLinkRectangular({
   children,
-  disabled = false,
-  className = '',
+  disabled,
+  buttonColor,
+  className,
   to,
   ...props
 }: ButtonLinkRectangularProps) {
@@ -20,6 +21,7 @@ export default function ButtonLinkRectangular({
     <ButtonLink
       className={`button-rectangular ${className}`}
       disabled={disabled}
+      buttonColor={buttonColor}
       to={to}
       {...props}
     >

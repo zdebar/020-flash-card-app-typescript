@@ -12,6 +12,6 @@ const apiRouter = express.Router();
 apiRouter.get("/users", authenticateMiddleware, getUserController); // sends user settings and user score
 apiRouter.get("/items", authenticateMiddleware, getItemsController); // sends array of items
 apiRouter.patch("/items", authenticateMiddleware, updateItemsController); // updates user items, sends user score
-apiRouter.get("/info/:itemId", authenticateMiddleware, getInfoController); // sends array of items with info
+apiRouter.get("/items/:itemId/info", authenticateMiddleware, getInfoController); // sends array of items with info
 
 export default apiRouter;

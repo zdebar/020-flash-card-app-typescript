@@ -1,9 +1,10 @@
-import { ButtonHTMLAttributes, ReactNode } from 'react';
-import { NavLink } from 'react-router-dom';
+import { ReactNode } from 'react';
+import { Link } from 'react-router-dom';
 
-interface ButtonLinkProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonLinkProps {
   children?: ReactNode;
   disabled?: boolean;
+  buttonColor?: string;
   className?: string;
   to: string;
 }
@@ -11,22 +12,23 @@ interface ButtonLinkProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 export default function ButtonLink({
   children,
   disabled = false,
+  buttonColor = 'button-primary',
   className = '',
   to,
   ...props
 }: ButtonLinkProps) {
-  const buttonClass = `flex items-center justify-center ${className} ${!disabled ? 'button-primary' : 'button-disabled'}`;
+  const buttonClass = `flex items-center justify-center px-4 py-2 rounded ${className} ${
+    !disabled ? buttonColor : 'button-disabled pointer-events-none'
+  }`;
 
   return (
-    <NavLink to={to}>
-      <button
-        className={buttonClass}
-        disabled={disabled}
-        aria-disabled={disabled}
-        {...props}
-      >
-        {children}
-      </button>
-    </NavLink>
+    <Link
+      to={disabled ? '#' : to}
+      className={buttonClass}
+      aria-disabled={disabled}
+      {...props}
+    >
+      {children}
+    </Link>
   );
 }

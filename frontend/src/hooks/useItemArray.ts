@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { fetchWithAuthAndParse } from '../utils/auth.utils';
 
 export function useItemArray() {
-  const [wordArray, setWordArray] = useState<Item[]>([]);
+  const [itemArray, setItemArray] = useState<Item[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(false); // true = czech to english, false = english to czech
 
@@ -27,7 +27,7 @@ export function useItemArray() {
         }>(apiPath);
 
         const items = data?.items || [];
-        setWordArray(items);
+        setItemArray(items);
         setDirection(alternateDirection(items, 0));
       } catch (error) {
         console.error('Error in fetching data:', error);
@@ -37,10 +37,10 @@ export function useItemArray() {
     fetchAndStoreWords();
   }, []);
 
-  const updateWordArray = useCallback(
+  const updateItemArray = useCallback(
     async (progressIncrement: number = 0, skipped: boolean = false) => {
       const updatedWordArray = updateItemObject(
-        wordArray,
+        itemArray,
         currentIndex,
         progressIncrement,
         skipped
@@ -48,7 +48,7 @@ export function useItemArray() {
 
       if (updatedWordArray.length > 0) {
         if (currentIndex + 1 >= updatedWordArray.length) {
-          setWordArray([]);
+          setItemArray([]);
 
           try {
             const data = await fetchWithAuthAndParse<{
@@ -69,17 +69,17 @@ export function useItemArray() {
         } else {
           setCurrentIndex(currentIndex + 1);
           setDirection(alternateDirection(updatedWordArray, currentIndex + 1));
-          setWordArray(updatedWordArray);
+          setItemArray(updatedWordArray);
         }
       }
     },
-    [wordArray, currentIndex, navigate, setUserScore, apiPath]
+    [itemArray, currentIndex, navigate, setUserScore, apiPath]
   );
 
   return {
-    wordArray,
+    itemArray,
     currentIndex,
     direction,
-    updateWordArray,
+    updateItemArray,
   };
 }

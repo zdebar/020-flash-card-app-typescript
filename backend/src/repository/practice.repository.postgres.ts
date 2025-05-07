@@ -30,7 +30,8 @@ export async function getItemsRepository(
     i.audio,
     COALESCE(ui.progress, 0) AS progress,
     ui.started_at IS NOT NULL AS started,
-    ui.skipped 
+    coalesce(ui.skipped, false) as skipped,
+    COUNT(b.id) > 0 as has_info 
   FROM items i
   LEFT JOIN user_items ui ON i.id = ui.item_id AND ui.user_id = (SELECT user_id FROM user_cte)
   LEFT JOIN block_items bi ON i.id = bi.item_id
@@ -39,6 +40,8 @@ export async function getItemsRepository(
   WHERE ui.mastered_at IS NULL
     AND COALESCE(ui.skipped, false) = false
     AND (ui.next_at IS NULL OR ui.next_at < NOW())
+  GROUP BY 
+    i.id, i.czech, i.english, i.pronunciation, i.audio, ui.progress, ui.started_at, ui.skipped, ui.next_at, b.block_order
   ORDER BY 
     COALESCE(ui.next_at, NOW() + INTERVAL '1 day') ASC NULLS LAST,
     COALESCE(i.item_order, b.block_order, 0),
@@ -143,7 +146,7 @@ export async function getScoreRepository(
 /**
  * Gets info relevant to the given items from PostgreSQL database.
  */
-export async function getInfoRepository(
+export async function getItemInfoRepository(
   db: PostgresClient,
   item_id: number
 ): Promise<ItemInfo[]> {
@@ -151,8 +154,8 @@ export async function getInfoRepository(
     SELECT 
       b.id,
       b.block_name,
-      b.explanation,
-      c.name AS category_name,
+      b.explanation AS block_explanation,
+      c.name AS block_category,
       CASE 
         WHEN b.category_id IN (3, 4) THEN (
           SELECT json_agg(
@@ -172,7 +175,7 @@ export async function getInfoRepository(
           WHERE bi_sub.block_id = b.id
         )
         ELSE NULL
-      END AS relevant_words
+      END AS items
     FROM blocks b
     JOIN categories c ON c.id = b.category_id
     JOIN block_items bi ON b.id = bi.block_id
@@ -182,6 +185,6 @@ export async function getInfoRepository(
 
   return await withDbClient(db, async (client) => {
     const result = await client.query(query, [item_id]);
-    return result.rows[0];
+    return result.rows;
   });
 }

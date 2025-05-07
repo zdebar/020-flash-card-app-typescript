@@ -1,9 +1,15 @@
 import { PostgresClient } from "../types/dataTypes";
-import { ItemProgress, UserScore, Item } from "../../../shared/types/dataTypes";
+import {
+  ItemProgress,
+  UserScore,
+  Item,
+  ItemInfo,
+} from "../../../shared/types/dataTypes";
 import {
   getItemsRepository,
   updateItemsRepository,
   getScoreRepository,
+  getItemInfoRepository,
 } from "../repository/practice.repository.postgres";
 import { addAudioPath } from "../utils/update.utils";
 
@@ -31,4 +37,27 @@ export async function updateItemsService(
 ): Promise<UserScore> {
   await updateItemsRepository(db, uid, items);
   return await getScoreRepository(db, uid);
+}
+
+/**
+ * Gets a list of words for a given user and language ID from the database.
+ */
+export async function getItemInfoService(
+  db: PostgresClient,
+  itemId: number
+): Promise<ItemInfo[]> {
+  const itemInfo: ItemInfo[] = await getItemInfoRepository(db, itemId);
+
+  if (!itemInfo || itemInfo.length === 0) {
+    throw new Error(`No item info found for itemId: ${itemId}`);
+  }
+
+  return itemInfo.map((item) => ({
+    ...item,
+    items:
+      item.items?.map((word) => ({
+        ...word,
+        audio: addAudioPath(word.audio),
+      })) || [],
+  }));
 }

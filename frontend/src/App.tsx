@@ -5,7 +5,6 @@ import { Routes, Route } from 'react-router-dom';
 import { useUser } from './hooks/useUser';
 import UserSettings from './components/UserSettings';
 import UserDashboard from './components/UserDashboard';
-
 import PracticeCard from './components/PracticeCard';
 import ButtonLinkRectangular from './components/common/ButtonLinkRectangular';
 

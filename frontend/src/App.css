@@ -5,7 +5,8 @@
 } */
 
 @layer base {
-  Button {
+  Button,
+  Link {
     @apply shadow-[2px_2px_4px_rgba(0,0,0,0.2)] active:shadow-none;
   }
 
@@ -42,20 +43,16 @@
     @apply bg-gray-50 dark:bg-gray-800;
   }
 
-  .button-round {
-    @apply h-12 w-12 rounded-full;
-  }
-
   .button-rectangular {
     @apply h-12 w-full;
   }
 
   .button-primary {
-    @apply bg-blue-600 text-white hover:bg-blue-800 dark:bg-blue-800 dark:text-white dark:hover:bg-blue-600;
+    @apply bg-blue-600 text-white shadow-[2px_2px_4px_rgba(0,0,0,0.35)] hover:bg-blue-800 active:shadow-none dark:bg-blue-800 dark:text-white dark:hover:bg-blue-600;
   }
 
   .button-secondary {
-    @apply bg-gray-100 text-gray-900 hover:bg-gray-200 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700;
+    @apply bg-gray-100 text-gray-900 shadow-[2px_2px_4px_rgba(0,0,0,0.2)] hover:bg-gray-200 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700;
   }
 
   .button-disabled {
