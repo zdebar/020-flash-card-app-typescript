@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
 import PracticeControls from './common/PracticeControls';
 import config from '../config/config';
-import SkipControl from './common/SkipControl';
 import Card from './common/Card';
 import { useAudioManager } from '../hooks/useAudioManager';
 import { useItemArray } from '../hooks/useItemArray';
 import Button from './common/Button';
-import { InfoIcon } from './common/Icons';
+import { InfoIcon, SlashBookmarkIcon } from './common/Icons';
 import InfoCard from './InfoCard';
 
 export default function PracticeCard() {
@@ -38,14 +37,14 @@ export default function PracticeCard() {
   }
 
   return (
-    <div className="py-4">
+    <div>
       {infoVisibility ? (
         <InfoCard
           itemId={itemArray[currentIndex]?.id}
           setInfo={setInfoVisibility}
         />
       ) : (
-        <div className="flex w-[320px] flex-col justify-center gap-1">
+        <div className="card">
           <div className="flex w-full gap-1">
             <Button
               onClick={() => setInfoVisibility(true)}
@@ -55,10 +54,13 @@ export default function PracticeCard() {
             >
               <InfoIcon></InfoIcon>
             </Button>
-            <SkipControl
-              handleSkip={() => updateItemArray(0, true)}
+            <Button
+              onClick={() => updateItemArray(0, true)}
+              buttonColor="button-secondary"
               className="flex-2"
-            />
+            >
+              <SlashBookmarkIcon></SlashBookmarkIcon>
+            </Button>
           </div>
           <Card
             currentIndex={currentIndex}

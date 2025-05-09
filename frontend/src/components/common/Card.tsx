@@ -13,11 +13,11 @@ export default function Card({
   wordArray,
   direction,
   revealed,
-  hintIndex = 100,
+  hintIndex,
 }: CardProps) {
   return (
     <div
-      className={`color-secondary-disabled flex h-[150px] w-full flex-col items-center justify-between py-3 shadow-none`}
+      className={`color-disabled flex h-full w-full flex-col items-center justify-between py-3`}
     >
       <p className="flex w-full justify-end pr-4 text-sm">
         {currentIndex + 1} / {wordArray.length}
@@ -29,7 +29,7 @@ export default function Card({
         {revealed
           ? wordArray[currentIndex]?.english
           : wordArray[currentIndex]?.english
-              .slice(0, hintIndex)
+              .slice(0, hintIndex ?? wordArray[currentIndex]?.english.length)
               .padEnd(wordArray[currentIndex]?.english.length, '\u00A0')}
       </p>
       <p className="pb-1">

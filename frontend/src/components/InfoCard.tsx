@@ -37,9 +37,9 @@ export default function InfoCard({
   }
 
   return (
-    <div className="flex h-[320px] w-[320px] flex-col justify-between gap-1">
-      <div className="flex h-12 w-full gap-1">
-        <div className="color-secondary-disabled flex flex-10 flex-col justify-center pl-4">
+    <div className="card">
+      <div className="flex w-full gap-1">
+        <div className="color-disabled shape-rectangular flex flex-10 flex-col justify-center pl-4">
           {infoArray?.[infoIndex].block_name}
         </div>
         <Button
@@ -51,8 +51,8 @@ export default function InfoCard({
           <CloseIcon />
         </Button>
       </div>
-      <div className="color-secondary-disabled h-full flex-1">
-        {infoArray?.[infoIndex].items.length === 0 ? (
+      <div className="color-disabled h-full">
+        {infoArray?.[infoIndex].items.length === 0 ? ( // If array.items has no items, show block_explanation
           <div
             className="flex flex-col justify-center pl-4"
             dangerouslySetInnerHTML={{
@@ -64,10 +64,13 @@ export default function InfoCard({
             {infoArray?.[infoIndex].items.map((item) => (
               <Button
                 key={item.id}
-                buttonColor="button-secondary"
+                buttonColor="button-secondary px-12"
                 onClick={() => playAudio(item.audio)}
               >
-                {item.english} - {item.pronunciation}
+                <div className="flex w-full justify-between">
+                  <span>{item.english}</span>
+                  <span>{item.pronunciation}</span>
+                </div>
               </Button>
             ))}
           </div>

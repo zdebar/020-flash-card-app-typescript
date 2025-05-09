@@ -17,32 +17,34 @@ export default function App() {
     <div className="dark:bg-gray-900">
       <div className="mx-auto flex min-h-screen w-full max-w-[900px] min-w-[320px] flex-col items-center">
         <Header />
-        <Routes>
-          <Route
-            path="/"
-            element={
-              loading ? (
-                <p>Loading...</p>
-              ) : userInfo ? (
-                <div>
-                  <h1>Ahoj, {userInfo.name}!</h1>
-                </div>
-              ) : (
-                <div className="w-[320px] p-4">
-                  <ButtonLinkRectangular to="/login">
-                    Přihlášení / Registrace
-                  </ButtonLinkRectangular>
-                </div>
-              )
-            }
-          />
-          <Route path="/login" element={<Login />} />
-          <Route path="/practice" element={<PracticeCard />} />
-          <Route path="/userSettings" element={<UserSettings />} />
-          <Route path="/userDashboard" element={<UserDashboard />} />
-          <Route path="/overview/grammar" element={<Grammar />} />
-          <Route path="/overview/vocabulary" element={<Vocabulary />} />
-        </Routes>
+        <div className="flex w-full max-w-[600px] flex-col items-center gap-1 p-4">
+          <Routes>
+            <Route
+              path="/"
+              element={
+                loading ? (
+                  <p>Loading...</p>
+                ) : userInfo ? (
+                  <div>
+                    <h1>Ahoj, {userInfo.name}!</h1>
+                  </div>
+                ) : (
+                  <div className="w-[320px]">
+                    <ButtonLinkRectangular to="/login">
+                      Přihlášení / Registrace
+                    </ButtonLinkRectangular>
+                  </div>
+                )
+              }
+            />
+            <Route path="/login" element={<Login />} />
+            <Route path="/practice" element={<PracticeCard />} />
+            <Route path="/userSettings" element={<UserSettings />} />
+            <Route path="/userDashboard" element={<UserDashboard />} />
+            <Route path="/overview/grammar" element={<Grammar />} />
+            <Route path="/overview/vocabulary" element={<Vocabulary />} />
+          </Routes>
+        </div>
       </div>
     </div>
   );

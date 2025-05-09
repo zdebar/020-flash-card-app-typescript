@@ -19,7 +19,7 @@ export default function ButtonLinkRound({
 }: ButtonLinkRoundProps) {
   return (
     <ButtonLink
-      className={`h-12 w-12 rounded-full ${className}`}
+      className={`shape-round ${className}`}
       disabled={disabled}
       buttonColor={buttonColor}
       to={to}

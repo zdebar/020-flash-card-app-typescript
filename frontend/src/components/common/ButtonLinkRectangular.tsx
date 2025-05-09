@@ -19,7 +19,7 @@ export default function ButtonLinkRectangular({
 }: ButtonLinkRectangularProps) {
   return (
     <ButtonLink
-      className={`button-rectangular ${className}`}
+      className={`shape-rectangular ${className}`}
       disabled={disabled}
       buttonColor={buttonColor}
       to={to}

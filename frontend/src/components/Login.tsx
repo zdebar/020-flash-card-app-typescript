@@ -26,7 +26,7 @@ export default function Login() {
   };
 
   return (
-    <div className="w-[320px] py-4">
+    <div>
       <Button onClick={handleGoogleLogin}>Google Login</Button>
     </div>
   );

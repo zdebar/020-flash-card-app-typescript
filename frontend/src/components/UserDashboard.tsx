@@ -6,24 +6,24 @@ export default function UserDashboard() {
   const { userScore } = useUser();
 
   return (
-    <div className="flex h-[320px] w-[320px] flex-col justify-between gap-1">
+    <div className="card">
       <ButtonLinkRectangular to="/practice">
         <span className="w-40">Procvičovat</span>
       </ButtonLinkRectangular>
       <Dashboard
-        className="color-secondary-disabled"
+        className="color-disabled"
         today={userScore?.startedCountToday}
         total={userScore?.startedCount}
       />
       <ButtonLinkRectangular
         to="/overview/grammar"
-        buttonColor="color-secondary"
+        buttonColor="button-secondary"
       >
         <span className="w-42">Seznam gramatiky</span>
       </ButtonLinkRectangular>
       <ButtonLinkRectangular
         to="/overview/vocabulary"
-        buttonColor="color-secondary"
+        buttonColor="button-secondary"
       >
         <span className="w-42">Seznam slovíček</span>
       </ButtonLinkRectangular>
