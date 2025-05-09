@@ -9,14 +9,18 @@ export default function Dashboard({
 }) {
   if (today === undefined || total === undefined) {
     return (
-      <div className={`flex h-full w-full justify-between p-4 ${className}`}>
+      <div
+        className={`flex h-full w-full flex-1 justify-between p-4 ${className}`}
+      >
         data nejsou k dispozici
       </div>
     );
   }
 
   return (
-    <div className={`flex h-full w-full justify-between p-4 ${className}`}>
+    <div
+      className={`flex h-full w-full flex-1 justify-between p-4 ${className}`}
+    >
       <p>dnes:</p>
       <div>{today}</div>
       <p>celkem:</p>

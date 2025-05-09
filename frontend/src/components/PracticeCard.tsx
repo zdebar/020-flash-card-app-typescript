@@ -5,8 +5,9 @@ import Card from './common/Card';
 import { useAudioManager } from '../hooks/useAudioManager';
 import { useItemArray } from '../hooks/useItemArray';
 import Button from './common/Button';
-import { InfoIcon, SlashBookmarkIcon } from './common/Icons';
+import { InfoIcon } from './common/Icons';
 import InfoCard from './InfoCard';
+import SkipButton from './common/SkipButton';
 
 export default function PracticeCard() {
   const { itemArray, currentIndex, direction, updateItemArray } =
@@ -46,7 +47,7 @@ export default function PracticeCard() {
       ) : (
         <div className="card">
           <div className="flex w-full gap-1">
-            <Button
+            <Button // Info button
               onClick={() => setInfoVisibility(true)}
               buttonColor="button-secondary"
               disabled={!itemArray[currentIndex]?.has_info}
@@ -54,13 +55,7 @@ export default function PracticeCard() {
             >
               <InfoIcon></InfoIcon>
             </Button>
-            <Button
-              onClick={() => updateItemArray(0, true)}
-              buttonColor="button-secondary"
-              className="flex-2"
-            >
-              <SlashBookmarkIcon></SlashBookmarkIcon>
-            </Button>
+            <SkipButton onSkip={() => updateItemArray(0, true)} />
           </div>
           <Card
             currentIndex={currentIndex}

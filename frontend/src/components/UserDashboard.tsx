@@ -7,14 +7,6 @@ export default function UserDashboard() {
 
   return (
     <div className="card">
-      <ButtonLinkRectangular to="/practice">
-        <span className="w-40">Procvičovat</span>
-      </ButtonLinkRectangular>
-      <Dashboard
-        className="color-disabled"
-        today={userScore?.startedCountToday}
-        total={userScore?.startedCount}
-      />
       <ButtonLinkRectangular
         to="/overview/grammar"
         buttonColor="button-secondary"
@@ -26,6 +18,14 @@ export default function UserDashboard() {
         buttonColor="button-secondary"
       >
         <span className="w-42">Seznam slovíček</span>
+      </ButtonLinkRectangular>
+      <Dashboard
+        className="color-disabled"
+        today={userScore?.startedCountToday}
+        total={userScore?.startedCount}
+      />
+      <ButtonLinkRectangular to="/practice">
+        <span className="w-40">Procvičovat</span>
       </ButtonLinkRectangular>
     </div>
   );
