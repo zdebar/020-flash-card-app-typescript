@@ -46,16 +46,14 @@ export class UserError extends Error {
 }
 
 // Info types
-export interface ItemInfo {
+export interface Block {
   block_id: number;
+  block_order: number;
   block_name: string;
   block_explanation: string;
-  block_category: string;
-  items: Item[];
 }
 
-// Overview Item types
-export interface OverviewItem {
+export interface ItemFull {
   item_order: number | null;
   id: number;
   czech: string;
@@ -69,9 +67,6 @@ export interface OverviewItem {
   skipped: boolean;
 }
 
-export interface OverviewGrammar {
-  block_id: number;
-  block_order: number;
-  block_name: string;
-  block_explanation: string;
+export interface ItemInfo extends Block {
+  items: ItemFull[];
 }

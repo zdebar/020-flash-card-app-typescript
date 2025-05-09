@@ -63,6 +63,7 @@ export default function PracticeCard() {
             direction={direction}
             revealed={revealed}
             hintIndex={hintIndex}
+            started={itemArray[currentIndex]?.started}
           ></Card>
           <PracticeControls
             revealed={revealed}

@@ -1,11 +1,9 @@
 import { useOverview } from '../hooks/useOverview';
-import { OverviewGrammar } from '../../../shared/types/dataTypes';
+import { Block } from '../../../shared/types/dataTypes';
 import Button from './common/Button';
 
 export default function Grammar() {
-  const { overviewArray } = useOverview<OverviewGrammar>(
-    '/api/overview/grammar'
-  );
+  const { overviewArray } = useOverview<Block>('/api/overview/grammar');
 
   return (
     <div className="flex w-[320px] flex-col justify-between gap-0.5">

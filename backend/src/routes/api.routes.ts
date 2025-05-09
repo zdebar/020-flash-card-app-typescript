@@ -7,7 +7,6 @@ import {
 } from "../controllers/practice.controller";
 import {
   getOverviewWordsController,
-  getOverviewSentencesController,
   getOverviewGrammarController,
 } from "../controllers/overview.controller";
 import { getUserController } from "../controllers/user.controller";

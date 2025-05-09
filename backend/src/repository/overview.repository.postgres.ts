@@ -1,6 +1,6 @@
 import { PostgresClient } from "../types/dataTypes";
 import { withDbClient } from "../utils/database.utils";
-import { OverviewItem, OverviewGrammar } from "../../../shared/types/dataTypes";
+import { ItemFull, Block } from "../../../shared/types/dataTypes";
 
 /**
  * Return started words for the user from PostgreSQL database.
@@ -10,7 +10,7 @@ export async function getOverviewWordsRepository(
   uid: string,
   limit: number,
   offset: number
-): Promise<OverviewItem[]> {
+): Promise<ItemFull[]> {
   let query = `
   WITH user_cte AS (
     SELECT id AS user_id FROM users WHERE uid = $1
@@ -51,7 +51,7 @@ export async function getOverviewSentencesRepository(
   uid: string,
   limit: number,
   offset: number
-): Promise<OverviewItem[]> {
+): Promise<ItemFull[]> {
   let query = `
     WITH user_cte AS (
       SELECT id AS user_id FROM users WHERE uid = $1
@@ -93,7 +93,7 @@ export async function getOverviewGrammarRepository(
   uid: string,
   limit: number,
   offset: number
-): Promise<OverviewGrammar[]> {
+): Promise<Block[]> {
   let query = `
     WITH user_cte AS (
       SELECT id AS user_id FROM users WHERE uid = $1

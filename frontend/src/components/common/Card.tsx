@@ -6,6 +6,7 @@ interface CardProps {
   direction: boolean;
   revealed: boolean;
   hintIndex?: number;
+  started?: boolean;
 }
 
 export default function Card({
@@ -14,10 +15,11 @@ export default function Card({
   direction,
   revealed,
   hintIndex,
+  started = true,
 }: CardProps) {
   return (
     <div
-      className={`color-disabled flex h-full w-full flex-col items-center justify-between py-3`}
+      className={`color-disabled flex h-full w-full flex-col items-center justify-between py-3 ${!started && 'color-highlighted rounded-sm'} `}
     >
       <p className="flex w-full justify-end pr-4 text-sm">
         {currentIndex + 1} / {wordArray.length}

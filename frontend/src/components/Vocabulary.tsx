@@ -1,11 +1,9 @@
 import { useOverview } from '../hooks/useOverview';
-import { OverviewItem } from '../../../shared/types/dataTypes';
+import { ItemFull } from '../../../shared/types/dataTypes';
 import Button from './common/Button';
 
 export default function Vocabulary() {
-  const { overviewArray } = useOverview<OverviewItem>(
-    '/api/overview/vocabulary'
-  );
+  const { overviewArray } = useOverview<ItemFull>('/api/overview/vocabulary');
 
   return (
     <div className="flex w-[320px] flex-col justify-between gap-0.5">

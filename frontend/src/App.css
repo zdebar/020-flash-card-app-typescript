@@ -31,6 +31,10 @@
     @apply bg-gray-50 shadow-none dark:bg-gray-800;
   }
 
+  .color-highlighted {
+    @apply bg-yellow-400;
+  }
+
   .shape-rectangular {
     @apply h-12 w-full rounded-sm;
   }
