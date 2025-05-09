@@ -1,10 +1,5 @@
 import { PostgresClient } from "../types/dataTypes";
-import {
-  ItemProgress,
-  UserScore,
-  Item,
-  ItemInfo,
-} from "../../../shared/types/dataTypes";
+import { UserScore, Item, ItemInfo } from "../../../shared/types/dataTypes";
 import {
   getItemsRepository,
   updateItemsRepository,
@@ -33,7 +28,7 @@ export async function getItemsService(
 export async function updateItemsService(
   db: PostgresClient,
   uid: string,
-  items: ItemProgress[]
+  items: Item[]
 ): Promise<UserScore> {
   await updateItemsRepository(db, uid, items);
   return await getScoreRepository(db, uid);

@@ -1,11 +1,6 @@
 import { Request, Response } from "express";
 import { postgresDBPool } from "../config/database.config.postgres";
-import {
-  ItemProgress,
-  UserScore,
-  Item,
-  ItemInfo,
-} from "../../../shared/types/dataTypes";
+import { UserScore, Item, ItemInfo } from "../../../shared/types/dataTypes";
 import {
   getItemsService,
   updateItemsService,
@@ -45,7 +40,7 @@ export async function updateItemsController(
 ): Promise<void> {
   try {
     const uid: string = (req as any).user.uid;
-    const items: ItemProgress[] = req.body;
+    const items: Item[] = req.body;
 
     const score: UserScore = await updateItemsService(
       postgresDBPool,

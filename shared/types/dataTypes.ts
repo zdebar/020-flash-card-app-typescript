@@ -1,39 +1,43 @@
-// Item types
+// Data types
 export interface Item {
-  // Send to frontend
   id: number;
   czech: string;
   english: string;
   pronunciation: string | null;
   audio: string | null;
+  item_order: number | null;
   progress: number;
+  started_at: Date | null;
+  next_at: Date | null;
+  mastered_at: Date | null;
   skipped: boolean;
-  started: boolean;
   has_info: boolean;
 }
 
-export interface ItemProgress {
-  // Send to backend, to upgrade user_items table
-  id: number;
-  progress: number;
-  skipped: boolean;
+export interface Block {
+  block_id: number;
+  block_order: number;
+  block_name: string;
+  block_explanation: string;
+}
+
+export interface ItemInfo extends Block {
+  items: Item[];
 }
 
 // User Types
 export interface UserSettings {
-  id: number; // User ID in the database
+  id: number;
 }
 
 export interface UserInfo {
-  // Frontend user info
   uid: string; // Firebase UID
-  name: string | null; // User's name
-  email: string | null; // User's email
-  picture: string | null; // User's profile picture URL
+  name: string | null;
+  email: string | null;
+  picture: string | null;
 }
 
 export interface UserScore {
-  // Gamification score
   startedCountToday: number;
   startedCount: number;
 }
@@ -43,35 +47,4 @@ export class UserError extends Error {
     super(message);
     this.name = "UserError";
   }
-}
-
-// Info types
-export interface ItemInfo {
-  block_id: number;
-  block_name: string;
-  block_explanation: string;
-  block_category: string;
-  items: Item[];
-}
-
-// Overview Item types
-export interface OverviewItem {
-  item_order: number | null;
-  id: number;
-  czech: string;
-  english: string;
-  pronunciation: string | null;
-  audio: string | null;
-  progress: number;
-  started_at: Date | null;
-  next_at: Date | null;
-  mastered_at: Date | null;
-  skipped: boolean;
-}
-
-export interface OverviewGrammar {
-  block_id: number;
-  block_order: number;
-  block_name: string;
-  block_explanation: string;
 }
