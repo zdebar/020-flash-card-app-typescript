@@ -3,7 +3,6 @@ import { Item, UserScore } from '../../../shared/types/dataTypes';
 import {
   alternateDirection,
   convertToItemProgress,
-  updateItemObject,
 } from '../utils/practice.utils';
 import { useUser } from './useUser';
 import { useNavigate } from 'react-router-dom';
@@ -39,16 +38,20 @@ export function useItemArray() {
 
   const updateItemArray = useCallback(
     async (progressIncrement: number = 0, skipped: boolean = false) => {
-      const updatedWordArray = updateItemObject(
-        itemArray,
-        currentIndex,
-        progressIncrement,
-        skipped
-      );
+      // Update the current item in the array useState
+      const updatedItemArray = [...itemArray];
+      updatedItemArray[currentIndex] = {
+        ...updatedItemArray[currentIndex],
+        progress: Math.max(
+          itemArray[currentIndex].progress + progressIncrement,
+          0
+        ),
+        skipped: skipped,
+      };
 
-      if (updatedWordArray.length > 0) {
-        if (currentIndex + 1 >= updatedWordArray.length) {
-          setItemArray([]);
+      if (updatedItemArray.length > 0) {
+        if (currentIndex + 1 >= updatedItemArray.length) {
+          // End of the array, update backend and navigate to userDashboard
 
           try {
             const data = await fetchWithAuthAndParse<{
@@ -56,7 +59,7 @@ export function useItemArray() {
             }>(apiPath, {
               method: 'PATCH',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(convertToItemProgress(updatedWordArray)),
+              body: JSON.stringify(convertToItemProgress(updatedItemArray)),
             });
 
             const newUserScore = data?.score || null;
@@ -65,11 +68,13 @@ export function useItemArray() {
             console.error('Error posting words:', error);
           }
 
+          setItemArray([]);
           navigate('/userDashboard');
         } else {
+          // Continue to the next item
           setCurrentIndex(currentIndex + 1);
-          setDirection(alternateDirection(updatedWordArray, currentIndex + 1));
-          setItemArray(updatedWordArray);
+          setDirection(alternateDirection(updatedItemArray, currentIndex + 1));
+          setItemArray(updatedItemArray);
         }
       }
     },

@@ -29,6 +29,7 @@ export async function getOverviewWordsService(
 
 /**
  * Gets a list of sentences for a given user and language ID from the database.
+ * TODO: redo as grammar lectures overview
  */
 export async function getOverviewSentencesService(
   db: PostgresClient,

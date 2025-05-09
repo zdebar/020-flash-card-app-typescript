@@ -21,14 +21,11 @@ export default function UserDashboard() {
       >
         <span className="w-42">Seznam gramatiky</span>
       </ButtonLinkRectangular>
-      <ButtonLinkRectangular to="/overview/words" buttonColor="color-secondary">
-        <span className="w-42">Seznam slovíček</span>
-      </ButtonLinkRectangular>
       <ButtonLinkRectangular
-        to="/overview/sentences"
+        to="/overview/vocabulary"
         buttonColor="color-secondary"
       >
-        <span className="w-42">Seznam vět</span>
+        <span className="w-42">Seznam slovíček</span>
       </ButtonLinkRectangular>
     </div>
   );

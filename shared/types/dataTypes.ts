@@ -45,7 +45,7 @@ export class UserError extends Error {
   }
 }
 
-// Item info
+// Info types
 export interface ItemInfo {
   block_id: number;
   block_name: string;

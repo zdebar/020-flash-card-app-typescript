@@ -44,6 +44,7 @@ i.item_order ASC NULLS FIRST
 
 /**
  * Return started sentences for the user from PostgreSQL database.
+ * TODO: redo as grammar lectures overview
  */
 export async function getOverviewSentencesRepository(
   db: PostgresClient,

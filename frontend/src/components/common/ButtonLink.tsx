@@ -17,7 +17,7 @@ export default function ButtonLink({
   to,
   ...props
 }: ButtonLinkProps) {
-  const buttonClass = `flex items-center justify-center px-4 py-2 rounded ${className} ${
+  const buttonClass = `flex items-center justify-center px-4 py-2 ${className} ${
     !disabled ? buttonColor : 'button-disabled pointer-events-none'
   }`;
 

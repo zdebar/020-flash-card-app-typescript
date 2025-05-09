@@ -25,9 +25,7 @@ export default function UserSettings() {
   return (
     <div className="w-[320px] py-4">
       {userInfo && <h1>uživatel: {userInfo.name}</h1>}
-      <Button onClick={handleLogout} className="rounded-md">
-        Logout
-      </Button>
+      <Button onClick={handleLogout}>Logout</Button>
     </div>
   );
 }

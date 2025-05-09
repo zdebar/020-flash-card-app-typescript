@@ -15,7 +15,7 @@ export default function PracticeCard() {
   const { playAudio } = useAudioManager(itemArray);
   const [revealed, setRevealed] = useState(false);
   const [hintIndex, setHintIndex] = useState(0);
-  const [info, setInfo] = useState(false);
+  const [infoVisibility, setInfoVisibility] = useState(false);
 
   const currentAudio = itemArray?.[currentIndex]?.audio || null;
 
@@ -39,13 +39,16 @@ export default function PracticeCard() {
 
   return (
     <div className="py-4">
-      {info ? (
-        <InfoCard itemId={itemArray[currentIndex]?.id} setInfo={setInfo} />
+      {infoVisibility ? (
+        <InfoCard
+          itemId={itemArray[currentIndex]?.id}
+          setInfo={setInfoVisibility}
+        />
       ) : (
         <div className="flex w-[320px] flex-col justify-center gap-1">
           <div className="flex w-full gap-1">
             <Button
-              onClick={() => setInfo(true)}
+              onClick={() => setInfoVisibility(true)}
               buttonColor="button-secondary"
               disabled={!itemArray[currentIndex]?.has_info}
               className="flex-10"

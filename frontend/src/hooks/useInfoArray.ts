@@ -17,7 +17,6 @@ export function useInfoArray(itemId: number) {
         }>(`/api/items/${itemId}/info`);
 
         const items = data?.itemInfo || [];
-        console.log('Fetched data:', items);
         setInfoArray(items);
         setInfoIndex(0);
       } catch (error) {

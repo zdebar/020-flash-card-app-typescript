@@ -17,27 +17,3 @@ export function convertToItemProgress(words: Item[]): ItemProgress[] {
     skipped: word.skipped,
   }));
 }
-
-/**
- * Updates the progress of a word in the word array.
- */
-export function updateItemObject(
-  wordArray: Item[],
-  currentIndex: number,
-  progressIncrement: number,
-  skipped: boolean
-): Item[] {
-  const updatedProgress = Math.max(
-    wordArray[currentIndex].progress + progressIncrement,
-    0
-  );
-
-  const updatedWordArray = [...wordArray];
-  updatedWordArray[currentIndex] = {
-    ...updatedWordArray[currentIndex],
-    progress: updatedProgress,
-    skipped: skipped,
-  };
-
-  return updatedWordArray;
-}

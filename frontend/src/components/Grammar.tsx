@@ -1,18 +1,20 @@
 import { useOverview } from '../hooks/useOverview';
-import { OverviewItem } from '../../../shared/types/dataTypes';
+import { OverviewGrammar } from '../../../shared/types/dataTypes';
 import Button from './common/Button';
 
-export default function ItemListCard() {
-  const { overviewArray } = useOverview<OverviewItem>('/api/overview/words');
+export default function Grammar() {
+  const { overviewArray } = useOverview<OverviewGrammar>(
+    '/api/overview/grammar'
+  );
 
   return (
     <div className="flex w-[320px] flex-col justify-between gap-0.5">
       {overviewArray.map((item) => (
         <Button
-          key={item.id}
+          key={item.block_id}
           buttonColor="button-secondary h-6 shadow-none justify-start pl-4"
         >
-          {item.id + '  ' + item.english + '  ' + item.progress}
+          {item.block_order + '  ' + item.block_name}
         </Button>
       ))}
     </div>

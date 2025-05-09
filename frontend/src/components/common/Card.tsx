@@ -13,7 +13,7 @@ export default function Card({
   wordArray,
   direction,
   revealed,
-  hintIndex = 0,
+  hintIndex = 100,
 }: CardProps) {
   return (
     <div
@@ -36,7 +36,7 @@ export default function Card({
         {revealed ? wordArray[currentIndex]?.pronunciation : '\u00A0'}
       </p>
       <p className="flex w-full justify-start pl-6 text-sm">
-        {revealed ? wordArray[currentIndex]?.progress : '\u00A0'}
+        {wordArray[currentIndex]?.progress}
       </p>
     </div>
   );
