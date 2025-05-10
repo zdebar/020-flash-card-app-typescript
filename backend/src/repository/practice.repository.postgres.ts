@@ -28,20 +28,23 @@ export async function getItemsRepository(
     i.english,
     i.pronunciation,
     i.audio,
+    i.item_order,
     COALESCE(ui.progress, 0) AS progress,
-    ui.started_at IS NOT NULL AS started,
+    ui.started_at,
+    ui.next_at,
+    ui.mastered_at,
     coalesce(ui.skipped, false) as skipped,
     COUNT(b.id) > 0 as has_info 
   FROM items i
   LEFT JOIN user_items ui ON i.id = ui.item_id AND ui.user_id = (SELECT user_id FROM user_cte)
   LEFT JOIN block_items bi ON i.id = bi.item_id
   LEFT JOIN blocks b ON bi.block_id = b.id
-  LEFT JOIN categories c ON b.category_id = c.id AND (c.id = 1 OR c.id IS NULL)
+  LEFT JOIN categories c ON b.category_id = c.id 
   WHERE ui.mastered_at IS NULL
     AND COALESCE(ui.skipped, false) = false
     AND (ui.next_at IS NULL OR ui.next_at < NOW())
   GROUP BY 
-    i.id, i.czech, i.english, i.pronunciation, i.audio, ui.progress, ui.started_at, ui.skipped, ui.next_at, b.block_order
+    i.id, i.czech, i.english, i.pronunciation, i.audio, ui.progress, ui.started_at, ui.skipped, ui.next_at, b.block_order, ui.mastered_at
   ORDER BY 
     COALESCE(ui.next_at, NOW() + INTERVAL '1 day') ASC NULLS LAST,
     COALESCE(i.item_order, b.block_order, 0),

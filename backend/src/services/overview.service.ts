@@ -1,5 +1,5 @@
 import { PostgresClient } from "../types/dataTypes";
-import { ItemFull } from "../../../shared/types/dataTypes";
+import { Item } from "../../../shared/types/dataTypes";
 import { addAudioPath } from "../utils/update.utils";
 import {
   getOverviewSentencesRepository,
@@ -14,8 +14,8 @@ export async function getOverviewWordsService(
   uid: string,
   limit: number,
   offset: number
-): Promise<ItemFull[]> {
-  const words: ItemFull[] = await getOverviewWordsRepository(
+): Promise<Item[]> {
+  const words: Item[] = await getOverviewWordsRepository(
     db,
     uid,
     limit,
@@ -36,8 +36,8 @@ export async function getOverviewSentencesService(
   uid: string,
   limit: number,
   offset: number
-): Promise<ItemFull[]> {
-  const words: ItemFull[] = await getOverviewSentencesRepository(
+): Promise<Item[]> {
+  const words: Item[] = await getOverviewSentencesRepository(
     db,
     uid,
     limit,

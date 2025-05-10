@@ -24,7 +24,7 @@
   }
 
   .button-secondary {
-    @apply bg-gray-100 text-gray-900 shadow-[2px_2px_2px_rgba(0,0,0,0.2)] hover:bg-gray-200 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700;
+    @apply bg-gray-200 text-gray-900 shadow-[2px_2px_2px_rgba(0,0,0,0.2)] hover:bg-gray-200 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700;
   }
 
   .color-disabled {
@@ -32,7 +32,7 @@
   }
 
   .color-highlighted {
-    @apply bg-gray-200;
+    @apply bg-gray-100;
   }
 
   .shape-rectangular {

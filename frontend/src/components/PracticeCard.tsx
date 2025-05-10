@@ -11,7 +11,7 @@ import SkipButton from './common/SkipButton';
 import { useUser } from '../hooks/useUser';
 
 export default function PracticeCard() {
-  const { itemArray, currentIndex, direction, updateItemArray, startedCount } =
+  const { itemArray, currentIndex, direction, updateItemArray } =
     useItemArray();
   const { playAudio } = useAudioManager(itemArray);
   const [revealed, setRevealed] = useState(false);
@@ -20,12 +20,6 @@ export default function PracticeCard() {
   const { userScore } = useUser();
 
   const currentAudio = itemArray?.[currentIndex]?.audio || null;
-
-  useEffect(() => {
-    return () => {
-      console.log('Unmounting PracticeCard component');
-    };
-  }, []);
 
   // Play audio when en to cz card direction is started
   useEffect(() => {
@@ -56,7 +50,7 @@ export default function PracticeCard() {
         <div className="card">
           <div className="flex w-full gap-1">
             <div className="color-disabled flex flex-3 flex-col items-center justify-center text-sm font-semibold">
-              {(userScore?.startedCountToday || 0) + startedCount}
+              {userScore?.startedCountToday || 0}
             </div>
             <Button // Info button
               onClick={() => setInfoVisibility(true)}
@@ -75,7 +69,6 @@ export default function PracticeCard() {
             direction={direction}
             revealed={revealed}
             hintIndex={hintIndex}
-            started={itemArray[currentIndex]?.started}
           ></Card>
           <PracticeControls
             revealed={revealed}

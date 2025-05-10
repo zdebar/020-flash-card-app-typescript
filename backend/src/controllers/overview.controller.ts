@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { postgresDBPool } from "../config/database.config.postgres";
-import { ItemFull, Block } from "../../../shared/types/dataTypes";
+import { Item, Block } from "../../../shared/types/dataTypes";
 import {
   getOverviewWordsService,
   getOverviewSentencesService,
@@ -21,7 +21,7 @@ export async function getOverviewWordsController(
     const limit: number = parseInt(req.query.limit as string, 10) || 10;
     const offset: number = (page - 1) * limit;
 
-    const data: ItemFull[] = await getOverviewWordsService(
+    const data: Item[] = await getOverviewWordsService(
       postgresDBPool,
       uid,
       limit,
@@ -55,7 +55,7 @@ export async function getOverviewSentencesController(
     const limit: number = parseInt(req.query.limit as string, 10) || 10;
     const offset: number = (page - 1) * limit;
 
-    const data: ItemFull[] = await getOverviewSentencesService(
+    const data: Item[] = await getOverviewSentencesService(
       postgresDBPool,
       uid,
       limit,

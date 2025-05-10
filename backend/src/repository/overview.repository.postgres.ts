@@ -1,6 +1,6 @@
 import { PostgresClient } from "../types/dataTypes";
 import { withDbClient } from "../utils/database.utils";
-import { ItemFull, Block } from "../../../shared/types/dataTypes";
+import { Item, Block } from "../../../shared/types/dataTypes";
 
 /**
  * Return started words for the user from PostgreSQL database.
@@ -10,18 +10,18 @@ export async function getOverviewWordsRepository(
   uid: string,
   limit: number,
   offset: number
-): Promise<ItemFull[]> {
+): Promise<Item[]> {
   let query = `
   WITH user_cte AS (
     SELECT id AS user_id FROM users WHERE uid = $1
   )
   SELECT
-    i.item_order,
     i.id,
     i.czech,
     i.english,
     i.pronunciation,
-    i.audio,    
+    i.audio,
+    i.item_order,    
     ui.progress,
     ui.started_at,
     ui.next_at,
@@ -29,10 +29,14 @@ export async function getOverviewWordsRepository(
     ui.skipped
   FROM items i
   JOIN user_items ui ON i.id = ui.item_id AND ui.user_id = (SELECT user_id FROM user_cte)
-  WHERE ui.started_at IS NOT NULL
-    AND i.item_order IS NOT NULL
+  LEFT JOIN block_items bi ON i.id = bi.item_id
+  LEFT JOIN blocks b ON bi.block_id = b.id
+  LEFT JOIN categories c ON b.category_id = c.id 
+  WHERE i.item_order IS NOT NULL
+  GROUP BY 
+    i.id, i.czech, i.english, i.pronunciation, i.audio, ui.progress, ui.started_at, ui.skipped, ui.next_at, b.block_order, ui.mastered_at
   ORDER BY 
-i.item_order ASC NULLS FIRST
+    i.item_order ASC NULLS FIRST
   LIMIT $2 OFFSET $3;
 `;
 
@@ -51,7 +55,7 @@ export async function getOverviewSentencesRepository(
   uid: string,
   limit: number,
   offset: number
-): Promise<ItemFull[]> {
+): Promise<Item[]> {
   let query = `
     WITH user_cte AS (
       SELECT id AS user_id FROM users WHERE uid = $1
@@ -86,7 +90,7 @@ export async function getOverviewSentencesRepository(
 }
 
 /**
- * Return started sentences for the user from PostgreSQL database.
+ * Return unlocked grammar lectures for the user from PostgreSQL database.
  */
 export async function getOverviewGrammarRepository(
   db: PostgresClient,

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Item, UserScore } from '../../../shared/types/dataTypes';
 import {
   alternateDirection,
@@ -11,12 +11,29 @@ export function useItemArray() {
   const [itemArray, setItemArray] = useState<Item[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(false); // true = czech to english, false = english to czech
-  const [startedCount, setStartedCount] = useState(0);
 
   const { setUserScore } = useUser();
 
   const apiPath = '/api/items';
 
+  const updateServer = useCallback(async () => {
+    try {
+      const data = await fetchWithAuthAndParse<{
+        score: UserScore | null;
+      }>(apiPath, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(convertToItemProgress(itemArray)),
+      });
+
+      const newUserScore = data?.score || null;
+      setUserScore(newUserScore);
+    } catch (error) {
+      console.error('Error posting words:', error);
+    }
+  }, [itemArray, apiPath, setUserScore]);
+
+  // Fetch items on mount or when currentIndex is 0
   useEffect(() => {
     if (currentIndex === 0) {
       const fetchAndStoreWords = async () => {
@@ -37,6 +54,26 @@ export function useItemArray() {
     }
   }, [currentIndex]);
 
+  // Update items on unmount - Ref, Update Ref, Effect on unmount
+  const updateItemsRef = useRef(updateServer);
+  const updateIndexRef = useRef(currentIndex);
+
+  useEffect(() => {
+    updateItemsRef.current = updateServer;
+  }, [updateServer]);
+
+  useEffect(() => {
+    updateIndexRef.current = currentIndex;
+  }, [currentIndex]);
+
+  useEffect(() => {
+    return () => {
+      if (updateIndexRef.current != 0) {
+        updateItemsRef.current();
+      }
+    };
+  }, []);
+
   const updateItemArray = useCallback(
     async (progressIncrement: number = 0, skipped: boolean = false) => {
       // Update the current item in the array useState
@@ -51,30 +88,10 @@ export function useItemArray() {
       };
 
       if (updatedItemArray.length > 0) {
-        if (!itemArray[currentIndex]?.started) {
-          setStartedCount((prevCount) => prevCount + 1);
-        }
-
         if (currentIndex + 1 >= updatedItemArray.length) {
           // End of the array, update backend and navigate to userDashboard
+          updateItemsRef.current();
 
-          try {
-            const data = await fetchWithAuthAndParse<{
-              score: UserScore | null;
-            }>(apiPath, {
-              method: 'PATCH',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(convertToItemProgress(updatedItemArray)),
-            });
-
-            const newUserScore = data?.score || null;
-            setUserScore(newUserScore);
-            // Reset started count after posting
-          } catch (error) {
-            console.error('Error posting words:', error);
-          }
-
-          setStartedCount(0);
           setCurrentIndex(0);
           setDirection(false);
         } else {
@@ -85,7 +102,7 @@ export function useItemArray() {
         }
       }
     },
-    [itemArray, currentIndex, setUserScore, apiPath]
+    [itemArray, currentIndex]
   );
 
   return {
@@ -93,7 +110,6 @@ export function useItemArray() {
     currentIndex,
     direction,
     updateItemArray,
-    startedCount,
     setCurrentIndex,
   };
 }

@@ -1,14 +1,16 @@
 // Item types
 export interface Item {
-  // Send to frontend
   id: number;
   czech: string;
   english: string;
   pronunciation: string | null;
   audio: string | null;
+  item_order: number | null;
   progress: number;
+  started_at: Date | null;
+  next_at: Date | null;
+  mastered_at: Date | null;
   skipped: boolean;
-  started: boolean;
   has_info: boolean;
 }
 
@@ -53,20 +55,6 @@ export interface Block {
   block_explanation: string;
 }
 
-export interface ItemFull {
-  item_order: number | null;
-  id: number;
-  czech: string;
-  english: string;
-  pronunciation: string | null;
-  audio: string | null;
-  progress: number;
-  started_at: Date | null;
-  next_at: Date | null;
-  mastered_at: Date | null;
-  skipped: boolean;
-}
-
 export interface ItemInfo extends Block {
-  items: ItemFull[];
+  items: Item[];
 }
