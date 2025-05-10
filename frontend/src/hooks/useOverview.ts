@@ -4,7 +4,7 @@ import { fetchWithAuthAndParse } from '../utils/auth.utils';
 export function useOverview<T>(apiPath: string) {
   const [overviewArray, setOverviewArray] = useState<T[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1); // Add totalPages state
+  const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
 
   const fetchAndStoreItems = useCallback(
@@ -12,13 +12,17 @@ export function useOverview<T>(apiPath: string) {
       try {
         setIsLoading(true);
         const data = await fetchWithAuthAndParse<{
-          data: T[] | null;
-          totalPages: number; // Expect totalPages in the response
+          rows: T[];
+          pagination: {
+            page: number;
+            limit: number;
+            totalPages: number;
+          };
         }>(`${apiPath}?page=${page}`);
 
-        const items = data?.data || [];
-        setOverviewArray(items); // Replace items instead of appending
-        setTotalPages(data?.totalPages || 1); // Update totalPages
+        const items = data?.rows || [];
+        setOverviewArray(items);
+        setTotalPages(data?.pagination.totalPages || 1);
       } catch (error) {
         console.error('Error in fetching data:', error);
       } finally {

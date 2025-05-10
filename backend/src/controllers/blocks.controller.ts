@@ -4,7 +4,6 @@ import { Item, Block } from "../../../shared/types/dataTypes";
 import {
   getGrammarPhrasesRepository,
   getGrammarsRepository,
-  getGrammarsCountRepository,
 } from "../repository/blocks.repository.postgres";
 
 /**
@@ -21,23 +20,18 @@ export async function getGrammarsController(
     const limit: number = parseInt(req.query.limit as string, 10) || 10;
     const offset: number = (page - 1) * limit;
 
-    const blocks: Block[] = await getGrammarsRepository(
+    const { rows, totalCount } = await getGrammarsRepository(
       postgresDBPool,
       uid,
       limit,
       offset
     );
 
-    // Calculate total pages (assuming getGrammarsRepository can provide total count)
-    const totalCount: number = await getGrammarsCountRepository(
-      postgresDBPool,
-      uid
-    );
     const totalPages = Math.ceil(totalCount / limit);
 
     res.status(200).json({
       message: "User grammar retrieved successfully.",
-      data: blocks,
+      rows,
       pagination: {
         page,
         limit,
@@ -64,7 +58,7 @@ export async function getGrammarPhrasesController(
     const limit: number = parseInt(req.query.limit as string, 10) || 10;
     const offset: number = (page - 1) * limit;
 
-    const items: Item[] = await getGrammarPhrasesRepository(
+    const { rows, totalCount } = await getGrammarPhrasesRepository(
       postgresDBPool,
       uid,
       grammarId,
@@ -74,7 +68,7 @@ export async function getGrammarPhrasesController(
 
     res.status(200).json({
       message: "User sentences retrieved successfully.",
-      items,
+      rows,
       pagination: {
         page,
         limit,

@@ -7,8 +7,8 @@ import UserSettings from './components/UserSettings';
 import UserDashboard from './components/UserDashboard';
 import PracticeCard from './components/PracticeCard';
 import ButtonLinkRectangular from './components/common/ButtonLinkRectangular';
-import Grammar from './components/Grammar';
-import Vocabulary from './components/Vocabulary';
+import { Words } from './components/Words';
+import { Grammars } from './components/Grammar';
 
 export default function App() {
   const { userInfo, loading } = useUser();
@@ -41,8 +41,8 @@ export default function App() {
             <Route path="/practice" element={<PracticeCard />} />
             <Route path="/userSettings" element={<UserSettings />} />
             <Route path="/userDashboard" element={<UserDashboard />} />
-            <Route path="/overview/grammar" element={<Grammar />} />
-            <Route path="/overview/vocabulary" element={<Vocabulary />} />
+            <Route path="/grammars" element={<Grammars />} />
+            <Route path="/words" element={<Words />} />
           </Routes>
         </div>
       </div>

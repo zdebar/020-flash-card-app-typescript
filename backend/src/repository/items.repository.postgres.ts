@@ -197,7 +197,7 @@ export async function getWordsRepository(
   uid: string,
   limit: number,
   offset: number
-): Promise<Item[]> {
+): Promise<{ rows: Item[]; totalCount: number }> {
   let query = `
     WITH user_cte AS (
       SELECT id AS user_id FROM users WHERE uid = $1
@@ -214,17 +214,21 @@ export async function getWordsRepository(
       ui.next_at,
       ui.mastered_at,
       ui.skipped,
-      false as has_info
+      false as has_info,
+      COUNT(*) OVER() AS total_count
     FROM items i
-    inner JOIN user_items ui ON i.id = ui.item_id AND ui.user_id = (SELECT user_id FROM user_cte)
+    INNER JOIN user_items ui ON i.id = ui.item_id AND ui.user_id = (SELECT user_id FROM user_cte)
     WHERE i.item_order IS NOT NULL
     ORDER BY 
       i.item_order ASC
     LIMIT $2 OFFSET $3;
-`;
+  `;
 
   return await withDbClient(db, async (client) => {
     const res = await client.query(query, [uid, limit, offset]);
-    return res.rows;
+    const rows = res.rows.map(({ total_count, ...rest }) => rest);
+    const totalCount =
+      res.rows.length > 0 ? parseInt(res.rows[0].total_count, 10) : 0;
+    return { rows, totalCount };
   });
 }

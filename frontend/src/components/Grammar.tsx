@@ -1,7 +1,7 @@
 import { useOverview } from '../hooks/useOverview';
 import { Block } from '../../../shared/types/dataTypes';
 
-export function Grammar() {
+export function Grammars() {
   const { overviewArray, fetchNextPage, hasMore, isLoading } =
     useOverview<Block>('/api/blocks/grammar');
 

@@ -2,7 +2,7 @@ import { useOverview } from '../hooks/useOverview';
 import { Item } from '../../../shared/types/dataTypes';
 
 export function Words() {
-  const { overviewArray, fetchNextPage, hasMore, isLoading } =
+  const { overviewArray, fetchPage, currentPage, totalPages, isLoading } =
     useOverview<Item>('/api/items/words');
 
   return (
@@ -13,9 +13,23 @@ export function Words() {
           <li key={item.id}>{item.english}</li>
         ))}
       </ul>
-      {hasMore && !isLoading && (
-        <button onClick={fetchNextPage}>Load More</button>
-      )}
+      <div>
+        <button
+          onClick={() => fetchPage(currentPage - 1)}
+          disabled={isLoading || currentPage === 1}
+        >
+          Previous
+        </button>
+        <span>
+          Page {currentPage} of {totalPages}
+        </span>
+        <button
+          onClick={() => fetchPage(currentPage + 1)}
+          disabled={isLoading || currentPage === totalPages}
+        >
+          Next
+        </button>
+      </div>
       {isLoading && <p>Loading...</p>}
     </div>
   );

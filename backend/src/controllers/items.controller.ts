@@ -11,10 +11,7 @@ import {
   updateItemsService,
   getItemInfoService,
 } from "../services/items.service";
-import {
-  getWordsRepository,
-  getWordsCountRepository,
-} from "../repository/items.repository.postgres";
+import { getWordsRepository } from "../repository/items.repository.postgres";
 
 /**
  * Controller function to retrieve user-specific words based on source and target languages.
@@ -106,23 +103,18 @@ export async function getWordsController(
     const limit: number = parseInt(req.query.limit as string, 10) || 10;
     const offset: number = (page - 1) * limit;
 
-    const data: Item[] = await getWordsRepository(
+    const { rows, totalCount } = await getWordsRepository(
       postgresDBPool,
       uid,
       limit,
       offset
     );
 
-    // Calculate total pages (assuming getWordsRepository can provide total count)
-    const totalCount: number = await getWordsCountRepository(
-      postgresDBPool,
-      uid
-    ); // Add a repository function to get total count
     const totalPages = Math.ceil(totalCount / limit);
 
     res.status(200).json({
       message: "User words retrieved successfully.",
-      data,
+      rows,
       pagination: {
         page,
         limit,
