@@ -1,16 +1,16 @@
 import { useOverview } from '../hooks/useOverview';
-import { Block } from '../../../shared/types/dataTypes';
+import { Item } from '../../../shared/types/dataTypes';
 
-export function Grammar() {
+export function Words() {
   const { overviewArray, fetchNextPage, hasMore, isLoading } =
-    useOverview<Block>('/api/blocks/grammar');
+    useOverview<Item>('/api/items/words');
 
   return (
     <div>
-      <h1>Grammar Overview</h1>
+      <h1>Words Overview</h1>
       <ul>
-        {overviewArray.map((block) => (
-          <li key={block.block_id}>{block.block_name}</li>
+        {overviewArray.map((item) => (
+          <li key={item.id}>{item.english}</li>
         ))}
       </ul>
       {hasMore && !isLoading && (

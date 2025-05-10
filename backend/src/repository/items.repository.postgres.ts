@@ -39,14 +39,13 @@ export async function getItemsRepository(
   LEFT JOIN user_items ui ON i.id = ui.item_id AND ui.user_id = (SELECT user_id FROM user_cte)
   LEFT JOIN block_items bi ON i.id = bi.item_id
   LEFT JOIN blocks b ON bi.block_id = b.id
-  LEFT JOIN categories c ON b.category_id = c.id 
   WHERE ui.mastered_at IS NULL
     AND COALESCE(ui.skipped, false) = false
     AND (ui.next_at IS NULL OR ui.next_at < NOW())
   GROUP BY 
     i.id, i.czech, i.english, i.pronunciation, i.audio, ui.progress, ui.started_at, ui.skipped, ui.next_at, b.block_order, ui.mastered_at
   ORDER BY 
-    COALESCE(ui.next_at, NOW() + INTERVAL '1 day') ASC NULLS LAST,
+    ui.next_at ASC NULLS LAST,
     COALESCE(i.item_order, b.block_order, 0),
     i.id ASC
   LIMIT $2;
@@ -61,7 +60,7 @@ export async function getItemsRepository(
 /**
  * Updates the user's word progress in a PostgreSQL database. --- learned_at a mastered_at se mění pouze při hraničním času
  */
-export async function updateItemsRepository(
+export async function patchItemsRepository(
   db: PostgresClient,
   uid: string,
   items: ItemProgress[]
@@ -148,6 +147,7 @@ export async function getScoreRepository(
 
 /**
  * Gets info relevant to the given items from PostgreSQL database.
+ * TODO: optimize this query
  */
 export async function getItemInfoRepository(
   db: PostgresClient,
@@ -156,9 +156,10 @@ export async function getItemInfoRepository(
   const query = `
     SELECT 
       b.id,
+      b.block_order,
       b.block_name,
       b.explanation AS block_explanation,
-      c.name AS block_category,
+      b.category_id as block_category_id,
       CASE 
         WHEN b.category_id IN (3, 4) THEN (
           SELECT json_agg(
@@ -167,10 +168,7 @@ export async function getItemInfoRepository(
               'czech', i_sub.czech,
               'english', i_sub.english,
               'pronunciation', i_sub.pronunciation,
-              'audio', i_sub.audio,
-              'progress', 0,
-              'skipped', false,
-              'started', false
+              'audio', i_sub.audio
             )
           )
           FROM items i_sub
@@ -180,14 +178,53 @@ export async function getItemInfoRepository(
         ELSE NULL
       END AS items
     FROM blocks b
-    JOIN categories c ON c.id = b.category_id
     JOIN block_items bi ON b.id = bi.block_id
-    LEFT JOIN items i ON i.id = bi.item_id
-    WHERE i.id = $1; 
+    JOIN items i ON i.id = bi.item_id
+    WHERE i.id = $1;
   `;
 
   return await withDbClient(db, async (client) => {
     const result = await client.query(query, [item_id]);
     return result.rows;
+  });
+}
+
+/**
+ * Return started words for the user from PostgreSQL database.
+ */
+export async function getWordsRepository(
+  db: PostgresClient,
+  uid: string,
+  limit: number,
+  offset: number
+): Promise<Item[]> {
+  let query = `
+    WITH user_cte AS (
+      SELECT id AS user_id FROM users WHERE uid = $1
+    )
+    SELECT
+      i.id,
+      i.czech,
+      i.english,
+      i.pronunciation,
+      i.audio,
+      i.item_order,    
+      ui.progress,
+      ui.started_at,
+      ui.next_at,
+      ui.mastered_at,
+      ui.skipped,
+      false as has_info
+    FROM items i
+    inner JOIN user_items ui ON i.id = ui.item_id AND ui.user_id = (SELECT user_id FROM user_cte)
+    WHERE i.item_order IS NOT NULL
+    ORDER BY 
+      i.item_order ASC
+    LIMIT $2 OFFSET $3;
+`;
+
+  return await withDbClient(db, async (client) => {
+    const res = await client.query(query, [uid, limit, offset]);
+    return res.rows;
   });
 }

@@ -4,11 +4,13 @@ import {
   getItemsController,
   getInfoController,
   updateItemsController,
-} from "../controllers/practice.controller";
+  getWordsController,
+} from "../controllers/items.controller";
 import {
-  getOverviewWordsController,
-  getOverviewGrammarController,
-} from "../controllers/overview.controller";
+  getGrammarPhrasesController,
+  getGrammarsController,
+} from "../controllers/blocks.controller";
+
 import { getUserController } from "../controllers/user.controller";
 
 const apiRouter = express.Router();
@@ -17,20 +19,12 @@ apiRouter.get("/users", authenticateMiddleware, getUserController); // sends use
 apiRouter.get("/items", authenticateMiddleware, getItemsController); // sends array of items
 apiRouter.patch("/items", authenticateMiddleware, updateItemsController); // updates user items, sends user score
 apiRouter.get("/items/:itemId/info", authenticateMiddleware, getInfoController); // sends array of items with info
+apiRouter.get("/items/words", authenticateMiddleware, getWordsController); // sends array of started words, with pagination
+apiRouter.get("/blocks/grammar", authenticateMiddleware, getGrammarsController); // sends array of started grammar lectures
 apiRouter.get(
-  "/overview/vocabulary",
+  "/blocks/grammar/:grammarId",
   authenticateMiddleware,
-  getOverviewWordsController
-); // sends array of words with progress
-apiRouter.get(
-  "/overview/grammar",
-  authenticateMiddleware,
-  getOverviewGrammarController
-); // sends array of grammar with progress
-apiRouter.get(
-  "/overview/grammar/:grammarId",
-  authenticateMiddleware,
-  getOverviewGrammarController
-); // sends array of grammar with progress
+  getGrammarPhrasesController
+); // sends array of phrases connected to given grammarID
 
 export default apiRouter;

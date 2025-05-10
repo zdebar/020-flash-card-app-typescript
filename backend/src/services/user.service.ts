@@ -1,6 +1,6 @@
 import { PostgresClient } from "../types/dataTypes";
 import { UserScore, UserSettings } from "../../../shared/types/dataTypes";
-import { getScoreRepository } from "../repository/practice.repository.postgres";
+import { getScoreRepository } from "../repository/items.repository.postgres";
 import { getUserRepository } from "../repository/user.repository.postgres";
 
 /**
