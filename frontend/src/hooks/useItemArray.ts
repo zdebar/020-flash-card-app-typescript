@@ -5,36 +5,37 @@ import {
   convertToItemProgress,
 } from '../utils/practice.utils';
 import { useUser } from './useUser';
-import { useNavigate } from 'react-router-dom';
 import { fetchWithAuthAndParse } from '../utils/auth.utils';
 
 export function useItemArray() {
   const [itemArray, setItemArray] = useState<Item[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(false); // true = czech to english, false = english to czech
+  const [startedCount, setStartedCount] = useState(0);
 
   const { setUserScore } = useUser();
-  const navigate = useNavigate();
 
   const apiPath = '/api/items';
 
   useEffect(() => {
-    const fetchAndStoreWords = async () => {
-      try {
-        const data = await fetchWithAuthAndParse<{
-          items: Item[] | null;
-        }>(apiPath);
+    if (currentIndex === 0) {
+      const fetchAndStoreWords = async () => {
+        try {
+          const data = await fetchWithAuthAndParse<{
+            items: Item[] | null;
+          }>(apiPath);
 
-        const items = data?.items || [];
-        setItemArray(items);
-        setDirection(alternateDirection(items, 0));
-      } catch (error) {
-        console.error('Error in fetching data:', error);
-      }
-    };
+          const items = data?.items || [];
+          setItemArray(items);
+          setDirection(alternateDirection(items, 0));
+        } catch (error) {
+          console.error('Error in fetching data:', error);
+        }
+      };
 
-    fetchAndStoreWords();
-  }, []);
+      fetchAndStoreWords();
+    }
+  }, [currentIndex]);
 
   const updateItemArray = useCallback(
     async (progressIncrement: number = 0, skipped: boolean = false) => {
@@ -50,6 +51,10 @@ export function useItemArray() {
       };
 
       if (updatedItemArray.length > 0) {
+        if (!itemArray[currentIndex]?.started) {
+          setStartedCount((prevCount) => prevCount + 1);
+        }
+
         if (currentIndex + 1 >= updatedItemArray.length) {
           // End of the array, update backend and navigate to userDashboard
 
@@ -64,12 +69,14 @@ export function useItemArray() {
 
             const newUserScore = data?.score || null;
             setUserScore(newUserScore);
+            // Reset started count after posting
           } catch (error) {
             console.error('Error posting words:', error);
           }
 
-          setItemArray([]);
-          navigate('/userDashboard');
+          setStartedCount(0);
+          setCurrentIndex(0);
+          setDirection(false);
         } else {
           // Continue to the next item
           setCurrentIndex(currentIndex + 1);
@@ -78,7 +85,7 @@ export function useItemArray() {
         }
       }
     },
-    [itemArray, currentIndex, navigate, setUserScore, apiPath]
+    [itemArray, currentIndex, setUserScore, apiPath]
   );
 
   return {
@@ -86,5 +93,7 @@ export function useItemArray() {
     currentIndex,
     direction,
     updateItemArray,
+    startedCount,
+    setCurrentIndex,
   };
 }

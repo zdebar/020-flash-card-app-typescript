@@ -8,16 +8,24 @@ import Button from './common/Button';
 import { InfoIcon } from './common/Icons';
 import InfoCard from './InfoCard';
 import SkipButton from './common/SkipButton';
+import { useUser } from '../hooks/useUser';
 
 export default function PracticeCard() {
-  const { itemArray, currentIndex, direction, updateItemArray } =
+  const { itemArray, currentIndex, direction, updateItemArray, startedCount } =
     useItemArray();
   const { playAudio } = useAudioManager(itemArray);
   const [revealed, setRevealed] = useState(false);
   const [hintIndex, setHintIndex] = useState(0);
   const [infoVisibility, setInfoVisibility] = useState(false);
+  const { userScore } = useUser();
 
   const currentAudio = itemArray?.[currentIndex]?.audio || null;
+
+  useEffect(() => {
+    return () => {
+      console.log('Unmounting PracticeCard component');
+    };
+  }, []);
 
   // Play audio when en to cz card direction is started
   useEffect(() => {
@@ -47,16 +55,20 @@ export default function PracticeCard() {
       ) : (
         <div className="card">
           <div className="flex w-full gap-1">
+            <div className="color-disabled flex flex-3 flex-col items-center justify-center text-sm font-semibold">
+              {(userScore?.startedCountToday || 0) + startedCount}
+            </div>
             <Button // Info button
               onClick={() => setInfoVisibility(true)}
               buttonColor="button-secondary"
               disabled={!itemArray[currentIndex]?.has_info}
-              className="flex-10"
+              className="flex-7"
             >
               <InfoIcon></InfoIcon>
             </Button>
             <SkipButton onSkip={() => updateItemArray(0, true)} />
           </div>
+
           <Card
             currentIndex={currentIndex}
             wordArray={itemArray}

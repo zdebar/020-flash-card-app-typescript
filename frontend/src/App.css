@@ -32,7 +32,7 @@
   }
 
   .color-highlighted {
-    @apply bg-yellow-400;
+    @apply bg-gray-200;
   }
 
   .shape-rectangular {

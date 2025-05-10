@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { Item } from '../../../shared/types/dataTypes';
-import { playAudioFromUseRef, fetchAudioFiles } from '../utils/audio.utils';
+import { fetchAudioFiles } from '../utils/audio.utils';
 
 export function useAudioManager(wordArray: Item[]) {
   const audioCacheRef = useRef<Map<string, HTMLAudioElement>>(new Map());
@@ -26,7 +26,13 @@ export function useAudioManager(wordArray: Item[]) {
 
   const playAudio = useCallback((audioPath: string | null) => {
     if (audioPath && audioCacheRef.current.has(audioPath)) {
-      playAudioFromUseRef(audioCacheRef.current, audioPath);
+      const audio = audioCacheRef.current.get(audioPath);
+      if (audio) {
+        audio.currentTime = 0;
+        audio.play().catch((error) => {
+          console.error('Error playing audio:', error);
+        });
+      }
     } else {
       console.warn(`Audio file not found in cache: ${audioPath}`);
     }
