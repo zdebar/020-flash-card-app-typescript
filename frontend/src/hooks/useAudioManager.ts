@@ -4,6 +4,7 @@ import { fetchAudioFiles } from '../utils/audio.utils';
 
 export function useAudioManager(wordArray: Item[]) {
   const audioCacheRef = useRef<Map<string, HTMLAudioElement>>(new Map());
+  const currentAudioRef = useRef<HTMLAudioElement | null>(null); // Track the currently playing audio
 
   useEffect(() => {
     const cacheAudio = async () => {
@@ -28,6 +29,14 @@ export function useAudioManager(wordArray: Item[]) {
     if (audioPath && audioCacheRef.current.has(audioPath)) {
       const audio = audioCacheRef.current.get(audioPath);
       if (audio) {
+        // Stop any currently playing audio
+        if (currentAudioRef.current) {
+          currentAudioRef.current.pause();
+          currentAudioRef.current.currentTime = 0;
+        }
+
+        // Play the new audio
+        currentAudioRef.current = audio;
         audio.currentTime = 0;
         audio.play().catch((error) => {
           console.error('Error playing audio:', error);
@@ -38,5 +47,31 @@ export function useAudioManager(wordArray: Item[]) {
     }
   }, []);
 
-  return { playAudio };
+  const stopAudio = useCallback(() => {
+    if (currentAudioRef.current) {
+      currentAudioRef.current.pause();
+      currentAudioRef.current.currentTime = 0;
+      currentAudioRef.current = null; // Clear the reference
+    }
+  }, []);
+
+  const muteAudio = useCallback(() => {
+    if (currentAudioRef.current) {
+      currentAudioRef.current.muted = true;
+    }
+  }, []);
+
+  const unmuteAudio = useCallback(() => {
+    if (currentAudioRef.current) {
+      currentAudioRef.current.muted = false;
+    }
+  }, []);
+
+  const setVolume = useCallback((volume: number) => {
+    if (currentAudioRef.current) {
+      currentAudioRef.current.volume = Math.min(Math.max(volume, 0), 1); // Clamp volume between 0 and 1
+    }
+  }, []);
+
+  return { playAudio, stopAudio, muteAudio, unmuteAudio, setVolume };
 }
