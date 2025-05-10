@@ -16,7 +16,6 @@ interface PracticeControlsProps {
   handlePlus: () => void;
   handleMinus: () => void;
   handleHint: () => void;
-  mutedAudio?: boolean;
 }
 
 export default function PracticeControls({
@@ -27,15 +26,11 @@ export default function PracticeControls({
   handlePlus,
   handleMinus,
   handleHint,
-  mutedAudio,
 }: PracticeControlsProps) {
   return (
     <div className="flex w-full justify-between gap-1">
       <div className="flex w-full flex-col gap-1">
-        <Button
-          onClick={handleAudio}
-          disabled={(direction && !revealed) || mutedAudio}
-        >
+        <Button onClick={handleAudio} disabled={direction && !revealed}>
           <AudioIcon></AudioIcon>
         </Button>
         <Button>

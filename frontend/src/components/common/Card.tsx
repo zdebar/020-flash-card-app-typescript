@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { Item } from '../../../../shared/types/dataTypes';
-import { VolumeIcon, MuteIcon } from './Icons';
+import { VolumeIcon } from './Icons';
 
 interface CardProps {
   currentIndex: number;
@@ -7,10 +8,7 @@ interface CardProps {
   direction: boolean;
   revealed: boolean;
   hintIndex?: number;
-  muteAudio?: () => void;
-  unmuteAudio?: () => void;
-  mutedAudio?: boolean;
-  setMutedAudio?: (muted: boolean) => void;
+  setVolume: (volume: number) => void;
 }
 
 export default function Card({
@@ -19,41 +17,43 @@ export default function Card({
   direction,
   revealed,
   hintIndex,
-  muteAudio,
-  unmuteAudio,
-  mutedAudio,
-  setMutedAudio,
+  setVolume,
 }: CardProps) {
+  const [showVolumeSlider, setShowVolumeSlider] = useState(false);
+  const [volume, setVolumeState] = useState(1); // Default volume is 1 (100%)
+
+  const handleVolumeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newVolume = parseFloat(event.target.value);
+    setVolumeState(newVolume);
+    setVolume(newVolume);
+  };
+
   return (
     <div
       className={`color-disabled flex h-full w-full flex-col items-center justify-between p-4 ${!direction && 'color-highlighted rounded-sm'} `}
     >
-      <div className="flex w-full justify-between">
-        <div>
-          {mutedAudio ? (
-            <button
-              onClick={() => {
-                setMutedAudio?.(false);
-                unmuteAudio?.();
-              }}
-            >
-              <MuteIcon></MuteIcon>
-            </button>
-          ) : (
-            <button
-              onClick={() => {
-                setMutedAudio?.(true);
-                muteAudio?.();
-              }}
-            >
-              <VolumeIcon></VolumeIcon>
-            </button>
+      <div className="flex w-full items-center justify-between">
+        <div className="relative">
+          <button onClick={() => setShowVolumeSlider((prev) => !prev)}>
+            <VolumeIcon />
+          </button>
+          {showVolumeSlider && (
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              value={volume}
+              onChange={handleVolumeChange}
+              className="absolute top-full left-0 mt-2 w-24"
+            />
           )}
         </div>
         <p className="flex w-full justify-end text-sm">
           {currentIndex + 1} / {wordArray.length}
         </p>
       </div>
+
       <p className="pt-1 font-bold">
         {direction || revealed ? wordArray[currentIndex].czech : '\u00A0'}
       </p>

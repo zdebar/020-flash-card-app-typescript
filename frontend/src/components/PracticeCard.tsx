@@ -13,8 +13,7 @@ import { useUser } from '../hooks/useUser';
 export default function PracticeCard() {
   const { itemArray, currentIndex, direction, updateItemArray } =
     useItemArray();
-  const { playAudio, muteAudio, unmuteAudio } = useAudioManager(itemArray);
-  const [mutedAudio, setMutedAudio] = useState(false);
+  const { playAudio, setVolume } = useAudioManager(itemArray);
   const [revealed, setRevealed] = useState(false);
   const [hintIndex, setHintIndex] = useState(0);
   const [infoVisibility, setInfoVisibility] = useState(false);
@@ -70,15 +69,11 @@ export default function PracticeCard() {
             direction={direction}
             revealed={revealed}
             hintIndex={hintIndex}
-            muteAudio={muteAudio}
-            unmuteAudio={unmuteAudio}
-            mutedAudio={mutedAudio}
-            setMutedAudio={setMutedAudio}
+            setVolume={setVolume}
           ></Card>
           <PracticeControls
             revealed={revealed}
             direction={direction}
-            mutedAudio={mutedAudio}
             handleAudio={() => playAudio(currentAudio)}
             handleReveal={handleReveal}
             handlePlus={() => {

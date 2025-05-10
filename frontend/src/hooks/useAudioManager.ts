@@ -5,6 +5,7 @@ import { fetchAudioFiles } from '../utils/audio.utils';
 export function useAudioManager(wordArray: Item[]) {
   const audioCacheRef = useRef<Map<string, HTMLAudioElement>>(new Map());
   const currentAudioRef = useRef<HTMLAudioElement | null>(null); // Track the currently playing audio
+  const volumeRef = useRef(1); // Store the current volume (default is 1)
 
   useEffect(() => {
     const cacheAudio = async () => {
@@ -36,6 +37,7 @@ export function useAudioManager(wordArray: Item[]) {
         }
 
         // Play the new audio
+        audio.volume = volumeRef.current; // Set the volume to the current value
         currentAudioRef.current = audio;
         audio.currentTime = 0;
         audio.play().catch((error) => {
@@ -51,7 +53,7 @@ export function useAudioManager(wordArray: Item[]) {
     if (currentAudioRef.current) {
       currentAudioRef.current.pause();
       currentAudioRef.current.currentTime = 0;
-      currentAudioRef.current = null; // Clear the reference
+      currentAudioRef.current = null;
     }
   }, []);
 
@@ -68,9 +70,7 @@ export function useAudioManager(wordArray: Item[]) {
   }, []);
 
   const setVolume = useCallback((volume: number) => {
-    if (currentAudioRef.current) {
-      currentAudioRef.current.volume = Math.min(Math.max(volume, 0), 1); // Clamp volume between 0 and 1
-    }
+    volumeRef.current = Math.min(Math.max(volume, 0), 1);
   }, []);
 
   return { playAudio, stopAudio, muteAudio, unmuteAudio, setVolume };
