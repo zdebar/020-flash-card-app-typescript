@@ -18,7 +18,7 @@ export function useItemArray() {
 
   const updateServer = useCallback(async () => {
     try {
-      const data = await fetchWithAuthAndParse<{
+      const response = await fetchWithAuthAndParse<{
         score: UserScore | null;
       }>(apiPath, {
         method: 'PATCH',
@@ -26,7 +26,7 @@ export function useItemArray() {
         body: JSON.stringify(convertToItemProgress(itemArray)),
       });
 
-      const newUserScore = data?.score || null;
+      const newUserScore = response?.score || null;
       setUserScore(newUserScore);
     } catch (error) {
       console.error('Error posting words:', error);

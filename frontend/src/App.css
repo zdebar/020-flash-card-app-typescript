@@ -24,7 +24,7 @@
   }
 
   .button-secondary {
-    @apply bg-gray-200 text-gray-900 shadow-[2px_2px_2px_rgba(0,0,0,0.2)] hover:bg-gray-200 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700;
+    @apply bg-gray-200 text-gray-900 shadow-[2px_2px_2px_rgba(0,0,0,0.2)] hover:bg-gray-400 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-600;
   }
 
   .color-disabled {
@@ -51,6 +51,6 @@
 
   /** Size classes*/
   .card {
-    @apply flex h-[320px] w-[320px] flex-col justify-between gap-1;
+    @apply flex h-[320px] w-[320px] flex-col justify-between gap-1 rounded-sm;
   }
 }
