@@ -36,8 +36,8 @@ export interface UserInfo {
 export interface UserScore {
   startedCountToday: number;
   startedCount: number;
-  blockCountToday: number;
-  blockCount: number;
+  // blockCountToday: number;
+  // blockCount: number;
 }
 
 export class UserError extends Error {

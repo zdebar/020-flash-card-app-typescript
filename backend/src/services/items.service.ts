@@ -25,7 +25,7 @@ export async function getItemsService(
 /**
  * Updates the user's word progress in the PostgreSQL database and returns the updated score.
  */
-export async function updateItemsService(
+export async function patchItemsService(
   db: PostgresClient,
   uid: string,
   items: Item[]

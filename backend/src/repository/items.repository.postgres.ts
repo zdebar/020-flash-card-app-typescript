@@ -2,12 +2,7 @@ import { PostgresClient } from "../types/dataTypes";
 import { getNextAt, getMasteredAt } from "../utils/update.utils";
 import { withDbClient } from "../utils/database.utils";
 import config from "../config/config";
-import {
-  UserScore,
-  Item,
-  ItemProgress,
-  ItemInfo,
-} from "../../../shared/types/dataTypes";
+import { UserScore, Item, ItemInfo } from "../../../shared/types/dataTypes";
 
 /**
  * Return required items for the user from PostgreSQL database.
@@ -28,12 +23,7 @@ export async function getItemsRepository(
     i.english,
     i.pronunciation,
     i.audio,
-    i.item_order,
     COALESCE(ui.progress, 0) AS progress,
-    ui.started_at,
-    ui.next_at,
-    ui.mastered_at,
-    coalesce(ui.skipped, false) as skipped,
     COUNT(b.id) > 0 as has_info 
   FROM items i
   LEFT JOIN user_items ui ON i.id = ui.item_id AND ui.user_id = (SELECT user_id FROM user_cte)
@@ -43,7 +33,7 @@ export async function getItemsRepository(
     AND COALESCE(ui.skipped, false) = false
     AND (ui.next_at IS NULL OR ui.next_at < NOW())
   GROUP BY 
-    i.id, i.czech, i.english, i.pronunciation, i.audio, ui.progress, ui.started_at, ui.skipped, ui.next_at, b.block_order, ui.mastered_at
+    i.id, i.czech, i.english, i.pronunciation, i.audio, ui.progress, b.block_order, ui.next_at
   ORDER BY 
     ui.next_at ASC NULLS LAST,
     COALESCE(i.item_order, b.block_order, 0),
@@ -63,18 +53,25 @@ export async function getItemsRepository(
 export async function patchItemsRepository(
   db: PostgresClient,
   uid: string,
-  items: ItemProgress[]
+  items: Item[]
 ): Promise<void> {
   if (items.length === 0) {
-    return; // No items to update
+    throw new Error("No items to update");
+    return;
   }
 
-  // Prepare data for unnest
+  for (const item of items) {
+    if (!item.id || item.progress === undefined) {
+      throw new Error(
+        "Invalid item data: Each item must have an id and progress."
+      );
+    }
+  }
+
   const itemIds = items.map((item) => item.id);
   const progresses = items.map((item) => item.progress);
-  const nextAts = items.map((item) => getNextAt(item.progress) || null);
+  const nextAts = items.map((item) => getNextAt(item.progress));
   const masteredAts = items.map((item) => getMasteredAt(item.progress) || null);
-  const skippedFlags = items.map((item) => item.skipped);
 
   const query = `
     WITH user_id_cte AS (
@@ -85,17 +82,15 @@ export async function patchItemsRepository(
         unnest($2::int[]) AS item_id,
         unnest($3::int[]) AS progress,
         unnest($4::timestamptz[]) AS next_at,
-        unnest($5::timestamptz[]) AS mastered_at,
-        unnest($6::boolean[]) AS skipped
+        unnest($5::timestamptz[]) AS mastered_at
     )
-    INSERT INTO user_items (user_id, item_id, progress, next_at, mastered_at, skipped)
+    INSERT INTO user_items (user_id, item_id, progress, next_at, mastered_at)
     SELECT 
       user_id,
       wd.item_id,
       wd.progress,
       wd.next_at,
-      wd.mastered_at,
-      wd.skipped
+      wd.mastered_at
     FROM user_id_cte, item_data wd
     ON CONFLICT(user_id, item_id) 
     DO UPDATE SET 
@@ -105,11 +100,10 @@ export async function patchItemsRepository(
         WHEN user_items.mastered_at IS NULL AND EXCLUDED.mastered_at IS NOT NULL 
         THEN EXCLUDED.mastered_at 
         ELSE user_items.mastered_at 
-      END,
-      skipped = EXCLUDED.skipped;
+      END;
   `;
 
-  const values = [uid, itemIds, progresses, nextAts, masteredAts, skippedFlags];
+  const values = [uid, itemIds, progresses, nextAts, masteredAts];
 
   await withDbClient(db, async (client) => {
     await client.query(query, values);
@@ -186,49 +180,5 @@ export async function getItemInfoRepository(
   return await withDbClient(db, async (client) => {
     const result = await client.query(query, [item_id]);
     return result.rows;
-  });
-}
-
-/**
- * Return started words for the user from PostgreSQL database.
- */
-export async function getWordsRepository(
-  db: PostgresClient,
-  uid: string,
-  limit: number,
-  offset: number
-): Promise<{ rows: Item[]; totalCount: number }> {
-  let query = `
-    WITH user_cte AS (
-      SELECT id AS user_id FROM users WHERE uid = $1
-    )
-    SELECT
-      i.id,
-      i.czech,
-      i.english,
-      i.pronunciation,
-      i.audio,
-      i.item_order,    
-      ui.progress,
-      ui.started_at,
-      ui.next_at,
-      ui.mastered_at,
-      ui.skipped,
-      false as has_info,
-      COUNT(*) OVER() AS total_count
-    FROM items i
-    INNER JOIN user_items ui ON i.id = ui.item_id AND ui.user_id = (SELECT user_id FROM user_cte)
-    WHERE i.item_order IS NOT NULL
-    ORDER BY 
-      i.item_order ASC
-    LIMIT $2 OFFSET $3;
-  `;
-
-  return await withDbClient(db, async (client) => {
-    const res = await client.query(query, [uid, limit, offset]);
-    const rows = res.rows.map(({ total_count, ...rest }) => rest);
-    const totalCount =
-      res.rows.length > 0 ? parseInt(res.rows[0].total_count, 10) : 0;
-    return { rows, totalCount };
   });
 }
