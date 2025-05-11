@@ -5,12 +5,7 @@ export interface Item {
   english: string;
   pronunciation: string | null;
   audio: string | null;
-  item_order: number | null;
   progress: number;
-  started_at: Date | null;
-  next_at: Date | null;
-  mastered_at: Date | null;
-  skipped: boolean;
   has_info: boolean;
 }
 
@@ -19,6 +14,7 @@ export interface Block {
   block_order: number;
   block_name: string;
   block_explanation: string;
+  block_category_id: number;
 }
 
 export interface ItemInfo extends Block {
@@ -40,6 +36,8 @@ export interface UserInfo {
 export interface UserScore {
   startedCountToday: number;
   startedCount: number;
+  blockCountToday: number;
+  blockCount: number;
 }
 
 export class UserError extends Error {
@@ -47,25 +45,4 @@ export class UserError extends Error {
     super(message);
     this.name = "UserError";
   }
-}
-
-// Info types
-export interface Block {
-  block_id: number;
-  block_order: number;
-  block_name: string;
-  block_explanation: string;
-  block_category_id: number;
-}
-
-export interface Info {
-  id: number;
-  czech: string;
-  english: string;
-  pronunciation: string | null;
-  audio: string | null;
-}
-
-export interface ItemInfo extends Block {
-  items: Info[];
 }

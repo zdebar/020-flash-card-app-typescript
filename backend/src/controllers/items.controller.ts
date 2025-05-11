@@ -74,47 +74,9 @@ export async function getInfoController(
       itemId
     );
 
-    console.log("itemInfo", itemInfo); // debug
     res.status(200).json({
       message: "Item info retrieved successfully.",
       itemInfo,
-    });
-  } catch (err) {
-    next(err);
-  }
-}
-
-/**
- * Get list of started words.
- */
-export async function getWordsController(
-  req: Request,
-  res: Response,
-  next: Function
-): Promise<void> {
-  try {
-    const uid: string = (req as any).user.uid;
-    const page: number = parseInt(req.query.page as string, 10) || 1;
-    const limit: number = parseInt(req.query.limit as string, 10) || 10;
-    const offset: number = (page - 1) * limit;
-
-    const { rows, totalCount } = await getWordsRepository(
-      postgresDBPool,
-      uid,
-      limit,
-      offset
-    );
-
-    const totalPages = Math.ceil(totalCount / limit);
-
-    res.status(200).json({
-      message: "User words retrieved successfully.",
-      rows,
-      pagination: {
-        page,
-        limit,
-        totalPages,
-      },
     });
   } catch (err) {
     next(err);
