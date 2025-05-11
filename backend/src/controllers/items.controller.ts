@@ -34,7 +34,7 @@ export async function getItemsController(
 /**
  * Updates the words associated with a user in the database. Sends back the updated score.
  */
-export async function updateItemsController(
+export async function patchItemsController(
   req: Request,
   res: Response,
   next: Function
