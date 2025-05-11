@@ -3,10 +3,10 @@ import {
   getItemsController,
   updateItemsController,
   getUserProfileController,
-} from "../practice.controller";
+} from "../items.controller";
 import { Request, Response } from "express";
 import db from "../../config/database.config.postgres";
-import * as wordService from "../../repository/practice.repository.postgres";
+import * as wordService from "../../repository/items.repository.postgres";
 import * as userService from "../../services/user.service";
 import { closeDbConnection } from "../../utils/database.utils";
 
@@ -55,7 +55,7 @@ describe("User Controller", () => {
       await updateItemsController(req as Request, res as Response);
 
       expect(db.connect).toHaveBeenCalled();
-      expect(wordService.updateItemsRepository).toHaveBeenCalledWith(
+      expect(wordService.patchItemsRepository).toHaveBeenCalledWith(
         db,
         1,
         req.body.words

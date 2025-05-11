@@ -2,10 +2,10 @@ import { PostgresClient } from "../types/dataTypes";
 import { UserScore, Item, ItemInfo } from "../../../shared/types/dataTypes";
 import {
   getItemsRepository,
-  updateItemsRepository,
+  patchItemsRepository,
   getScoreRepository,
   getItemInfoRepository,
-} from "../repository/practice.repository.postgres";
+} from "../repository/items.repository.postgres";
 import { addAudioPath } from "../utils/update.utils";
 
 /**
@@ -30,7 +30,7 @@ export async function updateItemsService(
   uid: string,
   items: Item[]
 ): Promise<UserScore> {
-  await updateItemsRepository(db, uid, items);
+  await patchItemsRepository(db, uid, items);
   return await getScoreRepository(db, uid);
 }
 

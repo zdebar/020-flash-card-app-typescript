@@ -3,15 +3,12 @@ import config from "../config/config";
 /**
  * Returns the next review date based on the progress and SRS intervals.
  */
-export function getNextAt(progress: number): string | null {
-  const interval = config.SRS[progress] ?? null;
-  if (interval) {
-    const randomFactor =
-      1 + (Math.random() * 2 * config.srsRandomness - config.srsRandomness);
-    const randomizedInterval = Math.round(interval * randomFactor);
-    return new Date(Date.now() + randomizedInterval * 1000).toISOString();
-  }
-  return null;
+export function getNextAt(progress: number): string {
+  const interval = config.SRS[progress] || 0;
+  const randomFactor =
+    1 + (Math.random() * 2 * config.srsRandomness - config.srsRandomness);
+  const randomizedInterval = Math.round(interval * randomFactor);
+  return new Date(Date.now() + randomizedInterval * 1000).toISOString();
 }
 
 /**

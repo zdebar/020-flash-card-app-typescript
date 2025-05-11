@@ -7,17 +7,17 @@ import UserSettings from './components/UserSettings';
 import UserDashboard from './components/UserDashboard';
 import PracticeCard from './components/PracticeCard';
 import ButtonLinkRectangular from './components/common/ButtonLinkRectangular';
-import Grammar from './components/Grammar';
-import Vocabulary from './components/Vocabulary';
+import { Words } from './components/Words';
+import { Grammars } from './components/Grammar';
 
 export default function App() {
   const { userInfo, loading } = useUser();
 
   return (
-    <div className="dark:bg-gray-900">
-      <div className="mx-auto flex min-h-screen w-full max-w-[900px] min-w-[320px] flex-col items-center">
+    <div className="h-screen dark:bg-gray-900">
+      <div className="mx-auto flex h-full w-full max-w-[900px] min-w-[320px] flex-col items-center">
         <Header />
-        <div className="flex w-full max-w-[600px] flex-col items-center gap-1 p-4">
+        <div className="flex h-full w-full flex-col items-center gap-1 p-4">
           <Routes>
             <Route
               path="/"
@@ -41,8 +41,8 @@ export default function App() {
             <Route path="/practice" element={<PracticeCard />} />
             <Route path="/userSettings" element={<UserSettings />} />
             <Route path="/userDashboard" element={<UserDashboard />} />
-            <Route path="/overview/grammar" element={<Grammar />} />
-            <Route path="/overview/vocabulary" element={<Vocabulary />} />
+            <Route path="/grammars" element={<Grammars />} />
+            <Route path="/words" element={<Words />} />
           </Routes>
         </div>
       </div>

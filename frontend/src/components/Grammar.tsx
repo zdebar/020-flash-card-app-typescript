@@ -1,22 +1,23 @@
-import { useOverview } from '../hooks/useOverview';
-import { OverviewGrammar } from '../../../shared/types/dataTypes';
-import Button from './common/Button';
+import { useList } from '../hooks/useList';
+import { Block } from '../../../shared/types/dataTypes';
 
-export default function Grammar() {
-  const { overviewArray } = useOverview<OverviewGrammar>(
-    '/api/overview/grammar'
+export function Grammars() {
+  const { overviewArray, fetchNextPage, hasMore, isLoading } = useList<Block>(
+    '/api/blocks/grammar'
   );
 
   return (
-    <div className="flex w-[320px] flex-col justify-between gap-0.5">
-      {overviewArray.map((item) => (
-        <Button
-          key={item.block_id}
-          buttonColor="button-secondary h-6 shadow-none justify-start pl-4"
-        >
-          {item.block_order + '  ' + item.block_name}
-        </Button>
-      ))}
+    <div>
+      <h1>Grammar Overview</h1>
+      <ul>
+        {overviewArray.map((block) => (
+          <li key={block.block_id}>{block.block_name}</li>
+        ))}
+      </ul>
+      {hasMore && !isLoading && (
+        <button onClick={fetchNextPage}>Load More</button>
+      )}
+      {isLoading && <p>Loading...</p>}
     </div>
   );
 }
