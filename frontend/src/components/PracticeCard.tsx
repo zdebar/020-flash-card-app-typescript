@@ -54,15 +54,15 @@ export default function PracticeCard() {
   }
 
   return (
-    <div>
+    <>
       {infoVisibility ? (
         <InfoCard
           itemId={itemArray[currentIndex]?.id}
           setInfo={setInfoVisibility}
         />
       ) : (
-        <div className="card h-full">
-          <div className="flex h-full w-full gap-1">
+        <div className="card">
+          <div className="flex h-12 w-full gap-1">
             <div className="color-disabled flex h-full flex-1 items-center justify-center px-2 text-sm font-semibold">
               {userScore?.blockCountToday || 0}
             </div>
@@ -104,6 +104,6 @@ export default function PracticeCard() {
           />
         </div>
       )}
-    </div>
+    </>
   );
 }

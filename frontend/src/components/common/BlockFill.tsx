@@ -21,7 +21,7 @@ function BlockFillComponent({ blocks }: { blocks: number }) {
   const level = Math.min(Math.floor(blocks / BLOCKS_PER_FILL), 20);
 
   return (
-    <div className="color-disabled flex flex-2 justify-center">
+    <div className="color-disabled flex flex-2 justify-center border-r-1">
       {[...Array(20)].map((_, idx) => {
         const filled = idx < level;
         const color = getColor(idx + 1);

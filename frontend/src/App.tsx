@@ -15,7 +15,7 @@ export default function App() {
     <div className="h-screen dark:bg-gray-900">
       <div className="mx-auto flex h-full w-full max-w-[900px] min-w-[320px] flex-col items-center">
         <Header />
-        <div className="flex h-full w-full max-w-[600px] flex-col items-center gap-1 p-4">
+        <div className="flex h-full w-full max-w-[600px] flex-col items-center gap-1">
           <Routes>
             <Route
               path="/"
