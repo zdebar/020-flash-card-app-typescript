@@ -28,9 +28,10 @@ export async function getItemsService(
 export async function patchItemsService(
   db: PostgresClient,
   uid: string,
-  items: Item[]
+  items: Item[],
+  onBlockEnd: boolean
 ): Promise<UserScore> {
-  await patchItemsRepository(db, uid, items);
+  await patchItemsRepository(db, uid, items, onBlockEnd);
   return await getScoreRepository(db, uid);
 }
 

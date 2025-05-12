@@ -40,12 +40,14 @@ export async function patchItemsController(
 ): Promise<void> {
   try {
     const uid: string = (req as any).user.uid;
-    const items: Item[] = req.body;
+    const { items, onBlockEnd }: { items: Item[]; onBlockEnd: boolean } =
+      req.body;
 
     const score: UserScore = await patchItemsService(
       postgresDBPool,
       uid,
-      items
+      items,
+      onBlockEnd
     );
 
     res.status(200).json({

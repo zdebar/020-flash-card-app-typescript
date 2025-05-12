@@ -41,6 +41,14 @@ CREATE TABLE IF NOT EXISTS user_items (
   PRIMARY KEY (user_id, item_id)
 );
 
+CREATE TABLE IF NOT EXISTS user_score (
+  user_id INTEGER NOT NULL,
+  day DATE DEFAULT CURRENT_DATE,
+  blocks_finished INTEGER DEFAULT 0 CHECK (blocks_finished >= 0),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  PRIMARY KEY (user_id, day)
+);
+
 CREATE TABLE IF NOT EXISTS block_items (
   block_id INTEGER NOT NULL,
   item_id INTEGER NOT NULL,

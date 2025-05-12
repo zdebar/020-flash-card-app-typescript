@@ -12,24 +12,6 @@ export function useItemArray() {
 
   const apiPath = '/api/items';
 
-  // Updates the user progress in the backend, receives the updated user score
-  const patchItems = useCallback(async () => {
-    try {
-      const response = await fetchWithAuthAndParse<{
-        score: UserScore | null;
-      }>(apiPath, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(itemArray),
-      });
-
-      const newUserScore = response?.score || null;
-      setUserScore(newUserScore);
-    } catch (error) {
-      console.error('Error posting words:', error);
-    }
-  }, [itemArray, apiPath, setUserScore]);
-
   // Fetch items on mount or when currentIndex is 0
   useEffect(() => {
     if (currentIndex === 0) {
@@ -52,7 +34,30 @@ export function useItemArray() {
   }, [currentIndex]);
 
   // Update items on unmount - Ref, Update Ref, Effect on unmount
-  const updateItemsRef = useRef(patchItems);
+  const patchItems = useCallback(
+    async (onBlockEnd: boolean) => {
+      try {
+        const response = await fetchWithAuthAndParse<{
+          score: UserScore | null;
+        }>(apiPath, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            items: itemArray,
+            onBlockEnd,
+          }),
+        });
+
+        const newUserScore = response?.score || null;
+        setUserScore(newUserScore);
+      } catch (error) {
+        console.error('Error posting words:', error);
+      }
+    },
+    [itemArray, apiPath, setUserScore]
+  );
+
+  const updateItemsRef = useRef<(onBlockEnd: boolean) => void>(patchItems);
   const updateIndexRef = useRef(currentIndex);
 
   useEffect(() => {
@@ -66,7 +71,7 @@ export function useItemArray() {
   useEffect(() => {
     return () => {
       if (updateIndexRef.current != 0) {
-        updateItemsRef.current();
+        updateItemsRef.current(false);
       }
     };
   }, []);
@@ -87,7 +92,7 @@ export function useItemArray() {
       if (updatedItemArray.length > 0) {
         if (currentIndex + 1 >= updatedItemArray.length) {
           // End of the array, update backend and navigate to userDashboard
-          updateItemsRef.current();
+          updateItemsRef.current(true);
 
           setCurrentIndex(0);
           setDirection(false);

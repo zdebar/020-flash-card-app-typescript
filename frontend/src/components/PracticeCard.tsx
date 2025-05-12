@@ -8,6 +8,7 @@ import Button from './common/Button';
 import { InfoIcon } from './common/Icons';
 import InfoCard from './InfoCard';
 import { useUser } from '../hooks/useUser';
+import { BlockFill } from './common/BlockFill';
 
 export default function PracticeCard() {
   const { itemArray, currentIndex, direction, updateItemArray } =
@@ -60,11 +61,12 @@ export default function PracticeCard() {
           setInfo={setInfoVisibility}
         />
       ) : (
-        <div className="card">
-          <div className="flex w-full gap-1">
-            <div className="color-disabled flex flex-1 flex-col items-center justify-center text-sm font-semibold">
-              {userScore?.startedCountToday || 0}
+        <div className="card h-full">
+          <div className="flex h-full w-full gap-1">
+            <div className="color-disabled flex h-full flex-1 items-center justify-center px-2 text-sm font-semibold">
+              {userScore?.blockCountToday || 0}
             </div>
+            <BlockFill blocks={userScore?.blockCountToday || 0} />
             <Button // Info button
               onClick={() => setInfoVisibility(true)}
               buttonColor="button-secondary"

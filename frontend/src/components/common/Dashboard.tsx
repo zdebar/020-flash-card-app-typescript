@@ -1,13 +1,13 @@
 export default function Dashboard({
-  today,
+  started,
   total,
   className = '',
 }: {
-  today?: number;
+  started?: number;
   total?: number;
   className?: string;
 }) {
-  if (today === undefined || total === undefined) {
+  if (started === undefined || total === undefined) {
     return (
       <div
         className={`flex h-full w-full flex-1 justify-between p-4 ${className}`}
@@ -19,12 +19,9 @@ export default function Dashboard({
 
   return (
     <div
-      className={`flex h-full w-full flex-1 justify-between p-4 ${className}`}
+      className={`flex h-full w-full flex-1 justify-center p-4 ${className}`}
     >
-      <p>dnes:</p>
-      <div>{today}</div>
-      <p>celkem:</p>
-      <p>{total}</p>
+      <div>{`${started} / ${total}`}</div>
     </div>
   );
 }

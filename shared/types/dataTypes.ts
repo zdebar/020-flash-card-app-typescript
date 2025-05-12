@@ -34,10 +34,10 @@ export interface UserInfo {
 }
 
 export interface UserScore {
+  itemsTotal: number;
   startedCountToday: number;
   startedCount: number;
-  // blockCountToday: number;
-  // blockCount: number;
+  blockCountToday: number;
 }
 
 export class UserError extends Error {

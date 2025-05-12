@@ -12,8 +12,8 @@ export default function UserDashboard() {
       </ButtonLinkRectangular>
       <Dashboard
         className="color-disabled"
-        today={userScore?.startedCountToday}
-        total={userScore?.startedCount}
+        started={userScore?.startedCount}
+        total={userScore?.itemsTotal}
       />
     </div>
   );

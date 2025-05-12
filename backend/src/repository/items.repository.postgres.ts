@@ -11,7 +11,7 @@ export async function getItemsRepository(
   db: PostgresClient,
   uid: string
 ): Promise<Item[]> {
-  const numWords: number = config.block;
+  const numWords: number = config.round;
 
   let query = `
   WITH user_cte AS (
@@ -52,7 +52,8 @@ export async function getItemsRepository(
 export async function patchItemsRepository(
   db: PostgresClient,
   uid: string,
-  items: Item[]
+  items: Item[],
+  onBlockEnd: boolean
 ): Promise<void> {
   if (items.length === 0) {
     throw new Error("No items to update");
@@ -106,6 +107,16 @@ export async function patchItemsRepository(
 
   await withDbClient(db, async (client) => {
     await client.query(query, values);
+
+    if (onBlockEnd) {
+      const scoreQuery = `
+        INSERT INTO user_score (user_id, day, blockCount)
+        VALUES ((SELECT id FROM users WHERE uid = $1), CURRENT_DATE, 1)
+        ON CONFLICT (user_id, day) 
+        DO UPDATE SET blockCount = user_score.blockCount + 1;
+      `;
+      await client.query(scoreQuery, [uid]);
+    }
   });
 }
 
@@ -117,14 +128,31 @@ export async function getScoreRepository(
   uid: string
 ): Promise<UserScore> {
   const query = `
-    WITH user_cte AS (
-      SELECT id AS user_id FROM users WHERE uid = $1
-    )
+   WITH user_cte AS (
+    SELECT id AS user_id FROM users WHERE uid = $1
+  ),
+  blocks_cte AS (
+    SELECT COALESCE(blockCount, 0) AS blockCountToday
+    FROM user_score
+    WHERE user_id = (SELECT user_id FROM user_cte)
+    AND day = CURRENT_DATE
+  ),
+  started_cte AS (
     SELECT 
-      COUNT(CASE WHEN DATE(ui.started_at AT TIME ZONE 'UTC') = CURRENT_DATE THEN 1 END) AS "startedCountToday",
-      COUNT(*) AS "startedCount"
+      COUNT(CASE WHEN DATE(ui.started_at AT TIME ZONE 'UTC') = CURRENT_DATE THEN 1 END) AS startedCountToday,
+      COUNT(*) AS startedCount
     FROM user_items ui
-    JOIN user_cte u ON ui.user_id = u.user_id;
+    JOIN user_cte u ON ui.user_id = u.user_id
+  ),
+  total_cte AS (
+    SELECT COUNT(*) AS itemsTotal
+    FROM items
+  )
+  SELECT 
+    COALESCE((SELECT blockCountToday FROM blocks_cte), 0) AS "blockCountToday",
+    (SELECT startedCountToday FROM started_cte) AS "startedCountToday",
+    (SELECT startedCount FROM started_cte) AS "startedCount",
+    (SELECT itemsTotal FROM total_cte) AS "itemsTotal";
   `;
 
   return await withDbClient(db, async (client) => {
@@ -134,6 +162,8 @@ export async function getScoreRepository(
     return {
       startedCountToday: parseInt(row.startedCountToday, 10),
       startedCount: parseInt(row.startedCount, 10),
+      blockCountToday: parseInt(row.blockCountToday, 10),
+      itemsTotal: parseInt(row.itemsTotal, 10),
     };
   });
 }
