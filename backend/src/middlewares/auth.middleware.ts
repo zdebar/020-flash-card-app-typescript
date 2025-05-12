@@ -41,8 +41,8 @@ export async function authenticateMiddleware(
       return;
     }
 
-    const { uid } = decodedToken;
-    (req as any).user = { uid };
+    const { uid, name, email } = decodedToken;
+    (req as any).user = { uid, name, email };
     next();
   } catch (error) {
     logger.error("Authentication failed:", error);

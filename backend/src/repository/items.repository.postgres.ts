@@ -128,31 +128,31 @@ export async function getScoreRepository(
   uid: string
 ): Promise<UserScore> {
   const query = `
-   WITH user_cte AS (
-    SELECT id AS user_id FROM users WHERE uid = $1
-  ),
-  blocks_cte AS (
-    SELECT COALESCE(blockCount, 0) AS blockCountToday
-    FROM user_score
-    WHERE user_id = (SELECT user_id FROM user_cte)
-    AND day = CURRENT_DATE
-  ),
-  started_cte AS (
+    WITH user_cte AS (
+      SELECT id AS user_id FROM users WHERE uid = $1
+    ),
+    blocks_cte AS (
+      SELECT COALESCE(blockCount, 0) AS blockCountToday
+      FROM user_score
+      WHERE user_id = (SELECT user_id FROM user_cte)
+      AND day = CURRENT_DATE
+    ),
+    started_cte AS (
+      SELECT 
+        COUNT(CASE WHEN DATE(ui.started_at AT TIME ZONE 'UTC') = CURRENT_DATE THEN 1 END) AS startedCountToday,
+        COUNT(*) AS startedCount
+      FROM user_items ui
+      JOIN user_cte u ON ui.user_id = u.user_id
+    ),
+    total_cte AS (
+      SELECT COUNT(*) AS itemsTotal
+      FROM items
+    )
     SELECT 
-      COUNT(CASE WHEN DATE(ui.started_at AT TIME ZONE 'UTC') = CURRENT_DATE THEN 1 END) AS startedCountToday,
-      COUNT(*) AS startedCount
-    FROM user_items ui
-    JOIN user_cte u ON ui.user_id = u.user_id
-  ),
-  total_cte AS (
-    SELECT COUNT(*) AS itemsTotal
-    FROM items
-  )
-  SELECT 
-    COALESCE((SELECT blockCountToday FROM blocks_cte), 0) AS "blockCountToday",
-    (SELECT startedCountToday FROM started_cte) AS "startedCountToday",
-    (SELECT startedCount FROM started_cte) AS "startedCount",
-    (SELECT itemsTotal FROM total_cte) AS "itemsTotal";
+      COALESCE((SELECT blockCountToday FROM blocks_cte), 0) AS "blockCountToday",
+      (SELECT startedCountToday FROM started_cte) AS "startedCountToday",
+      (SELECT startedCount FROM started_cte) AS "startedCount",
+      (SELECT itemsTotal FROM total_cte) AS "itemsTotal";
   `;
 
   return await withDbClient(db, async (client) => {

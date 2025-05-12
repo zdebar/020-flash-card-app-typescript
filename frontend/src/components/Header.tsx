@@ -1,10 +1,10 @@
-import { ReactNode } from 'react';
-import { UserIcon, HomeIcon, AcademicCapIcon } from './common/Icons';
+import { UserIcon, HomeIcon, AcademicCapIcon, NoteIcon } from './common/Icons';
 import { useUser } from '../hooks/useUser';
 import { useEffect, useState } from 'react';
 import ButtonLinkRound from './common/ButtonLinkRound';
+import Button from './common/Button';
 
-export default function Header(): ReactNode {
+export default function Header({ openNotes }: { openNotes: () => void }) {
   const { userInfo } = useUser();
   const [isShortScreen, setIsShortScreen] = useState(false);
 
@@ -23,14 +23,23 @@ export default function Header(): ReactNode {
 
   return (
     <header
-      className={`z-50 flex w-full justify-between p-4 ${
-        isShortScreen ? 'fixed top-0 left-0' : 'relative mb-4'
+      className={`z-2 flex w-full justify-between p-4 ${
+        isShortScreen ? 'fixed top-0 left-0 h-0' : 'relative'
       }`}
     >
-      <ButtonLinkRound to="/">
-        <HomeIcon />
-      </ButtonLinkRound>
-      <div className={`flex ${isShortScreen && 'flex-col'} gap-4`}>
+      <div className={`flex ${isShortScreen ? 'h-30 flex-col' : ''} gap-4`}>
+        <ButtonLinkRound to="/">
+          <HomeIcon />
+        </ButtonLinkRound>
+        <Button
+          buttonColor="button-secondary"
+          className="shape-round"
+          onClick={openNotes}
+        >
+          <NoteIcon />
+        </Button>
+      </div>
+      <div className={`flex ${isShortScreen ? 'h-30 flex-col' : ''} gap-4`}>
         <ButtonLinkRound to="/userDashboard" disabled={!userInfo}>
           <AcademicCapIcon />
         </ButtonLinkRound>

@@ -1,7 +1,9 @@
 -- Create tables
 CREATE TABLE IF NOT EXISTS users (
-  id SERIAL PRIMARY KEY,
+  id SERIAL PRIMARY KEY,  
   uid VARCHAR(255) UNIQUE, -- firebase uid
+  name TEXT, -- user name
+  email TEXT, -- user email
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -26,7 +28,7 @@ CREATE TABLE IF NOT EXISTS blocks (
   explanation TEXT, -- html code
   block_order INTEGER CHECK (block_order >= 0), -- after whick item_order will the block be shown
   category_id INTEGER, 
-  FOREIGN KEY (category_id) REFERENCES category(id) ON DELETE SET NULL,
+  FOREIGN KEY (category_id) REFERENCES category(id) ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS user_items (
@@ -47,6 +49,13 @@ CREATE TABLE IF NOT EXISTS user_score (
   blocks_finished INTEGER DEFAULT 0 CHECK (blocks_finished >= 0),
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
   PRIMARY KEY (user_id, day)
+);
+
+CREATE TABLE IF NOT EXISTS user_notes (
+  user_id INTEGER NOT NULL,
+  date TIMESTAMPTZ DEFAULT NOW(),
+  note TEXT, 
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS block_items (

@@ -17,11 +17,11 @@ export function useItemArray() {
     if (currentIndex === 0) {
       const fetchAndStoreWords = async () => {
         try {
-          const data = await fetchWithAuthAndParse<{
+          const response = await fetchWithAuthAndParse<{
             items: Item[] | null;
           }>(apiPath);
 
-          const items = data?.items || [];
+          const items = response?.items || [];
           setItemArray(items);
           setDirection(alternateDirection(items, 0));
         } catch (error) {

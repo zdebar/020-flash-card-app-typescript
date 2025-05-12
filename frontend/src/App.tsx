@@ -7,15 +7,22 @@ import Login from './components/Login';
 import PracticeCard from './components/PracticeCard';
 import UserSettings from './components/UserSettings';
 import UserDashboard from './components/UserDashboard';
+import Notes from './components/common/Notes';
+import { useState } from 'react';
 
 export default function App() {
   const { userInfo, loading } = useUser();
+  const [isNotesOpen, setIsNotesOpen] = useState(false);
+
+  const openNotes = () => setIsNotesOpen(true);
+  const closeNotes = () => setIsNotesOpen(false);
 
   return (
     <div className="h-screen dark:bg-gray-900">
       <div className="mx-auto flex h-full w-full max-w-[900px] min-w-[320px] flex-col items-center">
-        <Header />
-        <div className="flex h-full w-full max-w-[600px] flex-col items-center gap-1">
+        <Header openNotes={openNotes} />
+
+        <div className="z-1 flex h-full w-full max-w-[600px] flex-col items-center gap-1">
           <Routes>
             <Route
               path="/"
@@ -41,6 +48,7 @@ export default function App() {
             <Route path="/userDashboard" element={<UserDashboard />} />
           </Routes>
         </div>
+        {isNotesOpen && <Notes onClose={closeNotes} />}
       </div>
     </div>
   );

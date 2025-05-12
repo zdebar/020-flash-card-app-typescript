@@ -8,9 +8,16 @@ import { getUserRepository } from "../repository/user.repository.postgres";
  */
 export async function getUserService(
   db: PostgresClient,
-  uid: string
+  uid: string,
+  name: string | null,
+  email: string | null
 ): Promise<{ userSettings: UserSettings; userScore: UserScore }> {
-  const userSettings: UserSettings = await getUserRepository(db, uid);
+  const userSettings: UserSettings = await getUserRepository(
+    db,
+    uid,
+    name,
+    email
+  );
   const userScore: UserScore = await getScoreRepository(db, uid);
   return { userSettings, userScore };
 }

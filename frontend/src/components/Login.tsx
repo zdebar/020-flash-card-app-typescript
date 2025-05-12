@@ -26,8 +26,8 @@ export default function Login() {
   };
 
   return (
-    <div>
+    <>
       <Button onClick={handleGoogleLogin}>Google Login</Button>
-    </div>
+    </>
   );
 }

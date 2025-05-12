@@ -4,7 +4,7 @@ import itemsRouter from "./items.routes";
 
 const apiRouter = express.Router();
 
-apiRouter.use(usersRouter);
-apiRouter.use(itemsRouter);
+apiRouter.use("/users", usersRouter);
+apiRouter.use("/items", itemsRouter);
 
 export default apiRouter;
