@@ -1,14 +1,12 @@
 import './App.css';
-import Header from './components/Header';
-import Login from './components/Login';
 import { Routes, Route } from 'react-router-dom';
 import { useUser } from './hooks/useUser';
+import ButtonLinkRectangular from './components/common/ButtonLinkRectangular';
+import Header from './components/Header';
+import Login from './components/Login';
+import PracticeCard from './components/PracticeCard';
 import UserSettings from './components/UserSettings';
 import UserDashboard from './components/UserDashboard';
-import PracticeCard from './components/PracticeCard';
-import ButtonLinkRectangular from './components/common/ButtonLinkRectangular';
-import { Words } from './components/Words';
-import { Grammars } from './components/Grammar';
 
 export default function App() {
   const { userInfo, loading } = useUser();
@@ -17,7 +15,7 @@ export default function App() {
     <div className="h-screen dark:bg-gray-900">
       <div className="mx-auto flex h-full w-full max-w-[900px] min-w-[320px] flex-col items-center">
         <Header />
-        <div className="flex h-full w-full flex-col items-center gap-1 p-4">
+        <div className="flex h-full w-full max-w-[600px] flex-col items-center gap-1 p-4">
           <Routes>
             <Route
               path="/"
@@ -41,8 +39,6 @@ export default function App() {
             <Route path="/practice" element={<PracticeCard />} />
             <Route path="/userSettings" element={<UserSettings />} />
             <Route path="/userDashboard" element={<UserDashboard />} />
-            <Route path="/grammars" element={<Grammars />} />
-            <Route path="/words" element={<Words />} />
           </Routes>
         </div>
       </div>

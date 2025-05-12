@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Item } from '../../../shared/types/dataTypes';
 import { fetchAudioFiles } from '../utils/audio.utils';
 
@@ -6,7 +6,9 @@ export function useAudioManager(wordArray: Item[]) {
   const audioCacheRef = useRef<Map<string, HTMLAudioElement>>(new Map());
   const currentAudioRef = useRef<HTMLAudioElement | null>(null); // Track the currently playing audio
   const volumeRef = useRef(1); // Store the current volume (default is 1)
+  const [isPlaying, setIsPlaying] = useState(false);
 
+  // Fetch and cache audio files when the component mounts or wordArray changes
   useEffect(() => {
     const cacheAudio = async () => {
       try {
@@ -26,6 +28,7 @@ export function useAudioManager(wordArray: Item[]) {
     };
   }, [wordArray]);
 
+  // Function to play audio
   const playAudio = useCallback((audioPath: string | null) => {
     if (audioPath && audioCacheRef.current.has(audioPath)) {
       const audio = audioCacheRef.current.get(audioPath);
@@ -40,12 +43,17 @@ export function useAudioManager(wordArray: Item[]) {
         audio.volume = volumeRef.current; // Set the volume to the current value
         currentAudioRef.current = audio;
         audio.currentTime = 0;
+        setIsPlaying(true);
         audio.play().catch((error) => {
           console.error('Error playing audio:', error);
+          setIsPlaying(false);
         });
+        audio.onended = () => setIsPlaying(false);
+        audio.onpause = () => setIsPlaying(false);
       }
     } else {
       console.warn(`Audio file not found in cache: ${audioPath}`);
+      setIsPlaying(false);
     }
   }, []);
 
@@ -54,6 +62,7 @@ export function useAudioManager(wordArray: Item[]) {
       currentAudioRef.current.pause();
       currentAudioRef.current.currentTime = 0;
       currentAudioRef.current = null;
+      setIsPlaying(false);
     }
   }, []);
 
@@ -73,5 +82,12 @@ export function useAudioManager(wordArray: Item[]) {
     volumeRef.current = Math.min(Math.max(volume, 0), 1);
   }, []);
 
-  return { playAudio, stopAudio, muteAudio, unmuteAudio, setVolume };
+  return {
+    playAudio,
+    stopAudio,
+    muteAudio,
+    unmuteAudio,
+    setVolume,
+    isPlaying,
+  };
 }

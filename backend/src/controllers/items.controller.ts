@@ -3,10 +3,9 @@ import { postgresDBPool } from "../config/database.config.postgres";
 import { UserScore, Item, ItemInfo } from "../../../shared/types/dataTypes";
 import {
   getItemsService,
-  updateItemsService,
+  patchItemsService,
   getItemInfoService,
 } from "../services/items.service";
-import { getWordsRepository } from "../repository/items.repository.postgres";
 
 /**
  * Controller function to retrieve user-specific words based on source and target languages.
@@ -43,7 +42,7 @@ export async function patchItemsController(
     const uid: string = (req as any).user.uid;
     const items: Item[] = req.body;
 
-    const score: UserScore = await updateItemsService(
+    const score: UserScore = await patchItemsService(
       postgresDBPool,
       uid,
       items

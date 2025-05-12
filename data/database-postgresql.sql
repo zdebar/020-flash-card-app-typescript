@@ -36,7 +36,6 @@ CREATE TABLE IF NOT EXISTS user_items (
   started_at TIMESTAMPTZ DEFAULT NOW(), -- datetime when the user started learning the item
   next_at TIMESTAMPTZ, -- datetime when the user should learn the item again
   mastered_at TIMESTAMPTZ, -- datetime when the user mastered the item
-  skipped BOOLEAN DEFAULT FALSE, -- whether the user skipped the item
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
   FOREIGN KEY (item_id) REFERENCES items(id) ON DELETE CASCADE,
   PRIMARY KEY (user_id, item_id)
@@ -54,4 +53,4 @@ CREATE TABLE IF NOT EXISTS block_items (
 CREATE UNIQUE INDEX user_items_user_id_item_id_idx ON user_items(user_id, item_id);
 CREATE INDEX idx_user_items_user_id_item_id ON user_items(user_id, item_id);
 CREATE INDEX idx_blocks_category ON blocks(category);
-s
+

@@ -9,6 +9,7 @@ interface CardProps {
   revealed: boolean;
   hintIndex?: number;
   setVolume: (volume: number) => void;
+  error: string | null;
 }
 
 export default function Card({
@@ -18,6 +19,7 @@ export default function Card({
   revealed,
   hintIndex,
   setVolume,
+  error,
 }: CardProps) {
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
   const [volume, setVolumeState] = useState(1); // Default volume is 1 (100%)
@@ -30,10 +32,10 @@ export default function Card({
 
   return (
     <div
-      className={`color-disabled flex h-full w-full flex-col items-center justify-between p-4 ${!direction && 'color-highlighted rounded-sm'} `}
+      className={`color-disabled shape-rectangular flex h-full w-full flex-col items-center justify-between px-4 pt-3 pb-2 ${!direction && 'color-highlighted rounded-sm'} `}
     >
       <div className="flex w-full items-center justify-between">
-        <div className="relative">
+        <div className="relative flex">
           <button onClick={() => setShowVolumeSlider((prev) => !prev)}>
             <VolumeIcon />
           </button>
@@ -45,7 +47,8 @@ export default function Card({
               step="0.01"
               value={volume}
               onChange={handleVolumeChange}
-              className="absolute top-full left-0 mt-2 w-24"
+              className="ml-2 w-24"
+              autoFocus
             />
           )}
         </div>
@@ -65,11 +68,16 @@ export default function Card({
               .padEnd(wordArray[currentIndex]?.english.length, '\u00A0')}
       </p>
       <p className="pb-1">
-        {revealed ? wordArray[currentIndex]?.pronunciation : '\u00A0'}
+        {revealed && wordArray[currentIndex]?.pronunciation
+          ? wordArray[currentIndex].pronunciation
+          : '\u00A0'}
       </p>
-      <p className="flex w-full justify-start text-sm">
-        {wordArray[currentIndex]?.progress}
-      </p>
+      <div className="flex w-full items-center justify-between">
+        <p className="flex w-full justify-start text-sm">
+          {wordArray[currentIndex]?.progress}
+        </p>
+        <p className="text-sm whitespace-nowrap text-red-500">{error}</p>
+      </div>
     </div>
   );
 }

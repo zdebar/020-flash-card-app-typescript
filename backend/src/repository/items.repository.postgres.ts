@@ -30,7 +30,6 @@ export async function getItemsRepository(
   LEFT JOIN block_items bi ON i.id = bi.item_id
   LEFT JOIN blocks b ON bi.block_id = b.id
   WHERE ui.mastered_at IS NULL
-    AND COALESCE(ui.skipped, false) = false
     AND (ui.next_at IS NULL OR ui.next_at < NOW())
   GROUP BY 
     i.id, i.czech, i.english, i.pronunciation, i.audio, ui.progress, b.block_order, ui.next_at

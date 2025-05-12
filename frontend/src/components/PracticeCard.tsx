@@ -7,19 +7,32 @@ import { useItemArray } from '../hooks/useItemArray';
 import Button from './common/Button';
 import { InfoIcon } from './common/Icons';
 import InfoCard from './InfoCard';
-import SkipButton from './common/SkipButton';
 import { useUser } from '../hooks/useUser';
 
 export default function PracticeCard() {
   const { itemArray, currentIndex, direction, updateItemArray } =
     useItemArray();
-  const { playAudio, setVolume } = useAudioManager(itemArray);
+  const { playAudio, setVolume, isPlaying } = useAudioManager(itemArray);
   const [revealed, setRevealed] = useState(false);
   const [hintIndex, setHintIndex] = useState(0);
   const [infoVisibility, setInfoVisibility] = useState(false);
+  const [currentAudio, setCurrentAudio] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const { userScore } = useUser();
 
-  const currentAudio = itemArray?.[currentIndex]?.audio || null;
+  useEffect(() => {
+    const audio = itemArray?.[currentIndex]?.audio || null;
+    setCurrentAudio(audio);
+  }, [itemArray, currentIndex]);
+
+  // Set error when no audio is available
+  useEffect(() => {
+    if (!currentAudio) {
+      setError('bez audia');
+    } else {
+      setError(null);
+    }
+  }, [currentAudio]);
 
   // Play audio when en to cz card direction is started
   useEffect(() => {
@@ -49,20 +62,18 @@ export default function PracticeCard() {
       ) : (
         <div className="card">
           <div className="flex w-full gap-1">
-            <div className="color-disabled flex flex-3 flex-col items-center justify-center text-sm font-semibold">
+            <div className="color-disabled flex flex-1 flex-col items-center justify-center text-sm font-semibold">
               {userScore?.startedCountToday || 0}
             </div>
             <Button // Info button
               onClick={() => setInfoVisibility(true)}
               buttonColor="button-secondary"
               disabled={!itemArray[currentIndex]?.has_info}
-              className="flex-7"
+              className="flex-1"
             >
               <InfoIcon></InfoIcon>
             </Button>
-            <SkipButton onSkip={() => updateItemArray(0, true)} />
           </div>
-
           <Card
             currentIndex={currentIndex}
             wordArray={itemArray}
@@ -70,10 +81,13 @@ export default function PracticeCard() {
             revealed={revealed}
             hintIndex={hintIndex}
             setVolume={setVolume}
+            error={error}
           ></Card>
           <PracticeControls
             revealed={revealed}
             direction={direction}
+            noAudio={!currentAudio || isPlaying}
+            audioIsPlaying={isPlaying}
             handleAudio={() => playAudio(currentAudio)}
             handleReveal={handleReveal}
             handlePlus={() => {

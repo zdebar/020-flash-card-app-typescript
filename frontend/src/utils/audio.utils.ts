@@ -38,7 +38,7 @@ export function playAudioFromUseRef(
 }
 
 /**
- * Fetches the audio files for the words and caches them in the browser's cache storage and in useRef.
+ * Fetches the audio files for the words and caches them in the browser's cache storage and in provided useRef.
  */
 export async function fetchAudioFiles(
   words: Item[],
