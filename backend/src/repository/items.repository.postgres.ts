@@ -13,37 +13,50 @@ export async function getItemsRepository(
 ): Promise<Item[]> {
   const numWords: number = config.round;
 
-  let query = `
-  WITH user_cte AS (
-    SELECT id AS user_id FROM users WHERE uid = $1
-  )
-  SELECT
-    i.id,
-    i.czech,
-    i.english,
-    i.pronunciation,
-    i.audio,
-    COALESCE(ui.progress, 0) AS progress,
-    COUNT(b.id) > 0 as has_info 
-  FROM items i
-  LEFT JOIN user_items ui ON i.id = ui.item_id AND ui.user_id = (SELECT user_id FROM user_cte)
-  LEFT JOIN block_items bi ON i.id = bi.item_id
-  LEFT JOIN blocks b ON bi.block_id = b.id
-  WHERE ui.mastered_at IS NULL
-    AND (ui.next_at IS NULL OR ui.next_at < NOW())
-  GROUP BY 
-    i.id, i.czech, i.english, i.pronunciation, i.audio, ui.progress, b.block_order, ui.next_at
-  ORDER BY 
-    ui.next_at ASC NULLS LAST,
-    COALESCE(i.item_order, b.block_order, 0),
-    i.id ASC
-  LIMIT $2;
-`;
+  const runQuery = async (isOdd: number): Promise<Item[]> => {
+    const query = `
+      WITH user_cte AS (
+          SELECT id AS user_id FROM users WHERE uid = $1
+      )
+      SELECT
+          i.id,
+          i.czech,
+          i.english,
+          i.pronunciation,
+          i.audio,
+          COALESCE(ui.progress, 0) AS progress,
+          COUNT(b.id) > 0 as has_info 
+      FROM items i
+      LEFT JOIN user_items ui ON i.id = ui.item_id AND ui.user_id = (SELECT user_id FROM user_cte)
+      LEFT JOIN block_items bi ON i.id = bi.item_id
+      LEFT JOIN blocks b ON bi.block_id = b.id
+      WHERE ui.mastered_at IS NULL
+        AND (ui.next_at IS NULL OR ui.next_at < NOW())
+        AND COALESCE(ui.progress, 0) % 2 = $2 
+      GROUP BY 
+          i.id, i.czech, i.english, i.pronunciation, i.audio, ui.progress, b.block_order, ui.next_at
+      ORDER BY 
+          ui.next_at ASC NULLS LAST,
+          COALESCE(i.item_order, b.block_order, 0),
+          i.id ASC
+      LIMIT $3;
+    `;
 
-  return await withDbClient(db, async (client) => {
-    const res = await client.query(query, [uid, numWords]);
+    const res = await withDbClient(db, async (client) => {
+      return await client.query(query, [uid, isOdd, numWords]);
+    });
+
     return res.rows;
-  });
+  };
+
+  const randomChoice = Math.random() < 0.5 ? 1 : 0;
+  let items = await runQuery(randomChoice);
+
+  if (items.length < numWords) {
+    items = await runQuery(0);
+  }
+
+  return items;
 }
 
 /**

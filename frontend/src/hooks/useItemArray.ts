@@ -19,6 +19,7 @@ export function useItemArray() {
       }>(apiPath);
 
       const items = response?.items || [];
+
       setItemArray(items);
       setDirection(alternateDirection(items, 0));
       setCurrentIndex(0);
