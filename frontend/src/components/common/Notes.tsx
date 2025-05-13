@@ -31,36 +31,39 @@ export default function Notes({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div
-      className="absolute z-50 h-[320px] w-[320px] overflow-auto"
-      style={{ minHeight: '240px', maxHeight: '90vh' }}
-    >
-      <form
-        onSubmit={handleSubmit}
-        className="flex h-full flex-col justify-between gap-1"
+    <>
+      <div className="pointer-events-auto fixed inset-0 z-40"></div>
+      <div
+        className="color-disabled absolute top-20 z-50 h-[160px] w-[320px] overflow-auto rounded-sm"
+        style={{ minHeight: '160px', maxHeight: '90vh' }}
       >
-        <textarea
-          value={note}
-          onChange={handleNoteChange}
-          placeholder="Napiš poznámku..."
-          className="color-disabled h-full w-full resize-none rounded-sm border p-2"
-          rows={5}
-          required
-        />
-        <div className="flex justify-between gap-1">
-          <Button
-            onClick={onClose}
-            type="button"
-            buttonColor="button-secondary"
-            aria-label="Close"
-          >
-            Zavřít
-          </Button>
-          <Button type="submit" disabled={isSubmitting}>
-            Odeslat
-          </Button>
-        </div>
-      </form>
-    </div>
+        <form
+          onSubmit={handleSubmit}
+          className="flex h-full flex-col justify-between gap-1"
+        >
+          <textarea
+            value={note}
+            onChange={handleNoteChange}
+            placeholder="Napiš poznámku..."
+            className="color-disabled color-text h-full w-full resize-none rounded-sm border p-2"
+            rows={5}
+            required
+          />
+          <div className="flex justify-between gap-1">
+            <Button
+              onClick={onClose}
+              type="button"
+              buttonColor="button-secondary"
+              aria-label="Close"
+            >
+              Zavřít
+            </Button>
+            <Button type="submit" disabled={isSubmitting}>
+              Odeslat
+            </Button>
+          </div>
+        </form>
+      </div>
+    </>
   );
 }

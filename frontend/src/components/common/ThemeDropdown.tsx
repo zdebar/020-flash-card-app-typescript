@@ -11,7 +11,7 @@ export default function ThemeDropdown() {
   };
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="color-text flex items-center gap-4">
       <label htmlFor="theme-select" className="text-sm font-medium">
         Theme:
       </label>
@@ -19,11 +19,11 @@ export default function ThemeDropdown() {
         id="theme-select"
         value={theme}
         onChange={handleChange}
-        className="rounded border p-2"
+        className="h-10 w-full rounded-sm border p-2 dark:bg-gray-800"
       >
-        <option value="light">Light</option>
-        <option value="dark">Dark</option>
-        <option value="system">System</option>
+        <option value="light">light</option>
+        <option value="dark">dark</option>
+        <option value="system">system</option>
       </select>
     </div>
   );

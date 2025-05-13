@@ -2,11 +2,10 @@ import { useNavigate } from 'react-router-dom';
 import { useUser } from '../hooks/useUser';
 import { getAuth, signOut } from 'firebase/auth';
 import Button from './common/Button';
-// import ThemeDropdown from './common/ThemeDropdown';
+import ThemeDropdown from './common/ThemeDropdown';
 
 export default function UserSettings() {
-  const { userInfo, setUserInfo, setUserSettings, setUserScore, setLoading } =
-    useUser();
+  const { setUserInfo, setUserSettings, setUserScore, setLoading } = useUser();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -24,10 +23,9 @@ export default function UserSettings() {
   };
 
   return (
-    <div className="w-full">
-      {userInfo && <h1>uživatel: {userInfo.name}</h1>}
+    <div className="flex w-[320px] flex-col gap-4">
       <Button onClick={handleLogout}>Logout</Button>
-      {/* <ThemeDropdown /> */}
+      <ThemeDropdown />
     </div>
   );
 }

@@ -13,7 +13,6 @@ interface PracticeControlsProps {
   revealed: boolean;
   direction: boolean;
   noAudio: boolean;
-  audioIsPlaying: boolean;
   handleAudio: () => void;
   handleReveal: () => void;
   handlePlus: () => void;
@@ -25,7 +24,6 @@ export default function PracticeControls({
   revealed,
   direction,
   noAudio,
-  audioIsPlaying,
   handleAudio,
   handleReveal,
   handlePlus,
@@ -42,25 +40,25 @@ export default function PracticeControls({
         <Button onClick={handleAudio} disabled={isAudioDisabled}>
           <AudioIcon></AudioIcon>
         </Button>
-        <Button disabled={audioIsPlaying}>
+        <Button>
           <MicrophoneIcon></MicrophoneIcon>
         </Button>
       </div>
       {!revealed ? (
         <div className="flex w-full flex-col gap-1">
-          <Button onClick={handleReveal} disabled={audioIsPlaying}>
+          <Button onClick={handleReveal}>
             <EyeIcon></EyeIcon>
           </Button>
-          <Button onClick={handleHint} disabled={audioIsPlaying}>
+          <Button onClick={handleHint}>
             <HintIcon></HintIcon>
           </Button>
         </div>
       ) : (
         <div className="flex w-full flex-col gap-1">
-          <Button onClick={handlePlus} disabled={audioIsPlaying}>
+          <Button onClick={handlePlus}>
             <PlusIcon></PlusIcon>
           </Button>
-          <Button onClick={handleMinus} disabled={audioIsPlaying}>
+          <Button onClick={handleMinus}>
             <MinusIcon></MinusIcon>
           </Button>
         </div>

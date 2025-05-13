@@ -12,27 +12,26 @@ export function useItemArray() {
 
   const apiPath = '/api/items';
 
+  const fetchItems = async () => {
+    try {
+      const response = await fetchWithAuthAndParse<{
+        items: Item[] | null;
+      }>(apiPath);
+
+      const items = response?.items || [];
+      setItemArray(items);
+      setDirection(alternateDirection(items, 0));
+      setCurrentIndex(0);
+    } catch (error) {
+      console.error('Error in fetching data:', error);
+    }
+  };
+
   // Fetch items on mount or when currentIndex is 0
   useEffect(() => {
     if (loading) return;
-    if (currentIndex === 0) {
-      const fetchAndStoreWords = async () => {
-        try {
-          const response = await fetchWithAuthAndParse<{
-            items: Item[] | null;
-          }>(apiPath);
-
-          const items = response?.items || [];
-          setItemArray(items);
-          setDirection(alternateDirection(items, 0));
-        } catch (error) {
-          console.error('Error in fetching data:', error);
-        }
-      };
-
-      fetchAndStoreWords();
-    }
-  }, [currentIndex, loading, apiPath]);
+    fetchItems();
+  }, [loading]);
 
   // Update items on unmount - Ref, Update Ref, Effect on unmount
   const patchItems = useCallback(
@@ -94,7 +93,7 @@ export function useItemArray() {
         if (currentIndex + 1 >= updatedItemArray.length) {
           // End of the array, update backend
           updateItemsRef.current(true);
-          setCurrentIndex(0); // Triggers the useEffect to fetch items again
+          fetchItems();
         } else {
           // Continue to the next item
           setCurrentIndex(currentIndex + 1);

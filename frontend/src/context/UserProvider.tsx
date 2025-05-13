@@ -45,19 +45,21 @@ export function UserProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const applyTheme = (theme: UserTheme) => {
-    if (theme === 'system') {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+      document.documentElement.classList.remove('light');
+      localStorage.setItem('theme', 'dark');
+    } else if (theme === 'light') {
+      document.documentElement.classList.add('light');
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    } else if (theme === 'system') {
+      localStorage.removeItem('theme');
       const prefersDark = window.matchMedia(
         '(prefers-color-scheme: dark)'
       ).matches;
-      document.documentElement.classList.add(prefersDark ? 'dark' : 'light');
-      document.documentElement.classList.remove(prefersDark ? 'light' : 'dark');
-    } else {
-      document.documentElement.classList.add(
-        theme === 'dark' ? 'dark' : 'light'
-      );
-      document.documentElement.classList.remove(
-        theme === 'dark' ? 'light' : 'dark'
-      );
+      document.documentElement.classList.toggle('dark', prefersDark);
+      document.documentElement.classList.toggle('light', !prefersDark);
     }
   };
 
@@ -66,6 +68,20 @@ export function UserProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('theme', newTheme);
     applyTheme(newTheme);
   };
+
+  useEffect(() => {
+    if (theme === 'system') {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+      const handleChange = (event: MediaQueryListEvent) => {
+        document.documentElement.classList.toggle('dark', event.matches);
+        document.documentElement.classList.toggle('light', !event.matches);
+      };
+
+      mediaQuery.addEventListener('change', handleChange);
+      return () => mediaQuery.removeEventListener('change', handleChange);
+    }
+  }, [theme]);
 
   return (
     <UserContext.Provider

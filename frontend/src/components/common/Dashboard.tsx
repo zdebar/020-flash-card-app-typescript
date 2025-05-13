@@ -1,3 +1,5 @@
+import BarFill from './BarFill';
+
 export default function Dashboard({
   started,
   total,
@@ -19,9 +21,10 @@ export default function Dashboard({
 
   return (
     <div
-      className={`flex h-full w-full flex-1 justify-center p-4 ${className}`}
+      className={`flex h-full w-full flex-1 flex-col items-center justify-start gap-1 p-4 ${className}`}
     >
-      <div>{`${started} / ${total}`}</div>
+      <div className="items-center">{`${started} / ${total}`}</div>
+      <BarFill blocks={started} />
     </div>
   );
 }
