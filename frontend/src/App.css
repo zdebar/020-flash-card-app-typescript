@@ -32,7 +32,7 @@
   }
 
   .color-disabled {
-    @apply bg-gray-50 text-black shadow-none dark:bg-gray-800 dark:text-white;
+    @apply bg-gray-50 text-black shadow-none dark:bg-gray-800;
   }
 
   .color-text {
@@ -40,7 +40,7 @@
   }
 
   .color-highlighted {
-    @apply bg-gray-100;
+    @apply bg-gray-100 dark:bg-gray-800;
   }
 
   .shape-rectangular {
