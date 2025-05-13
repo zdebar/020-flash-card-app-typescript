@@ -19,12 +19,30 @@ function getColor(level: number) {
 
 function BlockFillComponent({ blocks }: { blocks: number }) {
   const level = Math.min(Math.floor(blocks / BLOCKS_PER_FILL), 20);
+  const subLevel = blocks - level * BLOCKS_PER_FILL;
 
   return (
-    <div className="color-disabled flex flex-2 justify-center border-r-1">
+    <div className="color-disabled color-text flex flex-2 justify-center border-r-1">
       {[...Array(20)].map((_, idx) => {
         const filled = idx < level;
         const color = getColor(idx + 1);
+
+        if (idx === level) {
+          return (
+            <div className="flex flex-col" key={idx}>
+              <div
+                className="border-l-1"
+                style={{
+                  height: `${((5 - subLevel) / BLOCKS_PER_FILL) * 100}%`,
+                }}
+              ></div>
+              <div
+                className={`w-2 border-l-1 ${color}`}
+                style={{ height: `${(subLevel / BLOCKS_PER_FILL) * 100}%` }}
+              ></div>
+            </div>
+          );
+        }
 
         return (
           <div

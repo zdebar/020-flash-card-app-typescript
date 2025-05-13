@@ -7,9 +7,7 @@ export default function UserDashboard() {
 
   return (
     <div className="card">
-      <ButtonLinkRectangular to="/practice">
-        <span className="w-40">Procvičovat</span>
-      </ButtonLinkRectangular>
+      <ButtonLinkRectangular to="/practice">Procvičovat</ButtonLinkRectangular>
       <Dashboard
         className="color-disabled"
         started={userScore?.startedCount}

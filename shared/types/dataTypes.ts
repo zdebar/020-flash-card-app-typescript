@@ -26,6 +26,8 @@ export interface UserSettings {
   id: number;
 }
 
+export type UserTheme = "light" | "dark" | "system";
+
 export interface UserInfo {
   uid: string; // Firebase UID
   name: string | null;

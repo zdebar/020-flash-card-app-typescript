@@ -46,11 +46,11 @@ export default function PracticeControls({
       </div>
       {!revealed ? (
         <div className="flex w-full flex-col gap-1">
-          <Button onClick={handleReveal} disabled={audioIsPlaying}>
-            <EyeIcon></EyeIcon>
-          </Button>
           <Button onClick={handleHint}>
             <HintIcon></HintIcon>
+          </Button>
+          <Button onClick={handleReveal} disabled={audioIsPlaying}>
+            <EyeIcon></EyeIcon>
           </Button>
         </div>
       ) : (

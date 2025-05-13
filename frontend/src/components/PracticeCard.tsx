@@ -63,15 +63,15 @@ export default function PracticeCard() {
       ) : (
         <div className="card">
           <div className="flex h-12 w-full gap-1">
-            <div className="color-disabled flex h-full flex-1 items-center justify-center px-2 text-sm font-semibold">
+            <div className="color-disabled color-text flex h-full flex-1 items-center justify-center px-2 text-sm font-semibold">
               {userScore?.blockCountToday || 0}
             </div>
             <BlockFill blocks={userScore?.blockCountToday || 0} />
             <Button // Info button
               onClick={() => setInfoVisibility(true)}
-              buttonColor="button-secondary"
+              buttonColor="button-secondary "
               disabled={!itemArray[currentIndex]?.has_info}
-              className="flex-1"
+              className="color-text flex-1"
             >
               <InfoIcon></InfoIcon>
             </Button>

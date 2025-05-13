@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useUser } from '../hooks/useUser';
 import { getAuth, signOut } from 'firebase/auth';
 import Button from './common/Button';
+import ThemeDropdown from './common/ThemeDropdown';
 
 export default function UserSettings() {
   const { userInfo, setUserInfo, setUserSettings, setUserScore, setLoading } =
@@ -26,6 +27,7 @@ export default function UserSettings() {
     <div className="w-full">
       {userInfo && <h1>uživatel: {userInfo.name}</h1>}
       <Button onClick={handleLogout}>Logout</Button>
+      <ThemeDropdown />
     </div>
   );
 }

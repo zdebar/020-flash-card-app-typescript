@@ -3,6 +3,7 @@ import {
   UserScore,
   UserSettings,
   UserInfo,
+  UserTheme,
 } from '../../../shared/types/dataTypes';
 
 export interface UserContextType {
@@ -10,10 +11,12 @@ export interface UserContextType {
   userSettings: UserSettings | null;
   userScore: UserScore | null;
   loading: boolean;
+  theme: UserTheme;
   setUserInfo: (user: UserInfo | null) => void;
   setUserSettings: (settings: UserSettings | null) => void;
   setUserScore: (score: UserScore | null) => void;
   setLoading: (loading: boolean) => void;
+  chooseTheme: (theme: UserTheme) => void;
 }
 
 export const UserContext = createContext<UserContextType | undefined>(

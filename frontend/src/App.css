@@ -13,6 +13,10 @@
   h1 {
     @apply text-black dark:text-white;
   }
+
+  p {
+    @apply text-black dark:text-white;
+  }
 }
 
 @layer components {
@@ -28,7 +32,11 @@
   }
 
   .color-disabled {
-    @apply bg-gray-50 shadow-none dark:bg-gray-800;
+    @apply bg-gray-50 text-black shadow-none dark:bg-gray-800 dark:text-white;
+  }
+
+  .color-text {
+    @apply text-gray-900 dark:text-white;
   }
 
   .color-highlighted {
