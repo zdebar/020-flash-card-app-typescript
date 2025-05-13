@@ -32,7 +32,7 @@ export default function Notes({ onClose }: { onClose: () => void }) {
 
   return (
     <div
-      className="color-disabled shape-rectangular absolute z-50 h-[320px] w-[320px] overflow-auto"
+      className="absolute z-50 h-[320px] w-[320px] overflow-auto"
       style={{ minHeight: '240px', maxHeight: '90vh' }}
     >
       <form
@@ -43,7 +43,7 @@ export default function Notes({ onClose }: { onClose: () => void }) {
           value={note}
           onChange={handleNoteChange}
           placeholder="Napiš poznámku..."
-          className="h-full w-full resize-none rounded-sm border p-2"
+          className="color-disabled h-full w-full resize-none rounded-sm border p-2"
           rows={5}
           required
         />

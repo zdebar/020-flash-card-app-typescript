@@ -8,12 +8,13 @@ export function useItemArray() {
   const [itemArray, setItemArray] = useState<Item[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(false); // true = czech to english, false = english to czech
-  const { setUserScore } = useUser();
+  const { setUserScore, loading } = useUser();
 
   const apiPath = '/api/items';
 
   // Fetch items on mount or when currentIndex is 0
   useEffect(() => {
+    if (loading) return;
     if (currentIndex === 0) {
       const fetchAndStoreWords = async () => {
         try {
@@ -31,7 +32,7 @@ export function useItemArray() {
 
       fetchAndStoreWords();
     }
-  }, [currentIndex]);
+  }, [currentIndex, loading, apiPath]);
 
   // Update items on unmount - Ref, Update Ref, Effect on unmount
   const patchItems = useCallback(
@@ -91,11 +92,9 @@ export function useItemArray() {
 
       if (updatedItemArray.length > 0) {
         if (currentIndex + 1 >= updatedItemArray.length) {
-          // End of the array, update backend and navigate to userDashboard
+          // End of the array, update backend
           updateItemsRef.current(true);
-
-          setCurrentIndex(0);
-          setDirection(false);
+          setCurrentIndex(0); // Triggers the useEffect to fetch items again
         } else {
           // Continue to the next item
           setCurrentIndex(currentIndex + 1);

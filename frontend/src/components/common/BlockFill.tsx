@@ -22,7 +22,7 @@ function BlockFillComponent({ blocks }: { blocks: number }) {
   const subLevel = blocks - level * BLOCKS_PER_FILL;
 
   return (
-    <div className="color-disabled color-text flex flex-2 justify-center border-r-1">
+    <div className="color-disabled color-text flex w-40 justify-center border-r-1">
       {[...Array(20)].map((_, idx) => {
         const filled = idx < level;
         const color = getColor(idx + 1);

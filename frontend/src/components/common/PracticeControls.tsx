@@ -7,6 +7,7 @@ import {
   HintIcon,
 } from './Icons';
 import Button from './Button';
+import { useMemo } from 'react';
 
 interface PracticeControlsProps {
   revealed: boolean;
@@ -31,26 +32,27 @@ export default function PracticeControls({
   handleMinus,
   handleHint,
 }: PracticeControlsProps) {
+  const isAudioDisabled = useMemo(() => {
+    return (direction && !revealed) || noAudio;
+  }, [direction, revealed, noAudio]);
+
   return (
     <div className="flex w-full justify-between gap-1">
       <div className="flex w-full flex-col gap-1">
-        <Button
-          onClick={handleAudio}
-          disabled={(direction && !revealed) || noAudio}
-        >
+        <Button onClick={handleAudio} disabled={isAudioDisabled}>
           <AudioIcon></AudioIcon>
         </Button>
-        <Button>
+        <Button disabled={audioIsPlaying}>
           <MicrophoneIcon></MicrophoneIcon>
         </Button>
       </div>
       {!revealed ? (
         <div className="flex w-full flex-col gap-1">
-          <Button onClick={handleHint}>
-            <HintIcon></HintIcon>
-          </Button>
           <Button onClick={handleReveal} disabled={audioIsPlaying}>
             <EyeIcon></EyeIcon>
+          </Button>
+          <Button onClick={handleHint} disabled={audioIsPlaying}>
+            <HintIcon></HintIcon>
           </Button>
         </div>
       ) : (

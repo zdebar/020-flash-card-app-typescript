@@ -45,6 +45,7 @@ export default function PracticeCard() {
   // Handler to reveal button
   function handleReveal() {
     setRevealed(true);
+
     if (direction) playAudio(currentAudio);
     setHintIndex(0);
   }

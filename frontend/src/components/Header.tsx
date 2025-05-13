@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import ButtonLinkRound from './common/ButtonLinkRound';
 import Button from './common/Button';
 
-export default function Header({ openNotes }: { openNotes: () => void }) {
+export default function Header({ toggleNotes }: { toggleNotes: () => void }) {
   const { userInfo } = useUser();
   const [isShortScreen, setIsShortScreen] = useState(false);
 
@@ -34,7 +34,7 @@ export default function Header({ openNotes }: { openNotes: () => void }) {
         <Button
           buttonColor="button-secondary"
           className="shape-round"
-          onClick={openNotes}
+          onClick={toggleNotes}
         >
           <NoteIcon />
         </Button>

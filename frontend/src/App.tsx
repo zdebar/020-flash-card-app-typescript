@@ -14,15 +14,15 @@ export default function App() {
   const { userInfo, loading } = useUser();
   const [isNotesOpen, setIsNotesOpen] = useState(false);
 
-  const openNotes = () => setIsNotesOpen(true);
+  const toggleNotes = () => setIsNotesOpen((prev) => !prev);
   const closeNotes = () => setIsNotesOpen(false);
 
   return (
     <div className="h-screen dark:bg-gray-900">
       <div className="mx-auto flex h-full w-full max-w-[900px] min-w-[320px] flex-col items-center">
-        <Header openNotes={openNotes} />
+        <Header toggleNotes={toggleNotes} />
 
-        <div className="z-1 flex h-full w-full max-w-[600px] flex-col items-center gap-1">
+        <div className="z-1 flex h-full w-full max-w-[600px] flex-col items-center gap-1 landscape:justify-center">
           <Routes>
             <Route
               path="/"

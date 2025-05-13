@@ -32,7 +32,7 @@ export default function Card({
 
   return (
     <div
-      className={`color-disabled shape-rectangular flex h-full w-full flex-col items-center justify-between px-4 pt-3 pb-2 ${!direction && 'color-highlighted rounded-sm'} `}
+      className={`color-disabled flex h-full w-full flex-col items-center justify-between px-4 pt-3 pb-2 ${!direction && 'color-highlighted rounded-sm'} `}
     >
       <div className="flex w-full items-center justify-between">
         <div className="relative flex">

@@ -43,13 +43,24 @@ export function useAudioManager(wordArray: Item[]) {
         audio.volume = volumeRef.current; // Set the volume to the current value
         currentAudioRef.current = audio;
         audio.currentTime = 0;
-        setIsPlaying(true);
-        audio.play().catch((error) => {
-          console.error('Error playing audio:', error);
+
+        audio
+          .play()
+          .then(() => {
+            setIsPlaying(true);
+          })
+          .catch((error) => {
+            console.error('Error playing audio:', error);
+            setIsPlaying(false);
+          });
+
+        audio.onended = () => {
           setIsPlaying(false);
-        });
-        audio.onended = () => setIsPlaying(false);
-        audio.onpause = () => setIsPlaying(false);
+        };
+
+        audio.onpause = () => {
+          setIsPlaying(false);
+        };
       }
     } else {
       console.warn(`Audio file not found in cache: ${audioPath}`);
