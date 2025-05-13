@@ -70,9 +70,9 @@ export default function PracticeCard() {
         <div className="card">
           <div className="flex h-12 w-full gap-1">
             <div className="color-disabled color-text flex h-full flex-1 items-center justify-center px-2 text-sm font-semibold">
-              {userScore?.blockCountToday || 0}
+              {userScore?.blockCount?.[0] || 0}
             </div>
-            <BlockFill blocks={userScore?.blockCountToday || 0} />
+            <BlockFill blocks={userScore?.blockCount?.[0] || 0} />
             <Button // Info button
               onClick={() => setInfoVisibility(true)}
               buttonColor="button-secondary "

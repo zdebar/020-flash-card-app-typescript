@@ -39,7 +39,7 @@ export interface UserScore {
   itemsTotal: number;
   startedCountToday: number;
   startedCount: number;
-  blockCountToday: number;
+  blockCount: number[];
 }
 
 export class UserError extends Error {

@@ -1,4 +1,5 @@
 import BarFill from './BarFill';
+import { useUser } from '../../hooks/useUser';
 
 export default function Dashboard({
   started,
@@ -9,6 +10,7 @@ export default function Dashboard({
   total?: number;
   className?: string;
 }) {
+  const { userScore } = useUser();
   if (started === undefined || total === undefined) {
     return (
       <div
@@ -21,10 +23,16 @@ export default function Dashboard({
 
   return (
     <div
-      className={`flex h-full w-full flex-1 flex-col items-center justify-start gap-1 p-4 ${className}`}
+      className={`flex h-full w-full flex-1 flex-col items-center justify-start gap-0 p-4 ${className}`}
     >
-      <div className="items-center">{`${started} / ${total}`}</div>
-      <BarFill blocks={started} />
+      <div className="items-center pb-2">{`${started} / ${total}`}</div>
+      {userScore &&
+        userScore.blockCount.map((item, idx) => (
+          <div className="flex items-center justify-center gap-2 pr-8">
+            <p className="w-8 text-right text-xs">{item}</p>
+            <BarFill key={idx} blocks={item} />
+          </div>
+        ))}
     </div>
   );
 }
