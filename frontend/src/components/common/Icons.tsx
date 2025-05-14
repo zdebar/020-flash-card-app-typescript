@@ -120,13 +120,13 @@ export function SlashBookmarkIcon() {
   );
 }
 
-export function MicrophoneIcon() {
+export function MicrophoneIcon({ color }: { color?: string }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
       fill="none"
-      stroke="currentColor"
+      stroke={color || 'currentColor'}
       strokeWidth="1.5"
       className="size-5.5"
     >

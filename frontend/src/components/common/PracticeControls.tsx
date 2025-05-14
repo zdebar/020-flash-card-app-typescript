@@ -13,7 +13,9 @@ interface PracticeControlsProps {
   revealed: boolean;
   direction: boolean;
   noAudio: boolean;
+  isRecording: boolean;
   handleAudio: () => void;
+  handleRecording: () => void;
   handleReveal: () => void;
   handlePlus: () => void;
   handleMinus: () => void;
@@ -24,7 +26,9 @@ export default function PracticeControls({
   revealed,
   direction,
   noAudio,
+  isRecording,
   handleAudio,
+  handleRecording,
   handleReveal,
   handlePlus,
   handleMinus,
@@ -40,8 +44,10 @@ export default function PracticeControls({
         <Button onClick={handleAudio} disabled={isAudioDisabled}>
           <AudioIcon></AudioIcon>
         </Button>
-        <Button>
-          <MicrophoneIcon></MicrophoneIcon>
+        <Button onClick={handleRecording} disabled={isAudioDisabled}>
+          <MicrophoneIcon
+            color={isRecording ? 'lightgreen' : ''}
+          ></MicrophoneIcon>
         </Button>
       </div>
       {!revealed ? (
