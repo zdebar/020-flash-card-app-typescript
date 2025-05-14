@@ -133,6 +133,25 @@ export function useAudioManager(wordArray: Item[]) {
     }
   }, []);
 
+  // Save recorded audio to a file
+  const saveRecordedAudio = useCallback(() => {
+    if (!recordedAudio) {
+      console.warn('No recorded audio to save.');
+      return;
+    }
+
+    // Vytvoření odkazu pro stažení
+    const url = URL.createObjectURL(recordedAudio);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'recorded-audio.webm'; // Název souboru
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    URL.revokeObjectURL(url);
+  }, [recordedAudio]);
+
   // Compare recorded audio with a given audio file
   const compareAudio = useCallback(
     async (audioPath: string) => {
@@ -161,66 +180,17 @@ export function useAudioManager(wordArray: Item[]) {
       const recordedBuffer = await decodeAudio(recordedAudio);
       const targetBuffer = await decodeAudio(targetAudio);
 
-      // Create an AnalyserNode for frequency analysis
-      const analyser = audioContext.createAnalyser();
-      analyser.fftSize = 2048; // Set FFT size (higher values give more frequency resolution)
+      // Compare the audio buffers (e.g., by analyzing frequency data)
+      const recordedData = recordedBuffer.getChannelData(0); // First channel
+      const targetData = targetBuffer.getChannelData(0); // First channel
 
-      const getFrequencyData = async (buffer: AudioBuffer) => {
-        const source = audioContext.createBufferSource();
-        source.buffer = buffer;
+      // Simple comparison: Check if the waveforms are similar
+      const similarity = recordedData.reduce((acc, value, index) => {
+        return acc + Math.abs(value - (targetData[index] || 0));
+      }, 0);
 
-        const analyserData = new Float32Array(analyser.frequencyBinCount);
-        source.connect(analyser);
-        analyser.connect(audioContext.destination);
-
-        source.start();
-        await new Promise((resolve) => setTimeout(resolve, 100)); // Allow audio to play briefly
-        analyser.getFloatFrequencyData(analyserData);
-
-        source.stop();
-        return analyserData;
-      };
-
-      // Get frequency data for both audio files
-      const recordedFrequencyData = await getFrequencyData(recordedBuffer);
-      const targetFrequencyData = await getFrequencyData(targetBuffer);
-
-      // Compare frequency data segment by segment
-      const segmentSize = 256; // Number of frequency bins per segment
-      const numSegments =
-        Math.min(recordedFrequencyData.length, targetFrequencyData.length) /
-        segmentSize;
-
-      let totalSimilarity = 0;
-      const segmentSimilarities: number[] = [];
-
-      for (let i = 0; i < numSegments; i++) {
-        const start = i * segmentSize;
-        const end = start + segmentSize;
-
-        const recordedSegment = recordedFrequencyData.slice(start, end);
-        const targetSegment = targetFrequencyData.slice(start, end);
-
-        // Calculate similarity for this segment
-        const segmentSimilarity = recordedSegment.reduce(
-          (acc, value, index) => {
-            return acc + Math.abs(value - (targetSegment[index] || 0));
-          },
-          0
-        );
-
-        segmentSimilarities.push(segmentSimilarity);
-        totalSimilarity += segmentSimilarity;
-      }
-
-      // Log segment-level similarities
-      console.log('Segment similarities:', segmentSimilarities);
-
-      // Calculate overall similarity
-      const averageSimilarity = totalSimilarity / numSegments;
-      console.log('Average similarity score:', averageSimilarity);
-
-      return averageSimilarity < 0.1; // Adjust threshold as needed
+      console.log('Audio similarity score:', similarity);
+      return similarity < 0.1;
     },
     [recordedAudio]
   );
@@ -234,6 +204,7 @@ export function useAudioManager(wordArray: Item[]) {
     startRecording,
     stopRecording,
     compareAudio,
+    saveRecordedAudio,
     isPlaying,
     isRecording,
     recordedAudio,

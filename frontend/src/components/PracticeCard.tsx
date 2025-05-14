@@ -19,6 +19,7 @@ export default function PracticeCard() {
     startRecording,
     stopRecording,
     compareAudio,
+    saveRecordedAudio,
     isRecording,
     recordedAudio,
   } = useAudioManager(itemArray);
@@ -127,9 +128,14 @@ export default function PracticeCard() {
             }}
             handleHint={() => setHintIndex((prevIndex) => prevIndex + 1)}
           />
-          <Button className="h-6" onClick={handleToggleRecording}>
-            {isRecording ? 'Stop Recording' : 'Start Recording'}
-          </Button>
+          <div className="flex w-full items-center justify-between gap-1">
+            <Button className="h-6" onClick={handleToggleRecording}>
+              {isRecording ? 'Stop Recording' : 'Start Recording'}
+            </Button>
+            <Button className="h-6" onClick={saveRecordedAudio}>
+              Save Audio
+            </Button>
+          </div>
         </div>
       )}
     </>
