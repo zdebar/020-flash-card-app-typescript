@@ -7,6 +7,10 @@ export function useAudioManager(wordArray: Item[]) {
   const currentAudioRef = useRef<HTMLAudioElement | null>(null); // Track the currently playing audio
   const volumeRef = useRef(1); // Store the current volume (default is 1)
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordedAudio, setRecordedAudio] = useState<Blob | null>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
 
   // Fetch and cache audio files when the component mounts or wordArray changes
   useEffect(() => {
@@ -93,12 +97,96 @@ export function useAudioManager(wordArray: Item[]) {
     volumeRef.current = Math.min(Math.max(volume, 0), 1);
   }, []);
 
+  // Start recording audio
+  const startRecording = useCallback(async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      audioChunksRef.current = [];
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunksRef.current.push(event.data);
+        }
+      };
+
+      mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(audioChunksRef.current, {
+          type: 'audio/webm',
+        });
+        setRecordedAudio(audioBlob);
+      };
+
+      mediaRecorder.start();
+      setIsRecording(true);
+    } catch (error) {
+      console.error('Error starting audio recording:', error);
+    }
+  }, []);
+
+  // Stop recording audio
+  const stopRecording = useCallback(() => {
+    if (mediaRecorderRef.current) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+    }
+  }, []);
+
+  // Compare recorded audio with a given audio file
+  const compareAudio = useCallback(
+    async (audioPath: string) => {
+      if (!recordedAudio || !audioCacheRef.current.has(audioPath)) {
+        console.warn('Recorded audio or target audio file is missing.');
+        return false;
+      }
+
+      const targetAudio = audioCacheRef.current.get(audioPath);
+      if (!targetAudio) {
+        console.warn('Target audio file not found in cache.');
+        return false;
+      }
+
+      // Load and decode both audio files using the Web Audio API
+      const audioContext = new AudioContext();
+
+      const decodeAudio = async (audioBlob: Blob | HTMLAudioElement) => {
+        const arrayBuffer =
+          audioBlob instanceof Blob
+            ? await audioBlob.arrayBuffer()
+            : await fetch(audioBlob.src).then((res) => res.arrayBuffer());
+        return await audioContext.decodeAudioData(arrayBuffer);
+      };
+
+      const recordedBuffer = await decodeAudio(recordedAudio);
+      const targetBuffer = await decodeAudio(targetAudio);
+
+      // Compare the audio buffers (e.g., by analyzing frequency data)
+      const recordedData = recordedBuffer.getChannelData(0); // First channel
+      const targetData = targetBuffer.getChannelData(0); // First channel
+
+      // Simple comparison: Check if the waveforms are similar
+      const similarity = recordedData.reduce((acc, value, index) => {
+        return acc + Math.abs(value - (targetData[index] || 0));
+      }, 0);
+
+      console.log('Audio similarity score:', similarity);
+      return similarity < 0.1;
+    },
+    [recordedAudio]
+  );
+
   return {
     playAudio,
     stopAudio,
     muteAudio,
     unmuteAudio,
     setVolume,
+    startRecording,
+    stopRecording,
+    compareAudio,
     isPlaying,
+    isRecording,
+    recordedAudio,
   };
 }

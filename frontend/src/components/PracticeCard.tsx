@@ -13,7 +13,15 @@ import { BlockFill } from './common/BlockFill';
 export default function PracticeCard() {
   const { itemArray, currentIndex, direction, updateItemArray } =
     useItemArray();
-  const { playAudio, setVolume } = useAudioManager(itemArray);
+  const {
+    playAudio,
+    setVolume,
+    startRecording,
+    stopRecording,
+    compareAudio,
+    isRecording,
+    recordedAudio,
+  } = useAudioManager(itemArray);
   const [revealed, setRevealed] = useState(false);
   const [hintIndex, setHintIndex] = useState(0);
   const [infoVisibility, setInfoVisibility] = useState(false);
@@ -54,6 +62,18 @@ export default function PracticeCard() {
     if (direction) playAudio(currentAudio);
     setHintIndex(0);
   }
+
+  // Toggle recording and compare audio
+  const handleToggleRecording = async () => {
+    if (isRecording) {
+      stopRecording();
+      if (recordedAudio && currentAudio) {
+        await compareAudio(currentAudio);
+      }
+    } else {
+      startRecording();
+    }
+  };
 
   if (itemArray?.length === 0) {
     return <p>Loading..</p>;
@@ -107,6 +127,9 @@ export default function PracticeCard() {
             }}
             handleHint={() => setHintIndex((prevIndex) => prevIndex + 1)}
           />
+          <Button className="h-6" onClick={handleToggleRecording}>
+            {isRecording ? 'Stop Recording' : 'Start Recording'}
+          </Button>
         </div>
       )}
     </>
