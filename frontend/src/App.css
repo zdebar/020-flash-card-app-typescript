@@ -60,6 +60,6 @@
 
   /** Size classes*/
   .card {
-    @apply flex h-[320px] w-[320px] flex-col justify-between gap-1 rounded-sm;
+    @apply flex aspect-square w-[320px] flex-col justify-between gap-1 rounded-sm;
   }
 }

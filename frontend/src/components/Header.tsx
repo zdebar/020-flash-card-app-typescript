@@ -4,13 +4,19 @@ import { useEffect, useState } from 'react';
 import ButtonLinkRound from './common/ButtonLinkRound';
 import Button from './common/Button';
 
-export default function Header({ toggleNotes }: { toggleNotes: () => void }) {
+export default function Header({
+  toggleNotes,
+  isShortScreen,
+}: {
+  toggleNotes: () => void;
+  isShortScreen: boolean;
+}) {
   const { userInfo } = useUser();
-  const [isShortScreen, setIsShortScreen] = useState(false);
+  const [isNarrowScreen, setIsNarrowScreen] = useState(false);
 
   useEffect(() => {
     const updatePosition = () => {
-      setIsShortScreen(window.innerHeight < 420);
+      setIsNarrowScreen(window.innerWidth < 600);
     };
 
     updatePosition();
@@ -27,7 +33,9 @@ export default function Header({ toggleNotes }: { toggleNotes: () => void }) {
         isShortScreen ? 'fixed top-0 left-0 h-0' : 'relative'
       }`}
     >
-      <div className={`flex ${isShortScreen ? 'h-30 flex-col' : ''} gap-4`}>
+      <div
+        className={`flex ${isNarrowScreen && isShortScreen ? 'h-30 flex-col' : ''} gap-4`}
+      >
         <ButtonLinkRound to="/">
           <HomeIcon />
         </ButtonLinkRound>
@@ -39,7 +47,9 @@ export default function Header({ toggleNotes }: { toggleNotes: () => void }) {
           <NoteIcon />
         </Button>
       </div>
-      <div className={`flex ${isShortScreen ? 'h-30 flex-col' : ''} gap-4`}>
+      <div
+        className={`flex ${isNarrowScreen && isShortScreen ? 'h-30 flex-col' : ''} gap-4`}
+      >
         <ButtonLinkRound to="/userDashboard" disabled={!userInfo}>
           <AcademicCapIcon />
         </ButtonLinkRound>

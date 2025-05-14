@@ -40,7 +40,7 @@ export default function PracticeControls({
         <Button onClick={handleAudio} disabled={isAudioDisabled}>
           <AudioIcon></AudioIcon>
         </Button>
-        <Button>
+        <Button disabled={true}>
           <MicrophoneIcon></MicrophoneIcon>
         </Button>
       </div>

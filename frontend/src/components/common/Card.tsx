@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Item } from '../../../../shared/types/dataTypes';
 import { VolumeIcon } from './Icons';
 
@@ -23,12 +23,21 @@ export default function Card({
 }: CardProps) {
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
   const [volume, setVolumeState] = useState(1); // Default volume is 1 (100%)
+  const [noAudio, setNoAudio] = useState(false);
 
   const handleVolumeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newVolume = parseFloat(event.target.value);
     setVolumeState(newVolume);
     setVolume(newVolume);
   };
+
+  useEffect(() => {
+    if (error === 'bez audia') {
+      setNoAudio(true);
+    } else {
+      setNoAudio(false);
+    }
+  }, [error]);
 
   return (
     <div
@@ -61,7 +70,7 @@ export default function Card({
         {direction || revealed ? wordArray[currentIndex].czech : '\u00A0'}
       </p>
       <p>
-        {revealed
+        {revealed || noAudio
           ? wordArray[currentIndex]?.english
           : wordArray[currentIndex]?.english
               .slice(0, hintIndex ?? wordArray[currentIndex]?.english.length)
