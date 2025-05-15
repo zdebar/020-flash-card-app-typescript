@@ -6,6 +6,7 @@ import {
   patchItemsService,
   getItemInfoService,
 } from "../services/items.service";
+import logger from "../utils/logger.utils";
 
 /**
  * Controller function to retrieve user-specific words based on source and target languages.
@@ -20,6 +21,8 @@ export async function getItemsController(
     const uid: string = (req as any).user.uid;
 
     const items: Item[] = await getItemsService(postgresDBPool, uid);
+
+    logger.debug(items);
 
     res.status(200).json({
       message: "User words retrieved successfully.",
@@ -42,6 +45,8 @@ export async function patchItemsController(
     const uid: string = (req as any).user.uid;
     const { items, onBlockEnd }: { items: Item[]; onBlockEnd: boolean } =
       req.body;
+
+    logger.debug(`${onBlockEnd}`, items);
 
     const score: UserScore = await patchItemsService(
       postgresDBPool,

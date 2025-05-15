@@ -99,7 +99,6 @@ export const fetchUser = async (
       });
     }
 
-    console.log('User score:', userScore);
     setUserScore(userScore);
     setUserSettings(userSettings);
   } catch (error) {

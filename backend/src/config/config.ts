@@ -31,6 +31,7 @@ const config = {
     345600, // 4d
     691200, // 8d
     1036800, // 12d
+    1382400, // 16d
   ],
   srsRandomness: 0.1, // Randomness of SRS algorithm 0.1 (10%); uniform distribution; to ensure that words are not repeated in blocks, but are are mixed out
 

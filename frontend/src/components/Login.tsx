@@ -27,7 +27,9 @@ export default function Login() {
 
   return (
     <>
-      <Button onClick={handleGoogleLogin}>Google Login</Button>
+      <Button onClick={handleGoogleLogin} className="button-rectangular">
+        Google Login
+      </Button>
     </>
   );
 }

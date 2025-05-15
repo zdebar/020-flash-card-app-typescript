@@ -9,6 +9,9 @@ const config = {
     'bg-blue-600', // 11–15
     'bg-blue-700', // 16–20
   ],
+  errorMessages: {
+    noAudio: 'beze zvuku',
+  },
 };
 
 export default config;

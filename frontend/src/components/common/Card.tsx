@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Item } from '../../../../shared/types/dataTypes';
 import { VolumeIcon } from './Icons';
+import config from '../../config/config';
 
 interface CardProps {
   currentIndex: number;
@@ -24,6 +25,7 @@ export default function Card({
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
   const [volume, setVolumeState] = useState(1); // Default volume is 1 (100%)
   const [noAudio, setNoAudio] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleVolumeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newVolume = parseFloat(event.target.value);
@@ -32,10 +34,12 @@ export default function Card({
   };
 
   useEffect(() => {
-    if (error === 'bez audia') {
+    if (error === 'noAudio') {
       setNoAudio(true);
+      setErrorMessage(config.errorMessages[error] || '');
     } else {
       setNoAudio(false);
+      setErrorMessage('');
     }
   }, [error]);
 
@@ -85,7 +89,7 @@ export default function Card({
         <p className="flex w-full justify-start text-sm">
           {wordArray[currentIndex]?.progress}
         </p>
-        <p className="text-sm whitespace-nowrap text-red-500">{error}</p>
+        <p className="text-sm whitespace-nowrap text-red-500">{errorMessage}</p>
       </div>
     </div>
   );

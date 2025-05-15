@@ -24,7 +24,9 @@ export default function UserSettings() {
 
   return (
     <div className="flex w-[320px] flex-col gap-4">
-      <Button onClick={handleLogout}>Logout</Button>
+      <Button onClick={handleLogout} className="button-rectangular">
+        Logout
+      </Button>
       <ThemeDropdown />
     </div>
   );

@@ -14,7 +14,7 @@ export default function Button({
   className = '',
   ...props
 }: ButtonProps) {
-  const buttonClass = `flex items-center justify-center shape-rectangular ${className} ${!disabled ? buttonColor : 'color-disabled'}`;
+  const buttonClass = `flex items-center justify-center ${className} ${!disabled ? buttonColor : 'color-disabled'}`;
 
   return (
     <button

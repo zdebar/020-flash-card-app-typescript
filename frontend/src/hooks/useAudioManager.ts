@@ -40,7 +40,7 @@ export function useAudioManager(wordArray: Item[]) {
         }
 
         // Play the new audio
-        audio.volume = volumeRef.current; // Set the volume to the current value
+        audio.volume = volumeRef.current;
         currentAudioRef.current = audio;
         audio.currentTime = 0;
 

@@ -51,13 +51,6 @@ CREATE TABLE IF NOT EXISTS user_score (
   PRIMARY KEY (user_id, day)
 );
 
-CREATE TABLE IF NOT EXISTS user_notes (
-  user_id INTEGER NOT NULL,
-  date TIMESTAMPTZ DEFAULT NOW(),
-  note TEXT, 
-  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);
-
 CREATE TABLE IF NOT EXISTS block_items (
   block_id INTEGER NOT NULL,
   item_id INTEGER NOT NULL,

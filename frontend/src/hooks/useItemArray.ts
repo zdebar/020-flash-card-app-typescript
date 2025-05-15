@@ -58,7 +58,8 @@ export function useItemArray() {
     [itemArray, apiPath, setUserScore]
   );
 
-  const updateItemsRef = useRef<(onBlockEnd: boolean) => void>(patchItems);
+  const updateItemsRef =
+    useRef<(onBlockEnd: boolean) => Promise<void>>(patchItems);
   const updateIndexRef = useRef(currentIndex);
 
   useEffect(() => {
@@ -93,10 +94,9 @@ export function useItemArray() {
       if (updatedItemArray.length > 0) {
         if (currentIndex + 1 >= updatedItemArray.length) {
           // End of the array, update backend
-          updateItemsRef.current(true);
-          fetchItems();
+          await updateItemsRef.current(true);
+          await fetchItems();
         } else {
-          // Continue to the next item
           setCurrentIndex(currentIndex + 1);
           setDirection(alternateDirection(updatedItemArray, currentIndex + 1));
           setItemArray(updatedItemArray);

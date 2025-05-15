@@ -29,7 +29,7 @@ export default function PracticeCard() {
   // Set error when no audio is available
   useEffect(() => {
     if (!currentAudio) {
-      setError('bez audia');
+      setError('noAudio');
     } else {
       setError(null);
     }
@@ -69,15 +69,14 @@ export default function PracticeCard() {
       ) : (
         <div className="card">
           <div className="flex h-12 w-full gap-1">
-            <div className="color-disabled color-text flex h-full flex-1 items-center justify-center px-2 text-sm font-semibold">
+            <div className="color-disabled shape-rectangular color-text flex h-full flex-1 items-center justify-center px-2 text-sm font-semibold">
               {userScore?.blockCount?.[0] || 0}
             </div>
             <BlockFill blocks={userScore?.blockCount?.[0] || 0} />
             <Button // Info button
               onClick={() => setInfoVisibility(true)}
-              buttonColor="button-secondary "
               disabled={!itemArray[currentIndex]?.has_info}
-              className="color-text flex-1"
+              className="shape-rectangular flex-1"
             >
               <InfoIcon></InfoIcon>
             </Button>

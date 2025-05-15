@@ -25,7 +25,6 @@ export default function Dashboard({
     <div
       className={`flex h-full w-full flex-1 flex-col items-center justify-start gap-0 p-4 ${className}`}
     >
-      <div className="items-center pb-2">{`${started} / ${total}`}</div>
       {userScore &&
         userScore.blockCount.map((item, idx) => (
           <div className="flex items-center justify-center gap-2 pr-8">

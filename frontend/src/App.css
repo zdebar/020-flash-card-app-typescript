@@ -11,10 +11,7 @@
     @apply active:shadow-none;
   }
 
-  h1 {
-    @apply text-black dark:text-white;
-  }
-
+  h1,
   p {
     @apply text-black dark:text-white;
   }
@@ -28,12 +25,8 @@
     @apply bg-blue-600 text-white shadow-[2px_2px_2px_rgba(0,0,0,0.35)] hover:bg-blue-800 dark:bg-blue-800 dark:text-white dark:hover:bg-blue-600;
   }
 
-  .button-secondary {
-    @apply bg-gray-200 text-gray-900 shadow-[2px_2px_2px_rgba(0,0,0,0.2)] hover:bg-gray-400 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-600;
-  }
-
   .color-disabled {
-    @apply bg-gray-50 text-black shadow-none dark:bg-gray-800 dark:text-white;
+    @apply bg-gray-100 text-black shadow-none dark:bg-gray-800 dark:text-white;
   }
 
   .color-text {
@@ -41,25 +34,57 @@
   }
 
   .color-highlighted {
-    @apply bg-gray-100 dark:bg-gray-700;
+    @apply bg-gray-200 dark:bg-gray-700;
   }
 
   .shape-rectangular {
+    @apply h-full w-full rounded-sm;
+  }
+
+  .button-rectangular {
     @apply h-12 w-full rounded-sm;
   }
 
-  .shape-round {
+  .button-round {
     @apply h-12 w-12 rounded-full;
-  }
-
-  /** Text classes*/
-
-  .label {
-    @apply text-black dark:text-white;
   }
 
   /** Size classes*/
   .card {
     @apply flex aspect-square w-[320px] flex-col justify-between gap-1 rounded-sm;
+  }
+}
+
+@media (max-height: 420px) {
+  .header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 0;
+  }
+
+  .app {
+    justify-content: center;
+  }
+}
+
+@media (max-height: 420px) and (max-width: 640px) {
+  .sideheader {
+    display: flex;
+    flex-direction: column;
+    height: 150px;
+  }
+}
+
+@media (min-height: 421px) {
+  .header {
+    position: relative;
+    /* margin-bottom: 80px; */
+  }
+}
+
+@media (min-height: 640px) {
+  .header {
+    margin-bottom: 80px;
   }
 }

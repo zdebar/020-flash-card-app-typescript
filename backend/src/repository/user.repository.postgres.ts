@@ -29,22 +29,3 @@ export async function getUserRepository(
     return user.rows[0];
   });
 }
-
-export async function patchNotesRepository(
-  db: PostgresClient,
-  uid: string,
-  note: string
-): Promise<void> {
-  return withDbClient(db, async (client) => {
-    await client.query(
-      `
-      WITH user_cte AS (
-        SELECT id AS user_id FROM users WHERE uid = $1
-      )
-      INSERT INTO user_notes (user_id, date, note)
-      VALUES ((SELECT user_id FROM user_cte), DEFAULT, $2);
-      `,
-      [uid, note]
-    );
-  });
-}

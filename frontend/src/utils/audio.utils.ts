@@ -67,6 +67,10 @@ export async function fetchAudioFiles(
             cache.put(audioPath, clonedResponse);
             saveAudioToUseRef(audioRef, audioPath, audioBlob);
           }
+        } else {
+          console.error(
+            `Invalid public URL for audio file: ${audioPath}. Skipping...`
+          );
         }
       } else {
         // If cached, use the cached response
@@ -75,4 +79,11 @@ export async function fetchAudioFiles(
       }
     }
   }
+}
+
+/**
+ * Clears the audio cache in the browser's cache storage.
+ */
+export async function clearAudioCache() {
+  await caches.delete('audio-cache');
 }
