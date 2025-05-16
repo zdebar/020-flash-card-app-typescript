@@ -25,6 +25,10 @@
     @apply bg-blue-600 text-white shadow-[2px_2px_2px_rgba(0,0,0,0.35)] hover:bg-blue-800 dark:bg-blue-800 dark:text-white dark:hover:bg-blue-600;
   }
 
+  .button-secondary {
+    @apply bg-pink-600 text-white shadow-[2px_2px_2px_rgba(0,0,0,0.35)] hover:bg-pink-800 dark:bg-pink-600 dark:text-white dark:hover:bg-pink-500;
+  }
+
   .color-disabled {
     @apply bg-gray-100 text-black shadow-none dark:bg-gray-800 dark:text-white;
   }

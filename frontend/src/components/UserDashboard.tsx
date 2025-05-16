@@ -15,6 +15,9 @@ export default function UserDashboard() {
         started={userScore?.startedCount}
         total={userScore?.itemsTotal}
       />
+      <ButtonLink to="/grammarList" className="button-rectangular">
+        Přehled gramatiky
+      </ButtonLink>
     </div>
   );
 }

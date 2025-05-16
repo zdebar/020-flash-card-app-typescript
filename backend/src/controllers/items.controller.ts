@@ -22,8 +22,6 @@ export async function getItemsController(
 
     const items: Item[] = await getItemsService(postgresDBPool, uid);
 
-    logger.debug(items);
-
     res.status(200).json({
       message: "User words retrieved successfully.",
       items,
@@ -45,8 +43,6 @@ export async function patchItemsController(
     const uid: string = (req as any).user.uid;
     const { items, onBlockEnd }: { items: Item[]; onBlockEnd: boolean } =
       req.body;
-
-    logger.debug(`${onBlockEnd}`, items);
 
     const score: UserScore = await patchItemsService(
       postgresDBPool,

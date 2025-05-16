@@ -44,15 +44,14 @@ export default function InfoCard({
         </div>
         <Button
           name="close"
-          buttonColor="button-secondary"
-          className="flex-2"
+          className="button-rectangular flex-2"
           onClick={() => setInfo(false)}
         >
           <CloseIcon />
         </Button>
       </div>
       <div className="color-disabled h-full">
-        {infoArray?.[infoIndex].items.length === 0 ? ( // If array.items has no items, show block_explanation
+        {infoArray?.[infoIndex].items.length === 0 ? (
           <div
             className="flex flex-col justify-center pl-4"
             dangerouslySetInnerHTML={{
@@ -64,7 +63,7 @@ export default function InfoCard({
             {infoArray?.[infoIndex].items.map((item) => (
               <Button
                 key={item.id}
-                buttonColor="button-secondary px-12"
+                buttonColor="button-primary button-rectangular px-12"
                 onClick={() => playAudio(item.audio)}
               >
                 <div className="flex w-full justify-between">
@@ -81,6 +80,7 @@ export default function InfoCard({
         <Button
           name="previous"
           onClick={handlePrevious}
+          className="button-rectangular"
           disabled={infoIndex === 0}
         >
           <PreviousIcon />
@@ -88,6 +88,7 @@ export default function InfoCard({
         <Button
           name="next"
           onClick={handleNext}
+          className="button-rectangular"
           disabled={infoIndex === infoArray.length - 1}
         >
           <NextIcon />

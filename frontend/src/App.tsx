@@ -7,6 +7,7 @@ import Login from './components/Login';
 import PracticeCard from './components/PracticeCard';
 import UserSettings from './components/UserSettings';
 import UserDashboard from './components/UserDashboard';
+import GrammarList from './components/GrammarlList';
 
 export default function App() {
   const { userInfo, loading } = useUser();
@@ -27,7 +28,7 @@ export default function App() {
                   <p>Loading...</p>
                 ) : userInfo ? (
                   <div>
-                    <h1>Přihlášen: {userInfo.name}</h1>
+                    <h1>Uživatel: {userInfo.name}</h1>
                   </div>
                 ) : (
                   <div className="w-[320px]">
@@ -42,6 +43,7 @@ export default function App() {
             <Route path="/practice" element={<PracticeCard />} />
             <Route path="/userSettings" element={<UserSettings />} />
             <Route path="/userDashboard" element={<UserDashboard />} />
+            <Route path="/grammarList" element={<GrammarList />} />
           </Routes>
         </div>
       </div>

@@ -13,42 +13,51 @@ export async function getItemsRepository(
 ): Promise<Item[]> {
   const numWords: number = config.round;
 
-  const query = `
-    WITH user_cte AS (
-        SELECT id AS user_id FROM users WHERE uid = $1
-    ),
-    rand_parity AS (
-        SELECT floor(random() * 2)::int AS parity
-    )
-    SELECT
-        i.id,
-        i.czech,
-        i.english,
-        i.pronunciation,
-        i.audio,
-        COALESCE(ui.progress, 0) as progress,
-        COUNT(b.id) > 0 as has_info
-    FROM items i
-    LEFT JOIN user_items ui ON i.id = ui.item_id AND ui.user_id = (SELECT user_id FROM user_cte)
-    LEFT JOIN block_items bi ON i.id = bi.item_id
-    LEFT JOIN blocks b ON bi.block_id = b.id
-    CROSS JOIN rand_parity
-    WHERE ui.mastered_at IS NULL
-      AND (ui.next_at IS NULL OR ui.next_at < NOW())
-      AND ((COALESCE(ui.progress, 0) % 2 = rand_parity.parity) or ui.progress is null)
-    GROUP BY 
-        i.id, i.czech, i.english, i.pronunciation, i.audio, ui.progress, b.block_order, ui.next_at
-    ORDER BY 
-        ui.next_at ASC NULLS LAST,
-        COALESCE(i.item_order, b.block_order, 0),
-        i.id ASC
-    LIMIT $2;
-  `;
+  const runQuery = async (isOdd: number): Promise<Item[]> => {
+    const query = `
+      WITH user_cte AS (
+          SELECT id AS user_id FROM users WHERE uid = $1
+      )
+      SELECT
+          i.id,
+          i.czech,
+          i.english,
+          i.pronunciation,
+          i.audio,
+          COALESCE(ui.progress, 0) AS progress,
+          i.first_in_lecture,
+          COUNT(b.id) > 0 as has_info 
+      FROM items i
+      LEFT JOIN user_items ui ON i.id = ui.item_id AND ui.user_id = (SELECT user_id FROM user_cte)
+      LEFT JOIN block_items bi ON i.id = bi.item_id
+      LEFT JOIN blocks b ON bi.block_id = b.id
+      WHERE ui.mastered_at IS NULL
+        AND (ui.next_at IS NULL OR ui.next_at < NOW())
+        AND ((COALESCE(ui.progress, 0) % 2 = $2) or ui.progress is null)
+      GROUP BY 
+          i.id, i.czech, i.english, i.pronunciation, i.audio, ui.progress, b.block_order, ui.next_at
+      ORDER BY 
+          ui.next_at ASC NULLS LAST,
+          COALESCE(i.item_order, b.block_order) asc nulls last,
+          i.id ASC
+      LIMIT $3;
+    `;
 
-  return await withDbClient(db, async (client) => {
-    const result = await client.query(query, [uid, numWords]);
-    return result.rows;
-  });
+    const res = await withDbClient(db, async (client) => {
+      return await client.query(query, [uid, isOdd, numWords]);
+    });
+
+    return res.rows;
+  };
+
+  const randomChoice = Math.random() < 0.5 ? 1 : 0;
+  let items = await runQuery(randomChoice);
+
+  if (items.length < numWords) {
+    items = await runQuery(0);
+  }
+
+  return items;
 }
 
 /**
@@ -128,10 +137,17 @@ export async function getScoreRepository(
       SELECT id AS user_id FROM users WHERE uid = $1
     ),
     blocks_cte AS (
-      SELECT ARRAY_AGG(blockCount ORDER BY day DESC) AS blockCount
-      FROM user_score
-      WHERE user_id = (SELECT user_id FROM user_cte)
-      GROUP BY user_id
+      SELECT ARRAY_AGG(COALESCE(us.blockCount, 0) ORDER BY d.day DESC) AS blockCount
+      FROM (
+        SELECT generate_series(
+          CURRENT_DATE - INTERVAL '9 days',
+          CURRENT_DATE,
+          INTERVAL '1 day'
+        )::date AS day
+      ) d
+      LEFT JOIN user_score us
+        ON us.user_id = (SELECT user_id FROM user_cte)
+        AND us.day = d.day
     ),
     started_cte AS (
       SELECT 

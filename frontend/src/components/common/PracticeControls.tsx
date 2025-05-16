@@ -59,10 +59,16 @@ export default function PracticeControls({
         </div>
       ) : (
         <div className="flex w-full flex-col gap-1">
-          <Button onClick={handlePlus} className="button-rectangular">
+          <Button
+            onClick={handlePlus}
+            className="button-rectangular button-secondary"
+          >
             <PlusIcon></PlusIcon>
           </Button>
-          <Button onClick={handleMinus} className="button-rectangular">
+          <Button
+            onClick={handleMinus}
+            className="button-rectangular button-secondary"
+          >
             <MinusIcon></MinusIcon>
           </Button>
         </div>

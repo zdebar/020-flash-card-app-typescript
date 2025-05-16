@@ -23,7 +23,7 @@ export default function Dashboard({
 
   return (
     <div
-      className={`flex h-full w-full flex-1 flex-col items-center justify-start gap-0 p-4 ${className}`}
+      className={`flex h-full w-full flex-1 flex-col items-center justify-center gap-0 p-4 ${className}`}
     >
       {userScore &&
         userScore.blockCount.map((item, idx) => (

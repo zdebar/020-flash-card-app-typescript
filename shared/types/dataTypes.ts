@@ -6,6 +6,7 @@ export interface Item {
   pronunciation: string | null;
   audio: string | null;
   progress: number;
+  first_in_lecture: boolean;
   has_info: boolean;
 }
 

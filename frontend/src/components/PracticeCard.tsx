@@ -76,6 +76,12 @@ export default function PracticeCard() {
             <Button // Info button
               onClick={() => setInfoVisibility(true)}
               disabled={!itemArray[currentIndex]?.has_info}
+              buttonColor={
+                itemArray[currentIndex]?.first_in_lecture &&
+                itemArray[currentIndex]?.progress === 0
+                  ? 'button-secondary'
+                  : 'button-primary'
+              }
               className="shape-rectangular flex-1"
             >
               <InfoIcon></InfoIcon>
