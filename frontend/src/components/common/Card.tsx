@@ -4,8 +4,9 @@ import { VolumeIcon } from './Icons';
 import config from '../../config/config';
 
 interface CardProps {
-  currentIndex: number;
-  wordArray: Item[];
+  item: Item;
+  index: number;
+  total: number;
   direction: boolean;
   revealed: boolean;
   hintIndex?: number;
@@ -14,8 +15,9 @@ interface CardProps {
 }
 
 export default function Card({
-  currentIndex,
-  wordArray,
+  item,
+  index,
+  total,
   direction,
   revealed,
   hintIndex,
@@ -23,7 +25,7 @@ export default function Card({
   error,
 }: CardProps) {
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
-  const [volume, setVolumeState] = useState(1); // Default volume is 1 (100%)
+  const [volume, setVolumeState] = useState(1);
   const [noAudio, setNoAudio] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -66,29 +68,25 @@ export default function Card({
           )}
         </div>
         <p className="flex w-full justify-end text-sm">
-          {currentIndex + 1} / {wordArray.length}
+          {index + 1} / {total}
         </p>
       </div>
 
       <p className="pt-1 font-bold">
-        {direction || revealed ? wordArray[currentIndex].czech : '\u00A0'}
+        {direction || revealed ? item.czech : '\u00A0'}
       </p>
       <p>
         {revealed || noAudio
-          ? wordArray[currentIndex]?.english
-          : wordArray[currentIndex]?.english
-              .slice(0, hintIndex ?? wordArray[currentIndex]?.english.length)
-              .padEnd(wordArray[currentIndex]?.english.length, '\u00A0')}
+          ? item?.english
+          : item?.english
+              .slice(0, hintIndex ?? item?.english.length)
+              .padEnd(item?.english.length, '\u00A0')}
       </p>
       <p className="pb-1">
-        {revealed && wordArray[currentIndex]?.pronunciation
-          ? wordArray[currentIndex].pronunciation
-          : '\u00A0'}
+        {revealed && item?.pronunciation ? item.pronunciation : '\u00A0'}
       </p>
       <div className="flex w-full items-center justify-between">
-        <p className="flex w-full justify-start text-sm">
-          {wordArray[currentIndex]?.progress}
-        </p>
+        <p className="flex w-full justify-start text-sm">{item?.progress}</p>
         <p className="text-sm whitespace-nowrap text-red-500">{errorMessage}</p>
       </div>
     </div>

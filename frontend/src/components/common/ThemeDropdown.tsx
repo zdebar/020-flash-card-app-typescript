@@ -11,7 +11,7 @@ export default function ThemeDropdown() {
   };
 
   return (
-    <div className="color-text flex items-center gap-4">
+    <div className="flex items-center gap-4">
       <label htmlFor="theme-select" className="text-sm font-medium">
         Theme:
       </label>
@@ -19,7 +19,7 @@ export default function ThemeDropdown() {
         id="theme-select"
         value={theme}
         onChange={handleChange}
-        className="h-10 w-full rounded-sm border p-2 dark:bg-gray-800"
+        className="button-rectangular color-disabled p-2"
       >
         <option value="light">light</option>
         <option value="dark">dark</option>

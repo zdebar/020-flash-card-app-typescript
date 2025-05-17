@@ -4,11 +4,10 @@ import config from '../config/config';
 import Card from './common/Card';
 import { useAudioManager } from '../hooks/useAudioManager';
 import { useItemArray } from '../hooks/useItemArray';
-import Button from './common/Button';
-import { InfoIcon } from './common/Icons';
+
 import InfoCard from './InfoCard';
-import { useUser } from '../hooks/useUser';
-import { BlockFill } from './common/BlockFill';
+
+import TopBar from './common/TopBar';
 
 export default function PracticeCard() {
   const { itemArray, currentIndex, direction, updateItemArray } =
@@ -19,7 +18,6 @@ export default function PracticeCard() {
   const [infoVisibility, setInfoVisibility] = useState(false);
   const [currentAudio, setCurrentAudio] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const { userScore } = useUser();
 
   useEffect(() => {
     const audio = itemArray?.[currentIndex]?.audio || null;
@@ -68,28 +66,15 @@ export default function PracticeCard() {
         />
       ) : (
         <div className="card">
-          <div className="flex h-12 w-full gap-1">
-            <div className="color-disabled shape-rectangular color-text flex h-full flex-1 items-center justify-center px-2 text-sm font-semibold">
-              {userScore?.blockCount?.[0] || 0}
-            </div>
-            <BlockFill blocks={userScore?.blockCount?.[0] || 0} />
-            <Button // Info button
-              onClick={() => setInfoVisibility(true)}
-              disabled={!itemArray[currentIndex]?.has_info}
-              buttonColor={
-                itemArray[currentIndex]?.first_in_lecture &&
-                itemArray[currentIndex]?.progress === 0
-                  ? 'button-secondary'
-                  : 'button-primary'
-              }
-              className="shape-rectangular flex-1"
-            >
-              <InfoIcon></InfoIcon>
-            </Button>
-          </div>
-          <Card
+          <TopBar
+            itemArray={itemArray}
             currentIndex={currentIndex}
-            wordArray={itemArray}
+            setInfoVisibility={setInfoVisibility}
+          />
+          <Card
+            item={itemArray[currentIndex]}
+            index={currentIndex}
+            total={itemArray.length}
             direction={direction}
             revealed={revealed}
             hintIndex={hintIndex}

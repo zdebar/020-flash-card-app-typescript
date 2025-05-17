@@ -7,9 +7,8 @@ import { useUser } from '../hooks/useUser';
 
 export default function GrammarList() {
   const [grammarArray, setGrammarArray] = useState([] as Block[]);
-  const [explanationIndex, setExplanationIndex] = useState(
-    null as number | null
-  );
+  const [explanationIndex, setExplanationIndex] = useState(0);
+  const [showExplanation, setShowExplanation] = useState(false);
   const { loading, userInfo } = useUser();
 
   const apiPath = '/api/blocks/grammar';
@@ -33,14 +32,14 @@ export default function GrammarList() {
 
   return (
     <>
-      {explanationIndex === null ? (
-        <div className={`flex h-full w-full flex-col gap-1`}>
-          {grammarArray.map((block, idx) => (
+      {!showExplanation ? (
+        <div className={`w-card flex h-full flex-col gap-1`}>
+          {grammarArray.map((block) => (
             <Button
               key={block.block_id}
               className="button-rectangular flex h-8 justify-start px-2"
               onClick={() => {
-                setExplanationIndex(idx);
+                setShowExplanation(true);
               }}
             >
               <span
@@ -48,7 +47,7 @@ export default function GrammarList() {
                   display: 'inline-block',
                   width: '2.5em',
                   textAlign: 'right',
-                  marginRight: '0.75em', // add gap here
+                  marginRight: '0.75em',
                 }}
               >
                 {block.block_order}
@@ -59,8 +58,10 @@ export default function GrammarList() {
         </div>
       ) : (
         <ExplanationCard
-          block={grammarArray[explanationIndex]}
+          blocks={grammarArray}
+          index={explanationIndex}
           setIndex={setExplanationIndex}
+          setVisibility={setShowExplanation}
         />
       )}
     </>

@@ -2,8 +2,8 @@
 CREATE TABLE IF NOT EXISTS users (
   id SERIAL PRIMARY KEY,  
   uid VARCHAR(255) UNIQUE, -- firebase uid
-  name TEXT, -- user name
-  email TEXT, -- user email
+  user_name TEXT, -- user name
+  user_email TEXT, -- user email
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -19,14 +19,14 @@ CREATE TABLE IF NOT EXISTS items (
 
 CREATE TABLE IF NOT EXISTS categories (
   id SERIAL PRIMARY KEY,
-  name TEXT NOT NULL, 
-  explanation TEXT
+  category_name TEXT NOT NULL, 
+  category_explanation TEXT
 );
 
 CREATE TABLE IF NOT EXISTS blocks (
   id INTEGER PRIMARY KEY, -- 10-99 for pronunciation, 100-999 for grammar
   block_name TEXT NOT NULL, 
-  explanation TEXT, -- html code
+  block_explanation TEXT, -- html code
   block_order INTEGER CHECK (block_order >= 0), -- after whick item_order will the block be shown
   category_id INTEGER, 
   FOREIGN KEY (category_id) REFERENCES category(id) ON DELETE SET NULL

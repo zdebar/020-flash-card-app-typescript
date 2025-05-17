@@ -4,7 +4,7 @@ import { getColor } from '../../utils/graph.utils';
 
 const BLOCKS_PER_FILL = config.blockFillSize; // Number of blocks to fill in the progress bar
 
-function BlockFillComponent({ blocks }: { blocks: number }) {
+function BarComponent({ blocks }: { blocks: number }) {
   const level = Math.min(Math.floor(blocks / BLOCKS_PER_FILL), 20);
   const subLevel = blocks - level * BLOCKS_PER_FILL;
 
@@ -43,4 +43,4 @@ function BlockFillComponent({ blocks }: { blocks: number }) {
 }
 
 // Wrap the component with React.memo
-export const BlockFill = React.memo(BlockFillComponent);
+export const PracticeCardBar = React.memo(BarComponent);

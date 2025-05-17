@@ -7,7 +7,7 @@ import {
 } from '../../../shared/types/dataTypes';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../config/firebase.config';
-import { fetchUser } from '../utils/auth.utils';
+import { fetchWithAuthAndParse } from '../utils/auth.utils';
 import { UserTheme } from '../../../shared/types/dataTypes';
 
 export function UserProvider({ children }: { children: ReactNode }) {
@@ -18,13 +18,35 @@ export function UserProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<UserTheme>('system');
 
   useEffect(() => {
-    const fetchUserPreferences = async () => {
-      fetchUser(setUserInfo, setUserSettings, setUserScore, setLoading);
-    };
-
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        fetchUserPreferences();
+        try {
+          setLoading(true);
+          const data = await fetchWithAuthAndParse<{
+            userSettings: UserSettings | null;
+            userScore: UserScore | null;
+          }>(`/api/users`);
+
+          const userScore = data?.userScore || null;
+          const userSettings = data?.userSettings || null;
+
+          if (auth.currentUser) {
+            const { uid, email, displayName, photoURL } = auth.currentUser;
+            setUserInfo({
+              uid,
+              email,
+              name: displayName || 'Bez jména',
+              picture: photoURL || 'Bez emailu',
+            });
+          }
+
+          setUserScore(userScore);
+          setUserSettings(userSettings);
+        } catch (error) {
+          console.error('Error fetching user preferences:', error);
+        } finally {
+          setLoading(false);
+        }
       } else {
         setUserInfo(null);
         setUserScore(null);

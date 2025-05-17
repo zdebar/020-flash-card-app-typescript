@@ -14,11 +14,11 @@ export default function App() {
 
   return (
     <div className="h-screen dark:bg-gray-900">
-      <div className="mx-auto flex h-full w-full max-w-[900px] min-w-[320px] flex-col items-center">
+      <div className="w-app min-w-card mx-auto flex h-full w-full flex-col items-center">
         <Header />
 
         <div
-          className={`app z-1 flex h-full w-full max-w-[320px] flex-col items-center gap-1`}
+          className={`app z-1 flex h-full w-full flex-col items-center gap-1`}
         >
           <Routes>
             <Route
@@ -31,7 +31,7 @@ export default function App() {
                     <h1>Uživatel: {userInfo.name}</h1>
                   </div>
                 ) : (
-                  <div className="w-[320px]">
+                  <div className="w-card">
                     <ButtonLink to="/login" className="button-rectangular">
                       Přihlášení / Registrace
                     </ButtonLink>

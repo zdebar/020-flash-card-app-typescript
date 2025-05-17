@@ -1,13 +1,10 @@
 import { useState, useEffect } from 'react';
 import { ItemInfo } from '../../../shared/types/dataTypes';
-// import { useNavigate } from 'react-router-dom';
 import { fetchWithAuthAndParse } from '../utils/auth.utils';
 
 export function useInfoArray(itemId: number) {
   const [infoArray, setInfoArray] = useState<ItemInfo[]>([]);
   const [infoIndex, setInfoIndex] = useState(0);
-
-  // const navigate = useNavigate();
 
   useEffect(() => {
     const fetchAndStoreWords = async () => {

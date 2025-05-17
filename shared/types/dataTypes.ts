@@ -15,7 +15,7 @@ export interface Block {
   block_order: number;
   block_name: string;
   block_explanation: string;
-  block_category_id: number;
+  category_id: number;
 }
 
 export interface ItemInfo extends Block {

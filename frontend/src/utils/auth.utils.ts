@@ -1,7 +1,5 @@
 import { getAuth } from 'firebase/auth';
 import config from '../config/config';
-import { UserScore, UserSettings } from '../../../shared/types/dataTypes';
-import { auth } from '../config/firebase.config';
 
 export const fetchWithAuthAndParse = async <T>(
   url: string,
@@ -49,61 +47,5 @@ export const fetchWithAuthAndParse = async <T>(
   } catch (error) {
     console.error('Error during fetch:', error);
     return null;
-  }
-};
-
-interface SetUserInfo {
-  (userInfo: {
-    uid: string;
-    email: string | null;
-    name: string;
-    picture: string;
-  }): void;
-}
-
-interface SetUserSettings {
-  (userSettings: UserSettings | null): void;
-}
-
-interface SetUserScore {
-  (userScore: UserScore | null): void;
-}
-
-interface SetLoading {
-  (isLoading: boolean): void;
-}
-
-export const fetchUser = async (
-  setUserInfo: SetUserInfo,
-  setUserSettings: SetUserSettings,
-  setUserScore: SetUserScore,
-  setLoading: SetLoading
-): Promise<void> => {
-  try {
-    setLoading(true);
-    const data = await fetchWithAuthAndParse<{
-      userSettings: UserSettings | null;
-      userScore: UserScore | null;
-    }>(`/api/users`);
-
-    const userScore = data?.userScore || null;
-    const userSettings = data?.userSettings || null;
-
-    if (auth.currentUser) {
-      const { uid, email, displayName, photoURL } = auth.currentUser;
-      setUserInfo({
-        uid,
-        email,
-        name: displayName || 'Bez jména',
-        picture: photoURL || 'Bez emailu',
-      });
-    }
-
-    setUserScore(userScore);
-    setUserSettings(userSettings);
-  } catch (error) {
-    console.error('Error fetching user preferences:', error);
-  } finally {
-    setLoading(false);
   }
 };

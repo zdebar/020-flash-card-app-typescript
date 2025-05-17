@@ -140,7 +140,7 @@ export async function getScoreRepository(
       SELECT ARRAY_AGG(COALESCE(us.blockCount, 0) ORDER BY d.day DESC) AS blockCount
       FROM (
         SELECT generate_series(
-          CURRENT_DATE - INTERVAL '9 days',
+          CURRENT_DATE - INTERVAL '6 days',
           CURRENT_DATE,
           INTERVAL '1 day'
         )::date AS day
@@ -194,8 +194,8 @@ export async function getItemInfoRepository(
       b.id,
       b.block_order,
       b.block_name,
-      b.explanation AS block_explanation,
-      b.category_id as block_category_id,
+      b.block_explanation,
+      b.category_id,
       CASE 
         WHEN b.category_id IN (3, 4) THEN (
           SELECT json_agg(

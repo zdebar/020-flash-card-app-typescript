@@ -21,8 +21,8 @@ export async function getGrammarListRepository(
       b.id AS block_id,
       b.block_order,
       b.block_name,
-      b.explanation AS block_explanation,      
-      b.category_id AS block_category_id
+      b.block_explanation,      
+      b.category_id
     FROM blocks b
     WHERE b.block_order <= (SELECT user_words_count FROM user_words_count_cte)
     	and b.category_id = 1

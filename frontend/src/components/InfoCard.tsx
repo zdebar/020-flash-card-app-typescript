@@ -1,15 +1,16 @@
 import { useInfoArray } from '../hooks/useInfoArray';
 import Button from './common/Button';
-import { NextIcon, PreviousIcon, CloseIcon } from './common/Icons';
+import { CloseIcon } from './common/Icons';
 import { useAudioManager } from '../hooks/useAudioManager';
-import { useEffect } from 'react';
+import { useEffect, Dispatch, SetStateAction } from 'react';
+import PrevNextControls from './common/PrevNextControls';
 
 export default function InfoCard({
   itemId,
   setInfo,
 }: {
   itemId: number;
-  setInfo: (info: boolean) => void;
+  setInfo: Dispatch<SetStateAction<number | null>>;
 }) {
   const { infoArray, infoIndex, setInfoIndex } = useInfoArray(itemId);
   const { playAudio } = useAudioManager(infoArray?.[infoIndex]?.items ?? []);
@@ -22,18 +23,6 @@ export default function InfoCard({
 
   if (infoArray?.length === 0) {
     return <p>Loading ... </p>;
-  }
-
-  function handlePrevious() {
-    if (infoIndex > 0) {
-      setInfoIndex(infoIndex - 1);
-    }
-  }
-
-  function handleNext() {
-    if (infoIndex < infoArray.length - 1) {
-      setInfoIndex(infoIndex + 1);
-    }
   }
 
   return (
@@ -75,25 +64,11 @@ export default function InfoCard({
           </div>
         )}
       </div>
-
-      <div className="flex gap-1">
-        <Button
-          name="previous"
-          onClick={handlePrevious}
-          className="button-rectangular"
-          disabled={infoIndex === 0}
-        >
-          <PreviousIcon />
-        </Button>
-        <Button
-          name="next"
-          onClick={handleNext}
-          className="button-rectangular"
-          disabled={infoIndex === infoArray.length - 1}
-        >
-          <NextIcon />
-        </Button>
-      </div>
+      <PrevNextControls
+        arrayLength={infoArray.length}
+        index={infoIndex}
+        setIndex={setInfoIndex}
+      />
     </div>
   );
 }

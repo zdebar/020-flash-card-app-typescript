@@ -13,6 +13,7 @@ export async function getUserController(
 ): Promise<void> {
   try {
     const { uid, name, email } = (req as any).user;
+
     const {
       userSettings,
       userScore,
