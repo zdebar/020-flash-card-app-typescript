@@ -5,16 +5,11 @@ import { Item } from '../../../../shared/types/dataTypes';
 import { useUser } from '../../hooks/useUser';
 
 interface TopBarProps {
-  itemArray: Item[];
-  currentIndex: number;
+  item: Item;
   setInfoVisibility: (value: boolean) => void;
 }
 
-export default function TopBar({
-  itemArray,
-  currentIndex,
-  setInfoVisibility,
-}: TopBarProps) {
+export default function TopBar({ item, setInfoVisibility }: TopBarProps) {
   const { userScore } = useUser();
 
   return (
@@ -25,10 +20,9 @@ export default function TopBar({
       <PracticeCardBar blocks={userScore?.blockCount?.[0] || 0} />
       <Button // Info button
         onClick={() => setInfoVisibility(true)}
-        disabled={!itemArray[currentIndex]?.has_info}
+        disabled={!item?.has_info}
         buttonColor={
-          itemArray[currentIndex]?.first_in_lecture &&
-          itemArray[currentIndex]?.progress === 0
+          item?.first_in_lecture && item?.progress === 0
             ? 'button-secondary'
             : 'button-primary'
         }

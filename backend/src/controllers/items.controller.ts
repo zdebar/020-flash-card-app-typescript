@@ -20,11 +20,11 @@ export async function getItemsController(
   try {
     const uid: string = (req as any).user.uid;
 
-    const items: Item[] = await getItemsService(postgresDBPool, uid);
+    const data: Item[] = await getItemsService(postgresDBPool, uid);
 
     res.status(200).json({
       message: "User words retrieved successfully.",
-      items,
+      data,
     });
   } catch (err) {
     next(err);

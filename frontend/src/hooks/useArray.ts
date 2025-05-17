@@ -5,16 +5,20 @@ import { useUser } from '../hooks/useUser';
 export function useArray<T>(apiPath: string) {
   const [itemArray, setItemArray] = useState<T[]>([]);
   const [index, setIndex] = useState(0);
+  const [reload, setReload] = useState(false);
   const { loading, userInfo } = useUser();
 
+  function wrapIndex(newIndex: number) {
+    if (itemArray.length === 0) return 0;
+    return (newIndex + itemArray.length) % itemArray.length;
+  }
+
   function nextIndex() {
-    setIndex((prevIndex) => (prevIndex + 1) % itemArray.length);
+    setIndex((prev) => wrapIndex(prev + 1));
   }
 
   function prevIndex() {
-    setIndex(
-      (prevIndex) => (prevIndex - 1 + itemArray.length) % itemArray.length
-    );
+    setIndex((prev) => wrapIndex(prev - 1));
   }
 
   useEffect(() => {
@@ -26,19 +30,22 @@ export function useArray<T>(apiPath: string) {
         }>(apiPath);
         setItemArray(response?.data || []);
         setIndex(0);
+        setReload(false);
       } catch (error) {
         console.error('Error in fetching data:', error);
       }
     };
     fetchData();
-  }, [loading, userInfo, apiPath]);
+  }, [loading, userInfo, apiPath, reload]);
 
   return {
     itemArray,
+    setItemArray,
     index,
     setIndex,
     nextIndex,
     prevIndex,
     itemArrayLength: itemArray.length,
+    setReload,
   };
 }

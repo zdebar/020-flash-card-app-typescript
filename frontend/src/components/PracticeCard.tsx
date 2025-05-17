@@ -10,28 +10,29 @@ import InfoCard from './InfoCard';
 import TopBar from './common/TopBar';
 
 export default function PracticeCard() {
-  const { itemArray, currentIndex, direction, updateItemArray } =
-    useItemArray();
+  const {
+    itemArray,
+    currentItem,
+    index,
+    direction,
+    itemArrayLength,
+    updateItemArray,
+  } = useItemArray();
   const { playAudio, setVolume } = useAudioManager(itemArray);
+
   const [revealed, setRevealed] = useState(false);
   const [hintIndex, setHintIndex] = useState(0);
   const [infoVisibility, setInfoVisibility] = useState(false);
-  const [currentAudio, setCurrentAudio] = useState<string | null>(null); // je toto vůbez potřeba?
+
   const [error, setError] = useState<string | null>(null); // jak více obecně chybové hlášky?
 
   useEffect(() => {
-    const audio = itemArray?.[currentIndex]?.audio || null;
-    setCurrentAudio(audio);
-  }, [itemArray, currentIndex]);
-
-  // Set error when no audio is available
-  useEffect(() => {
-    if (!currentAudio) {
+    if (!currentItem?.audio) {
       setError('noAudio');
     } else {
       setError(null);
     }
-  }, [currentAudio]);
+  }, [currentItem]);
 
   // Play audio when en to cz card direction is started
   const directionRef = useRef(direction);
@@ -41,40 +42,31 @@ export default function PracticeCard() {
   }, [direction]);
 
   useEffect(() => {
-    if (!direction && currentAudio) {
-      setTimeout(() => playAudio(currentAudio), 100);
+    if (!direction && currentItem?.audio) {
+      setTimeout(() => playAudio(currentItem.audio), 100);
     }
-  }, [direction, playAudio, currentAudio]);
+  }, [direction, playAudio, currentItem]);
 
   // Handler to reveal button
   function handleReveal() {
     setRevealed(true);
-    if (direction) playAudio(currentAudio);
+    if (direction && currentItem?.audio) playAudio(currentItem.audio);
     setHintIndex(0);
   }
 
-  if (itemArray?.length === 0) {
-    return <p>Loading..</p>;
-  }
+  if (!itemArrayLength) return <p>Loading..</p>;
 
   return (
     <>
       {infoVisibility ? (
-        <InfoCard
-          itemId={itemArray[currentIndex]?.id}
-          setVisibility={setInfoVisibility}
-        />
+        <InfoCard itemId={currentItem?.id} setVisibility={setInfoVisibility} />
       ) : (
         <div className="card">
-          <TopBar
-            itemArray={itemArray}
-            currentIndex={currentIndex}
-            setInfoVisibility={setInfoVisibility}
-          />
+          <TopBar item={currentItem} setInfoVisibility={setInfoVisibility} />
           <Card
-            item={itemArray[currentIndex]}
-            index={currentIndex}
-            total={itemArray.length}
+            item={currentItem}
+            index={index}
+            total={itemArrayLength}
             direction={direction}
             revealed={revealed}
             hintIndex={hintIndex}
@@ -84,8 +76,10 @@ export default function PracticeCard() {
           <PracticeControls
             revealed={revealed}
             direction={direction}
-            noAudio={!currentAudio}
-            handleAudio={() => playAudio(currentAudio)}
+            noAudio={!currentItem?.audio}
+            handleAudio={() =>
+              currentItem?.audio && playAudio(currentItem.audio)
+            }
             handleReveal={handleReveal}
             handlePlus={() => {
               updateItemArray(config.plusProgress);
