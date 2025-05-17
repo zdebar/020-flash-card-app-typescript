@@ -16,8 +16,8 @@ export default function PracticeCard() {
   const [revealed, setRevealed] = useState(false);
   const [hintIndex, setHintIndex] = useState(0);
   const [infoVisibility, setInfoVisibility] = useState(false);
-  const [currentAudio, setCurrentAudio] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [currentAudio, setCurrentAudio] = useState<string | null>(null); // je toto vůbez potřeba?
+  const [error, setError] = useState<string | null>(null); // jak více obecně chybové hlášky?
 
   useEffect(() => {
     const audio = itemArray?.[currentIndex]?.audio || null;
@@ -62,7 +62,7 @@ export default function PracticeCard() {
       {infoVisibility ? (
         <InfoCard
           itemId={itemArray[currentIndex]?.id}
-          setInfo={setInfoVisibility}
+          setVisibility={setInfoVisibility}
         />
       ) : (
         <div className="card">

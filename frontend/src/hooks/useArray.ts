@@ -22,9 +22,10 @@ export function useArray<T>(apiPath: string) {
     const fetchData = async () => {
       try {
         const response = await fetchWithAuthAndParse<{
-          blocks: T[] | null;
+          data: T[] | null;
         }>(apiPath);
-        setItemArray(response?.blocks || []);
+        setItemArray(response?.data || []);
+        setIndex(0);
       } catch (error) {
         console.error('Error in fetching data:', error);
       }

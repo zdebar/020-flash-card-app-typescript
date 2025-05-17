@@ -15,11 +15,11 @@ export async function getGrammarListController(
   try {
     const uid: string = (req as any).user.uid;
 
-    const blocks: Block[] = await getGrammarListRepository(postgresDBPool, uid);
+    const data: Block[] = await getGrammarListRepository(postgresDBPool, uid);
 
     res.status(200).json({
       message: "Grammar list retrieved successfully.",
-      blocks,
+      data,
     });
   } catch (err) {
     next(err);

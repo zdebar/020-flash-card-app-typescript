@@ -71,14 +71,11 @@ export async function getInfoController(
   try {
     const itemId: number = parseInt((req as any).params.itemId, 10);
 
-    const itemInfo: ItemInfo[] = await getItemInfoService(
-      postgresDBPool,
-      itemId
-    );
+    const data: ItemInfo[] = await getItemInfoService(postgresDBPool, itemId);
 
     res.status(200).json({
       message: "Item info retrieved successfully.",
-      itemInfo,
+      data,
     });
   } catch (err) {
     next(err);
