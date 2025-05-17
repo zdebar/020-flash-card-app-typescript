@@ -1,28 +1,17 @@
-import { Dispatch, SetStateAction } from 'react';
 import Button from './Button';
 import { PreviousIcon, NextIcon } from './Icons';
 
 export default function PrevNextControls({
-  arrayLength,
+  handleNext,
+  handlePrevious,
   index,
-  setIndex,
+  arrayLength,
 }: {
-  arrayLength: number;
+  handleNext: () => void;
+  handlePrevious: () => void;
   index: number;
-  setIndex: Dispatch<SetStateAction<number>>;
+  arrayLength: number;
 }) {
-  function handlePrevious() {
-    if (index > 0) {
-      setIndex(index - 1);
-    }
-  }
-
-  function handleNext() {
-    if (index < arrayLength - 1) {
-      setIndex(index + 1);
-    }
-  }
-
   return (
     <div className="flex gap-1">
       <Button

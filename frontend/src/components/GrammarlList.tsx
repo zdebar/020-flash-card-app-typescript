@@ -1,45 +1,28 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Block } from '../../../shared/types/dataTypes';
-import { fetchWithAuthAndParse } from '../utils/auth.utils';
+import PrevNextControls from './common/PrevNextControls';
+
 import Button from './common/Button';
 import ExplanationCard from './ExplanationCard';
-import { useUser } from '../hooks/useUser';
+
+import { useArray } from '../hooks/useArray';
 
 export default function GrammarList() {
-  const [grammarArray, setGrammarArray] = useState([] as Block[]);
-  const [explanationIndex, setExplanationIndex] = useState(0);
+  const { itemArray, index, setIndex, nextIndex, prevIndex, itemArrayLength } =
+    useArray<Block>('/api/blocks/grammar');
   const [showExplanation, setShowExplanation] = useState(false);
-  const { loading, userInfo } = useUser();
-
-  const apiPath = '/api/blocks/grammar';
-
-  useEffect(() => {
-    if (loading || !userInfo) return;
-    const fetchData = async () => {
-      try {
-        const response = await fetchWithAuthAndParse<{
-          blocks: Block[] | null;
-        }>(apiPath);
-
-        const blocks = response?.blocks || [];
-        setGrammarArray(blocks);
-      } catch (error) {
-        console.error('Error in fetching data:', error);
-      }
-    };
-    fetchData();
-  }, [loading, userInfo]);
 
   return (
     <>
       {!showExplanation ? (
         <div className={`w-card flex h-full flex-col gap-1`}>
-          {grammarArray.map((block) => (
+          {itemArray.map((block, idx) => (
             <Button
               key={block.block_id}
               className="button-rectangular flex h-8 justify-start px-2"
               onClick={() => {
                 setShowExplanation(true);
+                setIndex(idx);
               }}
             >
               <span
@@ -57,13 +40,20 @@ export default function GrammarList() {
           ))}
         </div>
       ) : (
-        <ExplanationCard
-          blocks={grammarArray}
-          index={explanationIndex}
-          setIndex={setExplanationIndex}
-          setVisibility={setShowExplanation}
-        />
+        <div className="card">
+          <ExplanationCard
+            block={itemArray[index]}
+            setVisibility={setShowExplanation}
+          />
+          <PrevNextControls
+            handleNext={nextIndex}
+            handlePrevious={prevIndex}
+            index={index}
+            arrayLength={itemArrayLength}
+          />
+        </div>
       )}
+      ;
     </>
   );
 }
