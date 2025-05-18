@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Item } from '../../../../shared/types/dataTypes';
+import { Item, PracticeError } from '../../../../shared/types/dataTypes';
 import { VolumeIcon } from './Icons';
-import config from '../../config/config';
 
 interface CardProps {
   item: Item;
@@ -11,7 +10,7 @@ interface CardProps {
   revealed: boolean;
   hintIndex?: number;
   setVolume: (volume: number) => void;
-  error: string | null;
+  error: PracticeError | null;
 }
 
 export default function Card({
@@ -36,9 +35,9 @@ export default function Card({
   };
 
   useEffect(() => {
-    if (error === 'noAudio') {
+    if (error === PracticeError.NoAudio) {
       setNoAudio(true);
-      setErrorMessage(config.errorMessages[error] || '');
+      setErrorMessage(PracticeError.NoAudio);
     } else {
       setNoAudio(false);
       setErrorMessage('');

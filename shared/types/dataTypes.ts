@@ -49,3 +49,7 @@ export class UserError extends Error {
     this.name = "UserError";
   }
 }
+
+export enum PracticeError {
+  NoAudio = "beze zvuku",
+}

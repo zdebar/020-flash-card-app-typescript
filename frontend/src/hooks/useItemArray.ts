@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { usePatchOnUnmount } from './usePatchOnUnmount';
 import { Item, UserScore } from '../../../shared/types/dataTypes';
 import { alternateDirection } from '../utils/practice.utils';
 import { useUser } from './useUser';
@@ -7,20 +8,14 @@ import { useArray } from './useArray';
 
 export function useItemArray() {
   const apiPath = '/api/items';
-  const {
-    itemArray,
-    setItemArray,
-    index,
-    nextIndex,
-    itemArrayLength,
-    setReload,
-  } = useArray<Item>(apiPath);
+  const { array, setItemArray, index, nextIndex, arrayLength, setReload } =
+    useArray<Item>(apiPath);
   const [direction, setDirection] = useState(false); // true = czech to english, false = english to czech
   const { setUserScore } = useUser();
 
   useEffect(() => {
-    setDirection(alternateDirection(itemArray[index]));
-  }, [itemArray, index]);
+    setDirection(alternateDirection(array[index]));
+  }, [array, index]);
 
   // Update items on unmount - Ref, Update Ref, Effect on unmount
   const patchItems = useCallback(
@@ -32,7 +27,7 @@ export function useItemArray() {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            items: itemArray,
+            items: array,
             onBlockEnd,
           }),
         });
@@ -43,44 +38,25 @@ export function useItemArray() {
         console.error('Error posting words:', error);
       }
     },
-    [itemArray, apiPath, setUserScore]
+    [array, apiPath, setUserScore]
   );
 
-  const updateItemsRef =
-    useRef<(onBlockEnd: boolean) => Promise<void>>(patchItems);
-  const updateIndexRef = useRef(index);
-
-  useEffect(() => {
-    updateItemsRef.current = patchItems;
-  }, [patchItems]);
-
-  useEffect(() => {
-    updateIndexRef.current = index;
-  }, [index]);
-
-  // Update items on unmount
-  useEffect(() => {
-    return () => {
-      if (updateIndexRef.current != 0) {
-        updateItemsRef.current(false);
-      }
-    };
-  }, []);
+  usePatchOnUnmount(patchItems, index);
 
   // Update the item in Array
   const updateItemArray = useCallback(
     async (progressIncrement: number = 0) => {
-      const updatedItemArray = [...itemArray];
+      const updatedItemArray = [...array];
 
-      if (!itemArray[index]) return;
+      if (!array[index]) return;
       updatedItemArray[index] = {
         ...updatedItemArray[index],
-        progress: Math.max(itemArray[index].progress + progressIncrement, 0),
+        progress: Math.max(array[index].progress + progressIncrement, 0),
       };
 
-      if (itemArrayLength > 0) {
-        if (index + 1 >= itemArrayLength) {
-          await updateItemsRef.current(true);
+      if (arrayLength > 0) {
+        if (index + 1 >= arrayLength) {
+          await patchItems(true);
           setReload(true);
         } else {
           setItemArray(updatedItemArray);
@@ -88,14 +64,14 @@ export function useItemArray() {
         }
       }
     },
-    [itemArray, index, itemArrayLength, setItemArray, nextIndex, setReload]
+    [array, index, arrayLength, setItemArray, nextIndex, setReload, patchItems]
   );
 
   return {
-    itemArray,
-    currentItem: itemArray?.[index],
+    itemArray: array,
+    currentItem: array?.[index],
     index,
-    itemArrayLength,
+    itemArrayLength: arrayLength,
     direction,
     updateItemArray,
   };

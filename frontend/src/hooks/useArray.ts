@@ -3,14 +3,14 @@ import { fetchWithAuthAndParse } from '../utils/auth.utils';
 import { useUser } from '../hooks/useUser';
 
 export function useArray<T>(apiPath: string) {
-  const [itemArray, setItemArray] = useState<T[]>([]);
+  const [array, setArray] = useState<T[]>([]);
   const [index, setIndex] = useState(0);
   const [reload, setReload] = useState(false);
   const { loading, userInfo } = useUser();
 
   function wrapIndex(newIndex: number) {
-    if (itemArray.length === 0) return 0;
-    return (newIndex + itemArray.length) % itemArray.length;
+    if (array.length === 0) return 0;
+    return (newIndex + array.length) % array.length;
   }
 
   function nextIndex() {
@@ -28,7 +28,7 @@ export function useArray<T>(apiPath: string) {
         const response = await fetchWithAuthAndParse<{
           data: T[] | null;
         }>(apiPath);
-        setItemArray(response?.data || []);
+        setArray(response?.data || []);
         setIndex(0);
         setReload(false);
       } catch (error) {
@@ -39,13 +39,13 @@ export function useArray<T>(apiPath: string) {
   }, [loading, userInfo, apiPath, reload]);
 
   return {
-    itemArray,
-    setItemArray,
+    array,
+    setItemArray: setArray,
     index,
     setIndex,
     nextIndex,
     prevIndex,
-    itemArrayLength: itemArray.length,
+    arrayLength: array.length,
     setReload,
   };
 }

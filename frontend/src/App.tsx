@@ -8,6 +8,7 @@ import PracticeCard from './components/PracticeCard';
 import UserSettings from './components/UserSettings';
 import UserDashboard from './components/UserDashboard';
 import GrammarList from './components/GrammarlList';
+import Loading from './components/common/Loading';
 
 export default function App() {
   const { userInfo, loading } = useUser();
@@ -25,7 +26,7 @@ export default function App() {
               path="/"
               element={
                 loading ? (
-                  <p>Loading...</p>
+                  <Loading />
                 ) : userInfo ? (
                   <div>
                     <h1>Uživatel: {userInfo.name}</h1>

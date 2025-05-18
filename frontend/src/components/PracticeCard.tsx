@@ -1,12 +1,12 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import PracticeControls from './common/PracticeControls';
 import config from '../config/config';
 import Card from './common/Card';
 import { useAudioManager } from '../hooks/useAudioManager';
 import { useItemArray } from '../hooks/useItemArray';
-
+import { useAutoPlayAudioOnDirection } from '../hooks/useAutoPlayAudioOnDirection';
+import { PracticeError } from '../../../shared/types/dataTypes';
 import InfoCard from './InfoCard';
-
 import TopBar from './common/TopBar';
 
 export default function PracticeCard() {
@@ -24,28 +24,17 @@ export default function PracticeCard() {
   const [hintIndex, setHintIndex] = useState(0);
   const [infoVisibility, setInfoVisibility] = useState(false);
 
-  const [error, setError] = useState<string | null>(null); // jak více obecně chybové hlášky?
+  const [error, setError] = useState<PracticeError | null>(null);
 
   useEffect(() => {
     if (!currentItem?.audio) {
-      setError('noAudio');
+      setError(PracticeError.NoAudio);
     } else {
       setError(null);
     }
   }, [currentItem]);
 
-  // Play audio when en to cz card direction is started
-  const directionRef = useRef(direction);
-
-  useEffect(() => {
-    directionRef.current = direction;
-  }, [direction]);
-
-  useEffect(() => {
-    if (!direction && currentItem?.audio) {
-      setTimeout(() => playAudio(currentItem.audio), 100);
-    }
-  }, [direction, playAudio, currentItem]);
+  useAutoPlayAudioOnDirection(direction, playAudio, currentItem.audio);
 
   // Handler to reveal button
   function handleReveal() {

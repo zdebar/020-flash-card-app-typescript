@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Item } from '../../../shared/types/dataTypes';
-import { fetchAudioFiles } from '../utils/audio.utils';
+import { fetchAndCacheAudioFiles } from '../utils/audio.utils';
 
 export function useAudioManager(wordArray: Item[]) {
   const audioCacheRef = useRef<Map<string, HTMLAudioElement>>(new Map());
@@ -13,7 +13,7 @@ export function useAudioManager(wordArray: Item[]) {
     const cacheAudio = async () => {
       try {
         if (wordArray.length > 0) {
-          await fetchAudioFiles(wordArray, audioCacheRef.current);
+          await fetchAndCacheAudioFiles(wordArray, audioCacheRef.current);
         }
       } catch (error) {
         console.error('Error caching audio files:', error);

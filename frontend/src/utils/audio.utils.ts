@@ -40,30 +40,29 @@ export function playAudioFromUseRef(
 /**
  * Fetches the audio files for the words and caches them in the browser's cache storage and in provided useRef.
  */
-export async function fetchAudioFiles(
+export async function fetchAndCacheAudioFiles(
   words: Item[],
   audioRef: Map<string, HTMLAudioElement>
 ) {
   const cache = await caches.open('audio-cache');
 
   for (const word of words) {
-    if (word.audio) {
+    const audioPath = word.audio;
+    if (audioPath) {
       // Check if the audio file is already cached
-      const audioPath = word.audio;
       const cachedResponse = await cache.match(audioPath);
+
       if (!cachedResponse) {
-        // If not cached, fetch the audio file from Supabase
         const { data } = supabase.storage
           .from('audio-files')
           .getPublicUrl(audioPath);
 
-        // Check if the public URL is valid and fetch the audio file
         if (data.publicUrl) {
           const response = await fetch(data.publicUrl);
           if (response.ok) {
             const clonedResponse = response.clone();
             const audioBlob = await response.blob();
-            // Save the audio blob to the cache and useRef
+
             cache.put(audioPath, clonedResponse);
             saveAudioToUseRef(audioRef, audioPath, audioBlob);
           }
