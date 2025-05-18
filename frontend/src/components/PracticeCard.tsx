@@ -7,6 +7,7 @@ import { useItemArray } from '../hooks/useItemArray';
 import { useAutoPlayAudioOnDirection } from '../hooks/useAutoPlayAudioOnDirection';
 import { PracticeError } from '../../../shared/types/dataTypes';
 import InfoCard from './InfoCard';
+import Loading from './common/Loading';
 import TopBar from './common/TopBar';
 
 export default function PracticeCard() {
@@ -34,7 +35,7 @@ export default function PracticeCard() {
     }
   }, [currentItem]);
 
-  useAutoPlayAudioOnDirection(direction, playAudio, currentItem.audio);
+  useAutoPlayAudioOnDirection(direction, playAudio, currentItem?.audio);
 
   // Handler to reveal button
   function handleReveal() {
@@ -43,7 +44,7 @@ export default function PracticeCard() {
     setHintIndex(0);
   }
 
-  if (!itemArrayLength) return <p>Loading..</p>;
+  if (!itemArrayLength) return <Loading />;
 
   return (
     <>

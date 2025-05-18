@@ -2,6 +2,8 @@ import React from 'react';
 import { useUser } from '../../hooks/useUser';
 import { UserTheme } from '../../../../shared/types/dataTypes';
 
+const themes: UserTheme[] = ['light', 'dark', 'system'];
+
 export default function ThemeDropdown() {
   const { theme, chooseTheme } = useUser();
 
@@ -20,10 +22,13 @@ export default function ThemeDropdown() {
         value={theme}
         onChange={handleChange}
         className="button-rectangular color-disabled p-2"
+        aria-label="Změna motivu"
       >
-        <option value="light">light</option>
-        <option value="dark">dark</option>
-        <option value="system">system</option>
+        {themes.map((t) => (
+          <option key={t} value={t}>
+            {t.charAt(0).toUpperCase() + t.slice(1)}
+          </option>
+        ))}
       </select>
     </div>
   );

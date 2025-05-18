@@ -2,15 +2,28 @@ import React from 'react';
 import config from '../../config/config';
 import { getColor } from '../../utils/graph.utils';
 
-const BLOCKS_PER_FILL = config.blockFillSize; // Number of blocks to fill in the progress bar
+const BLOCKS_PER_FILL = config.blockFillSize;
+const MAX_BLOCKS = 20;
 
-function BarComponent({ blocks }: { blocks: number }) {
-  const level = Math.min(Math.floor(blocks / BLOCKS_PER_FILL), 20);
+interface PracticeCardBarProps {
+  blocks: number;
+}
+
+function BarComponent({ blocks }: PracticeCardBarProps) {
+  const level = Math.min(Math.floor(blocks / BLOCKS_PER_FILL), MAX_BLOCKS);
   const subLevel = blocks - level * BLOCKS_PER_FILL;
 
   return (
-    <div className="color-disabled color-text flex w-40 justify-center border-r-1">
-      {[...Array(20)].map((_, idx) => {
+    <div
+      className="color-disabled color-text flex w-40 justify-center border-r-1"
+      role="progressbar"
+      aria-label="Úroveň pokroku"
+      aria-valuenow={level}
+      aria-valuemin={0}
+      aria-valuemax={MAX_BLOCKS}
+      title={`Úroveň: ${level} z ${MAX_BLOCKS}`}
+    >
+      {[...Array(MAX_BLOCKS)].map((_, idx) => {
         const filled = idx < level;
         const color = getColor(idx + 1);
 
@@ -20,7 +33,7 @@ function BarComponent({ blocks }: { blocks: number }) {
               <div
                 className="border-l-1"
                 style={{
-                  height: `${((5 - subLevel) / BLOCKS_PER_FILL) * 100}%`,
+                  height: `${((BLOCKS_PER_FILL - subLevel) / BLOCKS_PER_FILL) * 100}%`,
                 }}
               ></div>
               <div
@@ -34,7 +47,7 @@ function BarComponent({ blocks }: { blocks: number }) {
         return (
           <div
             key={idx}
-            className={`h-12 w-2 ${filled ? color : ''} border-l-1`}
+            className={`h-12 w-2 border-l-1${filled && color ? ` ${color}` : ''}`}
           ></div>
         );
       })}
@@ -42,5 +55,4 @@ function BarComponent({ blocks }: { blocks: number }) {
   );
 }
 
-// Wrap the component with React.memo
 export const PracticeCardBar = React.memo(BarComponent);

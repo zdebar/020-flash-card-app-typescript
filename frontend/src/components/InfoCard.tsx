@@ -4,6 +4,7 @@ import { useAudioManager } from '../hooks/useAudioManager';
 import { Dispatch, SetStateAction } from 'react';
 import PrevNextControls from './common/PrevNextControls';
 import { useArray } from '../hooks/useArray';
+import Loading from './common/Loading';
 import type { ItemInfo } from '../../../shared/types/dataTypes';
 
 export default function InfoCard({
@@ -13,43 +14,49 @@ export default function InfoCard({
   itemId: number;
   setVisibility: Dispatch<SetStateAction<boolean>>;
 }) {
-  const { itemArray, index, nextIndex, prevIndex, itemArrayLength } =
+  const { array, index, nextIndex, prevIndex, arrayLength } =
     useArray<ItemInfo>(`/api/items/${itemId}/info`);
-  const { playAudio } = useAudioManager(itemArray?.[index]?.items ?? []);
+  const { playAudio } = useAudioManager(array?.[index]?.items ?? []);
 
-  if (itemArray?.length === 0) {
-    return <p>Loading ... </p>;
+  const current = array?.[index];
+
+  if (!current) {
+    return <Loading />;
   }
 
   return (
     <div className="card">
       <div className="flex w-full gap-1">
         <div className="color-disabled shape-rectangular flex flex-10 flex-col justify-center pl-4">
-          {itemArray?.[index].block_name}
+          <h2 className="font-semibold">{current.block_name}</h2>
         </div>
         <Button
           name="close"
+          type="button"
           className="button-rectangular flex-2"
           onClick={() => setVisibility(false)}
+          aria-label="Zavřít informace"
         >
           <CloseIcon />
         </Button>
       </div>
       <div className="color-disabled h-full">
-        {itemArray?.[index].items.length === 0 ? (
+        {current.items.length === 0 ? (
           <div
             className="flex flex-col justify-center pl-4"
             dangerouslySetInnerHTML={{
-              __html: itemArray?.[index].block_explanation,
+              __html: current.block_explanation,
             }}
           ></div>
         ) : (
           <div className="flex h-full flex-col gap-1">
-            {itemArray?.[index].items.map((item) => (
+            {current.items.map((item) => (
               <Button
                 key={item.id}
-                buttonColor="button-primary button-rectangular px-12"
+                buttonColor="button-primary"
+                className="button-rectangular px-12"
                 onClick={() => playAudio(item.audio)}
+                aria-label={`Přehrát ${item.english}`}
               >
                 <div className="flex w-full justify-between">
                   <span>{item.english}</span>
@@ -64,7 +71,7 @@ export default function InfoCard({
         handleNext={nextIndex}
         handlePrevious={prevIndex}
         index={index}
-        arrayLength={itemArrayLength}
+        arrayLength={arrayLength}
       />
     </div>
   );

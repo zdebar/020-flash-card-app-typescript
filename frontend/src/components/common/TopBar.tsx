@@ -11,24 +11,26 @@ interface TopBarProps {
 
 export default function TopBar({ item, setInfoVisibility }: TopBarProps) {
   const { userScore } = useUser();
+  const blockCount = userScore?.blockCount?.[0] || 0;
+  const infoButtonColor =
+    item?.first_in_lecture && item?.progress === 0
+      ? 'button-secondary'
+      : 'button-primary';
 
   return (
     <div className="button-rectangular flex gap-1">
       <div className="color-disabled shape-rectangular color-text flex h-full flex-1 items-center justify-center px-2 text-sm font-semibold">
-        {userScore?.blockCount?.[0] || 0}
+        {blockCount}
       </div>
-      <PracticeCardBar blocks={userScore?.blockCount?.[0] || 0} />
-      <Button // Info button
+      <PracticeCardBar blocks={blockCount} />
+      <Button
         onClick={() => setInfoVisibility(true)}
         disabled={!item?.has_info}
-        buttonColor={
-          item?.first_in_lecture && item?.progress === 0
-            ? 'button-secondary'
-            : 'button-primary'
-        }
+        buttonColor={infoButtonColor}
         className="shape-rectangular flex-1"
+        aria-label="Zobrazit informace"
       >
-        <InfoIcon></InfoIcon>
+        <InfoIcon />
       </Button>
     </div>
   );

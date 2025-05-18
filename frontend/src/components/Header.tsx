@@ -6,17 +6,26 @@ export default function Header() {
   const { userInfo } = useUser();
 
   return (
-    <header className={`header z-2 flex w-full justify-between`}>
-      <div className={`sideheader m-4 flex gap-4`}>
-        <ButtonLink className="button-round" to="/">
+    <header className="header z-2 flex w-full justify-between">
+      <nav
+        className="sideheader m-4 flex gap-4"
+        role="navigation"
+        aria-label="Hlavní navigace"
+      >
+        <ButtonLink className="button-round" to="/" aria-label="Domů">
           <HomeIcon />
         </ButtonLink>
-      </div>
-      <div className={`sideheader m-4 flex gap-4`}>
+      </nav>
+      <nav
+        className="sideheader m-4 flex gap-4"
+        role="navigation"
+        aria-label="Uživatelská navigace"
+      >
         <ButtonLink
           className="button-round"
           to="/userDashboard"
           disabled={!userInfo}
+          aria-label="Uživatelský dashboard"
         >
           <AcademicCapIcon />
         </ButtonLink>
@@ -24,10 +33,11 @@ export default function Header() {
           className="button-round"
           to="/userSettings"
           disabled={!userInfo}
+          aria-label="Nastavení uživatele"
         >
           <UserIcon />
         </ButtonLink>
-      </div>
+      </nav>
     </header>
   );
 }

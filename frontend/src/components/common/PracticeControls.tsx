@@ -7,7 +7,6 @@ import {
   HintIcon,
 } from './Icons';
 import Button from './Button';
-import { useMemo } from 'react';
 
 interface PracticeControlsProps {
   revealed: boolean;
@@ -30,9 +29,7 @@ export default function PracticeControls({
   handleMinus,
   handleHint,
 }: PracticeControlsProps) {
-  const isAudioDisabled = useMemo(() => {
-    return (direction && !revealed) || noAudio;
-  }, [direction, revealed, noAudio]);
+  const isAudioDisabled = (direction && !revealed) || noAudio;
 
   return (
     <div className="flex w-full justify-between gap-1">
@@ -41,19 +38,32 @@ export default function PracticeControls({
           onClick={handleAudio}
           disabled={isAudioDisabled}
           className="button-rectangular"
+          aria-label="Přehrát audio"
         >
           <AudioIcon></AudioIcon>
         </Button>
-        <Button disabled={true} className="button-rectangular">
+        <Button
+          disabled={true}
+          className="button-rectangular"
+          aria-label="Mikrofon (zatím nedostupné)"
+        >
           <MicrophoneIcon></MicrophoneIcon>
         </Button>
       </div>
       {!revealed ? (
         <div className="flex w-full flex-col gap-1">
-          <Button onClick={handleReveal} className="button-rectangular">
+          <Button
+            onClick={handleReveal}
+            className="button-rectangular"
+            aria-label="Zobrazit odpověď"
+          >
             <EyeIcon></EyeIcon>
           </Button>
-          <Button onClick={handleHint} className="button-rectangular">
+          <Button
+            onClick={handleHint}
+            className="button-rectangular"
+            aria-label="Nápověda"
+          >
             <HintIcon></HintIcon>
           </Button>
         </div>
@@ -62,12 +72,14 @@ export default function PracticeControls({
           <Button
             onClick={handlePlus}
             className="button-rectangular button-secondary"
+            aria-label="Zvýšit skore"
           >
             <PlusIcon></PlusIcon>
           </Button>
           <Button
             onClick={handleMinus}
             className="button-rectangular button-secondary"
+            aria-label="Snížit skore"
           >
             <MinusIcon></MinusIcon>
           </Button>

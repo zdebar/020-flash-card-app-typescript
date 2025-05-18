@@ -8,17 +8,19 @@ import ExplanationCard from './ExplanationCard';
 import { useArray } from '../hooks/useArray';
 
 export default function GrammarList() {
-  const { itemArray, index, setIndex, nextIndex, prevIndex, itemArrayLength } =
+  const { array, index, setIndex, nextIndex, prevIndex, arrayLength } =
     useArray<Block>('/api/blocks/grammar');
   const [showExplanation, setShowExplanation] = useState(false);
+
+  if (!arrayLength) return <p>Není odemčena žádná lekce gramatiky.</p>;
 
   return (
     <>
       {!showExplanation ? (
         <div className={`w-card flex h-full flex-col gap-1`}>
-          {itemArray.map((block, idx) => (
+          {array.map((block, idx) => (
             <Button
-              key={block.block_id}
+              key={idx}
               className="button-rectangular flex h-8 justify-start px-2"
               onClick={() => {
                 setShowExplanation(true);
@@ -42,18 +44,17 @@ export default function GrammarList() {
       ) : (
         <div className="card">
           <ExplanationCard
-            block={itemArray[index]}
+            block={array[index] || null}
             setVisibility={setShowExplanation}
           />
           <PrevNextControls
             handleNext={nextIndex}
             handlePrevious={prevIndex}
             index={index}
-            arrayLength={itemArrayLength}
+            arrayLength={arrayLength}
           />
         </div>
       )}
-      ;
     </>
   );
 }

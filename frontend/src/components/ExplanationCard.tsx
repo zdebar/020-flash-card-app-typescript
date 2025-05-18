@@ -1,5 +1,4 @@
 import { Block } from '../../../shared/types/dataTypes';
-
 import Button from './common/Button';
 import { CloseIcon } from './common/Icons';
 import type { Dispatch, SetStateAction } from 'react';
@@ -11,15 +10,11 @@ export default function ExplanationCard({
   block: Block;
   setVisibility: Dispatch<SetStateAction<boolean>>;
 }) {
-  if (block === null) {
-    return <p>Není odemčena žádná gramatika.</p>;
-  }
-
   return (
     <div className="flex h-full w-full flex-col gap-1">
       <div className="flex h-12 w-full gap-1">
         <div className="color-disabled shape-rectangular flex flex-10 items-center justify-start">
-          <span
+          <h2
             style={{
               display: 'inline-block',
               width: '2.5em',
@@ -28,15 +23,15 @@ export default function ExplanationCard({
             }}
           >
             {block.block_order}
-          </span>
-          {block.block_name}
+          </h2>
+          <h2 className="ml-2 font-semibold">{block.block_name}</h2>
         </div>
         <Button
           name="close"
+          type="button"
           className="button-rectangular flex-2"
-          onClick={() => {
-            setVisibility(false);
-          }}
+          onClick={() => setVisibility(false)}
+          aria-label="Zavřít vysvětlení"
         >
           <CloseIcon />
         </Button>

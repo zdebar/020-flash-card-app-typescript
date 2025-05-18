@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Item, PracticeError } from '../../../../shared/types/dataTypes';
 import { VolumeIcon } from './Icons';
 
@@ -13,6 +13,15 @@ interface CardProps {
   error: PracticeError | null;
 }
 
+function getErrorMessage(error: PracticeError | null) {
+  switch (error) {
+    case PracticeError.NoAudio:
+      return 'Zvuk není k dispozici.';
+    default:
+      return '';
+  }
+}
+
 export default function Card({
   item,
   index,
@@ -25,8 +34,9 @@ export default function Card({
 }: CardProps) {
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
   const [volume, setVolumeState] = useState(1);
-  const [noAudio, setNoAudio] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+
+  const noAudio = error === PracticeError.NoAudio;
+  const errorMessage = getErrorMessage(error);
 
   const handleVolumeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newVolume = parseFloat(event.target.value);
@@ -34,23 +44,17 @@ export default function Card({
     setVolume(newVolume);
   };
 
-  useEffect(() => {
-    if (error === PracticeError.NoAudio) {
-      setNoAudio(true);
-      setErrorMessage(PracticeError.NoAudio);
-    } else {
-      setNoAudio(false);
-      setErrorMessage('');
-    }
-  }, [error]);
-
   return (
     <div
       className={`color-disabled flex h-full w-full flex-col items-center justify-between px-4 pt-3 pb-2 ${!direction && 'color-highlighted rounded-sm'} `}
     >
       <div className="flex w-full items-center justify-between">
         <div className="relative flex">
-          <button onClick={() => setShowVolumeSlider((prev) => !prev)}>
+          <button
+            onClick={() => setShowVolumeSlider((prev) => !prev)}
+            aria-label="Nastavit hlasitost"
+            disabled={noAudio}
+          >
             <VolumeIcon />
           </button>
           {showVolumeSlider && (
@@ -63,6 +67,10 @@ export default function Card({
               onChange={handleVolumeChange}
               className="ml-2 w-24"
               autoFocus
+              aria-valuenow={volume}
+              aria-valuemin={0}
+              aria-valuemax={1}
+              disabled={noAudio}
             />
           )}
         </div>
