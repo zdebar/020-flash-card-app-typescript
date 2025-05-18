@@ -4,6 +4,6 @@ import { getGrammarListController } from "../controllers/blocks.controller";
 
 const itemsRouter = express.Router();
 
-itemsRouter.get("/grammar", authenticateMiddleware, getGrammarListController); // sends list of grammar blocks
+itemsRouter.get("/grammar", getGrammarListController); // sends list of grammar blocks
 
 export default itemsRouter;

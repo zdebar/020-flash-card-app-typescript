@@ -20,8 +20,8 @@ export default function errorHandlerMiddleware(
 
   // Send the response
   if (err instanceof UserError) {
-    res.status(400).json({ message: err.message });
+    res.status(400).json({ error: err.message });
   } else {
-    res.status(500).json({ message: "Interní chyba serveru" });
+    res.status(500).json({ error: "Interní chyba serveru" });
   }
 }

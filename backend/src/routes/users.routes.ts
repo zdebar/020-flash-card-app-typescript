@@ -4,6 +4,6 @@ import { getUserController } from "../controllers/user.controller";
 
 const usersRouter = express.Router();
 
-usersRouter.get("/", authenticateMiddleware, getUserController); // sends user settings, user score
+usersRouter.get("/", getUserController); // sends user settings, user score
 
 export default usersRouter;
