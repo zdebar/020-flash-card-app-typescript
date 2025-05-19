@@ -1,7 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback } from 'react';
 import { usePatchOnUnmount } from './usePatchOnUnmount';
 import { Item, UserScore } from '../../../shared/types/dataTypes';
-import { alternateDirection } from '../utils/practice.utils';
 import { useUser } from './useUser';
 import { fetchWithAuthAndParse } from '../utils/auth.utils';
 import { useArray } from './useArray';
@@ -10,12 +9,8 @@ export function useItemArray() {
   const apiPath = '/api/items';
   const { array, setArray, index, nextIndex, arrayLength, setReload } =
     useArray<Item>(apiPath);
-  const [direction, setDirection] = useState(false); // true = czech to english, false = english to czech
-  const { setUserScore } = useUser();
 
-  useEffect(() => {
-    setDirection(alternateDirection(array[index]));
-  }, [array, index]);
+  const { setUserScore } = useUser();
 
   const patchItems = useCallback(
     async (onBlockEnd: boolean, updateArray: Item[]) => {
@@ -42,7 +37,6 @@ export function useItemArray() {
 
   usePatchOnUnmount(patchItems, index, array);
 
-  // Update the item in Array
   const updateItemArray = useCallback(
     async (progressIncrement: number = 0) => {
       const updatedItemArray = [...array];
@@ -71,7 +65,6 @@ export function useItemArray() {
     currentItem: array?.[index],
     index,
     itemArrayLength: arrayLength,
-    direction,
     updateItemArray,
   };
 }

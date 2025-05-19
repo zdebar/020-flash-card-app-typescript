@@ -197,7 +197,7 @@ export async function getItemInfoRepository(
       b.block_explanation,
       b.category_id,
       CASE 
-        WHEN b.category_id IN (3, 4) THEN (
+        WHEN b.category_id IN (2) THEN (
           SELECT json_agg(
             json_build_object(
               'id', i_sub.id,

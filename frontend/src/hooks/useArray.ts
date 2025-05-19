@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
+
 import { fetchWithAuthAndParse } from '../utils/auth.utils';
 import { useUser } from '../hooks/useUser';
 
 export function useArray<T>(apiPath: string) {
   const [array, setArray] = useState<T[]>([]);
   const [index, setIndex] = useState(0);
-  const [reload, setReload] = useState(false);
+  const [reload, setReload] = useState(true);
   const { loading, userInfo } = useUser();
 
   function wrapIndex(newIndex: number) {
@@ -22,14 +23,16 @@ export function useArray<T>(apiPath: string) {
   }
 
   useEffect(() => {
-    if (loading || !userInfo) return;
+    if (loading || !userInfo || !reload) return;
     const fetchData = async () => {
       try {
         const response = await fetchWithAuthAndParse<{
           data: T[] | null;
         }>(apiPath);
+
         setArray(response?.data || []);
         setIndex(0);
+
         setReload(false);
       } catch (error) {
         console.error('Error in fetching data:', error);
