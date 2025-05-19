@@ -40,7 +40,7 @@ export function useArray<T>(apiPath: string) {
 
   return {
     array,
-    setItemArray: setArray,
+    setArray,
     index,
     setIndex,
     nextIndex,

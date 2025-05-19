@@ -6,10 +6,15 @@ import { useUser } from '../../hooks/useUser';
 
 interface TopBarProps {
   item: Item;
+  revelead: boolean;
   setInfoVisibility: (value: boolean) => void;
 }
 
-export default function TopBar({ item, setInfoVisibility }: TopBarProps) {
+export default function TopBar({
+  item,
+  revelead,
+  setInfoVisibility,
+}: TopBarProps) {
   const { userScore } = useUser();
   const blockCount = userScore?.blockCount?.[0] || 0;
   const infoButtonColor =
@@ -25,7 +30,7 @@ export default function TopBar({ item, setInfoVisibility }: TopBarProps) {
       <PracticeCardBar blocks={blockCount} />
       <Button
         onClick={() => setInfoVisibility(true)}
-        disabled={!item?.has_info}
+        disabled={!item?.has_info || !revelead}
         buttonColor={infoButtonColor}
         className="shape-rectangular flex-1"
         aria-label="Zobrazit informace"

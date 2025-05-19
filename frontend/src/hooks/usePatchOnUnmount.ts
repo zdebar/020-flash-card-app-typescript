@@ -1,11 +1,14 @@
 import { useEffect, useRef } from 'react';
+import { Item } from '../../../shared/types/dataTypes';
 
 export function usePatchOnUnmount(
-  patchFn: (onBlockEnd: boolean) => Promise<void>,
-  index: number
+  patchFn: (onBlockEnd: boolean, array: Item[]) => Promise<void>,
+  index: number,
+  updateArray: Item[]
 ) {
   const patchRef = useRef(patchFn);
   const indexRef = useRef(index);
+  const updateArrayRef = useRef(updateArray);
 
   useEffect(() => {
     patchRef.current = patchFn;
@@ -16,9 +19,13 @@ export function usePatchOnUnmount(
   }, [index]);
 
   useEffect(() => {
+    updateArrayRef.current = updateArray;
+  }, [updateArray]);
+
+  useEffect(() => {
     return () => {
       if (indexRef.current !== 0) {
-        patchRef.current(false);
+        patchRef.current(false, updateArrayRef.current);
       }
     };
   }, []);

@@ -41,9 +41,9 @@ export default function InfoCard({
         </Button>
       </div>
       <div className="color-disabled h-full">
-        {current.items.length === 0 ? (
+        {current.category_id !== 2 ? (
           <div
-            className="flex flex-col justify-center pl-4"
+            className="flex flex-col justify-center p-4 text-sm"
             dangerouslySetInnerHTML={{
               __html: current.block_explanation,
             }}
@@ -76,3 +76,4 @@ export default function InfoCard({
     </div>
   );
 }
+<p>Foukáš bez hlasivek – jen tichý šum.</p>;

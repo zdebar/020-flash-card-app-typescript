@@ -19,7 +19,7 @@ export default function PracticeCard() {
     itemArrayLength,
     updateItemArray,
   } = useItemArray();
-  const { playAudio, setVolume } = useAudioManager(itemArray);
+  const { playAudio, setVolume, stopAudio } = useAudioManager(itemArray);
 
   const [revealed, setRevealed] = useState(false);
   const [hintIndex, setHintIndex] = useState(0);
@@ -52,7 +52,11 @@ export default function PracticeCard() {
         <InfoCard itemId={currentItem?.id} setVisibility={setInfoVisibility} />
       ) : (
         <div className="card">
-          <TopBar item={currentItem} setInfoVisibility={setInfoVisibility} />
+          <TopBar
+            item={currentItem}
+            revelead={revealed}
+            setInfoVisibility={setInfoVisibility}
+          />
           <Card
             item={currentItem}
             index={index}
@@ -74,10 +78,12 @@ export default function PracticeCard() {
             handlePlus={() => {
               updateItemArray(config.plusProgress);
               setRevealed(false);
+              stopAudio();
             }}
             handleMinus={() => {
               updateItemArray(config.minusProgress);
               setRevealed(false);
+              stopAudio();
             }}
             handleHint={() => setHintIndex((prevIndex) => prevIndex + 1)}
           />
