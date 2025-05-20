@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-
 import { fetchWithAuthAndParse } from '../utils/auth.utils';
 import { useUser } from '../hooks/useUser';
 
@@ -23,6 +22,7 @@ export function useArray<T>(apiPath: string) {
   }
 
   useEffect(() => {
+    // data should be fetched / on mount, on reload variable, loading set, on userInfo changed
     if (loading || !userInfo || !reload) return;
     const fetchData = async () => {
       try {
@@ -32,7 +32,6 @@ export function useArray<T>(apiPath: string) {
 
         setArray(response?.data || []);
         setIndex(0);
-
         setReload(false);
       } catch (error) {
         console.error('Error in fetching data:', error);
@@ -48,7 +47,9 @@ export function useArray<T>(apiPath: string) {
     setIndex,
     nextIndex,
     prevIndex,
+    currentItem: array[index],
     arrayLength: array.length,
+    reload,
     setReload,
   };
 }

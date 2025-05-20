@@ -9,17 +9,22 @@ import { PracticeError } from '../../../shared/types/dataTypes';
 import InfoCard from './InfoCard';
 import Loading from './common/Loading';
 import TopBar from './common/TopBar';
-import { alternateDirection } from '../utils/practice.utils';
 
 export default function PracticeCard() {
-  const { itemArray, currentItem, index, itemArrayLength, updateItemArray } =
-    useItemArray();
+  const {
+    itemArray,
+    currentItem,
+    index,
+    itemArrayLength,
+    updateItemArray,
+    direction,
+  } = useItemArray();
   const { playAudio, setVolume, stopAudio } = useAudioManager(itemArray);
 
   const [revealed, setRevealed] = useState(false);
   const [hintIndex, setHintIndex] = useState(0);
   const [infoVisibility, setInfoVisibility] = useState(false);
-  const [direction, setDirection] = useState(false);
+
   const [error, setError] = useState<PracticeError | null>(null);
 
   useEffect(() => {
@@ -32,12 +37,6 @@ export default function PracticeCard() {
   }, [currentItem]);
 
   useAutoPlayAudioOnDirection(direction, playAudio, currentItem?.audio);
-
-  function handleNext() {
-    setRevealed(false);
-    stopAudio();
-    setDirection(alternateDirection(currentItem?.progress)); // true = czech to english, false = english to czech
-  }
 
   function handleReveal() {
     setRevealed(true);
@@ -78,11 +77,13 @@ export default function PracticeCard() {
             handleReveal={handleReveal}
             handlePlus={() => {
               updateItemArray(config.plusProgress);
-              handleNext();
+              setRevealed(false);
+              stopAudio();
             }}
             handleMinus={() => {
               updateItemArray(config.minusProgress);
-              handleNext();
+              setRevealed(false);
+              stopAudio();
             }}
             handleHint={() => setHintIndex((prevIndex) => prevIndex + 1)}
           />

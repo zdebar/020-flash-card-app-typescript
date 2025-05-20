@@ -1,16 +1,30 @@
-import { useCallback } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { usePatchOnUnmount } from './usePatchOnUnmount';
 import { Item, UserScore } from '../../../shared/types/dataTypes';
 import { useUser } from './useUser';
 import { fetchWithAuthAndParse } from '../utils/auth.utils';
 import { useArray } from './useArray';
+import { alternateDirection } from '../utils/practice.utils';
 
 export function useItemArray() {
   const apiPath = '/api/items';
-  const { array, setArray, index, nextIndex, arrayLength, setReload } =
-    useArray<Item>(apiPath);
-
+  const {
+    array,
+    setArray,
+    index,
+    nextIndex,
+    arrayLength,
+    setReload,
+    reload,
+    currentItem,
+  } = useArray<Item>(apiPath);
+  const [direction, setDirection] = useState(false);
   const { setUserScore } = useUser();
+
+  useEffect(() => {
+    if (reload) return;
+    setDirection(alternateDirection(currentItem?.progress));
+  }, [currentItem, reload]);
 
   const patchItems = useCallback(
     async (onBlockEnd: boolean, updateArray: Item[]) => {
@@ -52,19 +66,20 @@ export function useItemArray() {
           await patchItems(true, updatedItemArray);
           setReload(true);
         } else {
+          setArray(updatedItemArray);
           nextIndex();
         }
       }
-      setArray(updatedItemArray);
     },
     [array, index, arrayLength, setArray, nextIndex, setReload, patchItems]
   );
 
   return {
     itemArray: array,
-    currentItem: array?.[index],
+    currentItem,
     index,
     itemArrayLength: arrayLength,
     updateItemArray,
+    direction,
   };
 }
