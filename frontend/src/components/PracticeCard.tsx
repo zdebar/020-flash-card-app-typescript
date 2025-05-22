@@ -1,34 +1,115 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import PracticeControls from './common/PracticeControls';
 import config from '../config/config';
 import Card from './common/Card';
 import { useAudioManager } from '../hooks/useAudioManager';
-import { useItemArray } from '../hooks/useItemArray';
-import { useAutoPlayAudioOnDirection } from '../hooks/useAutoPlayAudioOnDirection';
-import { PracticeError } from '../../../shared/types/dataTypes';
+import { useArray } from '../hooks/useArray';
+import {
+  PracticeError,
+  Item,
+  UserScore,
+} from '../../../shared/types/dataTypes';
+import { usePatchOnUnmount } from '../hooks/usePatchOnUnmount';
+import { fetchWithAuthAndParse } from '../utils/auth.utils';
+import { alternateDirection } from '../utils/practice.utils';
+import { useUser } from '../hooks/useUser';
 import InfoCard from './InfoCard';
 import Loading from './common/Loading';
 import TopBar from './common/TopBar';
 
 export default function PracticeCard() {
+  const apiPath = '/api/items';
   const {
-    itemArray,
-    currentItem,
+    array,
+    setArray,
     index,
-    itemArrayLength,
-    updateItemArray,
-    direction,
-  } = useItemArray();
-  const { playAudio, setVolume, stopAudio } = useAudioManager(itemArray);
+    nextIndex,
+    arrayLength,
+    setReload,
+    reload,
+    currentItem,
+  } = useArray<Item>(apiPath);
+  const { playAudio, setVolume, stopAudio } = useAudioManager(array);
 
   const [revealed, setRevealed] = useState(false);
   const [hintIndex, setHintIndex] = useState(0);
   const [infoVisibility, setInfoVisibility] = useState(false);
-
+  const [direction, setDirection] = useState(false);
   const [error, setError] = useState<PracticeError | null>(null);
+  const { setUserScore } = useUser();
+
+  const patchItems = useCallback(
+    async (onBlockEnd: boolean, updateArray: Item[]) => {
+      try {
+        const response = await fetchWithAuthAndParse<{
+          score: UserScore | null;
+        }>(apiPath, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            items: updateArray,
+            onBlockEnd,
+          }),
+        });
+
+        const newUserScore = response?.score || null;
+        setUserScore(newUserScore);
+      } catch (error) {
+        console.error('Error posting words:', error);
+      }
+    },
+    [apiPath, setUserScore]
+  );
+
+  const updateItemArray = useCallback(
+    async (progressIncrement: number = 0) => {
+      const updatedItemArray = [...array];
+
+      setRevealed(false);
+      stopAudio();
+
+      if (!array[index]) return;
+      updatedItemArray[index] = {
+        ...updatedItemArray[index],
+        progress: Math.max(array[index].progress + progressIncrement, 0),
+      };
+
+      if (arrayLength > 0) {
+        if (index + 1 >= arrayLength) {
+          await patchItems(true, updatedItemArray);
+          setReload(true);
+        } else {
+          setArray(updatedItemArray);
+          nextIndex();
+        }
+      }
+    },
+    [
+      array,
+      index,
+      arrayLength,
+      setArray,
+      nextIndex,
+      setReload,
+      patchItems,
+      stopAudio,
+    ]
+  );
 
   useEffect(() => {
-    // Error setter
+    if (reload) return;
+
+    const newDirection = alternateDirection(currentItem?.progress);
+    setDirection(newDirection);
+
+    if (!newDirection && currentItem?.audio) {
+      setTimeout(() => playAudio(currentItem.audio!), 100);
+    }
+  }, [currentItem, reload, playAudio]);
+
+  usePatchOnUnmount(patchItems, index, array);
+
+  useEffect(() => {
     if (!currentItem?.audio) {
       setError(PracticeError.NoAudio);
     } else {
@@ -36,15 +117,7 @@ export default function PracticeCard() {
     }
   }, [currentItem]);
 
-  useAutoPlayAudioOnDirection(direction, playAudio, currentItem?.audio);
-
-  function handleReveal() {
-    setRevealed(true);
-    if (direction && currentItem?.audio) playAudio(currentItem.audio);
-    setHintIndex(0);
-  }
-
-  if (!itemArrayLength) return <Loading />;
+  if (!arrayLength) return <Loading />;
 
   return (
     <>
@@ -60,7 +133,7 @@ export default function PracticeCard() {
           <Card
             item={currentItem}
             index={index}
-            total={itemArrayLength}
+            total={arrayLength}
             direction={direction}
             revealed={revealed}
             hintIndex={hintIndex}
@@ -74,16 +147,16 @@ export default function PracticeCard() {
             handleAudio={() =>
               currentItem?.audio && playAudio(currentItem.audio)
             }
-            handleReveal={handleReveal}
+            handleReveal={() => {
+              setRevealed(true);
+              if (direction && currentItem?.audio) playAudio(currentItem.audio);
+              setHintIndex(0);
+            }}
             handlePlus={() => {
               updateItemArray(config.plusProgress);
-              setRevealed(false);
-              stopAudio();
             }}
             handleMinus={() => {
               updateItemArray(config.minusProgress);
-              setRevealed(false);
-              stopAudio();
             }}
             handleHint={() => setHintIndex((prevIndex) => prevIndex + 1)}
           />

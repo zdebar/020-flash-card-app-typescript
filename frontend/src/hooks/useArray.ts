@@ -6,7 +6,7 @@ export function useArray<T>(apiPath: string) {
   const [array, setArray] = useState<T[]>([]);
   const [index, setIndex] = useState(0);
   const [reload, setReload] = useState(true);
-  const { loading, userInfo } = useUser();
+  const { loading } = useUser();
 
   function wrapIndex(newIndex: number) {
     if (array.length === 0) return 0;
@@ -22,8 +22,8 @@ export function useArray<T>(apiPath: string) {
   }
 
   useEffect(() => {
-    // data should be fetched / on mount, on reload variable, loading set, on userInfo changed
-    if (loading || !userInfo || !reload) return;
+    // data should be fetched / on mount, on reload state
+    if (loading || !reload) return;
     const fetchData = async () => {
       try {
         const response = await fetchWithAuthAndParse<{
@@ -38,7 +38,7 @@ export function useArray<T>(apiPath: string) {
       }
     };
     fetchData();
-  }, [loading, userInfo, apiPath, reload]);
+  }, [loading, apiPath, reload]);
 
   return {
     array,
