@@ -65,7 +65,6 @@ export default function PracticeCard() {
     async (progressIncrement: number = 0) => {
       const updatedItemArray = [...array];
 
-      setRevealed(false);
       stopAudio();
 
       if (!array[index]) return;
@@ -154,9 +153,11 @@ export default function PracticeCard() {
             }}
             handlePlus={() => {
               updateItemArray(config.plusProgress);
+              setRevealed(false);
             }}
             handleMinus={() => {
               updateItemArray(config.minusProgress);
+              setRevealed(false);
             }}
             handleHint={() => setHintIndex((prevIndex) => prevIndex + 1)}
           />

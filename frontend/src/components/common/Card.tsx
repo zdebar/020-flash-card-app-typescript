@@ -83,7 +83,7 @@ export default function Card({
         {direction || revealed ? item.czech : '\u00A0'}
       </p>
       <p>
-        {revealed || noAudio
+        {revealed || (noAudio && !direction)
           ? item?.english
           : item?.english
               .slice(0, hintIndex ?? item?.english.length)
