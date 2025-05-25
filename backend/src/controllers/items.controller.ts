@@ -5,8 +5,8 @@ import {
   getItemsService,
   patchItemsService,
   getItemInfoService,
+  processPronunciationWithIPA,
 } from "../services/items.service";
-import logger from "../utils/logger.utils";
 
 /**
  * Controller function to retrieve user-specific words based on source and target languages.
@@ -81,3 +81,41 @@ export async function getInfoController(
     next(err);
   }
 }
+
+export const postPronunciationController = async (
+  req: Request,
+  res: Response,
+  next: Function
+): Promise<void> => {
+  try {
+    const englishText = req.query.englishText || req.headers["x-english-text"];
+    const ipaText = req.query.ipaText || req.headers["x-ipa-text"];
+    if (!englishText || !ipaText) {
+      res
+        .status(400)
+        .json({ message: "English text and IPA text are required." });
+      return;
+    }
+
+    const audioBuffer = req.body;
+    if (!audioBuffer || !Buffer.isBuffer(audioBuffer)) {
+      res
+        .status(400)
+        .json({ message: "Audio file is required as binary data." });
+      return;
+    }
+
+    const similarity = await processPronunciationWithIPA(
+      audioBuffer,
+      englishText as string,
+      ipaText as string
+    );
+
+    res.status(200).json({
+      message: "Phoneme comparison successful.",
+      similarity,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
