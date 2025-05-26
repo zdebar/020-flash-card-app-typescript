@@ -6,7 +6,15 @@ import {
   getScoreRepository,
   getItemInfoRepository,
 } from "../repository/items.repository.postgres";
+import { extractPhonemes, comparePhonemes } from "../utils/audio.utils";
 import { addAudioPath } from "../utils/update.utils";
+import { promisify } from "util";
+import { exec } from "child_process";
+import fs from "fs";
+import os from "os";
+import path from "path";
+
+const execAsync = promisify(exec);
 
 /**
  * Gets a list of words for a given user and language ID from the database.
@@ -56,4 +64,56 @@ export async function getItemInfoService(
         audio: addAudioPath(word.audio),
       })) || [],
   }));
+}
+
+export async function processPronunciationWithIPA(
+  audioBuffer: Buffer,
+  englishText: string,
+  ipaText: string
+): Promise<number[]> {
+  try {
+    const dictionaryPath = path.join(
+      __dirname,
+      "../resources/dictionary/english_us_arpa.dict"
+    );
+    const modelPath = path.join(__dirname, "../resources/models/english");
+
+    // Use a temporary directory
+    const workDir = os.tmpdir(); // Use the system's temporary directory
+    const audioPath = path.join(workDir, "audio.wav");
+    const textPath = path.join(workDir, "audio.txt");
+    const outputDir = path.join(workDir, "output");
+
+    // Ensure the output directory exists
+    fs.mkdirSync(outputDir, { recursive: true });
+
+    // Write files
+    fs.writeFileSync(audioPath, audioBuffer);
+    fs.writeFileSync(textPath, englishText);
+
+    // Run MFA
+    const mfaCmd = `mfa align ${workDir} ${dictionaryPath} ${modelPath} ${outputDir}`;
+    await execAsync(mfaCmd);
+
+    // Read TextGrid
+    const textGridPath = path.join(outputDir, "audio.TextGrid");
+    const textGrid = fs.readFileSync(textGridPath, "utf-8");
+
+    // Extract phonemes from TextGrid
+    const alignedPhonemes = extractPhonemes(textGrid);
+
+    // Compare with IPA
+    const ipaPhonemes = ipaText.split(" ");
+    const similarity = comparePhonemes(alignedPhonemes, ipaPhonemes);
+
+    // Cleanup
+    fs.unlinkSync(audioPath);
+    fs.unlinkSync(textPath);
+    fs.rmdirSync(outputDir, { recursive: true });
+
+    return similarity;
+  } catch (error) {
+    console.log("Error processing pronunciation:", error);
+    throw new Error("Failed to process pronunciation with IPA.");
+  }
 }

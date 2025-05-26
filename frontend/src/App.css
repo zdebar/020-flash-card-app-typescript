@@ -28,6 +28,10 @@
     @apply bg-pink-500 text-white shadow-[2px_2px_2px_rgba(0,0,0,0.35)] hover:bg-pink-700 dark:bg-pink-600 dark:text-white dark:hover:bg-pink-500;
   }
 
+  .button-tertiary {
+    @apply bg-green-200 text-black shadow-[2px_2px_2px_rgba(0,0,0,0.35)] hover:bg-green-300 dark:bg-green-600 dark:text-white dark:hover:bg-green-500;
+  }
+
   .color-disabled {
     @apply bg-gray-100 text-black shadow-none dark:bg-gray-800 dark:text-white;
   }
