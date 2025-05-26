@@ -10,11 +10,14 @@ export function useAudioManager(wordArray: Item[]) {
 
   // Fetch and cache audio files when the component mounts or wordArray changes
   useEffect(() => {
+    console.log('useAudioManager: Caching audio files...');
+
     const cacheAudio = async () => {
       try {
         if (wordArray.length > 0) {
           await fetchAndCacheAudioFiles(wordArray, audioCacheRef.current);
         }
+        console.log('Audio files cached successfully.');
       } catch (error) {
         console.error('Error caching audio files:', error);
       }
@@ -95,6 +98,7 @@ export function useAudioManager(wordArray: Item[]) {
 
   return {
     playAudio,
+
     stopAudio,
     muteAudio,
     unmuteAudio,

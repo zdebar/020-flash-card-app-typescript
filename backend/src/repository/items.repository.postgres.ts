@@ -25,7 +25,6 @@ export async function getItemsRepository(
           i.pronunciation,
           i.audio,
           COALESCE(ui.progress, 0) AS progress,
-          i.first_in_lecture,
           COUNT(b.id) > 0 as has_info 
       FROM items i
       LEFT JOIN user_items ui ON i.id = ui.item_id AND ui.user_id = (SELECT user_id FROM user_cte)

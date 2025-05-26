@@ -102,6 +102,7 @@ export default function PracticeCard() {
     setDirection(newDirection);
 
     if (!newDirection && currentItem?.audio) {
+      console.log('Playing audio:', currentItem.audio);
       setTimeout(() => playAudio(currentItem.audio!), 100);
     }
   }, [currentItem, reload, playAudio]);
