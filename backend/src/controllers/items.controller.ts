@@ -88,8 +88,9 @@ export const postPronunciationController = async (
   next: Function
 ): Promise<void> => {
   try {
-    const englishText = req.query.englishText || req.headers["x-english-text"];
-    const ipaText = req.query.ipaText || req.headers["x-ipa-text"];
+    const englishText = req.headers["x-english-text"];
+    const ipaText = decodeURIComponent(req.headers["x-ipa-text"] as string);
+
     if (!englishText || !ipaText) {
       res
         .status(400)
@@ -104,6 +105,8 @@ export const postPronunciationController = async (
         .json({ message: "Audio file is required as binary data." });
       return;
     }
+
+    console.log("Processing pronunciation with IPA:", englishText, ipaText);
 
     const similarity = await processPronunciationWithIPA(
       audioBuffer,

@@ -16,6 +16,7 @@ import { useUser } from '../hooks/useUser';
 import InfoCard from './InfoCard';
 import Loading from './common/Loading';
 import TopBar from './common/TopBar';
+import { usePronunciation } from '../hooks/usePronunciation';
 
 export default function PracticeCard() {
   const apiPath = '/api/items';
@@ -37,6 +38,13 @@ export default function PracticeCard() {
   const [direction, setDirection] = useState(false);
   const [error, setError] = useState<PracticeError | null>(null);
   const { setUserScore } = useUser();
+  const {
+    similarity,
+    isAudioChecking,
+    isRecording,
+    startRecording,
+    stopRecording,
+  } = usePronunciation();
 
   const patchItems = useCallback(
     async (onBlockEnd: boolean, updateArray: Item[]) => {
@@ -138,6 +146,7 @@ export default function PracticeCard() {
             hintIndex={hintIndex}
             setVolume={setVolume}
             error={error}
+            audioSimilarity={similarity}
           ></Card>
           <PracticeControls
             revealed={revealed}
@@ -160,6 +169,15 @@ export default function PracticeCard() {
               setRevealed(false);
             }}
             handleHint={() => setHintIndex((prevIndex) => prevIndex + 1)}
+            isAudioChecking={isAudioChecking}
+            isRecording={isRecording}
+            startRecording={startRecording}
+            stopRecording={() =>
+              stopRecording(
+                currentItem?.english || '',
+                currentItem?.pronunciation || ''
+              )
+            }
           />
         </div>
       )}

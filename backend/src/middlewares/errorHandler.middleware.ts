@@ -1,7 +1,6 @@
 import { NextFunction, Response, Request } from "express";
-import logger, { logErrorWithDetails } from "../utils/logger.utils";
+import { logErrorWithDetails } from "../utils/logger.utils";
 import { UserError } from "../../../shared/types/dataTypes";
-import { log } from "console";
 
 export default function errorHandlerMiddleware(
   err: Error,
@@ -10,13 +9,13 @@ export default function errorHandlerMiddleware(
   next: NextFunction
 ): void {
   // Log the error
-  logErrorWithDetails(err, "errorHandlerMiddleware", {
-    method: req.method,
-    url: req.originalUrl,
-    body: req.body,
-    query: req.query,
-    params: req.params,
-  });
+  // logErrorWithDetails(err, "errorHandlerMiddleware", {
+  //   method: req.method,
+  //   url: req.originalUrl,
+  //   body: req.body,
+  //   query: req.query,
+  //   params: req.params,
+  // });
 
   // Send the response
   if (err instanceof UserError) {

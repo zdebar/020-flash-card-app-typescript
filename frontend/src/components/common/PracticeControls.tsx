@@ -17,6 +17,10 @@ interface PracticeControlsProps {
   handlePlus: () => void;
   handleMinus: () => void;
   handleHint: () => void;
+  startRecording?: () => void;
+  stopRecording?: () => void;
+  isAudioChecking?: boolean;
+  isRecording?: boolean;
 }
 
 export default function PracticeControls({
@@ -28,6 +32,10 @@ export default function PracticeControls({
   handlePlus,
   handleMinus,
   handleHint,
+  startRecording,
+  stopRecording,
+  isAudioChecking = false,
+  isRecording = false,
 }: PracticeControlsProps) {
   const isAudioDisabled = (direction && !revealed) || noAudio;
 
@@ -43,9 +51,12 @@ export default function PracticeControls({
           <AudioIcon></AudioIcon>
         </Button>
         <Button
-          disabled={true}
+          disabled={isAudioChecking}
           className="button-rectangular"
           aria-label="Mikrofon (zatím nedostupné)"
+          onMouseDown={startRecording}
+          onMouseUp={stopRecording}
+          buttonColor={isRecording ? 'button-tertiary' : 'button-primary'}
         >
           <MicrophoneIcon></MicrophoneIcon>
         </Button>

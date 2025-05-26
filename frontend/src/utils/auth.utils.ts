@@ -30,22 +30,18 @@ export const fetchWithAuthAndParse = async <T>(
         throw new Error('Unauthorized. Please log in again.');
       }
 
-      try {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'An error occurred.');
-      } catch {
-        throw new Error('Failed to parse error response.');
-      }
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'An error occurred.');
     }
 
     try {
       return await response.json();
     } catch {
-      console.warn('Response succeeded, but data could not be parsed.');
+      console.log('Response succeeded, but data could not be parsed.');
       return null;
     }
   } catch (error) {
-    console.error('Error during fetch:', error);
+    console.log('Error during fetch:', error);
     return null;
   }
 };

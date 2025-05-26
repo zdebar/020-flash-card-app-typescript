@@ -11,6 +11,7 @@ import { addAudioPath } from "../utils/update.utils";
 import { promisify } from "util";
 import { exec } from "child_process";
 import fs from "fs";
+import os from "os";
 import path from "path";
 
 const execAsync = promisify(exec);
@@ -70,43 +71,49 @@ export async function processPronunciationWithIPA(
   englishText: string,
   ipaText: string
 ): Promise<number[]> {
-  // Paths for dictionary and model
-  const dictionaryPath = path.join(
-    __dirname,
-    "../resources/dictionary/english_us_arpa.dict"
-  );
-  const modelPath = path.join(__dirname, "../resources/models/english");
+  try {
+    const dictionaryPath = path.join(
+      __dirname,
+      "../resources/dictionary/english_us_arpa.dict"
+    );
+    const modelPath = path.join(__dirname, "../resources/models/english");
 
-  // Temporary paths
-  const workDir = "/dev/shm";
-  const audioPath = path.join(workDir, "audio.wav");
-  const textPath = path.join(workDir, "audio.txt");
-  const outputDir = path.join(workDir, "output");
+    // Use a temporary directory
+    const workDir = os.tmpdir(); // Use the system's temporary directory
+    const audioPath = path.join(workDir, "audio.wav");
+    const textPath = path.join(workDir, "audio.txt");
+    const outputDir = path.join(workDir, "output");
 
-  // Write files
-  fs.writeFileSync(audioPath, audioBuffer);
-  fs.writeFileSync(textPath, englishText);
-  fs.mkdirSync(outputDir, { recursive: true });
+    // Ensure the output directory exists
+    fs.mkdirSync(outputDir, { recursive: true });
 
-  // Run MFA
-  const mfaCmd = `mfa align ${workDir} ${dictionaryPath} ${modelPath} ${outputDir}`;
-  await execAsync(mfaCmd);
+    // Write files
+    fs.writeFileSync(audioPath, audioBuffer);
+    fs.writeFileSync(textPath, englishText);
 
-  // Read TextGrid
-  const textGridPath = path.join(outputDir, "audio.TextGrid");
-  const textGrid = fs.readFileSync(textGridPath, "utf-8");
+    // Run MFA
+    const mfaCmd = `mfa align ${workDir} ${dictionaryPath} ${modelPath} ${outputDir}`;
+    await execAsync(mfaCmd);
 
-  // Extract phonemes from TextGrid
-  const alignedPhonemes = extractPhonemes(textGrid);
+    // Read TextGrid
+    const textGridPath = path.join(outputDir, "audio.TextGrid");
+    const textGrid = fs.readFileSync(textGridPath, "utf-8");
 
-  // Compare with IPA
-  const ipaPhonemes = ipaText.split(" ");
-  const similarity = comparePhonemes(alignedPhonemes, ipaPhonemes);
+    // Extract phonemes from TextGrid
+    const alignedPhonemes = extractPhonemes(textGrid);
 
-  // Cleanup
-  fs.unlinkSync(audioPath);
-  fs.unlinkSync(textPath);
-  fs.rmdirSync(outputDir, { recursive: true });
+    // Compare with IPA
+    const ipaPhonemes = ipaText.split(" ");
+    const similarity = comparePhonemes(alignedPhonemes, ipaPhonemes);
 
-  return similarity;
+    // Cleanup
+    fs.unlinkSync(audioPath);
+    fs.unlinkSync(textPath);
+    fs.rmdirSync(outputDir, { recursive: true });
+
+    return similarity;
+  } catch (error) {
+    console.log("Error processing pronunciation:", error);
+    throw new Error("Failed to process pronunciation with IPA.");
+  }
 }
