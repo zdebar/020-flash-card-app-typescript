@@ -1,9 +1,13 @@
 import csv
 from collections import defaultdict
+from typing import List, Tuple, Dict
+
+# Define types
+PronunciationDict = Dict[str, List[Tuple[str, str]]]
 
 # Načtení dat
-pron_dict = defaultdict(list)
-with open('items_202505181556.csv', encoding='utf-8') as f:
+pron_dict: PronunciationDict = defaultdict(list)
+with open('../export/database_export.csv', encoding='utf-8') as f:
     reader = csv.DictReader(f)
     for row in reader:
         # Přeskočíme prázdnou výslovnost
@@ -21,8 +25,8 @@ with open('homophones_grouped.csv', 'w', encoding='utf-8', newline='') as f:
     writer.writerow(['pronunciation', 'ids'])
     for pron, id_eng_list in pron_dict.items():
         # Unikátní english hodnoty (case-insensitive), zachová první výskyt
-        seen = set()
-        filtered = []
+        seen: set[str] = set()
+        filtered: List[Tuple[str, str]] = []
         for id_, eng in id_eng_list:
             eng_lower = eng.lower()
             if eng_lower not in seen:
@@ -30,5 +34,5 @@ with open('homophones_grouped.csv', 'w', encoding='utf-8', newline='') as f:
                 filtered.append((id_, eng))
         # Pokud jsou alespoň dvě různé english, vypíšeme všechny id
         if len(filtered) > 1:
-            ids = [id_ for id_, _ in filtered]
+            ids: List[str] = [id_ for id_, _ in filtered]
             writer.writerow([pron, ','.join(ids)])

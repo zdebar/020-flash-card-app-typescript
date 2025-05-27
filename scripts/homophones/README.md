@@ -1,4 +1,4 @@
 # Sdružuje stejně znějící slova
 
-postup dle čísel python scriptů
-následně import do blocks, a bloc_items
+01_same_sounding // vybere slova která se liší pouze problematickou hláskou
+02_flatten // připraví export do databáze pro tables blocks, block_items

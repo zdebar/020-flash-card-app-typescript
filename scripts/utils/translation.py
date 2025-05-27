@@ -1,12 +1,11 @@
 import requests
-from googletrans import Translator
 from dotenv import load_dotenv
 import os
 
 # Load environment variables from .env file
 load_dotenv()
 
-def translate_to_czech(text: str) -> str:
+def translate_to_czech_Google_Translate(text: str) -> str:
     """
     Translates a given text from English to Czech using the Google Translate API.
 
@@ -38,17 +37,4 @@ def translate_to_czech(text: str) -> str:
         error_message = response_data.get("error", {}).get("message", "Unknown error")
         raise Exception(f"Translation API error: {error_message}")
 
-def translate_to_czech_no_api_key(text: str) -> str:
-    """
-    Translates a given text from English to Czech using the googletrans library.
-
-    Args:
-        text (str): The text to translate.
-
-    Returns:
-        str: The translated text in Czech.
-    """
-    translator = Translator()
-    translation = translator.translate(text, src='en', dest='cs')
-    return translation.text
 
