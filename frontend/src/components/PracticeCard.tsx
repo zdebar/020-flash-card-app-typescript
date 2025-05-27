@@ -43,16 +43,12 @@ export default function PracticeCard() {
   // Sending user progress to the server
   const patchItems = useCallback(
     async (onBlockEnd: boolean, updatedProgress: number[]) => {
-      console.log('Patching items with progress:', updatedProgress); // Debugging line
-
       const updatedArray = array
         .filter((_, idx) => idx < updatedProgress.length)
         .map((item, idx) => ({
           ...item,
           progress: updatedProgress[idx],
         }));
-
-      console.log('Patching items:', updatedArray); // Debugging line
 
       if (updatedArray.length === 0) return;
       setUserProgress([]);
@@ -93,8 +89,8 @@ export default function PracticeCard() {
       if (arrayLength > 0) {
         if (index + 1 >= arrayLength) {
           await patchItems(true, updatedProgress);
-          setReload(true);
           setAudioReload(true);
+          setReload(true);
         } else {
           setUserProgress(updatedProgress);
           nextIndex();
