@@ -26,11 +26,12 @@ export default function PracticeCard() {
     index,
     nextIndex,
     arrayLength,
-    setReload,
     reload,
+    setReload,
     currentItem,
   } = useArray<Item>(apiPath);
-  const { playAudio, setVolume, stopAudio } = useAudioManager(array);
+  const { playAudio, setVolume, stopAudio, setAudioReload, audioReload } =
+    useAudioManager(array);
 
   const [revealed, setRevealed] = useState(false);
   const [hintIndex, setHintIndex] = useState(0);
@@ -104,16 +105,21 @@ export default function PracticeCard() {
   );
 
   useEffect(() => {
-    if (reload) return;
+    if (!reload) {
+      setAudioReload(true);
+    }
+  }, [setAudioReload, reload]);
+
+  useEffect(() => {
+    if (audioReload) return;
 
     const newDirection = alternateDirection(currentItem?.progress);
     setDirection(newDirection);
 
     if (!newDirection && currentItem?.audio) {
-      console.log('Playing audio:', currentItem.audio);
       setTimeout(() => playAudio(currentItem.audio!), 100);
     }
-  }, [currentItem, reload, playAudio]);
+  }, [currentItem, playAudio, audioReload]);
 
   usePatchOnUnmount(patchItems, index, array);
 

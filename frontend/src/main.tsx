@@ -8,12 +8,12 @@ const rootElement = document.getElementById('root') as HTMLElement;
 
 if (rootElement) {
   createRoot(rootElement).render(
-    // <StrictMode>
-    <UserProvider>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </UserProvider>
-    // </StrictMode>
+    <StrictMode>
+      <UserProvider>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </UserProvider>
+    </StrictMode>
   );
 }

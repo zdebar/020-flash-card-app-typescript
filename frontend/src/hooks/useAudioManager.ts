@@ -7,29 +7,26 @@ export function useAudioManager(wordArray: Item[]) {
   const currentAudioRef = useRef<HTMLAudioElement | null>(null); // Track the currently playing audio
   const volumeRef = useRef(1); // Store the current volume (default is 1)
   const [isPlaying, setIsPlaying] = useState(false);
+  const [audioReload, setAudioReload] = useState(false);
 
-  // Fetch and cache audio files when the component mounts or wordArray changes
+  // Fetch and cache audio files when the component mounts or new wordArray
   useEffect(() => {
-    console.log('useAudioManager: Caching audio files...');
-
+    // new wordArray is provided
+    if (!audioReload) return;
     const cacheAudio = async () => {
       try {
         if (wordArray.length > 0) {
           await fetchAndCacheAudioFiles(wordArray, audioCacheRef.current);
         }
         console.log('Audio files cached successfully.');
+        setAudioReload(false);
       } catch (error) {
         console.error('Error caching audio files:', error);
       }
     };
 
     cacheAudio();
-
-    const currentRef = audioCacheRef.current;
-    return () => {
-      currentRef.clear();
-    };
-  }, [wordArray]);
+  }, [wordArray, audioReload]);
 
   // Function to play audio
   const playAudio = useCallback((audioPath: string | null) => {
@@ -52,8 +49,7 @@ export function useAudioManager(wordArray: Item[]) {
           .then(() => {
             setIsPlaying(true);
           })
-          .catch((error) => {
-            console.error('Error playing audio:', error);
+          .catch(() => {
             setIsPlaying(false);
           });
 
@@ -98,11 +94,12 @@ export function useAudioManager(wordArray: Item[]) {
 
   return {
     playAudio,
-
     stopAudio,
     muteAudio,
     unmuteAudio,
     setVolume,
     isPlaying,
+    audioReload,
+    setAudioReload,
   };
 }

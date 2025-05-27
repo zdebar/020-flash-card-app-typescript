@@ -7,15 +7,16 @@ const MAX_BLOCKS = 20;
 
 interface PracticeCardBarProps {
   blocks: number;
+  className?: string;
 }
 
-function BarComponent({ blocks }: PracticeCardBarProps) {
+function BarComponent({ blocks, className }: PracticeCardBarProps) {
   const level = Math.min(Math.floor(blocks / BLOCKS_PER_FILL), MAX_BLOCKS);
   const subLevel = blocks - level * BLOCKS_PER_FILL;
 
   return (
     <div
-      className="color-disabled color-text flex w-40 justify-center border-r-1"
+      className={`color-disabled color-text h-12 ${className} flex justify-center border-r-1`}
       role="progressbar"
       aria-label="Úroveň pokroku"
       aria-valuenow={level}
@@ -47,7 +48,7 @@ function BarComponent({ blocks }: PracticeCardBarProps) {
         return (
           <div
             key={idx}
-            className={`h-12 w-2 border-l-1${filled && color ? ` ${color}` : ''}`}
+            className={`h-full w-2 border-l-1${filled && color ? ` ${color}` : ''}`}
           ></div>
         );
       })}

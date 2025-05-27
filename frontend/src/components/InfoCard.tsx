@@ -27,13 +27,13 @@ export default function InfoCard({
   return (
     <div className="card">
       <div className="flex w-full gap-1">
-        <div className="color-disabled shape-rectangular flex flex-10 flex-col justify-center pl-4">
+        <div className="color-disabled shape-rectangular flex flex-col justify-center pl-4">
           <h2 className="font-semibold">{current.block_name}</h2>
         </div>
         <Button
           name="close"
           type="button"
-          className="button-rectangular flex-2"
+          className="button-rectangular w-23"
           onClick={() => setVisibility(false)}
           aria-label="Zavřít informace"
         >

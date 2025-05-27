@@ -18,13 +18,11 @@ export default function TopBar({
   const { userScore } = useUser();
   const blockCount = userScore?.blockCount?.[0] || 0;
   const infoButtonColor =
-    item?.first_in_lecture && item?.progress === 0
-      ? 'button-secondary'
-      : 'button-primary';
+    item?.progress === 0 ? 'button-secondary' : 'button-primary';
 
   return (
     <div className="button-rectangular flex gap-1">
-      <div className="color-disabled shape-rectangular color-text flex h-full flex-1 items-center justify-center px-2 text-sm font-semibold">
+      <div className="color-disabled shape-rectangular color-text flex h-full items-center justify-center px-2 text-sm font-semibold">
         {blockCount}
       </div>
       <PracticeCardBar blocks={blockCount} />
@@ -32,7 +30,7 @@ export default function TopBar({
         onClick={() => setInfoVisibility(true)}
         disabled={!item?.has_info || !revelead}
         buttonColor={infoButtonColor}
-        className="shape-rectangular flex-1"
+        className="shape-rectangular"
         aria-label="Zobrazit informace"
       >
         <InfoIcon />
