@@ -22,7 +22,7 @@ export function useArray<T>(apiPath: string) {
   }
 
   useEffect(() => {
-    // data should be fetched / on mount, on reload state; only once even in StrictMode
+    // data should be fetched / on mount, on reload state
     if (loading || !reload) return;
 
     const fetchData = async () => {

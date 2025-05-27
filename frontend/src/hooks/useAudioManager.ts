@@ -9,16 +9,14 @@ export function useAudioManager(wordArray: Item[]) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioReload, setAudioReload] = useState(false);
 
-  // Fetch and cache audio files when the component mounts or new wordArray
   useEffect(() => {
-    // new wordArray is provided
-    if (!audioReload) return;
     const cacheAudio = async () => {
       try {
         if (wordArray.length > 0) {
           await fetchAndCacheAudioFiles(wordArray, audioCacheRef.current);
+          console.log('Audio files cached successfully.', wordArray);
         }
-        console.log('Audio files cached successfully.');
+
         setAudioReload(false);
       } catch (error) {
         console.error('Error caching audio files:', error);
@@ -26,7 +24,7 @@ export function useAudioManager(wordArray: Item[]) {
     };
 
     cacheAudio();
-  }, [wordArray, audioReload]);
+  }, [wordArray]);
 
   // Function to play audio
   const playAudio = useCallback((audioPath: string | null) => {

@@ -21,8 +21,8 @@ export default function TopBar({
     item?.progress === 0 ? 'button-secondary' : 'button-primary';
 
   return (
-    <div className="button-rectangular flex gap-1">
-      <div className="color-disabled shape-rectangular color-text flex h-full items-center justify-center px-2 text-sm font-semibold">
+    <div className="flex min-h-12 gap-1">
+      <div className="color-disabled shape-rectangular color-text flex items-center justify-center px-2 text-sm font-semibold">
         {blockCount}
       </div>
       <PracticeCardBar blocks={blockCount} />

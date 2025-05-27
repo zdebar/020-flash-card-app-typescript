@@ -13,7 +13,7 @@ export async function getItemsRepository(
 ): Promise<Item[]> {
   const numWords: number = config.round;
 
-  const runQuery = async (isOdd: number): Promise<Item[]> => {
+  const runQuery = async (): Promise<Item[]> => {
     const query = `
       WITH user_cte AS (
           SELECT id AS user_id FROM users WHERE uid = $1
@@ -32,29 +32,31 @@ export async function getItemsRepository(
       LEFT JOIN blocks b ON bi.block_id = b.id
       WHERE ui.mastered_at IS NULL
         AND (ui.next_at IS NULL OR ui.next_at < NOW())
-        AND ((COALESCE(ui.progress, 0) % 2 = $2) or ui.progress is null)
       GROUP BY 
           i.id, i.czech, i.english, i.pronunciation, i.audio, ui.progress, b.block_order, ui.next_at
       ORDER BY 
           ui.next_at ASC NULLS LAST,
           COALESCE(i.item_order, b.block_order) asc nulls last,
           i.id ASC
-      LIMIT $3;
+      LIMIT $2;
     `;
 
     const res = await withDbClient(db, async (client) => {
-      return await client.query(query, [uid, isOdd, numWords]);
+      return await client.query(query, [uid, numWords]);
     });
 
     return res.rows;
   };
 
-  const randomChoice = Math.random() < 0.5 ? 1 : 0;
-  let items = await runQuery(randomChoice);
+  let items = await runQuery();
 
-  if (items.length < numWords) {
-    items = await runQuery(0);
-  }
+  items = items.sort((a, b) => {
+    const isEvenA = a.progress % 2 === 0;
+    const isEvenB = b.progress % 2 === 0;
+    if (isEvenA && !isEvenB) return -1;
+    if (!isEvenA && isEvenB) return 1;
+    return 0;
+  });
 
   return items;
 }

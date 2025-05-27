@@ -20,19 +20,12 @@ import { usePronunciation } from '../hooks/usePronunciation';
 
 export default function PracticeCard() {
   const apiPath = '/api/items';
-  const {
-    array,
-    setArray,
-    index,
-    nextIndex,
-    arrayLength,
-    reload,
-    setReload,
-    currentItem,
-  } = useArray<Item>(apiPath);
-  const { playAudio, setVolume, stopAudio, setAudioReload, audioReload } =
+  const { array, index, nextIndex, arrayLength, setReload, currentItem } =
+    useArray<Item>(apiPath);
+  const { playAudio, setVolume, stopAudio, audioReload, setAudioReload } =
     useAudioManager(array);
 
+  const [userProgress, setUserProgress] = useState<number[]>([]);
   const [revealed, setRevealed] = useState(false);
   const [hintIndex, setHintIndex] = useState(0);
   const [infoVisibility, setInfoVisibility] = useState(false);
@@ -47,8 +40,23 @@ export default function PracticeCard() {
     stopRecording,
   } = usePronunciation();
 
+  // Sending user progress to the server
   const patchItems = useCallback(
-    async (onBlockEnd: boolean, updateArray: Item[]) => {
+    async (onBlockEnd: boolean, updatedProgress: number[]) => {
+      console.log('Patching items with progress:', updatedProgress); // Debugging line
+
+      const updatedArray = array
+        .filter((_, idx) => idx < updatedProgress.length)
+        .map((item, idx) => ({
+          ...item,
+          progress: updatedProgress[idx],
+        }));
+
+      console.log('Patching items:', updatedArray); // Debugging line
+
+      if (updatedArray.length === 0) return;
+      setUserProgress([]);
+
       try {
         const response = await fetchWithAuthAndParse<{
           score: UserScore | null;
@@ -56,7 +64,7 @@ export default function PracticeCard() {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            items: updateArray,
+            items: updatedArray,
             onBlockEnd,
           }),
         });
@@ -67,49 +75,46 @@ export default function PracticeCard() {
         console.error('Error posting words:', error);
       }
     },
-    [apiPath, setUserScore]
+    [apiPath, setUserScore, array]
   );
 
+  // Update userProgress, if end of array reached, patch items
   const updateItemArray = useCallback(
     async (progressIncrement: number = 0) => {
-      const updatedItemArray = [...array];
-
+      setRevealed(false);
       stopAudio();
 
-      if (!array[index]) return;
-      updatedItemArray[index] = {
-        ...updatedItemArray[index],
-        progress: Math.max(array[index].progress + progressIncrement, 0),
-      };
+      const newProgress = Math.max(
+        array[index].progress + progressIncrement,
+        0
+      );
+      const updatedProgress = userProgress.concat(newProgress);
 
       if (arrayLength > 0) {
         if (index + 1 >= arrayLength) {
-          await patchItems(true, updatedItemArray);
+          await patchItems(true, updatedProgress);
           setReload(true);
+          setAudioReload(true);
         } else {
-          setArray(updatedItemArray);
+          setUserProgress(updatedProgress);
           nextIndex();
         }
       }
     },
     [
       array,
-      index,
       arrayLength,
-      setArray,
+      index,
       nextIndex,
-      setReload,
       patchItems,
+      setReload,
+      setAudioReload,
       stopAudio,
+      userProgress,
     ]
   );
 
-  useEffect(() => {
-    if (!reload) {
-      setAudioReload(true);
-    }
-  }, [setAudioReload, reload]);
-
+  // Set direction based on current item progress, play audio if needed
   useEffect(() => {
     if (audioReload) return;
 
@@ -121,8 +126,10 @@ export default function PracticeCard() {
     }
   }, [currentItem, playAudio, audioReload]);
 
-  usePatchOnUnmount(patchItems, index, array);
+  // Patch items on unmount
+  usePatchOnUnmount(patchItems, userProgress);
 
+  // Error setter
   useEffect(() => {
     if (!currentItem?.audio) {
       setError(PracticeError.NoAudio);
@@ -169,11 +176,9 @@ export default function PracticeCard() {
             }}
             handlePlus={() => {
               updateItemArray(config.plusProgress);
-              setRevealed(false);
             }}
             handleMinus={() => {
               updateItemArray(config.minusProgress);
-              setRevealed(false);
             }}
             handleHint={() => setHintIndex((prevIndex) => prevIndex + 1)}
             isAudioChecking={isAudioChecking}
