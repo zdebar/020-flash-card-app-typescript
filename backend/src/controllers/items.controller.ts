@@ -5,7 +5,6 @@ import {
   getItemsService,
   patchItemsService,
   getItemInfoService,
-  processPronunciationWithIPA,
 } from "../services/items.service";
 
 /**
@@ -81,44 +80,3 @@ export async function getInfoController(
     next(err);
   }
 }
-
-export const postPronunciationController = async (
-  req: Request,
-  res: Response,
-  next: Function
-): Promise<void> => {
-  try {
-    const englishText = req.headers["x-english-text"];
-    const ipaText = decodeURIComponent(req.headers["x-ipa-text"] as string);
-
-    if (!englishText || !ipaText) {
-      res
-        .status(400)
-        .json({ message: "English text and IPA text are required." });
-      return;
-    }
-
-    const audioBuffer = req.body;
-    if (!audioBuffer || !Buffer.isBuffer(audioBuffer)) {
-      res
-        .status(400)
-        .json({ message: "Audio file is required as binary data." });
-      return;
-    }
-
-    console.log("Processing pronunciation with IPA:", englishText, ipaText);
-
-    const similarity = await processPronunciationWithIPA(
-      audioBuffer,
-      englishText as string,
-      ipaText as string
-    );
-
-    res.status(200).json({
-      message: "Phoneme comparison successful.",
-      similarity,
-    });
-  } catch (err) {
-    next(err);
-  }
-};

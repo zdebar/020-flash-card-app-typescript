@@ -11,7 +11,6 @@ interface CardProps {
   hintIndex?: number;
   setVolume: (volume: number) => void;
   error: PracticeError | null;
-  audioSimilarity?: number[] | null;
 }
 
 function getErrorMessage(error: PracticeError | null) {
@@ -23,12 +22,6 @@ function getErrorMessage(error: PracticeError | null) {
   }
 }
 
-function getColorForSimilarity(similarity: number): string {
-  if (similarity >= 0.9) return 'text-green-500';
-  if (similarity <= 0.1) return 'text-red-500';
-  return 'text-yellow-500'; // For partial matches like 0.5
-}
-
 export default function Card({
   item,
   index,
@@ -38,7 +31,6 @@ export default function Card({
   hintIndex,
   setVolume,
   error,
-  audioSimilarity,
 }: CardProps) {
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
   const [volume, setVolumeState] = useState(1);
@@ -97,22 +89,7 @@ export default function Card({
               .slice(0, hintIndex ?? item?.english.length)
               .padEnd(item?.english.length, '\u00A0')}
       </p>
-      <p className="pb-1">
-        {revealed && item?.pronunciation
-          ? item.pronunciation.split(' ').map((phoneme, idx) => (
-              <span
-                key={idx}
-                className={
-                  audioSimilarity
-                    ? getColorForSimilarity(audioSimilarity[idx] || 0)
-                    : ''
-                }
-              >
-                {phoneme}
-              </span>
-            ))
-          : '\u00A0'}
-      </p>
+      <p className="pb-1">{revealed ? item?.pronunciation : '\u00A0'}</p>
       <div className="flex w-full items-center justify-between">
         <p className="flex w-full justify-start text-sm">{item?.progress}</p>
         <p className="text-sm whitespace-nowrap text-red-500">{errorMessage}</p>
