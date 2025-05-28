@@ -79,19 +79,21 @@ export default function Card({
         </p>
       </div>
 
-      <p className="pt-1 text-center font-bold">
-        {direction || revealed ? item.czech : '\u00A0'}
-      </p>
-      <p className="text-center">
-        {revealed || (noAudio && !direction)
-          ? item?.english
-          : item?.english
-              .slice(0, hintIndex ?? item?.english.length)
-              .padEnd(item?.english.length, '\u00A0')}
-      </p>
-      <p className="pb-1 text-center">
-        {revealed ? item?.pronunciation || '\u00A0' : '\u00A0'}
-      </p>
+      <div>
+        <p className="text-center font-bold">
+          {direction || revealed ? item.czech : '\u00A0'}
+        </p>
+        <p className="text-center">
+          {revealed || (noAudio && !direction)
+            ? item?.english
+            : item?.english
+                .slice(0, hintIndex ?? item?.english.length)
+                .padEnd(item?.english.length, '\u00A0')}
+        </p>
+        <p className="text-center">
+          {revealed ? item?.pronunciation || '\u00A0' : '\u00A0'}
+        </p>
+      </div>
       <div className="flex w-full items-center justify-between">
         <p className="flex w-full justify-start text-sm">{item?.progress}</p>
         <p className="text-sm whitespace-nowrap text-red-500">{errorMessage}</p>

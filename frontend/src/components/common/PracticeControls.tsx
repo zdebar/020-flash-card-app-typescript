@@ -25,7 +25,7 @@ export default function PracticeControls({
   const isAudioDisabled = (direction && !revealed) || noAudio;
 
   return (
-    <div className="flex w-full justify-between gap-1">
+    <div className="flex min-h-15 w-full justify-between gap-1">
       <Button
         onClick={handleAudio}
         disabled={isAudioDisabled}
@@ -38,14 +38,14 @@ export default function PracticeControls({
         <>
           <Button
             onClick={handleHint}
-            className="button-rectangular"
+            className="shape-rectangular"
             aria-label="Nápověda"
           >
             <HintIcon></HintIcon>
           </Button>
           <Button
             onClick={handleReveal}
-            className="button-rectangular"
+            className="shape-rectangular"
             aria-label="Zobrazit odpověď"
           >
             <EyeIcon></EyeIcon>
@@ -55,14 +55,14 @@ export default function PracticeControls({
         <>
           <Button
             onClick={handleMinus}
-            className="button-rectangular button-secondary"
+            className="shape-rectangular button-secondary"
             aria-label="Snížit skore"
           >
             <MinusIcon></MinusIcon>
           </Button>
           <Button
             onClick={handlePlus}
-            className="button-rectangular button-secondary"
+            className="shape-rectangular button-secondary"
             aria-label="Zvýšit skore"
           >
             <PlusIcon></PlusIcon>

@@ -17,8 +17,6 @@ export default function TopBar({
 }: TopBarProps) {
   const { userScore } = useUser();
   const blockCount = userScore?.blockCount?.[0] || 0;
-  const infoButtonColor =
-    item?.progress === 0 ? 'button-secondary' : 'button-primary';
 
   return (
     <div className="flex min-h-12 gap-1">
@@ -29,7 +27,7 @@ export default function TopBar({
       <Button
         onClick={() => setInfoVisibility(true)}
         disabled={!item?.has_info || !revelead}
-        buttonColor={infoButtonColor}
+        buttonColor="button-secondary"
         className="shape-rectangular"
         aria-label="Zobrazit informace"
       >
