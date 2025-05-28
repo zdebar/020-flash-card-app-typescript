@@ -104,12 +104,10 @@ export default function PracticeCard() {
 
   // Set direction based on current item progress, play audio if needed
   useEffect(() => {
-    if (audioReload) return;
-
     const newDirection = alternateDirection(currentItem?.progress);
     setDirection(newDirection);
 
-    if (!newDirection && currentItem?.audio) {
+    if (!newDirection && currentItem?.audio && !audioReload) {
       setTimeout(() => playAudio(currentItem.audio!), 100);
     }
   }, [currentItem, playAudio, audioReload]);

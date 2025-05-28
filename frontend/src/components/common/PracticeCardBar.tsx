@@ -1,6 +1,6 @@
 import React from 'react';
 import config from '../../config/config';
-import { getColor } from '../../utils/graph.utils';
+import { getBarColor } from '../../utils/graph.utils';
 
 const BLOCKS_PER_FILL = config.blockFillSize;
 const MAX_BLOCKS = 20;
@@ -26,7 +26,7 @@ function BarComponent({ blocks, className }: PracticeCardBarProps) {
     >
       {[...Array(MAX_BLOCKS)].map((_, idx) => {
         const filled = idx < level;
-        const color = getColor(idx + 1);
+        const color = getBarColor(idx + 1);
 
         if (idx === level) {
           return (

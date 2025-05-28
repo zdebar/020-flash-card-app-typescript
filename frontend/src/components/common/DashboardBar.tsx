@@ -1,5 +1,5 @@
 import config from '../../config/config';
-import { getColor } from '../../utils/graph.utils';
+import { getBarColor } from '../../utils/graph.utils';
 
 const BLOCKS_PER_FILL = config.blockFillSize; // Number of blocks to fill in the progress bar
 const MAX_BLOCKS = 20;
@@ -11,7 +11,7 @@ export default function DashboardBar({ blocks }: { blocks: number }) {
     <div className="color-disabled flex w-40 justify-center border-r-1">
       {[...Array(MAX_BLOCKS)].map((_, idx) => {
         const filled = idx < level;
-        const color = getColor(idx + 1);
+        const color = getBarColor(idx + 1);
 
         return (
           <div

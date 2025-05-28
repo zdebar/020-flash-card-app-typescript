@@ -89,7 +89,9 @@ export default function Card({
               .slice(0, hintIndex ?? item?.english.length)
               .padEnd(item?.english.length, '\u00A0')}
       </p>
-      <p className="pb-1">{revealed ? item?.pronunciation : '\u00A0'}</p>
+      <p className="pb-1">
+        {revealed ? item?.pronunciation || '\u00A0' : '\u00A0'}
+      </p>
       <div className="flex w-full items-center justify-between">
         <p className="flex w-full justify-start text-sm">{item?.progress}</p>
         <p className="text-sm whitespace-nowrap text-red-500">{errorMessage}</p>
