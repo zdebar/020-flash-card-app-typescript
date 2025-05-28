@@ -79,17 +79,17 @@ export default function Card({
         </p>
       </div>
 
-      <p className="pt-1 font-bold">
+      <p className="pt-1 text-center font-bold">
         {direction || revealed ? item.czech : '\u00A0'}
       </p>
-      <p>
+      <p className="text-center">
         {revealed || (noAudio && !direction)
           ? item?.english
           : item?.english
               .slice(0, hintIndex ?? item?.english.length)
               .padEnd(item?.english.length, '\u00A0')}
       </p>
-      <p className="pb-1">
+      <p className="pb-1 text-center">
         {revealed ? item?.pronunciation || '\u00A0' : '\u00A0'}
       </p>
       <div className="flex w-full items-center justify-between">

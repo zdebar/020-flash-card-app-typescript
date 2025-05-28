@@ -26,25 +26,16 @@ export default function PracticeControls({
 
   return (
     <div className="flex w-full justify-between gap-1">
-      <div className="flex w-full flex-col gap-1">
-        <Button
-          onClick={handleAudio}
-          disabled={isAudioDisabled}
-          className="shape-rectangular"
-          aria-label="Přehrát audio"
-        >
-          <AudioIcon></AudioIcon>
-        </Button>
-      </div>
+      <Button
+        onClick={handleAudio}
+        disabled={isAudioDisabled}
+        className="shape-rectangular"
+        aria-label="Přehrát audio"
+      >
+        <AudioIcon></AudioIcon>
+      </Button>
       {!revealed ? (
-        <div className="flex w-full flex-col gap-1">
-          <Button
-            onClick={handleReveal}
-            className="button-rectangular"
-            aria-label="Zobrazit odpověď"
-          >
-            <EyeIcon></EyeIcon>
-          </Button>
+        <>
           <Button
             onClick={handleHint}
             className="button-rectangular"
@@ -52,16 +43,16 @@ export default function PracticeControls({
           >
             <HintIcon></HintIcon>
           </Button>
-        </div>
-      ) : (
-        <div className="flex w-full flex-col gap-1">
           <Button
-            onClick={handlePlus}
-            className="button-rectangular button-secondary"
-            aria-label="Zvýšit skore"
+            onClick={handleReveal}
+            className="button-rectangular"
+            aria-label="Zobrazit odpověď"
           >
-            <PlusIcon></PlusIcon>
+            <EyeIcon></EyeIcon>
           </Button>
+        </>
+      ) : (
+        <>
           <Button
             onClick={handleMinus}
             className="button-rectangular button-secondary"
@@ -69,7 +60,14 @@ export default function PracticeControls({
           >
             <MinusIcon></MinusIcon>
           </Button>
-        </div>
+          <Button
+            onClick={handlePlus}
+            className="button-rectangular button-secondary"
+            aria-label="Zvýšit skore"
+          >
+            <PlusIcon></PlusIcon>
+          </Button>
+        </>
       )}
     </div>
   );
