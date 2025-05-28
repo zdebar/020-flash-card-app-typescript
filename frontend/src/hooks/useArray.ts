@@ -6,7 +6,6 @@ export function useArray<T>(apiPath: string) {
   const [array, setArray] = useState<T[]>([]);
   const [index, setIndex] = useState(0);
   const [reload, setReload] = useState(true);
-  const [direction, setDirection] = useState(false);
   const { loading } = useUser();
 
   function wrapIndex(newIndex: number) {
@@ -53,7 +52,5 @@ export function useArray<T>(apiPath: string) {
     arrayLength: array.length,
     reload,
     setReload,
-    direction,
-    setDirection,
   };
 }

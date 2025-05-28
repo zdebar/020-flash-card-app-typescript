@@ -3,24 +3,26 @@ import PracticeControls from './common/PracticeControls';
 import config from '../config/config';
 import Card from './common/Card';
 import { useAudioManager } from '../hooks/useAudioManager';
-import { useArray } from '../hooks/useArray';
-import {
-  PracticeError,
-  Item,
-  UserScore,
-} from '../../../shared/types/dataTypes';
+import { PracticeError, UserScore } from '../../../shared/types/dataTypes';
 import { usePatchOnUnmount } from '../hooks/usePatchOnUnmount';
 import { fetchWithAuthAndParse } from '../utils/auth.utils';
-import { alternateDirection } from '../utils/practice.utils';
 import { useUser } from '../hooks/useUser';
+import { useItemArray } from '../hooks/useItemArray';
 import InfoCard from './InfoCard';
 import Loading from './common/Loading';
 import TopBar from './common/TopBar';
 
 export default function PracticeCard() {
   const apiPath = '/api/items';
-  const { array, index, nextIndex, arrayLength, setReload, currentItem } =
-    useArray<Item>(apiPath);
+  const {
+    array,
+    index,
+    nextIndex,
+    arrayLength,
+    setReload,
+    currentItem,
+    direction,
+  } = useItemArray(apiPath);
   const { playAudio, setVolume, stopAudio, audioReload, setAudioReload } =
     useAudioManager(array);
 
@@ -28,7 +30,6 @@ export default function PracticeCard() {
   const [revealed, setRevealed] = useState(false);
   const [hintIndex, setHintIndex] = useState(0);
   const [infoVisibility, setInfoVisibility] = useState(false);
-  const [direction, setDirection] = useState(false);
   const [error, setError] = useState<PracticeError | null>(null);
   const { setUserScore } = useUser();
 
@@ -104,13 +105,10 @@ export default function PracticeCard() {
 
   // Set direction based on current item progress, play audio if needed
   useEffect(() => {
-    const newDirection = alternateDirection(currentItem?.progress);
-    setDirection(newDirection);
-
-    if (!newDirection && currentItem?.audio && !audioReload) {
+    if (!direction && currentItem?.audio && !audioReload) {
       setTimeout(() => playAudio(currentItem.audio!), 100);
     }
-  }, [currentItem, playAudio, audioReload]);
+  }, [currentItem, playAudio, audioReload, direction]);
 
   // Patch items on unmount
   usePatchOnUnmount(patchItems, userProgress);
