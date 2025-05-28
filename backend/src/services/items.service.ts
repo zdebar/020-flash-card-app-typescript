@@ -36,7 +36,7 @@ export async function patchItemsService(
 }
 
 /**
- * Gets a list of words for a given user and language ID from the database.
+ * Gets ItemInfo for given item ID from the database.
  */
 export async function getItemInfoService(
   db: PostgresClient,

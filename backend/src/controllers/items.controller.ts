@@ -8,8 +8,7 @@ import {
 } from "../services/items.service";
 
 /**
- * Controller function to retrieve user-specific words based on source and target languages.
- *
+ * Controller function to retrieve user-specific practice words.
  */
 export async function getItemsController(
   req: Request,
@@ -31,7 +30,7 @@ export async function getItemsController(
 }
 
 /**
- * Updates the words associated with a user in the database. Sends back the updated score.
+ * Updates practice user_words progress. Sends back the updated score.
  */
 export async function patchItemsController(
   req: Request,
@@ -60,7 +59,7 @@ export async function patchItemsController(
 }
 
 /**
- * Get context information for a specific item.
+ * Get context information for a specific word.
  */
 export async function getInfoController(
   req: Request,

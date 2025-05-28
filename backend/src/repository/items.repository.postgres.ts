@@ -16,16 +16,21 @@ export async function getItemsRepository(
   const runQuery = async (): Promise<Item[]> => {
     const query = `
       WITH user_cte AS (
-          SELECT id AS user_id FROM users WHERE uid = $1
+        SELECT id AS user_id FROM users WHERE uid = $1
       )
       SELECT
-          i.id,
-          i.czech,
-          i.english,
-          i.pronunciation,
-          i.audio,
-          COALESCE(ui.progress, 0) AS progress,
-          COUNT(b.id) > 0 as has_info 
+        i.id,
+        i.czech,
+        i.english,
+        i.pronunciation,
+        i.audio,
+        COALESCE(ui.progress, 0) AS progress,
+        EXISTS (
+          SELECT 1
+          FROM block_items bi
+          JOIN blocks b ON bi.block_id = b.id
+          WHERE bi.item_id = i.id AND b.category_id = 1
+        ) AS has_info
       FROM items i
       LEFT JOIN user_items ui ON i.id = ui.item_id AND ui.user_id = (SELECT user_id FROM user_cte)
       LEFT JOIN block_items bi ON i.id = bi.item_id
@@ -33,11 +38,11 @@ export async function getItemsRepository(
       WHERE ui.mastered_at IS NULL
         AND (ui.next_at IS NULL OR ui.next_at < NOW())
       GROUP BY 
-          i.id, i.czech, i.english, i.pronunciation, i.audio, ui.progress, b.block_order, ui.next_at
+        i.id, i.czech, i.english, i.pronunciation, i.audio, ui.progress, b.block_order, ui.next_at
       ORDER BY 
-          ui.next_at ASC NULLS LAST,
-          COALESCE(i.item_order, b.block_order) asc nulls last,
-          i.id ASC
+        ui.next_at ASC NULLS LAST,
+        COALESCE(i.item_order, b.block_order) asc nulls last,
+        i.id ASC
       LIMIT $2;
     `;
 
@@ -50,6 +55,7 @@ export async function getItemsRepository(
 
   let items = await runQuery();
 
+  // Sorts items even first, then odd items. Gives user better experience.
   items = items.sort((a, b) => {
     const isEvenA = a.progress % 2 === 0;
     const isEvenB = b.progress % 2 === 0;
@@ -183,8 +189,7 @@ export async function getScoreRepository(
 }
 
 /**
- * Gets info relevant to the given items from PostgreSQL database.
- * TODO: optimize this query
+ * Gets relevant grammar info for given item id.
  */
 export async function getItemInfoRepository(
   db: PostgresClient,
@@ -195,29 +200,11 @@ export async function getItemInfoRepository(
       b.id,
       b.block_order,
       b.block_name,
-      b.block_explanation,
-      b.category_id,
-      CASE 
-        WHEN b.category_id IN (2) THEN (
-          SELECT json_agg(
-            json_build_object(
-              'id', i_sub.id,
-              'czech', i_sub.czech,
-              'english', i_sub.english,
-              'pronunciation', i_sub.pronunciation,
-              'audio', i_sub.audio
-            )
-          )
-          FROM items i_sub
-          JOIN block_items bi_sub ON i_sub.id = bi_sub.item_id
-          WHERE bi_sub.block_id = b.id
-        )
-        ELSE NULL
-      END AS items
+      b.block_explanation
     FROM blocks b
     JOIN block_items bi ON b.id = bi.block_id
-    JOIN items i ON i.id = bi.item_id
-    WHERE i.id = $1;
+    WHERE bi.item_id = $1
+      AND b.category_id = 1;
   `;
 
   return await withDbClient(db, async (client) => {

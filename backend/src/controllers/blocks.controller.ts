@@ -4,7 +4,7 @@ import { Block } from "../../../shared/types/dataTypes";
 import { getGrammarListRepository } from "../repository/blocks.repository.postgres";
 
 /**
- * Controller function to retrieve user-specific words based on source and target languages.
+ * Controller function to retrieve list of grammar blocks.
  *
  */
 export async function getGrammarListController(

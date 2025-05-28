@@ -18,17 +18,17 @@ CREATE TABLE IF NOT EXISTS items (
 
 CREATE TABLE IF NOT EXISTS categories (
   id SERIAL PRIMARY KEY,
-  category_name TEXT NOT NULL, 
+  category_name TEXT NOT NULL UNIQUE,
   category_explanation TEXT
 );
 
 CREATE TABLE IF NOT EXISTS blocks (
   id INTEGER PRIMARY KEY, -- 10-99 for pronunciation, 100-999 for grammar
-  block_name TEXT NOT NULL, 
+  block_name TEXT NOT NULL UNIQUE, 
   block_explanation TEXT, -- html code
   block_order INTEGER CHECK (block_order >= 0), -- after whick item_order will the block be shown
   category_id INTEGER, 
-  FOREIGN KEY (category_id) REFERENCES category(id) ON DELETE SET NULL
+  FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS user_items (
@@ -59,17 +59,9 @@ CREATE TABLE IF NOT EXISTS block_items (
   PRIMARY KEY (block_id, item_id)
 );
 
-CREATE TABLE IF NOT EXISTS user_blocks (
-  user_id INTEGER NOT NULL,
-  block_id INTEGER NOT NULL,
-  started_at TIMESTAMPTZ DEFAULT NOW(), 
-  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-  FOREIGN KEY (block_id) REFERENCES blocks(id) ON DELETE CASCADE,
-  PRIMARY KEY (user_id, block_id)
-);
-
 -- Create indexes
 CREATE UNIQUE INDEX user_items_user_id_item_id_idx ON user_items(user_id, item_id);
-CREATE INDEX idx_user_items_user_id_item_id ON user_items(user_id, item_id);
-CREATE INDEX idx_blocks_category ON blocks(category);
+CREATE INDEX idx_blocks_category_id ON blocks(category_id); 
+CREATE INDEX idx_user_items_user_id ON user_items(user_id); 
+CREATE INDEX idx_user_items_item_id ON user_items(item_id); 
 
