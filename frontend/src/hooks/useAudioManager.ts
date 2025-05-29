@@ -14,7 +14,6 @@ export function useAudioManager(wordArray: Item[]) {
       try {
         if (wordArray.length > 0) {
           await fetchAndCacheAudioFiles(wordArray, audioCacheRef.current);
-          console.log('Audio files cached successfully.', wordArray);
         }
 
         setAudioReload(false);
