@@ -1,7 +1,16 @@
 import { useEffect, useState, useCallback } from 'react';
-import PracticeControls from './common/PracticeControls';
+import Button from './common/Button';
+import {
+  InfoIcon,
+  AudioIcon,
+  HintIcon,
+  EyeIcon,
+  PlusIcon,
+  MinusIcon,
+  VolumeIcon,
+} from './common/Icons';
+import { PracticeCardBar } from './common/PracticeCardBar';
 import config from '../config/config';
-import Card from './common/Card';
 import { useAudioManager } from '../hooks/useAudioManager';
 import { PracticeError, UserScore } from '../../../shared/types/dataTypes';
 import { usePatchOnUnmount } from '../hooks/usePatchOnUnmount';
@@ -10,7 +19,7 @@ import { useUser } from '../hooks/useUser';
 import { useItemArray } from '../hooks/useItemArray';
 import InfoCard from './InfoCard';
 import Loading from './common/Loading';
-import TopBar from './common/TopBar';
+import { getErrorMessage } from '../utils/error.utils';
 
 export default function PracticeCard() {
   const apiPath = '/api/items';
@@ -31,7 +40,12 @@ export default function PracticeCard() {
   const [hintIndex, setHintIndex] = useState(0);
   const [infoVisibility, setInfoVisibility] = useState(false);
   const [error, setError] = useState<PracticeError | null>(null);
-  const { setUserScore } = useUser();
+  const [showVolumeSlider, setShowVolumeSlider] = useState(false);
+  const [volume, setVolumeState] = useState(1);
+  const { setUserScore, userScore } = useUser();
+
+  const isAudioDisabled = (direction && !revealed) || !currentItem?.audio;
+  const noAudio = error === PracticeError.NoAudio;
 
   // Sending user progress to the server
   const patchItems = useCallback(
@@ -122,6 +136,13 @@ export default function PracticeCard() {
     }
   }, [currentItem]);
 
+  // Handle volume change
+  const handleVolumeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newVolume = parseFloat(event.target.value);
+    setVolumeState(newVolume);
+    setVolume(newVolume);
+  };
+
   if (!arrayLength) return <Loading />;
 
   return (
@@ -130,41 +151,141 @@ export default function PracticeCard() {
         <InfoCard itemId={currentItem?.id} setVisibility={setInfoVisibility} />
       ) : (
         <div className="card">
-          <TopBar
-            item={currentItem}
-            revelead={revealed}
-            setInfoVisibility={setInfoVisibility}
-          />
-          <Card
-            item={currentItem}
-            index={index}
-            total={arrayLength}
-            direction={direction}
-            revealed={revealed}
-            hintIndex={hintIndex}
-            setVolume={setVolume}
-            error={error}
-          ></Card>
-          <PracticeControls
-            revealed={revealed}
-            direction={direction}
-            noAudio={!currentItem?.audio}
-            handleAudio={() =>
-              currentItem?.audio && playAudio(currentItem.audio)
-            }
-            handleReveal={() => {
-              setRevealed(true);
-              if (direction && currentItem?.audio) playAudio(currentItem.audio);
-              setHintIndex(0);
-            }}
-            handlePlus={() => {
-              updateItemArray(config.plusProgress);
-            }}
-            handleMinus={() => {
-              updateItemArray(config.minusProgress);
-            }}
-            handleHint={() => setHintIndex((prevIndex) => prevIndex + 1)}
-          />
+          {/* Top bar with item info and user score */}
+          <div className="flex min-h-12 justify-center gap-1">
+            <div className="color-disabled shape-rectangular color-text flex flex-1 items-center justify-center text-sm font-semibold">
+              {userScore?.blockCount?.[0] || 0}
+            </div>
+            <PracticeCardBar
+              blocks={userScore?.blockCount?.[0] || 0}
+              className="flex-2"
+            />
+            <Button
+              onClick={() => setInfoVisibility(true)}
+              disabled={!currentItem?.has_info || !revealed}
+              buttonColor="button-secondary "
+              className="shape-rectangular flex-1"
+              aria-label="Zobrazit informace"
+            >
+              <InfoIcon />
+            </Button>
+          </div>
+          {/* Card content with item details */}
+          <div
+            className={`color-disabled flex h-full w-full flex-col items-center justify-between px-4 pt-3 pb-2 ${!direction && 'color-highlighted rounded-sm'} `}
+          >
+            <div className="flex w-full items-center justify-between">
+              <div className="relative flex pt-1">
+                <button
+                  onClick={() => setShowVolumeSlider((prev) => !prev)}
+                  aria-label="Nastavit hlasitost"
+                  disabled={noAudio}
+                >
+                  <VolumeIcon />
+                </button>
+                {showVolumeSlider && (
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    value={volume}
+                    onChange={handleVolumeChange}
+                    className="ml-2 w-24"
+                    autoFocus
+                    aria-valuenow={volume}
+                    aria-valuemin={0}
+                    aria-valuemax={1}
+                    disabled={noAudio}
+                  />
+                )}
+              </div>
+              <p className="flex w-full justify-end text-sm">
+                {index + 1} / {arrayLength}
+              </p>
+            </div>
+
+            <div>
+              <p className="text-center font-bold">
+                {direction || revealed ? currentItem.czech : '\u00A0'}
+              </p>
+              <p className="text-center">
+                {revealed || (noAudio && !direction)
+                  ? currentItem?.english
+                  : currentItem?.english
+                      .slice(0, hintIndex ?? currentItem?.english.length)
+                      .padEnd(currentItem?.english.length, '\u00A0')}
+              </p>
+              <p className="text-center">
+                {revealed ? currentItem?.pronunciation || '\u00A0' : '\u00A0'}
+              </p>
+            </div>
+            <div className="flex w-full items-center justify-between">
+              <p className="flex w-full justify-start text-sm">
+                {currentItem?.progress}
+              </p>
+              <p className="text-sm whitespace-nowrap text-red-500">
+                {getErrorMessage(error)}
+              </p>
+            </div>
+          </div>
+          {/* Practice Controls */}
+          <div className="flex min-h-12 w-full justify-between gap-1">
+            <Button
+              onClick={() => {
+                if (currentItem?.audio) playAudio(currentItem.audio);
+              }}
+              disabled={isAudioDisabled}
+              className="shape-rectangular"
+              aria-label="Přehrát audio"
+            >
+              <AudioIcon></AudioIcon>
+            </Button>
+            {!revealed ? (
+              <>
+                <Button
+                  onClick={() => setHintIndex((prevIndex) => prevIndex + 1)}
+                  className="shape-rectangular"
+                  aria-label="Nápověda"
+                >
+                  <HintIcon></HintIcon>
+                </Button>
+                <Button
+                  onClick={() => {
+                    setRevealed(true);
+                    if (direction && currentItem?.audio)
+                      playAudio(currentItem.audio);
+                    setHintIndex(0);
+                  }}
+                  className="shape-rectangular"
+                  aria-label="Zobrazit odpověď"
+                >
+                  <EyeIcon></EyeIcon>
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  onClick={() => {
+                    updateItemArray(config.minusProgress);
+                  }}
+                  className="shape-rectangular button-secondary"
+                  aria-label="Snížit skore"
+                >
+                  <MinusIcon></MinusIcon>
+                </Button>
+                <Button
+                  onClick={() => {
+                    updateItemArray(config.plusProgress);
+                  }}
+                  className="shape-rectangular button-secondary"
+                  aria-label="Zvýšit skore"
+                >
+                  <PlusIcon></PlusIcon>
+                </Button>
+              </>
+            )}
+          </div>
         </div>
       )}
     </>

@@ -16,7 +16,7 @@ function BarComponent({ blocks, className }: PracticeCardBarProps) {
 
   return (
     <div
-      className={`color-disabled color-text h-full ${className} flex justify-center border-r-1`}
+      className={`color-disabled color-text h-full w-full ${className} flex justify-center border-r-1`}
       role="progressbar"
       aria-label="Úroveň pokroku"
       aria-valuenow={level}
@@ -30,15 +30,19 @@ function BarComponent({ blocks, className }: PracticeCardBarProps) {
 
         if (idx === level) {
           return (
-            <div className="flex flex-col" key={idx}>
+            <div
+              className="flex flex-col"
+              key={idx}
+              style={{ width: `calc(100% / ${MAX_BLOCKS})` }}
+            >
               <div
-                className="h-full w-2 border-l-1"
+                className="h-full border-l-1"
                 style={{
                   height: `${((BLOCKS_PER_FILL - subLevel) / BLOCKS_PER_FILL) * 100}%`,
                 }}
               ></div>
               <div
-                className={`h-full w-2 border-l-1 ${color}`}
+                className={`h-full border-l-1 ${color}`}
                 style={{ height: `${(subLevel / BLOCKS_PER_FILL) * 100}%` }}
               ></div>
             </div>
@@ -48,7 +52,8 @@ function BarComponent({ blocks, className }: PracticeCardBarProps) {
         return (
           <div
             key={idx}
-            className={`h-full w-2 border-l-1${filled && color ? ` ${color}` : ''}`}
+            className={`h-full border-l-1${filled && color ? ` ${color}` : ''}`}
+            style={{ width: `calc(100% / ${MAX_BLOCKS})` }}
           ></div>
         );
       })}
