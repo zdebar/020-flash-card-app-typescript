@@ -12,26 +12,24 @@ import {
 import { PracticeCardBar } from './common/PracticeCardBar';
 import config from '../config/config';
 import { useAudioManager } from '../hooks/useAudioManager';
-import { PracticeError, UserScore } from '../../../shared/types/dataTypes';
+import {
+  PracticeError,
+  UserScore,
+  Item,
+} from '../../../shared/types/dataTypes';
 import { usePatchOnUnmount } from '../hooks/usePatchOnUnmount';
 import { fetchWithAuthAndParse } from '../utils/auth.utils';
 import { useUser } from '../hooks/useUser';
-import { useItemArray } from '../hooks/useItemArray';
+import { useArray } from '../hooks/useArray';
 import InfoCard from './InfoCard';
 import Loading from './common/Loading';
 import { getErrorMessage } from '../utils/error.utils';
+import { alternateDirection } from '../utils/practice.utils';
 
 export default function PracticeCard() {
   const apiPath = '/api/items';
-  const {
-    array,
-    index,
-    nextIndex,
-    arrayLength,
-    setReload,
-    currentItem,
-    direction,
-  } = useItemArray(apiPath);
+  const { array, index, nextIndex, arrayLength, setReload, currentItem } =
+    useArray<Item>(apiPath);
   const { playAudio, setVolume, stopAudio, audioReload, setAudioReload } =
     useAudioManager(array);
 
@@ -44,6 +42,7 @@ export default function PracticeCard() {
   const [volume, setVolumeState] = useState(1);
   const { setUserScore, userScore } = useUser();
 
+  const direction = alternateDirection(currentItem?.progress);
   const isAudioDisabled = (direction && !revealed) || !currentItem?.audio;
   const noAudio = error === PracticeError.NoAudio;
 
