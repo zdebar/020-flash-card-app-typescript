@@ -8,6 +8,7 @@ import {
   PlusIcon,
   MinusIcon,
   VolumeIcon,
+  MicrophoneIcon,
 } from './common/Icons';
 import { PracticeCardBar } from './common/PracticeCardBar';
 import config from '../config/config';
@@ -25,6 +26,7 @@ import InfoCard from './InfoCard';
 import Loading from './common/Loading';
 import { getErrorMessage } from '../utils/error.utils';
 import { alternateDirection } from '../utils/practice.utils';
+import { usePronunciation } from '../hooks/usePronunciation';
 
 export default function PracticeCard() {
   const apiPath = '/api/items';
@@ -32,6 +34,8 @@ export default function PracticeCard() {
     useArray<Item>(apiPath);
   const { playAudio, setVolume, stopAudio, audioReload, setAudioReload } =
     useAudioManager(array);
+  const { isAudioChecking, isRecording, startRecording, stopRecording } =
+    usePronunciation();
 
   const [userProgress, setUserProgress] = useState<number[]>([]);
   const [revealed, setRevealed] = useState(false);
@@ -229,61 +233,80 @@ export default function PracticeCard() {
             </div>
           </div>
           {/* Practice Controls */}
-          <div className="flex min-h-12 w-full justify-between gap-1">
-            <Button
-              onClick={() => {
-                if (currentItem?.audio) playAudio(currentItem.audio);
-              }}
-              disabled={isAudioDisabled}
-              className="shape-rectangular"
-              aria-label="Přehrát audio"
-            >
-              <AudioIcon></AudioIcon>
-            </Button>
-            {!revealed ? (
-              <>
-                <Button
-                  onClick={() => setHintIndex((prevIndex) => prevIndex + 1)}
-                  className="shape-rectangular"
-                  aria-label="Nápověda"
-                >
-                  <HintIcon></HintIcon>
-                </Button>
-                <Button
-                  onClick={() => {
-                    setRevealed(true);
-                    if (direction && currentItem?.audio)
-                      playAudio(currentItem.audio);
-                    setHintIndex(0);
-                  }}
-                  className="shape-rectangular"
-                  aria-label="Zobrazit odpověď"
-                >
-                  <EyeIcon></EyeIcon>
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button
-                  onClick={() => {
-                    updateItemArray(config.minusProgress);
-                  }}
-                  className="shape-rectangular button-secondary"
-                  aria-label="Snížit skore"
-                >
-                  <MinusIcon></MinusIcon>
-                </Button>
-                <Button
-                  onClick={() => {
-                    updateItemArray(config.plusProgress);
-                  }}
-                  className="shape-rectangular button-secondary"
-                  aria-label="Zvýšit skore"
-                >
-                  <PlusIcon></PlusIcon>
-                </Button>
-              </>
-            )}
+          <div className="flex w-full justify-between gap-1">
+            <div className="flex w-full flex-col gap-1">
+              <Button
+                onClick={() => {
+                  if (currentItem?.audio) playAudio(currentItem.audio);
+                }}
+                disabled={isAudioDisabled}
+                className="button-rectangular"
+                aria-label="Přehrát audio"
+              >
+                <AudioIcon></AudioIcon>
+              </Button>
+              <Button
+                disabled={isAudioChecking}
+                className="button-rectangular"
+                aria-label="Mikrofon (zatím nedostupné)"
+                onMouseDown={startRecording}
+                onMouseUp={() =>
+                  stopRecording(
+                    currentItem?.english || '',
+                    currentItem?.pronunciation || ''
+                  )
+                }
+                buttonColor={isRecording ? 'button-tertiary' : 'button-primary'}
+              >
+                <MicrophoneIcon></MicrophoneIcon>
+              </Button>
+            </div>
+            <div className="flex w-full flex-col gap-1">
+              {!revealed ? (
+                <>
+                  <Button
+                    onClick={() => {
+                      setRevealed(true);
+                      if (direction && currentItem?.audio)
+                        playAudio(currentItem.audio);
+                      setHintIndex(0);
+                    }}
+                    className="shape-rectangular"
+                    aria-label="Zobrazit odpověď"
+                  >
+                    <EyeIcon></EyeIcon>
+                  </Button>
+                  <Button
+                    onClick={() => setHintIndex((prevIndex) => prevIndex + 1)}
+                    className="shape-rectangular"
+                    aria-label="Nápověda"
+                  >
+                    <HintIcon></HintIcon>
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    onClick={() => {
+                      updateItemArray(config.plusProgress);
+                    }}
+                    className="shape-rectangular button-secondary"
+                    aria-label="Zvýšit skore"
+                  >
+                    <PlusIcon></PlusIcon>
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      updateItemArray(config.minusProgress);
+                    }}
+                    className="shape-rectangular button-secondary"
+                    aria-label="Snížit skore"
+                  >
+                    <MinusIcon></MinusIcon>
+                  </Button>
+                </>
+              )}
+            </div>
           </div>
         </div>
       )}
