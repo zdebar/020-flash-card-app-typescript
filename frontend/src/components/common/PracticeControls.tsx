@@ -25,7 +25,7 @@ export default function PracticeControls({
   const isAudioDisabled = (direction && !revealed) || noAudio;
 
   return (
-    <div className="flex min-h-15 w-full justify-between gap-1">
+    <div className="flex min-h-12 w-full justify-between gap-1">
       <Button
         onClick={handleAudio}
         disabled={isAudioDisabled}
