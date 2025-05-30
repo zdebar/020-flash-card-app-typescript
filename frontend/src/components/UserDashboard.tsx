@@ -7,8 +7,15 @@ export default function UserDashboard() {
 
   return (
     <div className="card">
-      <ButtonLink to="/practice" className="button-rectangular">
+      <ButtonLink
+        to="/practice"
+        className="button-rectangular"
+        buttonColor="button-secondary"
+      >
         Procvičovat
+      </ButtonLink>
+      <ButtonLink to="/grammarList" className="button-rectangular">
+        Přehled gramatiky
       </ButtonLink>
 
       <div
@@ -25,9 +32,6 @@ export default function UserDashboard() {
             </div>
           ))}
       </div>
-      <ButtonLink to="/grammarList" className="button-rectangular">
-        Přehled gramatiky
-      </ButtonLink>
     </div>
   );
 }

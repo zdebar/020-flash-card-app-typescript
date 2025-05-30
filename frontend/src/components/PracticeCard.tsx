@@ -151,25 +151,25 @@ export default function PracticeCard() {
       ) : (
         <div className="card">
           {/* Top bar with item info and user score */}
-          <div className="flex min-h-12 justify-center gap-1">
+          <div className="flex min-h-15 justify-center gap-1">
             <Button
               onClick={() => {
                 if (currentItem?.audio) playAudio(currentItem.audio);
               }}
               disabled={isAudioDisabled}
-              className="shape-rectangular flex-2"
+              className="shape-rectangular flex-1"
               aria-label="Přehrát audio"
             >
               <AudioIcon></AudioIcon>
             </Button>
             <PracticeCardBar
               blocks={userScore?.blockCount?.[0] || 0}
-              className="flex-3"
+              className="flex-2"
             />
             <Button
               onClick={() => setInfoVisibility(true)}
               disabled={!currentItem?.has_info || !revealed}
-              buttonColor="button-secondary "
+              buttonColor="button-secondary"
               className="shape-rectangular flex-1"
               aria-label="Zobrazit informace"
             >
