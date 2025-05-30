@@ -1,5 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap');
+
 @import 'tailwindcss';
+
 @custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-display: 'Caveat', 'sans-serif';
+}
 
 @layer base {
   Button,

@@ -25,6 +25,7 @@ import InfoCard from './InfoCard';
 import Loading from './common/Loading';
 import { getErrorMessage } from '../utils/error.utils';
 import { alternateDirection } from '../utils/practice.utils';
+import Overlay from './common/Overlay';
 
 export default function PracticeCard() {
   const apiPath = '/api/items';
@@ -40,11 +41,25 @@ export default function PracticeCard() {
   const [error, setError] = useState<PracticeError | null>(null);
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
   const [volume, setVolumeState] = useState(1);
+
+  const [isOverlayVisible, setOverlayVisible] = useState(true);
+  const [isSecondOverlayVisible, setSecondOverlayVisible] = useState(false);
+  const [hasSecondOverlayShown, setHasSecondOverlayShown] = useState(false);
+
   const { setUserScore, userScore } = useUser();
 
   const direction = alternateDirection(currentItem?.progress);
   const isAudioDisabled = (direction && !revealed) || !currentItem?.audio;
   const noAudio = error === PracticeError.NoAudio;
+
+  // Close guide overlay
+  const handleCloseOverlay = () => {
+    setOverlayVisible(false);
+  };
+
+  const handleCloseSecondOverlay = () => {
+    setSecondOverlayVisible(false);
+  };
 
   // Sending user progress to the server
   const patchItems = useCallback(
@@ -146,10 +161,20 @@ export default function PracticeCard() {
 
   return (
     <>
+      <Overlay
+        isVisible={isOverlayVisible}
+        onClose={handleCloseOverlay}
+        isRevealed={false}
+      />
+      <Overlay
+        isVisible={isSecondOverlayVisible}
+        onClose={handleCloseSecondOverlay}
+        isRevealed={true}
+      ></Overlay>
       {infoVisibility ? (
         <InfoCard itemId={currentItem?.id} setVisibility={setInfoVisibility} />
       ) : (
-        <div className="card">
+        <div className="card relative">
           {/* Top bar with item info and user score */}
           <div className="flex min-h-15 justify-center gap-1">
             <Button
@@ -249,6 +274,10 @@ export default function PracticeCard() {
                 <Button
                   onClick={() => {
                     setRevealed(true);
+                    if (!hasSecondOverlayShown) {
+                      setSecondOverlayVisible(true);
+                      setHasSecondOverlayShown(true);
+                    }
                     if (direction && currentItem?.audio)
                       playAudio(currentItem.audio);
                     setHintIndex(0);
