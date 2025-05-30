@@ -14,7 +14,7 @@ export default function Overlay({
 
   return (
     <div
-      className="card font-display absolute z-1 text-2xl"
+      className="card font-display absolute z-1 text-xl"
       role="dialog"
       style={{
         backgroundColor: !isDarkMode
@@ -27,14 +27,22 @@ export default function Overlay({
       {isRevealed ? (
         <div className="max-w-md">
           <p
-            className="absolute"
+            className="absolute text-center"
+            style={{
+              top: '65px',
+              left: '15px',
+            }}
+          >
+            Vyslovte slovíčko či větu alespoň jednou nahlas. Lépe vícekrát.
+          </p>
+          <p
+            className="absolute text-center"
             style={{
               top: '200px',
               left: '15px',
             }}
           >
-            Stikněte plus, jen pokud jste si zcela jistí svojí znalostí slovíčka
-            či fráze.
+            Stikněte plus, jen pokud jste si zcela jisti svojí znalostí .
           </p>
         </div>
       ) : (
@@ -52,16 +60,16 @@ export default function Overlay({
             className="absolute"
             style={{
               top: '30px',
-              left: '70px',
+              left: '80px',
             }}
           >
-            denních bloků až 100x
+            100 denních bloků
           </p>
           <p
             className="absolute"
             style={{
               top: '0px',
-              left: '230px',
+              left: '225px',
             }}
           >
             gramatika
@@ -69,8 +77,8 @@ export default function Overlay({
           <p
             className="absolute"
             style={{
-              top: '95px',
-              left: '200px',
+              top: '100px',
+              left: '190px',
             }}
           >
             pokrok v bloku
@@ -78,7 +86,7 @@ export default function Overlay({
           <p
             className="absolute"
             style={{
-              top: '95px',
+              top: '100px',
               left: '5px',
             }}
           >
@@ -106,7 +114,7 @@ export default function Overlay({
             className="absolute"
             style={{
               top: '290px',
-              left: '195px',
+              left: '190px',
             }}
           >
             odhalit překlad

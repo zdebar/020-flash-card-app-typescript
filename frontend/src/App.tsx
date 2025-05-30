@@ -14,7 +14,7 @@ export default function App() {
   const { userInfo, loading } = useUser();
 
   return (
-    <div className="h-screen dark:bg-gray-900">
+    <div className="min-h-screen dark:bg-gray-900">
       <div className="w-app min-w-card mx-auto flex h-full w-full flex-col items-center">
         <Header />
 
@@ -25,21 +25,33 @@ export default function App() {
             <Route
               path="/"
               element={
-                loading ? (
-                  <Loading />
-                ) : userInfo ? (
-                  <div>
-                    <h1>Uživatel: {userInfo.name}</h1>
-                  </div>
-                ) : (
-                  <div className="w-card">
-                    <ButtonLink to="/login" className="button-rectangular">
-                      Přihlášení / Registrace
-                    </ButtonLink>
-                  </div>
-                )
+                <div>
+                  {loading ? (
+                    <Loading />
+                  ) : userInfo ? (
+                    <div className="font-display m- max-w-[450px] p-4 text-xl">
+                      <h1 className="">Angličtina bezstarostně</h1>
+                      <p className="pb-8">
+                        Učte se jazyky přirozeně. Jako děti. Mluvením a
+                        posloucháním každý den.
+                      </p>
+
+                      <p className="pb-8">
+                        Napřed samostatná slovíčka, a postupně delší a delší
+                        věty, až budete mluvit bez přemýšlení.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="w-card">
+                      <ButtonLink to="/login" className="button-rectangular">
+                        Přihlášení / Registrace
+                      </ButtonLink>
+                    </div>
+                  )}{' '}
+                </div>
               }
             />
+
             <Route path="/login" element={<Login />} />
             <Route path="/practice" element={<PracticeCard />} />
             <Route path="/userSettings" element={<UserSettings />} />
