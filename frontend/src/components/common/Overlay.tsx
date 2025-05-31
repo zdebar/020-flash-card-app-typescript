@@ -78,10 +78,10 @@ export default function Overlay({
             className="absolute"
             style={{
               top: '100px',
-              left: '190px',
+              left: '180px',
             }}
           >
-            pokrok v bloku
+            slovíčko v bloku
           </p>
           <p
             className="absolute"

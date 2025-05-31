@@ -61,11 +61,11 @@
   }
 
   .button-rectangular {
-    @apply h-12 w-full rounded-sm;
+    @apply h-13 w-full rounded-sm;
   }
 
   .button-round {
-    @apply h-12 w-12 rounded-full;
+    @apply h-13 w-13 rounded-full;
   }
 
   /** Size classes*/

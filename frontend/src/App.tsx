@@ -25,30 +25,31 @@ export default function App() {
             <Route
               path="/"
               element={
-                <div>
-                  {loading ? (
-                    <Loading />
-                  ) : userInfo ? (
-                    <div className="font-display m- max-w-[450px] p-4 text-xl">
-                      <h1 className="">Angličtina bezstarostně</h1>
-                      <p className="pb-8">
-                        Učte se jazyky přirozeně. Jako děti. Mluvením a
-                        posloucháním každý den.
-                      </p>
-
-                      <p className="pb-8">
-                        Napřed samostatná slovíčka, a postupně delší a delší
-                        věty, až budete mluvit bez přemýšlení.
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="w-card">
-                      <ButtonLink to="/login" className="button-rectangular">
-                        Přihlášení / Registrace
-                      </ButtonLink>
-                    </div>
-                  )}{' '}
-                </div>
+                <>
+                  <div className="font-display m- max-w-[480px] p-4 text-center text-xl">
+                    <h1 className="">Angličtina bezstarostně</h1>
+                    <p className="pb-8">
+                      Učte se jazyky přirozeně. Mluvením a posloucháním každý
+                      den. Od samostatných slovíček až po delší a delší věty.
+                    </p>
+                  </div>
+                  <div>
+                    {loading ? (
+                      <Loading />
+                    ) : (
+                      !userInfo && (
+                        <div className="w-card">
+                          <ButtonLink
+                            to="/login"
+                            className="button-rectangular"
+                          >
+                            Přihlášení / Registrace
+                          </ButtonLink>
+                        </div>
+                      )
+                    )}
+                  </div>
+                </>
               }
             />
 

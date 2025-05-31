@@ -176,7 +176,7 @@ export default function PracticeCard() {
       ) : (
         <div className="card relative">
           {/* Top bar with item info and user score */}
-          <div className="flex min-h-15 justify-center gap-1">
+          <div className="flex min-h-13 justify-center gap-1.5">
             <Button
               onClick={() => {
                 if (currentItem?.audio) playAudio(currentItem.audio);
@@ -261,7 +261,7 @@ export default function PracticeCard() {
             </div>
           </div>
           {/* Practice Controls */}
-          <div className="flex min-h-15 w-full justify-between gap-1">
+          <div className="flex min-h-13 w-full justify-between gap-1">
             {!revealed ? (
               <>
                 <Button
