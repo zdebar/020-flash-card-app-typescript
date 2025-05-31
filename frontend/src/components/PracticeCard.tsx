@@ -26,6 +26,8 @@ import Loading from './common/Loading';
 import { getErrorMessage } from '../utils/error.utils';
 import { alternateDirection } from '../utils/practice.utils';
 import Overlay from './common/Overlay';
+import GuideFirst from './common/GuideFirst';
+import GuideSecond from './common/GuideSecond';
 
 export default function PracticeCard() {
   const apiPath = '/api/items';
@@ -42,24 +44,13 @@ export default function PracticeCard() {
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
   const [volume, setVolumeState] = useState(1);
 
-  const [isOverlayVisible, setOverlayVisible] = useState(true);
-  const [isSecondOverlayVisible, setSecondOverlayVisible] = useState(false);
-  const [hasSecondOverlayShown, setHasSecondOverlayShown] = useState(false);
+  const [activeOverlay, setActiveOverlay] = useState<string | null>('first');
 
   const { setUserScore, userScore } = useUser();
 
   const direction = alternateDirection(currentItem?.progress);
   const isAudioDisabled = (direction && !revealed) || !currentItem?.audio;
   const noAudio = error === PracticeError.NoAudio;
-
-  // Close guide overlay
-  const handleCloseOverlay = () => {
-    setOverlayVisible(false);
-  };
-
-  const handleCloseSecondOverlay = () => {
-    setSecondOverlayVisible(false);
-  };
 
   // Sending user progress to the server
   const patchItems = useCallback(
@@ -161,16 +152,21 @@ export default function PracticeCard() {
 
   return (
     <>
-      <Overlay
-        isVisible={isOverlayVisible}
-        onClose={handleCloseOverlay}
-        isRevealed={false}
-      />
-      <Overlay
-        isVisible={isSecondOverlayVisible}
-        onClose={handleCloseSecondOverlay}
-        isRevealed={true}
-      ></Overlay>
+      {/* First Overlay */}
+      {activeOverlay === 'first' && (
+        <Overlay onClose={() => setActiveOverlay('beforeSecond')}>
+          <GuideFirst />
+        </Overlay>
+      )}
+
+      {/* Second Overlay */}
+      {activeOverlay === 'second' && (
+        <Overlay onClose={() => setActiveOverlay(null)}>
+          <GuideSecond />
+        </Overlay>
+      )}
+
+      {/* Main content */}
       {infoVisibility ? (
         <InfoCard itemId={currentItem?.id} setVisibility={setInfoVisibility} />
       ) : (
@@ -274,9 +270,8 @@ export default function PracticeCard() {
                 <Button
                   onClick={() => {
                     setRevealed(true);
-                    if (!hasSecondOverlayShown) {
-                      setSecondOverlayVisible(true);
-                      setHasSecondOverlayShown(true);
+                    if (activeOverlay === 'beforeSecond') {
+                      setActiveOverlay('second');
                     }
                     if (direction && currentItem?.audio)
                       playAudio(currentItem.audio);

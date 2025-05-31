@@ -1,15 +1,9 @@
 interface OverlayProps {
-  isVisible: boolean;
-  isRevealed?: boolean;
   onClose: () => void;
+  children?: React.ReactNode; // Accept children components
 }
 
-export default function Overlay({
-  isVisible,
-  onClose,
-  isRevealed,
-}: OverlayProps) {
-  if (!isVisible) return null;
+export default function Overlay({ onClose, children }: OverlayProps) {
   const isDarkMode = document.documentElement.classList.contains('dark');
 
   return (
@@ -24,103 +18,7 @@ export default function Overlay({
       aria-modal="true"
       onClick={onClose}
     >
-      {isRevealed ? (
-        <div className="max-w-md">
-          <p
-            className="absolute text-center"
-            style={{
-              top: '65px',
-              left: '15px',
-            }}
-          >
-            Vyslovte slovíčko či větu alespoň jednou nahlas. Lépe vícekrát.
-          </p>
-          <p
-            className="absolute text-center"
-            style={{
-              top: '200px',
-              left: '15px',
-            }}
-          >
-            Stikněte plus, jen pokud jste si zcela jisti svojí znalostí .
-          </p>
-        </div>
-      ) : (
-        <div className="max-w-md">
-          <p
-            className="absolute"
-            style={{
-              top: '0px',
-              left: '10px',
-            }}
-          >
-            přehrát zvuk
-          </p>
-          <p
-            className="absolute"
-            style={{
-              top: '30px',
-              left: '80px',
-            }}
-          >
-            100 denních bloků
-          </p>
-          <p
-            className="absolute"
-            style={{
-              top: '0px',
-              left: '225px',
-            }}
-          >
-            gramatika
-          </p>
-          <p
-            className="absolute"
-            style={{
-              top: '100px',
-              left: '180px',
-            }}
-          >
-            slovíčko v bloku
-          </p>
-          <p
-            className="absolute"
-            style={{
-              top: '100px',
-              left: '5px',
-            }}
-          >
-            hlasitost
-          </p>
-          <p
-            className="absolute"
-            style={{
-              top: '200px',
-              left: '5px',
-            }}
-          >
-            pokrok slovíčka
-          </p>
-          <p
-            className="absolute"
-            style={{
-              top: '290px',
-              left: '5px',
-            }}
-          >
-            nápověda
-          </p>
-          <p
-            className="absolute"
-            style={{
-              top: '290px',
-              left: '190px',
-            }}
-          >
-            odhalit překlad
-          </p>
-        </div>
-      )}
+      <div className="max-w-md">{children}</div>
     </div>
   );
 }

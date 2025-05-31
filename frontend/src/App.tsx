@@ -1,5 +1,5 @@
 import './App.css';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { useUser } from './hooks/useUser';
 import ButtonLink from './components/common/ButtonLink';
 import Header from './components/Header';
@@ -9,12 +9,15 @@ import UserSettings from './components/UserSettings';
 import UserDashboard from './components/UserDashboard';
 import GrammarList from './components/GrammarlList';
 import Loading from './components/common/Loading';
+import Footer from './components/Footer';
 
 export default function App() {
   const { userInfo, loading } = useUser();
+  const location = useLocation();
+  const showFooterRoutes = ['/', '/login'];
 
   return (
-    <div className="min-h-screen dark:bg-gray-900">
+    <div className="flex min-h-screen flex-col justify-between dark:bg-gray-900">
       <div className="w-app min-w-card mx-auto flex h-full w-full flex-col items-center">
         <Header />
 
@@ -28,27 +31,25 @@ export default function App() {
                 <>
                   <div className="font-display m- max-w-[480px] p-4 text-center text-xl">
                     <h1 className="">Angličtina bezstarostně</h1>
+                    <p className="pb-8 text-red-600">
+                      aplikace v testovacím režimu
+                    </p>
                     <p className="pb-8">
-                      Učte se jazyky přirozeně. Mluvením a posloucháním každý
-                      den. Od samostatných slovíček až po delší a delší věty.
+                      Učte se jazyky přirozeně. Mluvením a posloucháním. Od
+                      samostatných slovíček až po delší a delší věty.
                     </p>
                   </div>
-                  <div>
-                    {loading ? (
-                      <Loading />
-                    ) : (
-                      !userInfo && (
-                        <div className="w-card">
-                          <ButtonLink
-                            to="/login"
-                            className="button-rectangular"
-                          >
-                            Přihlášení / Registrace
-                          </ButtonLink>
-                        </div>
-                      )
-                    )}
-                  </div>
+                  {loading ? (
+                    <Loading />
+                  ) : (
+                    !userInfo && (
+                      <div className="w-card">
+                        <ButtonLink to="/login" className="button-rectangular">
+                          Přihlášení / Registrace
+                        </ButtonLink>
+                      </div>
+                    )
+                  )}
                 </>
               }
             />
@@ -61,6 +62,7 @@ export default function App() {
           </Routes>
         </div>
       </div>
+      {showFooterRoutes.includes(location.pathname) && <Footer />}
     </div>
   );
 }
