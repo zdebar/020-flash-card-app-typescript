@@ -30,13 +30,13 @@ export default function App() {
               element={
                 <>
                   <div className="font-display m- max-w-[480px] p-4 text-center text-xl">
-                    <h1 className="">Angličtina bezstarostně</h1>
+                    <h1 className="">Angličtina přirozeně</h1>
                     <p className="pb-8 text-red-600">
                       aplikace v testovacím režimu
                     </p>
                     <p className="pb-8">
                       Učte se jazyky přirozeně. Mluvením a posloucháním. Od
-                      samostatných slovíček až po delší a delší věty.
+                      samostatných slovíček až po celé věty.
                     </p>
                   </div>
                   {loading ? (

@@ -20,8 +20,9 @@ export default function UserDashboard() {
       </ButtonLink>
 
       <div
-        className={`color-disabled shape-rectangular flex flex-1 flex-col items-center justify-center gap-0 p-4`}
+        className={`color-disabled shape-rectangular flex flex-1 flex-col items-center justify-center gap-0 pb-2`}
       >
+        <p className="font-display pb-2">bloky za posledních 7 dní</p>
         {userScore &&
           userScore.blockCount.map((item, idx) => (
             <div
