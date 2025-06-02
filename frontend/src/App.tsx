@@ -10,6 +10,7 @@ import UserDashboard from './components/UserDashboard';
 import GrammarList from './components/GrammarlList';
 import Loading from './components/common/Loading';
 import Footer from './components/Footer';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 export default function App() {
   const { userInfo, loading } = useUser();
@@ -18,6 +19,7 @@ export default function App() {
 
   return (
     <div className="flex min-h-screen flex-col justify-between dark:bg-gray-900">
+      <SpeedInsights />
       <div className="w-app min-w-card mx-auto flex h-full w-full flex-col items-center">
         <Header />
 
