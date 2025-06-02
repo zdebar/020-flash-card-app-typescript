@@ -12,7 +12,7 @@ export default function ExplanationCard({
 }) {
   return (
     <div className="flex h-full w-full flex-col gap-1">
-      <div className="flex h-12 w-full gap-1">
+      <div className="button-rectangular flex gap-1">
         <div className="color-disabled shape-rectangular flex flex-10 items-center justify-start">
           <h2
             style={{
