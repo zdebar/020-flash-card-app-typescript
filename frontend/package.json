@@ -14,7 +14,6 @@
     "@supabase/supabase-js": "^2.49.4",
     "@tailwindcss/postcss": "^4.0.15",
     "@tailwindcss/vite": "^4.0.15",
-    "@vercel/speed-insights": "^1.2.0",
     "audiobuffer-to-wav": "^1.0.0",
     "firebase": "^11.6.0",
     "react": "^19.1.0",
