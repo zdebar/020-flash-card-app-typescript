@@ -17,8 +17,14 @@ export async function getItemsRepository(
     const query = `
       WITH user_cte AS (
         SELECT id AS user_id FROM users WHERE uid = $1
+      ),
+      has_info_cte AS (
+        SELECT bi.item_id
+        FROM block_items bi
+        JOIN blocks b ON bi.block_id = b.id
+        WHERE b.category_id = 1
       )
-      SELECT
+      SELECT 
         i.id,
         i.czech,
         i.english,
@@ -27,22 +33,26 @@ export async function getItemsRepository(
         COALESCE(ui.progress, 0) AS progress,
         EXISTS (
           SELECT 1
-          FROM block_items bi
-          JOIN blocks b ON bi.block_id = b.id
-          WHERE bi.item_id = i.id AND b.category_id = 1
-        ) AS has_info
+          FROM has_info_cte
+          WHERE has_info_cte.item_id = i.id
+        ) AS "hasContextInfo",
+        EXISTS (
+          SELECT 
+          FROM has_info_cte
+          WHERE has_info_cte.item_id = i.id AND i.item_order = 1
+        ) AS "showContextInfo"
       FROM items i
       LEFT JOIN user_items ui ON i.id = ui.item_id AND ui.user_id = (SELECT user_id FROM user_cte)
       LEFT JOIN block_items bi ON i.id = bi.item_id
-      LEFT JOIN blocks b ON bi.block_id = b.id
+      LEFT JOIN blocks b ON bi.block_id = b.id AND b.category_id = 1
       WHERE ui.mastered_at IS NULL
         AND (ui.next_at IS NULL OR ui.next_at < NOW())
       GROUP BY 
         i.id, i.czech, i.english, i.pronunciation, i.audio, ui.progress, b.block_order, ui.next_at
-      ORDER BY 
+      ORDER BY     
         ui.next_at ASC NULLS LAST,
-        COALESCE(i.item_order, b.block_order) asc nulls last,
-        i.id ASC
+        COALESCE(b.block_order, i.item_order) ASC NULLS LAST,
+        i.id
       LIMIT $2;
     `;
 
@@ -55,7 +65,7 @@ export async function getItemsRepository(
 
   let items = await runQuery();
 
-  // Sorts items even first, then odd items. Gives user better experience.
+  // Sorts items even first, then odd items. Gives better user experience.
   items = items.sort((a, b) => {
     const isEvenA = a.progress % 2 === 0;
     const isEvenB = b.progress % 2 === 0;

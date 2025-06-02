@@ -6,7 +6,8 @@ export interface Item {
   pronunciation: string | null;
   audio: string | null;
   progress: number;
-  has_info: boolean;
+  hasContextInfo: boolean;
+  showContextInfo: boolean;
 }
 
 export interface Block {

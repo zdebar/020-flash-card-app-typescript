@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-export default function Loading() {
+export default function Loading({ text = 'Loading...' }: { text?: string }) {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
@@ -12,7 +12,7 @@ export default function Loading() {
 
   return (
     <p role="status" aria-live="polite" className="text-center">
-      Loading...
+      {text}
     </p>
   );
 }

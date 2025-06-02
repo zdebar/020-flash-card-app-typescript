@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Block } from '../../../shared/types/dataTypes';
 import PrevNextControls from './common/PrevNextControls';
-
+import Loading from './common/Loading';
 import Button from './common/Button';
 import ExplanationCard from './ExplanationCard';
 
@@ -12,7 +12,8 @@ export default function GrammarList() {
     useArray<Block>('/api/blocks/grammar');
   const [showExplanation, setShowExplanation] = useState(false);
 
-  if (!arrayLength) return <p>Není odemčena žádná lekce gramatiky.</p>;
+  if (!arrayLength)
+    return <Loading text="Není odemčena žádná lekce gramatiky" />;
 
   return (
     <>

@@ -43,7 +43,6 @@ export default function PracticeCard() {
   const [error, setError] = useState<PracticeError | null>(null);
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
   const [volume, setVolumeState] = useState(1);
-
   const [activeOverlay, setActiveOverlay] = useState<string | null>('first');
 
   const { setUserScore, userScore } = useUser();
@@ -51,6 +50,13 @@ export default function PracticeCard() {
   const direction = alternateDirection(currentItem?.progress);
   const isAudioDisabled = (direction && !revealed) || !currentItem?.audio;
   const noAudio = error === PracticeError.NoAudio;
+
+  // Show Info by default if the item has showContextInfo set to true
+  useEffect(() => {
+    if (currentItem?.showContextInfo === true && currentItem?.progress === 0) {
+      setInfoVisibility(true);
+    }
+  }, [currentItem]);
 
   // Sending user progress to the server
   const patchItems = useCallback(
@@ -189,7 +195,7 @@ export default function PracticeCard() {
             />
             <Button
               onClick={() => setInfoVisibility(true)}
-              disabled={!currentItem?.has_info || !revealed}
+              disabled={!currentItem?.hasContextInfo || !revealed}
               buttonColor="button-secondary"
               className="shape-rectangular flex-1"
               aria-label="Zobrazit informace"
