@@ -5,6 +5,7 @@
     "moduleResolution": "node16",
     "esModuleInterop": true,
     "resolveJsonModule": true,
+    "strict": true,
     "typeRoots": ["./node_modules/@types", "./types", "./src/types"],
     "types": ["node", "react", "react-dom", "react-router-dom"],
     "baseUrl": ".",
@@ -13,12 +14,8 @@
       "@shared/*": ["../shared/*"]
     }
   },
-  "include": [
-    "src",
-    "types",
-    "../archive/RegisterLink.tsx",
-    "../archive/InputForm.tsx"
-  ],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "types"],
+  "exclude": ["dist", "node_modules", "src/**/*.d.ts"],
   "files": [],
   "references": [
     { "path": "./tsconfig.app.json" },

@@ -22,10 +22,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": [
-    "./src/**/*",
-    "../shared/**/*",
-    "../archive/RegisterLink.tsx",
-    "../archive/InputForm.tsx"
-  ]
+  "include": ["./src/**/*", "../shared/**/*"]
 }
