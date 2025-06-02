@@ -39,7 +39,7 @@ export async function getItemsRepository(
         EXISTS (
           SELECT 
           FROM has_info_cte
-          WHERE has_info_cte.item_id = i.id AND i.item_order = 1
+          WHERE has_info_cte.item_id = i.id AND i.item_order = 1 AND ui.progress = 0
         ) AS "showContextInfo"
       FROM items i
       LEFT JOIN user_items ui ON i.id = ui.item_id AND ui.user_id = (SELECT user_id FROM user_cte)

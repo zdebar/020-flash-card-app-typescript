@@ -1,54 +1,28 @@
-# React + TypeScript + Vite
+# English Learning App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Description
 
-Currently, two official plugins are available:
+A simple English learning app for kids and adults. From czech language only.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Explanation
 
-## Expanding the ESLint configuration
+No one I know learned English from school. Everyone learned through repeated exposure by reading or listening.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Language is not math. People don’t learn by calculating sentences from grammatical rules. Words and sentences arise from the subconscious naturally and are pushed into the subconscious through repetition.
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+This app focuses on maximizing daily repetitions.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Principles
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- **Repetition**: Practice up to 1,000 words and sentences per hour.
+- **Speaking**: Prioritize listening and speaking. Everyone struggles with speaking, so why focus on anything else?
+- **No writing**: Writing slows down repetitions, and automatic grammar correction is here to stay.
+- **Paralysis-Free**: One "Practice" button. Nothing else. No paralysis about what to do next. Anytime you have half a minute, do some repetition. App will start with individual words and slowly will incorporate grammar and sentences.
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+## License
+
+This project is licensed under the MIT License.
+
+## Contact
+
+For questions or feedback, contact [zdebarth@gmail.com](mailto:zdebarth@gmail.com).

@@ -53,7 +53,7 @@ export default function PracticeCard() {
 
   // Show Info by default if the item has showContextInfo set to true
   useEffect(() => {
-    if (currentItem?.showContextInfo === true && currentItem?.progress === 0) {
+    if (currentItem?.showContextInfo === true) {
       setInfoVisibility(true);
     }
   }, [currentItem]);
