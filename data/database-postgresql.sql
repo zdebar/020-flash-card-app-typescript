@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS items (
   english TEXT NOT NULL, 
   pronunciation TEXT, -- IPA phonetic transcription
   audio TEXT, -- audio file name, without extension
-  item_order INTEGER CHECK (item_order >= 0), -- learning order of words; INTEGER for words, NULL for grammar
+  item_order INTEGER CHECK (item_order >= 0) -- learning order of words; INTEGER for words, NULL for grammar
 );
 
 CREATE TABLE IF NOT EXISTS categories (

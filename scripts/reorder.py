@@ -22,5 +22,5 @@ def reorder_item_order_in_directory(directory):
             print(f"Column 'item_order' not found in {file}. Skipping.")
 
 # Example usage
-directory = '../data/prepared'  # Replace with your directory path
+directory = '../data/imported'  # Replace with your directory path
 reorder_item_order_in_directory(directory)
