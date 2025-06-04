@@ -63,5 +63,4 @@ CREATE TABLE IF NOT EXISTS block_items (
 CREATE UNIQUE INDEX user_items_user_id_item_id_idx ON user_items(user_id, item_id);
 CREATE INDEX idx_blocks_category_id ON blocks(category_id); 
 CREATE INDEX idx_user_items_user_id ON user_items(user_id); 
-CREATE INDEX idx_user_items_item_id ON user_items(item_id); 
 
