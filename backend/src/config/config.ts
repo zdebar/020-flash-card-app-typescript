@@ -2,12 +2,11 @@ import dotenv from "dotenv";
 import path from "path";
 import { validateEnvVariables } from "../utils/validate.utils";
 
-dotenv.config({ path: path.resolve(__dirname, "../../.env") });
+// Only load .env file in non-production environments
+if (process.env.NODE_ENV !== "production") {
+  dotenv.config({ path: path.resolve(__dirname, "../../.env") });
+}
 validateEnvVariables([
-  "JWT_SECRET",
-  "JWT_REFRESH_SECRET",
-  "JWT_EXPIRES_IN",
-  "LOGGER_LEVEL",
   "NODE_ENV",
   "BACKEND_PORT",
   "DB_HOST",
