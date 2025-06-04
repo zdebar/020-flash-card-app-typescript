@@ -73,10 +73,10 @@ async def prepare_english_words(file_name: str, output_folder: str, audio_folder
 
 if __name__ == "__main__":
 
-    input_file = os.path.abspath("../data/en-source/grammar/015_towork.csv")  
-    output_file = os.path.abspath("../data/en-source/grammar/015_towork_DONE.csv")
-    mp3_folder = os.path.abspath("../data/en-source/grammar/015/mp3")
-    opus_folder = os.path.abspath("../data/en-source/grammar/015/opus")
+    input_file = os.path.abspath("../data/prepared/000to009.csv")  
+    output_file = os.path.abspath("../data/prepared/000to009_DONE.csv")
+    mp3_folder = os.path.abspath("../data/prepared/009/mp3")
+    opus_folder = os.path.abspath("../data/prepared/009/opus")
 
     asyncio.run(prepare_english_words(input_file, output_file, mp3_folder, opus_folder))
 
