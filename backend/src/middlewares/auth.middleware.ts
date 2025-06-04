@@ -33,7 +33,7 @@ export async function authenticateMiddleware(
 
     if (!decodedToken) return;
 
-    const projectId = firebaseConfig.projectId;
+    const projectId = firebaseConfig.project_id;
     if (decodedToken.aud !== projectId) {
       res
         .status(401)

@@ -6,7 +6,8 @@
   "scripts": {
     "test": "vitest",
     "dev": "nodemon -r dotenv/config src/server.ts",
-    "start": "node dist/server.js"
+    "start": "node dist/server.js",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",

@@ -10,5 +10,6 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts", "../archive/OLDfirebase.config copy.ts"],
+  "exclude": ["020_Secrets"]
 }
