@@ -8,7 +8,7 @@ import requestLoggerMiddleware from "./middlewares/requestLogger.middleware";
 import "./config/config";
 import { checkDatabaseConnection } from "./utils/database.utils";
 
-const PORT = process.env.BACKEND_PORT || 3000;
+const PORT = process.env.PORT || process.env.BACKEND_PORT || 3000;
 const allowedOrigin = process.env.FRONTEND_URL || "http://localhost:5173";
 export const app = express();
 

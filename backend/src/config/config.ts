@@ -8,7 +8,6 @@ if (process.env.NODE_ENV !== "production") {
 }
 validateEnvVariables([
   "NODE_ENV",
-  "BACKEND_PORT",
   "DB_HOST",
   "DB_PORT",
   "DB_USER",
