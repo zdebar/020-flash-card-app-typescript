@@ -2,8 +2,8 @@
 CREATE TABLE IF NOT EXISTS users (
   id SERIAL PRIMARY KEY,  
   uid VARCHAR(255) UNIQUE, -- firebase uid
-  user_name TEXT, -- user name
-  user_email TEXT, -- user email
+  name TEXT, -- user name
+  email TEXT, -- user email
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS user_items (
 CREATE TABLE IF NOT EXISTS user_score (
   user_id INTEGER NOT NULL,
   day DATE DEFAULT CURRENT_DATE,
-  blocks_finished INTEGER DEFAULT 0 CHECK (blocks_finished >= 0),
+  blockcount INTEGER DEFAULT 0 CHECK (blocks_finished >= 0),
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
   PRIMARY KEY (user_id, day)
 );

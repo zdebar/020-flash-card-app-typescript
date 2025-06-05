@@ -35,8 +35,8 @@ export default function App() {
                       aplikace v testovacím režimu
                     </p>
                     <p className="pb-8">
-                      Učte se jazyky přirozeně. Mluvením a posloucháním. Od
-                      samostatných slovíček až po celé věty.
+                      Nakonec stejně vždy záleží na množství opakování. Beze
+                      stresu, bez přemýšlení, tisíce opakování denně.
                     </p>
                   </div>
                   {loading ? (

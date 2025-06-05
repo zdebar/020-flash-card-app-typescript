@@ -14,6 +14,13 @@ export async function getUserController(
   try {
     const { uid, name, email } = (req as any).user;
 
+    if (!["demo@example.com", "zdebarth@gmail.com"].includes(email)) {
+      res.status(403).json({
+        message: "Přístup je prozatím uzavřen.",
+      });
+      return;
+    }
+
     const {
       userSettings,
       userScore,

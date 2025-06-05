@@ -158,159 +158,160 @@ export default function PracticeCard() {
 
   return (
     <>
-      {/* First Overlay */}
-      {activeOverlay === 'first' && (
-        <Overlay onClose={() => setActiveOverlay('beforeSecond')}>
-          <GuideFirst />
-        </Overlay>
-      )}
-
-      {/* Second Overlay */}
-      {activeOverlay === 'second' && (
-        <Overlay onClose={() => setActiveOverlay(null)}>
-          <GuideSecond />
-        </Overlay>
-      )}
-
       {/* Main content */}
       {infoVisibility ? (
         <InfoCard itemId={currentItem?.id} setVisibility={setInfoVisibility} />
       ) : (
-        <div className="card relative">
-          {/* Top bar with item info and user score */}
-          <div className="flex min-h-13 justify-center gap-1.5">
-            <Button
-              onClick={() => {
-                if (currentItem?.audio) playAudio(currentItem.audio);
-              }}
-              disabled={isAudioDisabled}
-              className="shape-rectangular flex-1"
-              aria-label="Přehrát audio"
-            >
-              <AudioIcon></AudioIcon>
-            </Button>
-            <PracticeCardBar
-              blocks={userScore?.blockCount?.[0] || 0}
-              className="flex-2"
-            />
-            <Button
-              onClick={() => setInfoVisibility(true)}
-              disabled={!currentItem?.hasContextInfo || !revealed}
-              buttonColor="button-secondary"
-              className="shape-rectangular flex-1"
-              aria-label="Zobrazit informace"
-            >
-              <InfoIcon />
-            </Button>
-          </div>
-          {/* Card content with item details */}
-          <div
-            className={`color-disabled flex h-full w-full flex-col items-center justify-between px-4 pt-3 pb-2 ${!direction && 'color-highlighted rounded-sm'} `}
-          >
-            <div className="flex w-full items-center justify-between">
-              <div className="relative flex pt-1">
-                <button
-                  onClick={() => setShowVolumeSlider((prev) => !prev)}
-                  aria-label="Nastavit hlasitost"
-                  disabled={noAudio}
-                >
-                  <VolumeIcon />
-                </button>
-                {showVolumeSlider && (
-                  <input
-                    type="range"
-                    min="0"
-                    max="1"
-                    step="0.01"
-                    value={volume}
-                    onChange={handleVolumeChange}
-                    className="ml-2 w-24"
-                    autoFocus
-                    aria-valuenow={volume}
-                    aria-valuemin={0}
-                    aria-valuemax={1}
-                    disabled={noAudio}
-                  />
-                )}
-              </div>
-              <p className="flex w-full justify-end text-sm">
-                {index + 1} / {arrayLength}
-              </p>
-            </div>
+        <div>
+          {/* First Overlay */}
+          {activeOverlay === 'first' && (
+            <Overlay onClose={() => setActiveOverlay('beforeSecond')}>
+              <GuideFirst />
+            </Overlay>
+          )}
 
-            <div>
-              <p className="text-center font-bold">
-                {direction || revealed ? currentItem.czech : '\u00A0'}
-              </p>
-              <p className="text-center">
-                {revealed || (noAudio && !direction)
-                  ? currentItem?.english
-                  : currentItem?.english
-                      .slice(0, hintIndex ?? currentItem?.english.length)
-                      .padEnd(currentItem?.english.length, '\u00A0')}
-              </p>
-              <p className="text-center">
-                {revealed ? currentItem?.pronunciation || '\u00A0' : '\u00A0'}
-              </p>
+          {/* Second Overlay */}
+          {activeOverlay === 'second' && (
+            <Overlay onClose={() => setActiveOverlay(null)}>
+              <GuideSecond />
+            </Overlay>
+          )}
+          <div className="card relative">
+            {/* Top bar with item info and user score */}
+            <div className="flex min-h-13 justify-center gap-1.5">
+              <Button
+                onClick={() => {
+                  if (currentItem?.audio) playAudio(currentItem.audio);
+                }}
+                disabled={isAudioDisabled}
+                className="shape-rectangular flex-1"
+                aria-label="Přehrát audio"
+              >
+                <AudioIcon></AudioIcon>
+              </Button>
+              <PracticeCardBar
+                blocks={userScore?.blockCount?.[0] || 0}
+                className="flex-2"
+              />
+              <Button
+                onClick={() => setInfoVisibility(true)}
+                disabled={!currentItem?.hasContextInfo || !revealed}
+                buttonColor="button-secondary"
+                className="shape-rectangular flex-1"
+                aria-label="Zobrazit informace"
+              >
+                <InfoIcon />
+              </Button>
             </div>
-            <div className="flex w-full items-center justify-between">
-              <p className="flex w-full justify-start text-sm">
-                {currentItem?.progress}
-              </p>
-              <p className="text-sm whitespace-nowrap text-red-500">
-                {getErrorMessage(error)}
-              </p>
+            {/* Card content with item details */}
+            <div
+              className={`color-disabled flex h-full w-full flex-col items-center justify-between px-4 pt-3 pb-2 ${!direction && 'color-highlighted rounded-sm'} `}
+            >
+              <div className="flex w-full items-center justify-between">
+                <div className="relative flex pt-1">
+                  <button
+                    onClick={() => setShowVolumeSlider((prev) => !prev)}
+                    aria-label="Nastavit hlasitost"
+                    disabled={noAudio}
+                  >
+                    <VolumeIcon />
+                  </button>
+                  {showVolumeSlider && (
+                    <input
+                      type="range"
+                      min="0"
+                      max="1"
+                      step="0.01"
+                      value={volume}
+                      onChange={handleVolumeChange}
+                      className="ml-2 w-24"
+                      autoFocus
+                      aria-valuenow={volume}
+                      aria-valuemin={0}
+                      aria-valuemax={1}
+                      disabled={noAudio}
+                    />
+                  )}
+                </div>
+                <p className="flex w-full justify-end text-sm">
+                  {index + 1} / {arrayLength}
+                </p>
+              </div>
+
+              <div>
+                <p className="text-center font-bold">
+                  {direction || revealed ? currentItem.czech : '\u00A0'}
+                </p>
+                <p className="text-center">
+                  {revealed || (noAudio && !direction)
+                    ? currentItem?.english
+                    : currentItem?.english
+                        .slice(0, hintIndex ?? currentItem?.english.length)
+                        .padEnd(currentItem?.english.length, '\u00A0')}
+                </p>
+                <p className="text-center">
+                  {revealed ? currentItem?.pronunciation || '\u00A0' : '\u00A0'}
+                </p>
+              </div>
+              <div className="flex w-full items-center justify-between">
+                <p className="flex w-full justify-start text-sm">
+                  {currentItem?.progress}
+                </p>
+                <p className="text-sm whitespace-nowrap text-red-500">
+                  {getErrorMessage(error)}
+                </p>
+              </div>
             </div>
-          </div>
-          {/* Practice Controls */}
-          <div className="flex min-h-13 w-full justify-between gap-1">
-            {!revealed ? (
-              <>
-                <Button
-                  onClick={() => setHintIndex((prevIndex) => prevIndex + 1)}
-                  className="shape-rectangular"
-                  aria-label="Nápověda"
-                >
-                  <HintIcon></HintIcon>
-                </Button>
-                <Button
-                  onClick={() => {
-                    setRevealed(true);
-                    if (activeOverlay === 'beforeSecond') {
-                      setActiveOverlay('second');
-                    }
-                    if (direction && currentItem?.audio)
-                      playAudio(currentItem.audio);
-                    setHintIndex(0);
-                  }}
-                  className="shape-rectangular"
-                  aria-label="Zobrazit odpověď"
-                >
-                  <EyeIcon></EyeIcon>
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button
-                  onClick={() => {
-                    updateItemArray(config.minusProgress);
-                  }}
-                  className="shape-rectangular button-secondary"
-                  aria-label="Snížit skore"
-                >
-                  <MinusIcon></MinusIcon>
-                </Button>
-                <Button
-                  onClick={() => {
-                    updateItemArray(config.plusProgress);
-                  }}
-                  className="shape-rectangular button-secondary"
-                  aria-label="Zvýšit skore"
-                >
-                  <PlusIcon></PlusIcon>
-                </Button>
-              </>
-            )}
+            {/* Practice Controls */}
+            <div className="flex min-h-13 w-full justify-between gap-1">
+              {!revealed ? (
+                <>
+                  <Button
+                    onClick={() => setHintIndex((prevIndex) => prevIndex + 1)}
+                    className="shape-rectangular"
+                    aria-label="Nápověda"
+                  >
+                    <HintIcon></HintIcon>
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setRevealed(true);
+                      if (activeOverlay === 'beforeSecond') {
+                        setActiveOverlay('second');
+                      }
+                      if (direction && currentItem?.audio)
+                        playAudio(currentItem.audio);
+                      setHintIndex(0);
+                    }}
+                    className="shape-rectangular"
+                    aria-label="Zobrazit odpověď"
+                  >
+                    <EyeIcon></EyeIcon>
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    onClick={() => {
+                      updateItemArray(config.minusProgress);
+                    }}
+                    className="shape-rectangular button-secondary"
+                    aria-label="Snížit skore"
+                  >
+                    <MinusIcon></MinusIcon>
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      updateItemArray(config.plusProgress);
+                    }}
+                    className="shape-rectangular button-secondary"
+                    aria-label="Zvýšit skore"
+                  >
+                    <PlusIcon></PlusIcon>
+                  </Button>
+                </>
+              )}
+            </div>
           </div>
         </div>
       )}
