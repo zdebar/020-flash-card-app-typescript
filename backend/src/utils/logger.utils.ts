@@ -32,14 +32,12 @@ const fileTransport = new DailyRotateFile({
   format: combine(timestamp(), json()),
 });
 
-const transports: winston.transport[] = [fileTransport];
-if (isDevelopment) {
-  transports.push(
-    new winston.transports.Console({
-      format: devFormat,
-    })
-  );
-}
+const transports: winston.transport[] = [
+  fileTransport,
+  new winston.transports.Console({
+    format: devFormat, // Use the same format for console logging
+  }),
+];
 
 const logger = winston.createLogger({
   level: process.env.LOGGER_LEVEL || "info",
