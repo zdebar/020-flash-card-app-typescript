@@ -7,9 +7,7 @@ export const fetchWithAuthAndParse = async <T>(
 ): Promise<T | null> => {
   const auth = getAuth();
   const user = auth.currentUser;
-  // const urlPath = config.backendURL + url;
-  const urlPath =
-    '020-flash-card-app-typescript-production.up.railway.app' + url;
+  const urlPath = config.backendURL + url;
 
   if (!user) {
     throw new Error('User is not logged in');
