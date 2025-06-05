@@ -12,6 +12,9 @@ const PORT = process.env.PORT || process.env.BACKEND_PORT || 3000;
 const allowedOrigin = process.env.FRONTEND_URL || "http://localhost:5173";
 export const app = express();
 
+// Trust proxy setting
+app.set("trust proxy", 1); // Trust the first proxy
+
 // Middleware
 app.use(requestLoggerMiddleware);
 
