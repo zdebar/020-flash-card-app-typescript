@@ -17,8 +17,8 @@ export default function App() {
   const showFooterRoutes = ['/', '/login'];
 
   return (
-    <div className="flex min-h-screen flex-col justify-between dark:bg-gray-900">
-      <div className="w-app min-w-card mx-auto flex h-full w-full flex-col items-center">
+    <div className="min-h-screen dark:bg-gray-900">
+      <div className="w-app min-card mx-auto flex h-full w-full flex-col items-center">
         <Header />
 
         <div

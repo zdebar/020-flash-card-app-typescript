@@ -162,7 +162,7 @@ export default function PracticeCard() {
       {infoVisibility ? (
         <InfoCard itemId={currentItem?.id} setVisibility={setInfoVisibility} />
       ) : (
-        <div>
+        <div className="card">
           {/* First Overlay */}
           {activeOverlay === 'first' && (
             <Overlay onClose={() => setActiveOverlay('beforeSecond')}>
@@ -176,7 +176,7 @@ export default function PracticeCard() {
               <GuideSecond />
             </Overlay>
           )}
-          <div className="card relative">
+          <div className="card">
             {/* Top bar with item info and user score */}
             <div className="flex min-h-13 justify-center gap-1.5">
               <Button
