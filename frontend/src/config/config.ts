@@ -1,5 +1,5 @@
 const config = {
-  Url: import.meta.env.VITE_API_URL || 'http://localhost:3000',
+  backendURL: import.meta.env.VITE_API_URL || 'http://localhost:3000',
   plusProgress: 1,
   minusProgress: -2,
   blockFillSize: 5,
