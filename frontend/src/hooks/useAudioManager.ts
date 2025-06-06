@@ -8,6 +8,7 @@ export function useAudioManager(wordArray: Item[]) {
   const volumeRef = useRef(1); // Store the current volume (default is 1)
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioReload, setAudioReload] = useState(false);
+  const [audioError, setAudioError] = useState(false);
 
   useEffect(() => {
     const cacheAudio = async () => {
@@ -61,6 +62,7 @@ export function useAudioManager(wordArray: Item[]) {
     } else {
       console.warn(`Audio file not found in cache: ${audioPath}`);
       setIsPlaying(false);
+      setAudioError(true);
     }
   }, []);
 
@@ -98,5 +100,7 @@ export function useAudioManager(wordArray: Item[]) {
     isPlaying,
     audioReload,
     setAudioReload,
+    audioError,
+    setAudioError,
   };
 }

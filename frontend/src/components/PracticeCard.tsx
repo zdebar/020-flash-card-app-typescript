@@ -26,15 +26,21 @@ import Loading from './common/Loading';
 import { getErrorMessage } from '../utils/error.utils';
 import { alternateDirection } from '../utils/practice.utils';
 import Overlay from './common/Overlay';
-import GuideFirst from './common/GuideFirst';
-import GuideSecond from './common/GuideSecond';
+import GuideHint from './common/GuideHint';
 
 export default function PracticeCard() {
   const apiPath = '/api/items';
   const { array, index, nextIndex, arrayLength, setReload, currentItem } =
     useArray<Item>(apiPath);
-  const { playAudio, setVolume, stopAudio, audioReload, setAudioReload } =
-    useAudioManager(array);
+  const {
+    playAudio,
+    setVolume,
+    stopAudio,
+    audioReload,
+    setAudioReload,
+    audioError,
+    setAudioError,
+  } = useAudioManager(array);
 
   const [userProgress, setUserProgress] = useState<number[]>([]);
   const [revealed, setRevealed] = useState(false);
@@ -50,6 +56,8 @@ export default function PracticeCard() {
   const direction = alternateDirection(currentItem?.progress);
   const isAudioDisabled = (direction && !revealed) || !currentItem?.audio;
   const noAudio = error === PracticeError.NoAudio;
+  const firstOverlay = activeOverlay === 'first';
+  const secondOverlay = activeOverlay === 'second';
 
   // Show Info by default if the item has showContextInfo set to true
   useEffect(() => {
@@ -57,6 +65,11 @@ export default function PracticeCard() {
       setInfoVisibility(true);
     }
   }, [currentItem]);
+
+  // Reset audio error for new item
+  useEffect(() => {
+    setAudioError(false);
+  }, [setAudioError, currentItem]);
 
   // Sending user progress to the server
   const patchItems = useCallback(
@@ -140,12 +153,12 @@ export default function PracticeCard() {
 
   // Error setter
   useEffect(() => {
-    if (!currentItem?.audio) {
+    if (!currentItem?.audio || audioError) {
       setError(PracticeError.NoAudio);
     } else {
       setError(null);
     }
-  }, [currentItem]);
+  }, [currentItem, audioError]);
 
   // Handle volume change
   const handleVolumeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -164,49 +177,26 @@ export default function PracticeCard() {
       ) : (
         <div className="card">
           {/* First Overlay */}
-          {activeOverlay === 'first' && (
-            <Overlay onClose={() => setActiveOverlay('beforeSecond')}>
-              <GuideFirst />
-            </Overlay>
+          {firstOverlay && (
+            <Overlay onClose={() => setActiveOverlay('beforeSecond')} />
           )}
 
           {/* Second Overlay */}
-          {activeOverlay === 'second' && (
-            <Overlay onClose={() => setActiveOverlay(null)}>
-              <GuideSecond />
-            </Overlay>
-          )}
+          {secondOverlay && <Overlay onClose={() => setActiveOverlay(null)} />}
           <div className="card">
-            {/* Top bar with item info and user score */}
-            <div className="flex min-h-13 justify-center gap-1.5">
-              <Button
-                onClick={() => {
-                  if (currentItem?.audio) playAudio(currentItem.audio);
-                }}
-                disabled={isAudioDisabled}
-                className="shape-rectangular flex-1"
-                aria-label="Přehrát audio"
-              >
-                <AudioIcon></AudioIcon>
-              </Button>
-              <PracticeCardBar
-                blocks={userScore?.blockCount?.[0] || 0}
-                className="flex-2"
-              />
-              <Button
-                onClick={() => setInfoVisibility(true)}
-                disabled={!currentItem?.hasContextInfo || !revealed}
-                buttonColor="button-secondary"
-                className="shape-rectangular flex-1"
-                aria-label="Zobrazit informace"
-              >
-                <InfoIcon />
-              </Button>
-            </div>
             {/* Card content with item details */}
             <div
-              className={`color-disabled flex h-full w-full flex-col items-center justify-between px-4 pt-3 pb-2 ${!direction && 'color-highlighted rounded-sm'} `}
+              className={`color-disabled relative flex h-full w-full flex-col items-center justify-between px-4 pt-3 pb-2 ${!direction && 'color-highlighted rounded-sm'} `}
             >
+              <GuideHint
+                visibility={secondOverlay}
+                text="vyslovte slovíčko nahlas"
+                style={{
+                  top: '20px',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                }}
+              />
               <div className="flex w-full items-center justify-between">
                 <div className="relative flex pt-1">
                   <button
@@ -214,6 +204,11 @@ export default function PracticeCard() {
                     aria-label="Nastavit hlasitost"
                     disabled={noAudio}
                   >
+                    <GuideHint
+                      visibility={firstOverlay}
+                      text="hlasitost"
+                      style={{ left: '-10px' }}
+                    />
                     <VolumeIcon />
                   </button>
                   {showVolumeSlider && (
@@ -233,8 +228,13 @@ export default function PracticeCard() {
                     />
                   )}
                 </div>
-                <p className="flex w-full justify-end text-sm">
+                <p className="relative flex w-full justify-end text-sm">
                   {index + 1} / {arrayLength}
+                  <GuideHint
+                    visibility={firstOverlay}
+                    text="slovíčka v bloku"
+                    style={{ right: '-10px' }}
+                  />
                 </p>
               </div>
 
@@ -254,13 +254,60 @@ export default function PracticeCard() {
                 </p>
               </div>
               <div className="flex w-full items-center justify-between">
-                <p className="flex w-full justify-start text-sm">
+                <p className="relative flex w-full justify-start text-sm">
                   {currentItem?.progress}
+                  <GuideHint
+                    visibility={firstOverlay}
+                    text="pokrok slovíčka"
+                    style={{ left: '-10px', top: '-55px' }}
+                  />
                 </p>
                 <p className="text-sm whitespace-nowrap text-red-500">
                   {getErrorMessage(error)}
                 </p>
               </div>
+            </div>
+            {/* Progress Bar with audi, blockcount and item infor */}
+            <div className="flex min-h-13 justify-center gap-1">
+              <Button
+                onClick={() => {
+                  if (currentItem?.audio) playAudio(currentItem.audio);
+                }}
+                disabled={isAudioDisabled}
+                className="shape-rectangular relative flex-1"
+                aria-label="Přehrát audio"
+              >
+                <GuideHint
+                  visibility={firstOverlay}
+                  text="přehrát audio"
+                  style={{ left: '5px' }}
+                />
+                <AudioIcon></AudioIcon>
+              </Button>
+              <PracticeCardBar
+                blocks={userScore?.blockCount?.[0] || 0}
+                className="relative flex-2"
+              >
+                <GuideHint
+                  visibility={firstOverlay}
+                  text="100 denních bloků"
+                  style={{ left: '5px', bottom: '25px' }}
+                />
+              </PracticeCardBar>
+              <Button
+                onClick={() => setInfoVisibility(true)}
+                disabled={!currentItem?.hasContextInfo || !revealed}
+                buttonColor="button-secondary"
+                className="shape-rectangular relative flex-1"
+                aria-label="Zobrazit informace"
+              >
+                <GuideHint
+                  visibility={firstOverlay}
+                  text="gramatika"
+                  style={{ right: '5px' }}
+                />
+                <InfoIcon />
+              </Button>
             </div>
             {/* Practice Controls */}
             <div className="flex min-h-13 w-full justify-between gap-1">
@@ -268,9 +315,14 @@ export default function PracticeCard() {
                 <>
                   <Button
                     onClick={() => setHintIndex((prevIndex) => prevIndex + 1)}
-                    className="shape-rectangular"
+                    className="shape-rectangular relative"
                     aria-label="Nápověda"
                   >
+                    <GuideHint
+                      visibility={firstOverlay}
+                      text="nápověda"
+                      style={{ left: '5px' }}
+                    />
                     <HintIcon></HintIcon>
                   </Button>
                   <Button
@@ -283,9 +335,14 @@ export default function PracticeCard() {
                         playAudio(currentItem.audio);
                       setHintIndex(0);
                     }}
-                    className="shape-rectangular"
+                    className="shape-rectangular relative"
                     aria-label="Zobrazit odpověď"
                   >
+                    <GuideHint
+                      visibility={firstOverlay}
+                      text="odhalit překlad"
+                      style={{ right: '5px' }}
+                    />
                     <EyeIcon></EyeIcon>
                   </Button>
                 </>
@@ -295,18 +352,32 @@ export default function PracticeCard() {
                     onClick={() => {
                       updateItemArray(config.minusProgress);
                     }}
-                    className="shape-rectangular button-secondary"
+                    className="shape-rectangular button-secondary relative"
                     aria-label="Snížit skore"
                   >
+                    <GuideHint
+                      visibility={secondOverlay}
+                      text="neznám"
+                      style={{
+                        left: '5px',
+                      }}
+                    />
                     <MinusIcon></MinusIcon>
                   </Button>
                   <Button
                     onClick={() => {
                       updateItemArray(config.plusProgress);
                     }}
-                    className="shape-rectangular button-secondary"
+                    className="shape-rectangular button-secondary relative"
                     aria-label="Zvýšit skore"
                   >
+                    <GuideHint
+                      visibility={secondOverlay}
+                      text="znám"
+                      style={{
+                        right: '5px',
+                      }}
+                    />
                     <PlusIcon></PlusIcon>
                   </Button>
                 </>

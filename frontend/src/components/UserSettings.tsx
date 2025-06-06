@@ -37,6 +37,7 @@ export default function UserSettings() {
       <ThemeDropdown />
       <ConfirmModal
         isVisible={isModalVisible}
+        text="Opravdu se chcete odhlásit?"
         onConfirm={() => {
           setModalVisible(false);
           handleLogout();

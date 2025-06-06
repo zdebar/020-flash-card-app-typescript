@@ -29,7 +29,7 @@ export default function App() {
               path="/"
               element={
                 <>
-                  <div className="font-display max-w-[480px] p-4 text-center text-xl">
+                  <div className="font-display h-full max-w-[480px] p-4 text-center text-xl">
                     <h1 className="">Angličtina přirozeně</h1>
                     <p className="pb-8 text-red-500">
                       aplikace v testovacím režimu
@@ -61,8 +61,8 @@ export default function App() {
             <Route path="/grammarList" element={<GrammarList />} />
           </Routes>
         </div>
+        {showFooterRoutes.includes(location.pathname) && <Footer />}
       </div>
-      {showFooterRoutes.includes(location.pathname) && <Footer />}
     </div>
   );
 }
