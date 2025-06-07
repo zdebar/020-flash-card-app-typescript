@@ -7,6 +7,7 @@ import {
   getItemInfoRepository,
 } from "../repository/items.repository.postgres";
 import { addAudioPath } from "../utils/update.utils";
+import sortItemsByProgress from "../utils/items.utils";
 
 /**
  * Gets a list of words for a given user and language ID from the database.
@@ -16,6 +17,9 @@ export async function getItemsService(
   uid: string
 ): Promise<Item[]> {
   const words: Item[] = await getItemsRepository(db, uid);
+
+  sortItemsByProgress(words);
+
   return words.map((word) => ({
     ...word,
     audio: addAudioPath(word.audio),

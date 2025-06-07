@@ -17,8 +17,8 @@ export default function App() {
   const showFooterRoutes = ['/', '/login'];
 
   return (
-    <div className="flex min-h-screen flex-col justify-between dark:bg-gray-900">
-      <div className="w-app min-w-card mx-auto flex h-full w-full flex-col items-center">
+    <div className="min-h-screen dark:bg-gray-900">
+      <div className="w-app min-card mx-auto flex h-full w-full flex-col items-center">
         <Header />
 
         <div
@@ -29,14 +29,14 @@ export default function App() {
               path="/"
               element={
                 <>
-                  <div className="font-display max-w-[480px] p-4 text-center text-xl">
+                  <div className="font-display h-full max-w-[480px] p-4 text-center text-xl">
                     <h1 className="">Angličtina přirozeně</h1>
                     <p className="pb-8 text-red-500">
                       aplikace v testovacím režimu
                     </p>
                     <p className="pb-8">
-                      Učte se jazyky přirozeně. Mluvením a posloucháním. Od
-                      samostatných slovíček až po celé věty.
+                      Nakonec stejně vždy záleží na množství opakování. Beze
+                      stresu, bez přemýšlení, tisíce opakování denně.
                     </p>
                   </div>
                   {loading ? (
@@ -61,8 +61,8 @@ export default function App() {
             <Route path="/grammarList" element={<GrammarList />} />
           </Routes>
         </div>
+        {showFooterRoutes.includes(location.pathname) && <Footer />}
       </div>
-      {showFooterRoutes.includes(location.pathname) && <Footer />}
     </div>
   );
 }

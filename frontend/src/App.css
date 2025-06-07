@@ -70,14 +70,18 @@
 
   /** Size classes*/
   .card {
-    @apply flex h-[320px] w-[320px] flex-col justify-between gap-1 rounded-sm;
+    @apply flex h-full max-h-[360px] min-h-[320px] w-full max-w-[360px] min-w-[320px] flex-col justify-between gap-1 rounded-sm;
   }
 
   .w-card {
-    @apply w-[320px];
+    @apply w-full max-w-[360px];
   }
-  .min-w-card {
-    @apply min-w-[320px];
+  .min-card {
+    @apply min-h-[320px] min-w-[320px];
+  }
+
+  .min-h-screen {
+    height: 100vh;
   }
 
   .w-app {

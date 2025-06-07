@@ -63,18 +63,7 @@ export async function getItemsRepository(
     return res.rows;
   };
 
-  let items = await runQuery();
-
-  // Sorts items even first, then odd items. Gives better user experience.
-  items = items.sort((a, b) => {
-    const isEvenA = a.progress % 2 === 0;
-    const isEvenB = b.progress % 2 === 0;
-    if (isEvenA && !isEvenB) return -1;
-    if (!isEvenA && isEvenB) return 1;
-    return 0;
-  });
-
-  return items;
+  return await runQuery();
 }
 
 /**

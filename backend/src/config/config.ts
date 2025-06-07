@@ -7,6 +7,7 @@ if (process.env.NODE_ENV !== "production") {
   dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 }
 validateEnvVariables([
+  "LOGGER_LEVEL",
   "NODE_ENV",
   "DB_HOST",
   "DB_PORT",

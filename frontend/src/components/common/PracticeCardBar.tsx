@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import config from '../../config/config';
 import { getBarColor } from '../../utils/graph.utils';
 
@@ -8,9 +8,10 @@ const MAX_BLOCKS = 20;
 interface PracticeCardBarProps {
   blocks: number;
   className?: string;
+  children?: ReactNode;
 }
 
-function BarComponent({ blocks, className }: PracticeCardBarProps) {
+function BarComponent({ blocks, className, children }: PracticeCardBarProps) {
   const level = Math.min(Math.floor(blocks / BLOCKS_PER_FILL), MAX_BLOCKS);
   const subLevel = blocks - level * BLOCKS_PER_FILL;
 
@@ -24,6 +25,7 @@ function BarComponent({ blocks, className }: PracticeCardBarProps) {
       aria-valuemax={MAX_BLOCKS}
       title={`Úroveň: ${level} z ${MAX_BLOCKS}`}
     >
+      {children}
       {[...Array(MAX_BLOCKS)].map((_, idx) => {
         const filled = idx < level;
         const color = getBarColor(idx + 1);

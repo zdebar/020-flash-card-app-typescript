@@ -6,8 +6,8 @@ from typing import Union, List, Any
 # This script converts MP3 files to Opus format with a lower bitrate. Also trims silence from the beginning and end of the audio files.
 
 # Define the source and output folders
-source_folder = os.path.abspath("../../data/en-source/grammar/001/mp3")
-output_folder = os.path.abspath("../../data/en-source/grammar/001/opus")
+source_folder = os.path.abspath("../../data/en-source/audio/mp3/1")
+output_folder = os.path.abspath("../../data/en-source/audio/opus_2")
 output_format = "opus"
 output_bitrate = "16k"
 os.makedirs(output_folder, exist_ok=True)

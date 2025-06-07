@@ -1,7 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../hooks/useUser';
-import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import {
+  getAuth,
+  signInWithPopup,
+  GoogleAuthProvider,
+  signInWithEmailAndPassword,
+} from 'firebase/auth';
 import Button from './common/Button';
 import Loading from './common/Loading';
 
@@ -30,8 +35,39 @@ export default function Login() {
     }
   };
 
+  const handleDemoLogin = async () => {
+    const auth = getAuth();
+    const demoEmail = 'demo@example.com';
+    const demoPassword = 'password123';
+
+    try {
+      setLoading(true);
+      setLocalLoading(true);
+      setError(null);
+      await signInWithEmailAndPassword(auth, demoEmail, demoPassword);
+      navigate('/');
+    } catch (error) {
+      setError('Demo login failed.');
+      console.error('Demo login failed:', error);
+    } finally {
+      setLoading(false);
+      setLocalLoading(false);
+    }
+  };
+
   return (
     <>
+      <Button
+        onClick={handleDemoLogin}
+        className="button-rectangular w-card"
+        aria-label="Přihlásit se jako demo uživatel"
+        disabled={loading}
+      >
+        {loading ? <Loading /> : 'Demo Account'}
+      </Button>
+      <p className="pt-4 text-sm text-red-500">
+        Google login otevřen pouze pro testery.
+      </p>
       <Button
         onClick={handleGoogleLogin}
         className="button-rectangular w-card"
@@ -40,6 +76,7 @@ export default function Login() {
       >
         {loading ? <Loading /> : 'Google Login'}
       </Button>
+
       {error && <p className="mt-2 text-red-500">{error}</p>}
     </>
   );
