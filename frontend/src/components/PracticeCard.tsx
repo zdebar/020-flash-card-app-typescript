@@ -291,7 +291,7 @@ export default function PracticeCard() {
                 <GuideHint
                   visibility={firstOverlay}
                   text="100 denních bloků"
-                  style={{ left: '5px', bottom: '25px' }}
+                  style={{ left: '10px', bottom: '25px' }}
                 />
               </PracticeCardBar>
               <Button
