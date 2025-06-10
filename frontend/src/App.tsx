@@ -45,8 +45,7 @@ export default function App() {
                       aplikace v testovacím režimu
                     </p>
                     <p className="pb-8">
-                      Nakonec stejně vždy záleží na množství opakování. Beze
-                      stresu, bez přemýšlení, tisíce opakování denně.
+                      Beze stresu, bez přemýšlení, tisíce opakování denně.
                     </p>
                   </div>
                   {loading ? (
