@@ -1,7 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Mansalva:wght@400;700&display=swap');
-
 @import 'tailwindcss';
-
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
@@ -57,11 +55,11 @@
   }
 
   .shape-rectangular {
-    @apply h-full w-full rounded-sm;
+    @apply h-full w-full;
   }
 
   .button-rectangular {
-    @apply h-13 w-full rounded-sm;
+    @apply h-13 w-full;
   }
 
   .button-round {

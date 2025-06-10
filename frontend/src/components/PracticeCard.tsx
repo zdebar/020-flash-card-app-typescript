@@ -9,7 +9,6 @@ import {
   MinusIcon,
   VolumeIcon,
 } from './common/Icons';
-import { PracticeCardBar } from './common/PracticeCardBar';
 import config from '../config/config';
 import { useAudioManager } from '../hooks/useAudioManager';
 import {
@@ -51,7 +50,7 @@ export default function PracticeCard() {
   const [volume, setVolumeState] = useState(1);
   const [activeOverlay, setActiveOverlay] = useState<string | null>('first');
 
-  const { setUserScore, userScore } = useUser();
+  const { setUserScore } = useUser();
 
   const direction = alternateDirection(currentItem?.progress);
   const isAudioDisabled = (direction && !revealed) || !currentItem?.audio;
@@ -175,7 +174,7 @@ export default function PracticeCard() {
       {infoVisibility ? (
         <InfoCard itemId={currentItem?.id} setVisibility={setInfoVisibility} />
       ) : (
-        <div className="card">
+        <>
           {/* First Overlay */}
           {firstOverlay && (
             <Overlay onClose={() => setActiveOverlay('beforeSecond')} />
@@ -186,7 +185,7 @@ export default function PracticeCard() {
           <div className="card">
             {/* Card content with item details */}
             <div
-              className={`color-disabled relative flex h-full w-full flex-col items-center justify-between px-4 pt-3 pb-2 ${!direction && 'color-highlighted rounded-sm'} `}
+              className={`color-disabled relative flex h-full w-full flex-col items-center justify-between px-4 pt-3 pb-2 ${!direction && 'color-highlighted'} `}
             >
               <GuideHint
                 visibility={secondOverlay}
@@ -284,16 +283,7 @@ export default function PracticeCard() {
                 />
                 <AudioIcon></AudioIcon>
               </Button>
-              <PracticeCardBar
-                blocks={userScore?.blockCount?.[0] || 0}
-                className="relative flex-2"
-              >
-                <GuideHint
-                  visibility={firstOverlay}
-                  text="100 denních bloků"
-                  style={{ left: '10px', bottom: '25px' }}
-                />
-              </PracticeCardBar>
+
               <Button
                 onClick={() => setInfoVisibility(true)}
                 disabled={!currentItem?.hasContextInfo || !revealed}
@@ -384,7 +374,7 @@ export default function PracticeCard() {
               )}
             </div>
           </div>
-        </div>
+        </>
       )}
     </>
   );

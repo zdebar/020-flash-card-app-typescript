@@ -1,5 +1,6 @@
 import './App.css';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Routes, Route, useLocation, useSearchParams } from 'react-router-dom';
 import { useUser } from './hooks/useUser';
 import ButtonLink from './components/common/ButtonLink';
 import Header from './components/Header';
@@ -15,6 +16,15 @@ export default function App() {
   const { userInfo, loading } = useUser();
   const location = useLocation();
   const showFooterRoutes = ['/', '/login'];
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    const query = searchParams.get('q');
+    if (query) {
+      console.log('Custom protocol query:', query);
+      // Handle the query parameter (e.g., navigate or perform an action)
+    }
+  }, [searchParams]);
 
   return (
     <div className="min-h-screen dark:bg-gray-900">
@@ -28,8 +38,8 @@ export default function App() {
             <Route
               path="/"
               element={
-                <>
-                  <div className="font-display h-full max-w-[480px] p-4 text-center text-xl">
+                <div className="flex w-full flex-col items-center justify-start gap-4">
+                  <div className="font-display max-w-[480px] p-4 text-center text-xl">
                     <h1 className="">Angličtina přirozeně</h1>
                     <p className="pb-8 text-red-500">
                       aplikace v testovacím režimu
@@ -50,7 +60,7 @@ export default function App() {
                       </div>
                     )
                   )}
-                </>
+                </div>
               }
             />
 

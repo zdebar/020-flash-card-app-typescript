@@ -15,16 +15,16 @@ export async function getItemsRepository(
 
   const runQuery = async (): Promise<Item[]> => {
     const query = `
-      WITH user_cte AS (
+	    WITH user_cte AS (
         SELECT id AS user_id FROM users WHERE uid = $1
       ),
       has_info_cte AS (
         SELECT bi.item_id
         FROM block_items bi
         JOIN blocks b ON bi.block_id = b.id
-        WHERE b.category_id = 1
+        WHERE b.category_id IN (0, 1)
       )
-      SELECT 
+      SELECT
         i.id,
         i.czech,
         i.english,
@@ -37,23 +37,23 @@ export async function getItemsRepository(
           WHERE has_info_cte.item_id = i.id
         ) AS "hasContextInfo",
         EXISTS (
-          SELECT 
+          SELECT 1
           FROM has_info_cte
           WHERE has_info_cte.item_id = i.id AND i.item_order = 1 AND ui.progress = 0
         ) AS "showContextInfo"
-      FROM items i
+      FROM items i 
       LEFT JOIN user_items ui ON i.id = ui.item_id AND ui.user_id = (SELECT user_id FROM user_cte)
-      LEFT JOIN block_items bi ON i.id = bi.item_id
-      LEFT JOIN blocks b ON bi.block_id = b.id AND b.category_id = 1
+      LEFT JOIN block_items bi on i.id = bi.item_id
+      LEFT JOIN blocks b on bi.block_id = b.id 
       WHERE ui.mastered_at IS NULL
         AND (ui.next_at IS NULL OR ui.next_at < NOW())
-      GROUP BY 
-        i.id, i.czech, i.english, i.pronunciation, i.audio, ui.progress, b.block_order, ui.next_at
-      ORDER BY     
-        ui.next_at ASC NULLS LAST,
-        COALESCE(b.block_order, i.item_order) ASC NULLS LAST,
-        i.id
-      LIMIT $2;
+        AND (b.category_id IN (0, 1) OR b.category_id IS NULL)
+      order by
+      	ui.next_at ASC NULLS last,
+ 	      COALESCE(b.block_order, i.item_order) ASC NULLS LAST,
+ 	      i.item_order,
+      	i.id
+      limit $2;
     `;
 
     const res = await withDbClient(db, async (client) => {
