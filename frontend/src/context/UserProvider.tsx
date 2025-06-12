@@ -35,7 +35,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
             setUserInfo({
               uid,
               email,
-              name: displayName || 'Bez jména',
+              name: displayName || 'Vzorový uživatel',
               picture: photoURL || 'Bez emailu',
             });
           }

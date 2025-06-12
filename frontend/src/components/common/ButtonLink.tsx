@@ -12,12 +12,12 @@ interface ButtonLinkProps extends Omit<LinkProps, 'to'> {
 export default function ButtonLink({
   children,
   disabled = false,
-  buttonColor = 'button-primary',
+  buttonColor = 'color-primary',
   className = '',
   to,
   ...props
 }: ButtonLinkProps) {
-  const buttonClass = `flex items-center justify-center px-4 py-2  ${className} ${
+  const buttonClass = `flex items-center justify-center ${className} ${
     disabled ? 'color-disabled pointer-events-none' : buttonColor
   }`;
 

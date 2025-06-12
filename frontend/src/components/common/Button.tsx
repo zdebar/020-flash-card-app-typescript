@@ -8,7 +8,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 export default function Button({
   children,
-  buttonColor = 'button-primary',
+  buttonColor = 'color-primary',
   className = '',
   ...props
 }: ButtonProps) {

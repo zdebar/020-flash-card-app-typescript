@@ -157,7 +157,14 @@ export default function PracticeCard() {
     } else {
       setError(null);
     }
-  }, [currentItem, audioError]);
+
+    if (audioError) {
+      const interval = setInterval(() => {
+        playAudio(currentItem.audio);
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [currentItem, audioError, playAudio]);
 
   // Handle volume change
   const handleVolumeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -261,19 +268,19 @@ export default function PracticeCard() {
                     style={{ left: '-10px', top: '-55px' }}
                   />
                 </p>
-                <p className="text-sm whitespace-nowrap text-red-500">
+                <p className="color-error text-sm whitespace-nowrap">
                   {getErrorMessage(error)}
                 </p>
               </div>
             </div>
             {/* Progress Bar with audi, blockcount and item infor */}
-            <div className="flex min-h-13 justify-center gap-1">
+            <div className="flex justify-center gap-1">
               <Button
                 onClick={() => {
                   if (currentItem?.audio) playAudio(currentItem.audio);
                 }}
                 disabled={isAudioDisabled}
-                className="shape-rectangular relative flex-1"
+                className="button-rectangular relative flex-1"
                 aria-label="Přehrát audio"
               >
                 <GuideHint
@@ -287,8 +294,8 @@ export default function PracticeCard() {
               <Button
                 onClick={() => setInfoVisibility(true)}
                 disabled={!currentItem?.hasContextInfo || !revealed}
-                buttonColor="button-secondary"
-                className="shape-rectangular relative flex-1"
+                buttonColor="color-secondary"
+                className="button-rectangular relative flex-1"
                 aria-label="Zobrazit informace"
               >
                 <GuideHint
@@ -300,12 +307,12 @@ export default function PracticeCard() {
               </Button>
             </div>
             {/* Practice Controls */}
-            <div className="flex min-h-13 w-full justify-between gap-1">
+            <div className="flex w-full justify-between gap-1">
               {!revealed ? (
                 <>
                   <Button
                     onClick={() => setHintIndex((prevIndex) => prevIndex + 1)}
-                    className="shape-rectangular relative"
+                    className="button-rectangular relative"
                     aria-label="Nápověda"
                   >
                     <GuideHint
@@ -325,7 +332,7 @@ export default function PracticeCard() {
                         playAudio(currentItem.audio);
                       setHintIndex(0);
                     }}
-                    className="shape-rectangular relative"
+                    className="button-rectangular relative"
                     aria-label="Zobrazit odpověď"
                   >
                     <GuideHint
@@ -342,7 +349,7 @@ export default function PracticeCard() {
                     onClick={() => {
                       updateItemArray(config.minusProgress);
                     }}
-                    className="shape-rectangular button-secondary relative"
+                    className="button-rectangular color-secondary relative"
                     aria-label="Snížit skore"
                   >
                     <GuideHint
@@ -358,7 +365,7 @@ export default function PracticeCard() {
                     onClick={() => {
                       updateItemArray(config.plusProgress);
                     }}
-                    className="shape-rectangular button-secondary relative"
+                    className="button-rectangular color-secondary relative"
                     aria-label="Zvýšit skore"
                   >
                     <GuideHint

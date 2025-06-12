@@ -59,18 +59,18 @@ export default function Login() {
     <>
       <Button
         onClick={handleDemoLogin}
-        className="button-rectangular w-card"
+        className="button-rectangular max-w-card"
         aria-label="Přihlásit se jako demo uživatel"
         disabled={loading}
       >
         {loading ? <Loading /> : 'Demo Account'}
       </Button>
-      <p className="pt-4 text-sm text-red-500">
+      <p className="color-error pt-4 text-sm">
         Google login otevřen pouze pro testery.
       </p>
       <Button
         onClick={handleGoogleLogin}
-        className="button-rectangular w-card"
+        className="button-rectangular max-w-card"
         aria-label="Přihlásit se přes Google"
         disabled={loading}
       >

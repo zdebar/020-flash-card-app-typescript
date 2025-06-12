@@ -23,7 +23,7 @@ export default function Header() {
       >
         <ButtonLink
           className="button-round"
-          buttonColor="button-secondary"
+          buttonColor="color-secondary"
           to="/userDashboard"
           disabled={!userInfo}
           aria-label="Uživatelský dashboard"

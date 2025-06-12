@@ -58,6 +58,7 @@ export function useAudioManager(wordArray: Item[]) {
         audio.onpause = () => {
           setIsPlaying(false);
         };
+        setAudioError(false);
       }
     } else {
       console.warn(`Audio file not found in cache: ${audioPath}`);

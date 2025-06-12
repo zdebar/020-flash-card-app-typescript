@@ -22,7 +22,7 @@ export async function getItemsRepository(
         SELECT bi.item_id
         FROM block_items bi
         JOIN blocks b ON bi.block_id = b.id
-        WHERE b.category_id = 0
+        WHERE b.category_id = 1
       )
       SELECT
         i.id,

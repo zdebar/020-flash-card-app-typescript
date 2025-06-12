@@ -30,20 +30,16 @@
   /** Button behavior*/
 
   /** Button Colors */
-  .button-primary {
+  .color-background {
+    @apply bg-white dark:bg-gray-900;
+  }
+
+  .color-primary {
     @apply bg-blue-600 text-white shadow-[2px_2px_2px_rgba(0,0,0,0.35)] hover:bg-blue-800 dark:bg-blue-800 dark:text-white dark:hover:bg-blue-600;
   }
 
-  .button-secondary {
+  .color-secondary {
     @apply bg-pink-500 text-white shadow-[2px_2px_2px_rgba(0,0,0,0.35)] hover:bg-pink-700 dark:bg-pink-600 dark:text-white dark:hover:bg-pink-500;
-  }
-
-  .button-tertiary {
-    @apply bg-green-600 text-white shadow-[2px_2px_2px_rgba(0,0,0,0.35)] hover:bg-green-800 dark:bg-green-600 dark:text-white dark:hover:bg-green-500;
-  }
-
-  .button-gray {
-    @apply bg-gray-300 text-black shadow-[2px_2px_2px_rgba(0,0,0,0.35)] hover:bg-gray-500 dark:bg-gray-600 dark:text-white dark:hover:bg-gray-400;
   }
 
   .color-disabled {
@@ -52,6 +48,10 @@
 
   .color-highlighted {
     @apply bg-gray-200 dark:bg-gray-700;
+  }
+
+  .color-error {
+    @apply text-red-500;
   }
 
   .shape-rectangular {
@@ -71,7 +71,7 @@
     @apply flex h-full max-h-[360px] min-h-[320px] w-full max-w-[360px] min-w-[320px] flex-col justify-between gap-1 rounded-sm;
   }
 
-  .w-card {
+  .max-w-card {
     @apply w-full max-w-[360px];
   }
   .min-card {
@@ -82,8 +82,13 @@
     height: 100vh;
   }
 
-  .w-app {
+  .max-w-app {
     @apply max-w-[900px];
+  }
+
+  /** Paddings, Margins, Gaps */
+  .p-big {
+    @apply p-8;
   }
 }
 

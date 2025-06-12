@@ -7,7 +7,8 @@ import ThemeDropdown from './common/ThemeDropdown';
 import ConfirmModal from './common/ConfirmModal';
 
 export default function UserSettings() {
-  const { setUserInfo, setUserSettings, setUserScore, setLoading } = useUser();
+  const { userInfo, setUserInfo, setUserSettings, setUserScore, setLoading } =
+    useUser();
   const navigate = useNavigate();
   const [isModalVisible, setModalVisible] = useState(false);
 
@@ -27,7 +28,8 @@ export default function UserSettings() {
   };
 
   return (
-    <div className="w-card flex flex-col gap-4">
+    <div className="max-w-card flex flex-col gap-4">
+      <p>Jméno: {userInfo?.name}</p>
       <Button
         onClick={() => setModalVisible(true)}
         className="button-rectangular"

@@ -76,4 +76,3 @@ export default function InfoCard({
     </div>
   );
 }
-<p>Foukáš bez hlasivek – jen tichý šum.</p>;

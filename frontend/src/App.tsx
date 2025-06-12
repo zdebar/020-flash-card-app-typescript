@@ -27,32 +27,36 @@ export default function App() {
   }, [searchParams]);
 
   return (
-    <div className="min-h-screen dark:bg-gray-900">
-      <div className="w-app min-card mx-auto flex h-full w-full flex-col items-center">
+    <div className="color-background min-h-screen">
+      <div className="max-w-app min-card mx-auto flex h-full w-full flex-col items-center">
         <Header />
 
-        <div
-          className={`app z-1 flex h-full w-full flex-col items-center gap-1`}
-        >
+        <div className={`app z-1 flex h-full w-full flex-col items-center`}>
           <Routes>
             <Route
               path="/"
               element={
-                <div className="flex w-full flex-col items-center justify-start gap-4">
+                <div className="flex w-full flex-col items-center justify-start">
                   <div className="font-display max-w-[480px] p-4 text-center text-xl">
                     <h1 className="">Angličtina přirozeně</h1>
-                    <p className="pb-8 text-red-500">
+                    <p className="color-error pb-8">
                       aplikace v testovacím režimu
                     </p>
                     <p className="pb-8">
-                      Beze stresu, bez přemýšlení, tisíce opakování denně.
+                      Nenásilné učení v malých, snadno zvládnutelných, soustech.
+                      Důkladné opakování dokud se vše nestane zcela přirozené.
+                    </p>
+                    <p>
+                      Je zcela na Vás jak moc budete procvičovat. Můžete
+                      postupovat pomalu a lehce po malých krůčcích nebo kráčet
+                      mílovými kroky.
                     </p>
                   </div>
                   {loading ? (
                     <Loading />
                   ) : (
                     !userInfo && (
-                      <div className="w-card">
+                      <div className="max-w-card">
                         <ButtonLink to="/login" className="button-rectangular">
                           Přihlášení / Registrace
                         </ButtonLink>
