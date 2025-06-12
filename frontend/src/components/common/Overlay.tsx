@@ -6,28 +6,30 @@ interface OverlayProps {
 export default function Overlay({ onClose, children }: OverlayProps) {
   const isDarkMode = document.documentElement.classList.contains('dark');
 
-  return (
-    <div className="card absolute">
-      {/* Overlay */}
-      <div
-        className="card font-display absolute z-10 text-xl"
-        role="dialog"
-        style={{
-          backgroundColor: !isDarkMode
-            ? 'rgba(255, 255, 255, 0.4)'
-            : 'rgba(17, 24, 39, 0.6)',
-        }}
-        aria-modal="true"
-        onClick={onClose}
-      >
-        <div className="max-w-md">{children}</div>
-      </div>
+  const handleOverlayClick = (event: React.MouseEvent) => {
+    event.stopPropagation(); // Prevent clicks from propagating to elements below
+    onClose();
+  };
 
-      {/* Disable interaction for elements below */}
+  return (
+    <div
+      className="font-display fixed inset-0 z-10 text-xl"
+      role="dialog"
+      style={{
+        backgroundColor: !isDarkMode
+          ? 'rgba(255, 255, 255, 0.4)'
+          : 'rgba(17, 24, 39, 0.6)',
+        pointerEvents: 'all', // Ensure overlay captures all interactions
+      }}
+      aria-modal="true"
+      onClick={handleOverlayClick}
+    >
       <div
-        className="absolute inset-0 z-0"
-        style={{ pointerEvents: 'none' }}
-      ></div>
+        className="mx-auto max-w-md"
+        onClick={(event) => event.stopPropagation()} // Prevent clicks inside the overlay from closing it
+      >
+        {children}
+      </div>
     </div>
   );
 }

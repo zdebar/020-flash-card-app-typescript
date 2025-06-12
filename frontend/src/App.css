@@ -68,7 +68,7 @@
 
   /** Size classes*/
   .card {
-    @apply flex h-full max-h-[360px] min-h-[320px] w-full max-w-[360px] min-w-[320px] flex-col justify-between gap-1 rounded-sm;
+    @apply flex h-full max-h-[360px] min-h-[320px] w-full max-w-[360px] min-w-[320px] flex-col justify-between gap-1;
   }
 
   .max-w-card {

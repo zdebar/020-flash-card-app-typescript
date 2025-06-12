@@ -142,10 +142,10 @@ export default function PracticeCard() {
 
   // Set direction based on current item progress, play audio if needed
   useEffect(() => {
-    if (!direction && currentItem?.audio && !audioReload) {
+    if (!direction && currentItem?.audio && !audioReload && !firstOverlay) {
       setTimeout(() => playAudio(currentItem.audio!), 100);
     }
-  }, [currentItem, playAudio, audioReload, direction]);
+  }, [currentItem, playAudio, audioReload, direction, firstOverlay]);
 
   // Patch items on unmount
   usePatchOnUnmount(patchItems, userProgress);

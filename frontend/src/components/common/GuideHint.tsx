@@ -13,6 +13,7 @@ export default function GuideHint({
         className="font-display absolute z-20 pt-6 text-xl"
         style={{
           whiteSpace: 'nowrap',
+          pointerEvents: 'none',
           ...style,
         }}
       >

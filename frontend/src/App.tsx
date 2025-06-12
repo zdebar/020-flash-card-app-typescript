@@ -38,18 +38,14 @@ export default function App() {
               element={
                 <div className="flex w-full flex-col items-center justify-start">
                   <div className="font-display max-w-[480px] p-4 text-center text-xl">
-                    <h1 className="">Angličtina přirozeně</h1>
+                    <h1 className="">Angličtina jednoduše</h1>
                     <p className="color-error pb-8">
                       aplikace v testovacím režimu
                     </p>
                     <p className="pb-8">
-                      Nenásilné učení v malých, snadno zvládnutelných, soustech.
-                      Důkladné opakování dokud se vše nestane zcela přirozené.
-                    </p>
-                    <p>
-                      Je zcela na Vás jak moc budete procvičovat. Můžete
-                      postupovat pomalu a lehce po malých krůčcích nebo kráčet
-                      mílovými kroky.
+                      Přihlašte se stisknětě tlačítko "Procvičovat" a aplikace
+                      Vás po malých krůčcíh naučí slovíčka i gramatiku. Od
+                      začátečníka až po plynulého mluvčího.
                     </p>
                   </div>
                   {loading ? (

@@ -25,7 +25,7 @@ export default function Login() {
       setLocalLoading(true);
       setError(null);
       await signInWithPopup(auth, provider);
-      navigate('/');
+      navigate('/userDashboard');
     } catch (error) {
       setError('Přihlášení přes Google selhalo.');
       console.error('Google login failed:', error);
@@ -45,7 +45,7 @@ export default function Login() {
       setLocalLoading(true);
       setError(null);
       await signInWithEmailAndPassword(auth, demoEmail, demoPassword);
-      navigate('/');
+      navigate('/userDashboard');
     } catch (error) {
       setError('Demo login failed.');
       console.error('Demo login failed:', error);
