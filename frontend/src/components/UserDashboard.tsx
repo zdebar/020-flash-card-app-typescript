@@ -2,6 +2,7 @@ import { useUser } from '../hooks/useUser';
 
 import DashboardBar from './common/DashboardBar';
 import ButtonLink from './common/ButtonLink';
+import LanguageBar from './common/languageBar';
 
 export default function UserDashboard() {
   const { userScore } = useUser();
@@ -22,6 +23,10 @@ export default function UserDashboard() {
       <div
         className={`color-disabled shape-rectangular flex flex-1 flex-col items-center justify-center pb-2`}
       >
+        <LanguageBar
+          learned={userScore?.learnedCount ?? 0}
+          learnedToday={userScore?.learnedCountToday ?? 0}
+        />
         <p className="font-display pb-2">bloky za posledních 7 dní</p>
         {userScore &&
           userScore.blockCount.map((item, idx) => (

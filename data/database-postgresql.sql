@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS user_items (
   item_id INTEGER NOT NULL,
   progress INTEGER DEFAULT 0 CHECK (progress >= 0), -- learning progress
   started_at TIMESTAMPTZ DEFAULT NOW(), -- datetime when the user started learning the item
+  learned_at TIMESTAMPTZ, -- datetime when the user learned the item
   next_at TIMESTAMPTZ, -- datetime when the user should learn the item again
   mastered_at TIMESTAMPTZ, -- datetime when the user mastered the item
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,

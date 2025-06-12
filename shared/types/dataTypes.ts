@@ -40,6 +40,8 @@ export interface UserScore {
   itemsTotal: number;
   startedCountToday: number;
   startedCount: number;
+  learnedCount: number; // items with progress > 5
+  learnedCountToday: number; // items with progress > 5
   blockCount: number[];
 }
 
