@@ -13,19 +13,27 @@ export async function getUserRepository(
   name: string | null,
   email: string | null
 ): Promise<UserSettings> {
-  return withDbClient(db, async (client) => {
-    const user: QueryResult<UserSettings> = await client.query(
-      `
-      INSERT INTO users (uid, name, email)
-      VALUES ($1, $2, $3)
-      ON CONFLICT (uid) DO UPDATE
-      SET name = EXCLUDED.name,
-          email = EXCLUDED.email
-      RETURNING id;
-      `,
-      [uid, name, email]
-    );
+  try {
+    return withDbClient(db, async (client) => {
+      const user: QueryResult<UserSettings> = await client.query(
+        `
+        INSERT INTO users (uid, name, email)
+        VALUES ($1, $2, $3)
+        ON CONFLICT (uid) DO UPDATE
+        SET name = EXCLUDED.name,
+            email = EXCLUDED.email
+        RETURNING id;
+        `,
+        [uid, name, email]
+      );
 
-    return user.rows[0];
-  });
+      return user.rows[0];
+    });
+  } catch (error) {
+    throw new Error(
+      `Error in getUserRepository: ${
+        (error as any).message
+      } | db type: ${typeof db} | uid: ${uid} | name: ${name} | email: ${email}`
+    );
+  }
 }

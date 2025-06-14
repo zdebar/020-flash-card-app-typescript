@@ -32,7 +32,12 @@ export async function getUserController(
       userSettings,
       userScore,
     });
-  } catch (error) {
-    next(error);
+  } catch (err) {
+    (err as any).message = `Error in getUserController: ${
+      (err as any).message
+    } | uid: ${(req as any).user.uid} | name: ${
+      (req as any).user.name
+    } | email: ${(req as any).user.email}`;
+    next(err);
   }
 }

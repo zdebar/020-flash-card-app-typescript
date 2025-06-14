@@ -16,7 +16,7 @@ export async function checkDatabaseConnection(): Promise<void> {
     console.log("Database connected successfully at port", process.env.DB_PORT);
   } catch (err: any) {
     console.error("Failed to connect to the database:", err.message);
-    throw new Error("Database connection failed.");
+    throw new Error("Database connection failed.", err.message);
   }
 }
 

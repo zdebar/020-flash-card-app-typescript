@@ -7,7 +7,6 @@ const { json, timestamp, combine, colorize, printf, simple } = format;
 const envPath = path.resolve(__dirname, "../../.env");
 dotenv.config({ path: envPath });
 
-const isDevelopment = process.env.NODE_ENV !== "production";
 const logDir = path.join(__dirname, "../../logs");
 
 // Custom format for console in development
@@ -56,9 +55,7 @@ export function logErrorWithDetails(
 ): void {
   logger.error({
     message: error?.message || String(error),
-    stack: error?.stack,
-    functionName,
-    params,
+    // stack: error?.stack,
     ...meta,
   });
 }

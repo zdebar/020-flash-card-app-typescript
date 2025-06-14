@@ -4,36 +4,62 @@ import config from "../config/config";
  * Returns the next review date based on the progress and SRS intervals.
  */
 export function getNextAt(progress: number): string {
-  const interval = config.SRS[progress] || 0;
-  const randomFactor =
-    1 + (Math.random() * 2 * config.srsRandomness - config.srsRandomness);
-  const randomizedInterval = Math.round(interval * randomFactor);
-  return new Date(Date.now() + randomizedInterval * 1000).toISOString();
+  try {
+    const interval = config.SRS[progress] || 0;
+    const randomFactor =
+      1 + (Math.random() * 2 * config.srsRandomness - config.srsRandomness);
+    const randomizedInterval = Math.round(interval * randomFactor);
+    return new Date(Date.now() + randomizedInterval * 1000).toISOString();
+  } catch (error) {
+    throw new Error(
+      `Error in getNextAt: ${(error as any).message} | progress: ${progress}`
+    );
+  }
 }
 
 /**
  * Returns the learnedAt date if the progress is equal to the learnedAt threshold.
  */
 export function getLearnedAt(progress: number): string | null {
-  if (progress >= config.learnedProgress) {
-    return new Date(Date.now()).toISOString();
+  try {
+    if (progress >= config.learnedProgress) {
+      return new Date(Date.now()).toISOString();
+    }
+    return null;
+  } catch (error) {
+    throw new Error(
+      `Error in getLearnedAt: ${(error as any).message} | progress: ${progress}`
+    );
   }
-  return null;
 }
 
 /**
  * Returns the mastered date if the progress is equal to the masteredAt threshold.
  */
 export function getMasteredAt(progress: number): string | null {
-  if (progress >= config.SRS.length) {
-    return new Date(Date.now()).toISOString();
+  try {
+    if (progress >= config.SRS.length) {
+      return new Date(Date.now()).toISOString();
+    }
+    return null;
+  } catch (error) {
+    throw new Error(
+      `Error in getMasteredAt: ${
+        (error as any).message
+      } | progress: ${progress}`
+    );
   }
-  return null;
 }
 
 /**
  * Adds an audio file path to a word object based on the language ID.
  */
 export function addAudioPath(audio: string | null): string | null {
-  return audio ? `${audio}.opus` : null;
+  try {
+    return audio ? `${audio}.opus` : null;
+  } catch (error) {
+    throw new Error(
+      `Error in addAudioPath: ${(error as any).message} | audio: ${audio}`
+    );
+  }
 }

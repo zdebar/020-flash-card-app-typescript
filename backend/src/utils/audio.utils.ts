@@ -1,5 +1,6 @@
-import fs from "fs";
-
+/**
+ *  Utility functions for audio processing, specifically for extracting phonemes.
+ */
 export function extractPhonemes(textGrid: string): string[] {
   const phonemeTier = textGrid.split('name = "phones"')[1];
   const intervals = phonemeTier.match(/text = "(.*?)"/g) || [];

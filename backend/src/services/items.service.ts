@@ -16,14 +16,20 @@ export async function getItemsService(
   db: PostgresClient,
   uid: string
 ): Promise<Item[]> {
-  const words: Item[] = await getItemsRepository(db, uid);
+  try {
+    const words: Item[] = await getItemsRepository(db, uid);
 
-  sortItemsByProgress(words);
+    sortItemsByProgress(words);
 
-  return words.map((word) => ({
-    ...word,
-    audio: addAudioPath(word.audio),
-  }));
+    return words.map((word) => ({
+      ...word,
+      audio: addAudioPath(word.audio),
+    }));
+  } catch (error) {
+    throw new Error(
+      `Error in getItemsService: ${(error as any).message} | uid: ${uid}`
+    );
+  }
 }
 
 /**
@@ -35,8 +41,18 @@ export async function patchItemsService(
   items: Item[],
   onBlockEnd: boolean
 ): Promise<UserScore> {
-  await patchItemsRepository(db, uid, items, onBlockEnd);
-  return await getScoreRepository(db, uid);
+  try {
+    await patchItemsRepository(db, uid, items, onBlockEnd);
+    return await getScoreRepository(db, uid);
+  } catch (error) {
+    throw new Error(
+      `Error in patchItemsService: ${
+        (error as any).message
+      } | uid: ${uid} | items: ${JSON.stringify(
+        items
+      )} | onBlockEnd: ${onBlockEnd}`
+    );
+  }
 }
 
 /**
@@ -46,18 +62,26 @@ export async function getItemInfoService(
   db: PostgresClient,
   itemId: number
 ): Promise<ItemInfo[]> {
-  const itemInfo: ItemInfo[] = await getItemInfoRepository(db, itemId);
+  try {
+    const itemInfo: ItemInfo[] = await getItemInfoRepository(db, itemId);
 
-  if (!itemInfo || itemInfo.length === 0) {
-    throw new Error(`No item info found for itemId: ${itemId}`);
+    if (!itemInfo || itemInfo.length === 0) {
+      throw new Error(`No item info found for itemId: ${itemId}`);
+    }
+
+    return itemInfo.map((item) => ({
+      ...item,
+      items:
+        item.items?.map((word) => ({
+          ...word,
+          audio: addAudioPath(word.audio),
+        })) || [],
+    }));
+  } catch (error) {
+    throw new Error(
+      `Error in getItemInfoService: ${
+        (error as any).message
+      } | itemId: ${itemId}`
+    );
   }
-
-  return itemInfo.map((item) => ({
-    ...item,
-    items:
-      item.items?.map((word) => ({
-        ...word,
-        audio: addAudioPath(word.audio),
-      })) || [],
-  }));
 }

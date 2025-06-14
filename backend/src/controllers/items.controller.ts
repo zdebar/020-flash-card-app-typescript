@@ -25,6 +25,9 @@ export async function getItemsController(
       data,
     });
   } catch (err) {
+    (err as any).message = `Error in getItemsController: ${
+      (err as any).message
+    } | uid: ${(req as any).user.uid}`;
     next(err);
   }
 }
@@ -54,6 +57,11 @@ export async function patchItemsController(
       score,
     });
   } catch (err) {
+    (err as any).message = `Error in patchItemsController: ${
+      (err as any).message
+    } | uid: ${(req as any).user.uid} | items: ${JSON.stringify(
+      (req as any).body.items
+    )} | onBlockEnd: ${(req as any).body.onBlockEnd}`;
     next(err);
   }
 }
@@ -76,6 +84,9 @@ export async function getInfoController(
       data,
     });
   } catch (err) {
+    (err as any).message = `Error in getInfoController: ${
+      (err as any).message
+    } | uid: ${(req as any).params.itemId}`;
     next(err);
   }
 }
