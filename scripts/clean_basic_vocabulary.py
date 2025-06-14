@@ -1,10 +1,11 @@
-"""
-Removes rows from the second file where both 'english' and 'czech' columns match rows in the first file.
-"""
+
 
 import pandas as pd
 
 def remove_matching_rows(file1, file2, output_file):
+    """
+    Removes rows from the second file where both 'english' and 'czech' columns match rows in the first file.
+    """
     # Read the first and second CSV files
     df1 = pd.read_csv(file1)
     df2 = pd.read_csv(file2)

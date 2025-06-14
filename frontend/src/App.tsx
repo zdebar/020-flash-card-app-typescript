@@ -43,9 +43,8 @@ export default function App() {
                       aplikace v testovacím režimu
                     </p>
                     <p className="pb-8">
-                      Přihlašte se stisknětě tlačítko "Procvičovat" a aplikace
-                      Vás po malých krůčcíh naučí slovíčka i gramatiku. Od
-                      začátečníka až po plynulého mluvčího.
+                      Bez lekcí, beze stresu, od slovíček po gramatiku.
+                      Zautomatizováno častým opakováním.
                     </p>
                   </div>
                   {loading ? (

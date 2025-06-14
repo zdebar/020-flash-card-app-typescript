@@ -159,8 +159,14 @@ export default function PracticeCard() {
     }
 
     if (audioError) {
+      let attempts = 0; // Initialize attempts counter
       const interval = setInterval(() => {
+        if (attempts >= 3) {
+          clearInterval(interval); // Stop after 3 attempts
+          return;
+        }
         playAudio(currentItem.audio);
+        attempts++;
       }, 1000);
       return () => clearInterval(interval);
     }

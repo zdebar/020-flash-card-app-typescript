@@ -2,6 +2,9 @@ import os
 import pandas as pd
 
 def reorder_item_order_in_directory(directory):
+    """
+    Reorder the 'item_order' column in all CSV files within the specified directory.
+    """
     # Get a list of all CSV files in the directory
     csv_files = [f for f in os.listdir(directory) if f.endswith('.csv')]
 

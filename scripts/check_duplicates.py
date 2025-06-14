@@ -1,6 +1,7 @@
 import csv
 from collections import defaultdict
 
+
 def check_duplicates(file_path: str):
     """
     Check for duplicate entries in a CSV file based on 'english' and 'czech' columns.
