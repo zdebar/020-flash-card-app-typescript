@@ -37,12 +37,13 @@ export interface UserInfo {
 }
 
 export interface UserScore {
-  itemsTotal: number;
+  blockCount: number[];
   startedCountToday: number;
   startedCount: number;
-  learnedCountToday: Record<string, number>; // items with progress > 5
-  learnedCount: Record<string, number>; // items with progress > 5
-  blockCount: number[];
+  itemsCountByLevel: Record<string, number>; // all items by cefr level
+  learnedCountTodayByLevel: Record<string, number>; // items with progress > 5 by cefr level
+  learnedCountByLevel: Record<string, number>; // items with progress > 5 by cefr level
+  itemsTotal: number;
 }
 
 export class UserError extends Error {

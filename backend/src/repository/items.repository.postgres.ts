@@ -166,16 +166,24 @@ export async function getScoreRepository(
         ON us.user_id = (SELECT user_id FROM user_cte)
         AND us.day = d.day
     ),
+    items_count_cte AS (
+      SELECT 
+        COALESCE(cl.level, 'none') AS level_id, 
+        COUNT(*) AS itemsCount
+      FROM items i
+      LEFT JOIN cefr_levels cl ON i.level_id = cl.id
+      GROUP BY COALESCE(cl.level, 'none')
+    ),
     learned_counts_cte AS (
       SELECT 
-        COALESCE(cl.level, 'unknown') AS level_id, -- Replace NULL level_id with 0
-        COUNT(*) FILTER (WHERE ui.progress > 5 AND DATE(ui.learned_at AT TIME ZONE 'UTC') = CURRENT_DATE) AS learnedCountToday,
-        COUNT(*) FILTER (WHERE ui.progress > 5) AS learnedCount
+        COALESCE(cl.level, 'none') AS level_id, -- Replace NULL level_id with 'none'
+        COUNT(*) FILTER (WHERE ui.progress > 5 AND DATE(ui.learned_at AT TIME ZONE 'UTC') = CURRENT_DATE) AS learnedCountTodayByLevel,
+        COUNT(*) FILTER (WHERE ui.progress > 5 AND DATE(ui.learned_at AT TIME ZONE 'UTC') != CURRENT_DATE) AS learnedCountByLevel
       FROM user_items ui
       JOIN items i ON ui.item_id = i.id
-      left join cefr_levels cl on i.level_id = cl.id
+      LEFT JOIN cefr_levels cl ON i.level_id = cl.id
       WHERE ui.user_id = (SELECT user_id FROM user_cte)
-      GROUP BY COALESCE(cl.level, 'unknown') -- Ensure grouping by non-NULL level_id
+      GROUP BY COALESCE(cl.level, 'none') -- Ensure grouping by non-NULL level_id
     ),
     started_cte AS (
       SELECT 
@@ -192,11 +200,13 @@ export async function getScoreRepository(
       (SELECT blockCount FROM blocks_cte) AS "blockCount", 
       started_cte.startedCountToday AS "startedCountToday",
       started_cte.startedCount AS "startedCount",
-      JSON_OBJECT_AGG(lc.level_id, lc.learnedCountToday) AS "learnedCountToday",
-      JSON_OBJECT_AGG(lc.level_id, lc.learnedCount) AS "learnedCount",
+      JSON_OBJECT_AGG(DISTINCT ic.level_id, ic.itemsCount) AS "itemsCountByLevel", 
+      JSON_OBJECT_AGG(DISTINCT lc.level_id, lc.learnedCountTodayByLevel) AS "learnedCountTodayByLevel",
+      JSON_OBJECT_AGG(DISTINCT lc.level_id, lc.learnedCountByLevel) AS "learnedCountByLevel",
       total_cte.itemsTotal AS "itemsTotal"
     FROM started_cte, total_cte
-    LEFT JOIN learned_counts_cte lc ON true
+    LEFT JOIN items_count_cte ic ON true 
+    LEFT JOIN learned_counts_cte lc ON true 
     GROUP BY started_cte.startedCountToday, started_cte.startedCount, total_cte.itemsTotal;
   `;
 
@@ -205,11 +215,12 @@ export async function getScoreRepository(
     const row = result.rows[0];
 
     return {
+      blockCount: row.blockCount,
       startedCountToday: parseInt(row.startedCountToday, 10),
       startedCount: parseInt(row.startedCount, 10),
-      blockCount: row.blockCount,
-      learnedCountToday: row.learnedCountToday,
-      learnedCount: row.learnedCount,
+      itemsCountByLevel: row.itemsCountByLevel,
+      learnedCountTodayByLevel: row.learnedCountTodayByLevel,
+      learnedCountByLevel: row.learnedCountByLevel,
       itemsTotal: parseInt(row.itemsTotal, 10),
     };
   });
