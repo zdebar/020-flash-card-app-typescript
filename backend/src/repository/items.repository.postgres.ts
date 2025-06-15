@@ -12,67 +12,59 @@ export async function getItemsRepository(
   db: PostgresClient,
   uid: string
 ): Promise<Item[]> {
-  try {
-    const numWords: number = config.round;
+  const numWords: number = config.round;
 
-    const runQuery = async (): Promise<Item[]> => {
-      const query = `
-        WITH user_cte AS (
-          SELECT id AS user_id FROM users WHERE uid = $1
-        ),
-        has_info_cte AS (
-          SELECT bi.item_id
-          FROM block_items bi
-          JOIN blocks b ON bi.block_id = b.id
-          WHERE b.category_id = 1
-        )
-        SELECT
-          i.id,
-          i.czech,
-          i.english,
-          i.pronunciation,
-          i.audio,
-          COALESCE(ui.progress, 0) AS progress,
-          EXISTS (
-            SELECT 1
-            FROM has_info_cte
-            WHERE has_info_cte.item_id = i.id
-          ) AS "hasContextInfo",
-          EXISTS (
-            SELECT 1
-            FROM has_info_cte
-            WHERE has_info_cte.item_id = i.id AND i.item_order = 1 AND ui.progress = 0
-          ) AS "showContextInfo"
-        FROM items i 
-        LEFT JOIN user_items ui ON i.id = ui.item_id AND ui.user_id = (SELECT user_id FROM user_cte)
-        LEFT JOIN block_items bi on i.id = bi.item_id
-        LEFT JOIN blocks b on bi.block_id = b.id 
-        WHERE ui.mastered_at IS NULL
-          AND (ui.next_at IS NULL OR ui.next_at < NOW())
-          AND (b.category_id IN (0, 1) OR b.category_id IS NULL)
-        order by
-          ui.next_at ASC NULLS last,
-          COALESCE(b.block_order, i.item_order) ASC NULLS LAST,
-          i.item_order,
-          i.id
-        limit $2;
-        `;
+  const runQuery = async (): Promise<Item[]> => {
+    const query = `
+	    WITH user_cte AS (
+        SELECT id AS user_id FROM users WHERE uid = $1
+      ),
+      has_info_cte AS (
+        SELECT bi.item_id
+        FROM block_items bi
+        JOIN blocks b ON bi.block_id = b.id
+        WHERE b.category_id = 1
+      )
+      SELECT
+        i.id,
+        i.czech,
+        i.english,
+        i.pronunciation,
+        i.audio,
+        COALESCE(ui.progress, 0) AS progress,
+        EXISTS (
+          SELECT 1
+          FROM has_info_cte
+          WHERE has_info_cte.item_id = i.id
+        ) AS "hasContextInfo",
+        EXISTS (
+          SELECT 1
+          FROM has_info_cte
+          WHERE has_info_cte.item_id = i.id AND i.item_order = 1 AND ui.progress = 0
+        ) AS "showContextInfo"
+      FROM items i 
+      LEFT JOIN user_items ui ON i.id = ui.item_id AND ui.user_id = (SELECT user_id FROM user_cte)
+      LEFT JOIN block_items bi on i.id = bi.item_id
+      LEFT JOIN blocks b on bi.block_id = b.id 
+      WHERE ui.mastered_at IS NULL
+        AND (ui.next_at IS NULL OR ui.next_at < NOW())
+        AND (b.category_id IN (0, 1) OR b.category_id IS NULL)
+      order by
+      	ui.next_at ASC NULLS last,
+ 	      COALESCE(b.block_order, i.item_order) ASC NULLS LAST,
+ 	      i.item_order,
+      	i.id
+      limit $2;
+    `;
 
-      const res = await withDbClient(db, async (client) => {
-        return await client.query(query, [uid, numWords]);
-      });
+    const res = await withDbClient(db, async (client) => {
+      return await client.query(query, [uid, numWords]);
+    });
 
-      return res.rows;
-    };
+    return res.rows;
+  };
 
-    return await runQuery();
-  } catch (error) {
-    throw new Error(
-      `Error in getItemsRepository: ${
-        (error as any).message
-      } | db type: ${typeof db} | uid: ${uid}`
-    );
-  }
+  return await runQuery();
 }
 
 /**
@@ -84,18 +76,17 @@ export async function patchItemsRepository(
   items: Item[],
   onBlockEnd: boolean
 ): Promise<void> {
-  try {
-    if (items.length === 0) {
-      throw new Error("No items to update");
-    }
+  if (items.length === 0) {
+    throw new Error("No items to update");
+  }
 
-    const itemIds = items.map((item) => item.id);
-    const progresses = items.map((item) => item.progress);
-    const nextAt = items.map((item) => getNextAt(item.progress));
-    const learnedAt = items.map((item) => getLearnedAt(item.progress));
-    const masteredAt = items.map((item) => getMasteredAt(item.progress));
+  const itemIds = items.map((item) => item.id);
+  const progresses = items.map((item) => item.progress);
+  const nextAt = items.map((item) => getNextAt(item.progress));
+  const learnedAt = items.map((item) => getLearnedAt(item.progress));
+  const masteredAt = items.map((item) => getMasteredAt(item.progress));
 
-    const query1 = `
+  const query1 = `
     WITH user_id_cte AS (
       SELECT id AS user_id FROM users WHERE uid = $1
     ),
@@ -130,32 +121,23 @@ export async function patchItemsRepository(
         THEN EXCLUDED.mastered_at 
         ELSE user_items.mastered_at 
       END;
-    `;
+  `;
 
-    const query2 = `
+  const query2 = `
     INSERT INTO user_score (user_id, day, blockCount)
     VALUES ((SELECT id FROM users WHERE uid = $1), CURRENT_DATE, 1)
     ON CONFLICT (user_id, day) 
     DO UPDATE SET blockCount = user_score.blockCount + 1;
-    `;
+  `;
 
-    const values = [uid, itemIds, progresses, nextAt, learnedAt, masteredAt];
+  const values = [uid, itemIds, progresses, nextAt, learnedAt, masteredAt];
 
-    await withDbClient(db, async (client) => {
-      await client.query(query1, values);
-      if (onBlockEnd) {
-        await client.query(query2, [uid]);
-      }
-    });
-  } catch (error) {
-    throw new Error(
-      `Error in patchItemsRepository: ${
-        (error as any).message
-      } | db type: ${typeof db} | uid: ${uid} | items: ${JSON.stringify(
-        items
-      )} | onBlockEnd: ${onBlockEnd}`
-    );
-  }
+  await withDbClient(db, async (client) => {
+    await client.query(query1, values);
+    if (onBlockEnd) {
+      await client.query(query2, [uid]);
+    }
+  });
 }
 
 /**
@@ -165,10 +147,11 @@ export async function getScoreRepository(
   db: PostgresClient,
   uid: string
 ): Promise<UserScore> {
-  try {
-    const query = `
+  const query = `
     WITH user_cte AS (
-      SELECT id AS user_id FROM users WHERE uid = $1
+      SELECT id AS user_id 
+      FROM users 
+      WHERE uid = $1
     ),
     blocks_cte AS (
       SELECT ARRAY_AGG(COALESCE(us.blockCount, 0) ORDER BY d.day DESC) AS blockCount
@@ -183,14 +166,21 @@ export async function getScoreRepository(
         ON us.user_id = (SELECT user_id FROM user_cte)
         AND us.day = d.day
     ),
+    learned_counts_cte AS (
+      SELECT 
+        COALESCE(cl.level, 'unknown') AS level_id, -- Replace NULL level_id with 0
+        COUNT(*) FILTER (WHERE ui.progress > 5 AND DATE(ui.learned_at AT TIME ZONE 'UTC') = CURRENT_DATE) AS learnedCountToday,
+        COUNT(*) FILTER (WHERE ui.progress > 5) AS learnedCount
+      FROM user_items ui
+      JOIN items i ON ui.item_id = i.id
+      left join cefr_levels cl on i.level_id = cl.id
+      WHERE ui.user_id = (SELECT user_id FROM user_cte)
+      GROUP BY COALESCE(cl.level, 'unknown') -- Ensure grouping by non-NULL level_id
+    ),
     started_cte AS (
       SELECT 
         COUNT(*) FILTER (WHERE DATE(ui.started_at AT TIME ZONE 'UTC') = CURRENT_DATE) AS startedCountToday,
-        COUNT(*) AS startedCount,
-        COUNT(*) FILTER (
-          WHERE ui.progress > 5 AND DATE(ui.learned_at AT TIME ZONE 'UTC') = CURRENT_DATE
-        ) AS learnedCountToday,
-        COUNT(*) FILTER (WHERE ui.progress > 5) AS learnedCount
+        COUNT(*) AS startedCount
       FROM user_items ui
       WHERE ui.user_id = (SELECT user_id FROM user_cte)
     ),
@@ -199,35 +189,30 @@ export async function getScoreRepository(
       FROM items
     )
     SELECT 
-      COALESCE(blocks_cte.blockCount, ARRAY[]::int[]) AS "blockCount", 
+      (SELECT blockCount FROM blocks_cte) AS "blockCount", 
       started_cte.startedCountToday AS "startedCountToday",
       started_cte.startedCount AS "startedCount",
-      started_cte.learnedCountToday AS "learnedCountToday",
-      started_cte.learnedCount AS "learnedCount",
+      JSON_OBJECT_AGG(lc.level_id, lc.learnedCountToday) AS "learnedCountToday",
+      JSON_OBJECT_AGG(lc.level_id, lc.learnedCount) AS "learnedCount",
       total_cte.itemsTotal AS "itemsTotal"
-    FROM blocks_cte, started_cte, total_cte;
-    `;
+    FROM started_cte, total_cte
+    LEFT JOIN learned_counts_cte lc ON true
+    GROUP BY started_cte.startedCountToday, started_cte.startedCount, total_cte.itemsTotal;
+  `;
 
-    return await withDbClient(db, async (client) => {
-      const result = await client.query(query, [uid]);
-      const row = result.rows[0];
+  return await withDbClient(db, async (client) => {
+    const result = await client.query(query, [uid]);
+    const row = result.rows[0];
 
-      return {
-        startedCountToday: parseInt(row.startedCountToday, 10),
-        startedCount: parseInt(row.startedCount, 10),
-        blockCount: row.blockCount,
-        learnedCountToday: parseInt(row.learnedCountToday, 10),
-        learnedCount: parseInt(row.learnedCount, 10),
-        itemsTotal: parseInt(row.itemsTotal, 10),
-      };
-    });
-  } catch (error) {
-    throw new Error(
-      `Error in getScoreRepository: ${
-        (error as any).message
-      } | db type: ${typeof db} | uid: ${uid}`
-    );
-  }
+    return {
+      startedCountToday: parseInt(row.startedCountToday, 10),
+      startedCount: parseInt(row.startedCount, 10),
+      blockCount: row.blockCount,
+      learnedCountToday: row.learnedCountToday,
+      learnedCount: row.learnedCount,
+      itemsTotal: parseInt(row.itemsTotal, 10),
+    };
+  });
 }
 
 /**
@@ -237,8 +222,7 @@ export async function getItemInfoRepository(
   db: PostgresClient,
   item_id: number
 ): Promise<ItemInfo[]> {
-  try {
-    const query = `
+  const query = `
     SELECT 
       b.id,
       b.block_order,
@@ -248,17 +232,10 @@ export async function getItemInfoRepository(
     JOIN block_items bi ON b.id = bi.block_id
     WHERE bi.item_id = $1
       AND b.category_id = 1;
-   `;
+  `;
 
-    return await withDbClient(db, async (client) => {
-      const result = await client.query(query, [item_id]);
-      return result.rows;
-    });
-  } catch (error) {
-    throw new Error(
-      `Error in getGrammarListRepository: ${
-        (error as any).message
-      } | db type: ${typeof db} | item_id: ${item_id}`
-    );
-  }
+  return await withDbClient(db, async (client) => {
+    const result = await client.query(query, [item_id]);
+    return result.rows;
+  });
 }

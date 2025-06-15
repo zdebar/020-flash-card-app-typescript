@@ -13,7 +13,24 @@ CREATE TABLE IF NOT EXISTS items (
   english TEXT NOT NULL, 
   pronunciation TEXT, -- IPA phonetic transcription
   audio TEXT, -- audio file name, without extension
-  item_order INTEGER CHECK (item_order >= 0) -- learning order of words; INTEGER for words, NULL for grammar
+  part_id INTEGER, -- part of speech (noun, verb, adjective, adverb, etc.) -- NEW
+  level_id INTEGER, -- CEFR level (A1, A2, B1, B2, C1, C2) -- NEW
+  item_order INTEGER CHECK (item_order >= 0), -- learning order of words; INTEGER for words, NULL for grammar
+  FOREIGN KEY (part_id) REFERENCES parts(id) ON DELETE SET NULL, -- NEW
+  FOREIGN KEY (level_id) REFERENCES cefr_levels(id) ON DELETE SET NULL, -- NEW
+);
+
+CREATE TABLE IF NOT EXISTS parts ( -- part of speech, e.g. noun, verb, adjective, adverb, etc. -- NEW
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL UNIQUE,
+  explanation TEXT,
+  example TEXT,  
+);
+
+CREATE TABLE IF NOT EXISTS cefr_levels ( -- Common European Framework of Reference for Languages (CEFR) levels -- NEW
+  id SERIAL PRIMARY KEY,
+  level TEXT NOT NULL UNIQUE, -- e.g. A1, A2, B1, B2, C1, C2
+  description TEXT -- description of the level
 );
 
 CREATE TABLE IF NOT EXISTS categories (
@@ -47,7 +64,7 @@ CREATE TABLE IF NOT EXISTS user_items (
 CREATE TABLE IF NOT EXISTS user_score (
   user_id INTEGER NOT NULL,
   day DATE DEFAULT CURRENT_DATE,
-  blockcount INTEGER DEFAULT 0 CHECK (blocks_finished >= 0),
+  blockcount INTEGER DEFAULT 0,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
   PRIMARY KEY (user_id, day)
 );
