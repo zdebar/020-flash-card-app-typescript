@@ -8,7 +8,6 @@ import {
   signInWithEmailAndPassword,
 } from 'firebase/auth';
 import Button from './common/Button';
-import Loading from './common/Loading';
 
 export default function Login() {
   const { setLoading } = useUser();
@@ -63,7 +62,7 @@ export default function Login() {
         aria-label="Přihlásit se jako demo uživatel"
         disabled={loading}
       >
-        {loading ? <Loading /> : 'Demo Account'}
+        Demo Account
       </Button>
       <p className="color-error pt-4 text-sm">
         Google login otevřen pouze pro testery.
@@ -74,7 +73,7 @@ export default function Login() {
         aria-label="Přihlásit se přes Google"
         disabled={loading}
       >
-        {loading ? <Loading /> : 'Google Login'}
+        Google Login
       </Button>
 
       {error && <p className="mt-2 text-red-500">{error}</p>}

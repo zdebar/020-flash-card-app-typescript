@@ -9,11 +9,10 @@ import PracticeCard from './components/PracticeCard';
 import UserSettings from './components/UserSettings';
 import UserDashboard from './components/UserDashboard';
 import GrammarList from './components/GrammarlList';
-import Loading from './components/common/Loading';
 import Footer from './components/Footer';
 
 export default function App() {
-  const { userInfo, loading } = useUser();
+  const { userInfo } = useUser();
   const location = useLocation();
   const showFooterRoutes = ['/', '/login'];
   const [searchParams] = useSearchParams();
@@ -36,28 +35,23 @@ export default function App() {
             <Route
               path="/"
               element={
-                <div className="flex w-full flex-col items-center justify-start">
-                  <div className="font-display max-w-[480px] p-4 text-center text-xl">
-                    <h1 className="">Angličtina jednoduše</h1>
-                    <p className="color-error pb-8">
-                      aplikace v testovacím režimu
-                    </p>
-                    <p className="pb-8">
-                      Bez lekcí, beze stresu, od slovíček po gramatiku.
-                      Zautomatizováno častým opakováním.
-                    </p>
-                  </div>
-                  {loading ? (
-                    <Loading />
-                  ) : (
-                    !userInfo && (
-                      <div className="max-w-card">
-                        <ButtonLink to="/login" className="button-rectangular">
-                          Přihlášení / Registrace
-                        </ButtonLink>
-                      </div>
-                    )
+                <div className="font-display flex w-full max-w-[480px] flex-col items-center justify-start gap-4 text-center text-xl">
+                  <h1 className="">Angličtina jednoduše</h1>
+                  <p className="color-error">aplikace v testovacím režimu</p>
+                  <p>Bez lekcí, beze stresu, od slovíček po gramatiku.</p>
+
+                  {!userInfo && (
+                    <div className="max-w-card items">
+                      <ButtonLink to="/login" className="button-rectangular">
+                        Přihlášení / Registrace
+                      </ButtonLink>
+                    </div>
                   )}
+
+                  <p>
+                    Aplikace sama kombinuje učení slovíček a gramatiky. Jedno
+                    tlačítko a procvičujte kolikrát denně jenom budete chtít.
+                  </p>
                 </div>
               }
             />

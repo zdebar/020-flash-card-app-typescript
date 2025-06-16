@@ -179,7 +179,8 @@ export default function PracticeCard() {
     setVolume(newVolume);
   };
 
-  if (!arrayLength) return <Loading />;
+  if (!arrayLength)
+    return <Loading text="Nic k procvičování. Zkuste to později." />;
 
   return (
     <>

@@ -30,7 +30,7 @@ export default function UserDashboard() {
             levels={userScore?.itemsCountByLevel ?? {}}
           />
         )}
-        <p className="font-display py-2">bloky za posledních 5 dní</p>
+        <p className="font-display py-2">cvičební bloky za posledních 5 dní</p>
         {userScore &&
           userScore.blockCount.slice(0, 5).map((item, idx) => (
             <div

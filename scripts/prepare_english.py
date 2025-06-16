@@ -8,8 +8,7 @@ from utils.prepare_words import clean_DataFrame
 from utils.helpers import async_save_csv
 from utils.convert_to_opus import convert_mp3_to_opus
 
-async def prepare_english_words(file_name: str, output_folder: str, audio_folder: str, opus_folder: str) -> None:
-   
+async def prepare_english_words(file_name: str, output_file: str, audio_folder: str, opus_folder: str) -> None:
     # Load the first word_number words from the CSV file, ensuring required columns exist
     df = pd.read_csv(file_name, header=0)
 
@@ -46,9 +45,9 @@ async def prepare_english_words(file_name: str, output_folder: str, audio_folder
     # Convert MP3 files to Opus format if they do not already exist
     output_format = "opus"
     output_bitrate = "16k"
-    for filename in os.listdir(mp3_folder):
+    for filename in os.listdir(audio_folder):
         if filename.endswith(".mp3"):
-            input_path = os.path.join(mp3_folder, filename)
+            input_path = os.path.join(audio_folder, filename)
             output_filename = os.path.splitext(filename)[0] + "." + output_format
             output_path = os.path.join(opus_folder, output_filename)
 
@@ -56,8 +55,16 @@ async def prepare_english_words(file_name: str, output_folder: str, audio_folder
             if os.path.exists(output_path):
                 continue
 
-        convert_mp3_to_opus(input_path, output_path, bitrate=output_bitrate)
-        print(f"Processed {filename} to {output_filename}")
+            # Check if the file is valid and not empty
+            if os.path.getsize(input_path) == 0:
+                print(f"Skipping empty file: {filename}")
+                continue
+
+            try:
+                convert_mp3_to_opus(input_path, output_path, bitrate=output_bitrate)
+                print(f"Processed {filename} to {output_filename}")
+            except Exception as e:
+                print(f"Error processing {filename}: {e}")
 
     df['audio'] = audio_files
 
@@ -71,12 +78,23 @@ async def prepare_english_words(file_name: str, output_folder: str, audio_folder
     # Save the processed CSV file
     await async_save_csv(df, output_file)
 
+async def process_all_files_in_directory(input_directory: str, output_directory: str, audio_folder: str, opus_folder: str) -> None:
+    # Ensure the output directory exists
+    os.makedirs(output_directory, exist_ok=True)
+
+    # Iterate over all CSV files in the input directory
+    for file_name in os.listdir(input_directory):
+        if file_name.endswith(".csv"):
+            input_file = os.path.join(input_directory, file_name)
+            output_file = os.path.join(output_directory, f"processed_{file_name}")
+            print(f"Processing {input_file}...")
+            await prepare_english_words(input_file, output_file, audio_folder, opus_folder)
+
 if __name__ == "__main__":
+    input_directory = os.path.abspath("../data/prepared")  # Directory containing input CSV files
+    output_directory = os.path.abspath("../data/prepared/processed")  # Directory to save processed files
+    audio_folder = os.path.abspath("../data/prepared/audio")
+    opus_folder = os.path.abspath("../data/prepared/opus")
 
-    input_file = os.path.abspath("../data/prepared/000to009.csv")  
-    output_file = os.path.abspath("../data/prepared/000to009_DONE.csv")
-    mp3_folder = os.path.abspath("../data/prepared/009/mp3")
-    opus_folder = os.path.abspath("../data/prepared/009/opus")
-
-    asyncio.run(prepare_english_words(input_file, output_file, mp3_folder, opus_folder))
+    asyncio.run(process_all_files_in_directory(input_directory, output_directory, audio_folder, opus_folder))
 
