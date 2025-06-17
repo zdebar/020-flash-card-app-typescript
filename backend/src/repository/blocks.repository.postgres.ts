@@ -25,7 +25,7 @@ export async function getGrammarListRepository(
         b.id,
         b.sequence,
         b.name,
-        b.explanation,      
+        b.explanation      
       FROM blocks b
       WHERE b.id IN (SELECT blocks_started FROM blocks_started_cte)
         and b.category_id = 1

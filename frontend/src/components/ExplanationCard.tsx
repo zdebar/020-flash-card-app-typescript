@@ -1,4 +1,4 @@
-import { Block } from '../../../shared/types/dataTypes';
+import { BlockExplanation } from '../../../shared/types/dataTypes';
 import Button from './common/Button';
 import { CloseIcon } from './common/Icons';
 import type { Dispatch, SetStateAction } from 'react';
@@ -7,7 +7,7 @@ export default function ExplanationCard({
   block,
   setVisibility,
 }: {
-  block: Block;
+  block: BlockExplanation;
   setVisibility: Dispatch<SetStateAction<boolean>>;
 }) {
   return (
@@ -22,9 +22,9 @@ export default function ExplanationCard({
               marginRight: '0.75em',
             }}
           >
-            {block.block_order}
+            {block.blockSequence}
           </h2>
-          <h2 className="ml-2 font-semibold">{block.block_name}</h2>
+          <h2 className="ml-2 font-semibold">{block.blockName}</h2>
         </div>
         <Button
           name="close"
@@ -40,7 +40,7 @@ export default function ExplanationCard({
         <div
           className="flex flex-col justify-center"
           dangerouslySetInnerHTML={{
-            __html: block.block_explanation,
+            __html: block.blockExplanation,
           }}
         ></div>
       </div>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Block } from '../../../shared/types/dataTypes';
+import { BlockExplanation } from '../../../shared/types/dataTypes';
 import PrevNextControls from './common/PrevNextControls';
 import Loading from './common/Loading';
 import Button from './common/Button';
@@ -9,7 +9,7 @@ import { useArray } from '../hooks/useArray';
 
 export default function GrammarList() {
   const { array, index, setIndex, nextIndex, prevIndex, arrayLength } =
-    useArray<Block>('/api/blocks/grammar');
+    useArray<BlockExplanation>('/api/blocks/grammar');
   const [showExplanation, setShowExplanation] = useState(false);
 
   if (!arrayLength)
@@ -36,9 +36,9 @@ export default function GrammarList() {
                   marginRight: '0.75em',
                 }}
               >
-                {block.block_order}
+                {block.blockSequence}
               </span>
-              {block.block_name}
+              {block.blockName}
             </Button>
           ))}
         </div>
