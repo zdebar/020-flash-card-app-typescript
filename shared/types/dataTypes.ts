@@ -10,16 +10,11 @@ export interface Item {
   showContextInfo: boolean;
 }
 
-export interface Block {
-  block_id: number;
-  block_order: number;
-  block_name: string;
-  block_explanation: string;
-  category_id: number;
-}
-
-export interface ItemInfo extends Block {
-  items: Item[];
+export interface BlockExplanation {
+  blockId: number;
+  blockSequence: number;
+  blockName: string;
+  blockExplanation: string;
 }
 
 // User Types
@@ -38,12 +33,9 @@ export interface UserInfo {
 
 export interface UserScore {
   blockCount: number[];
-  startedCountToday: number;
-  startedCount: number;
   itemsCountByLevel: Record<string, number>; // all items by cefr level
   learnedCountTodayByLevel: Record<string, number>; // items with progress > 5 by cefr level
   learnedCountByLevel: Record<string, number>; // items with progress > 5 by cefr level
-  itemsTotal: number;
 }
 
 export class UserError extends Error {

@@ -2,8 +2,11 @@ import { PostgresClient } from "../types/dataTypes";
 import { getNextAt, getLearnedAt, getMasteredAt } from "../utils/update.utils";
 import { withDbClient } from "../utils/database.utils";
 import config from "../config/config";
-import { UserScore, Item, ItemInfo } from "../../../shared/types/dataTypes";
-import { get } from "http";
+import {
+  UserScore,
+  Item,
+  BlockExplanation,
+} from "../../../shared/types/dataTypes";
 
 /**
  * Return required items for the user from PostgreSQL database.
@@ -12,12 +15,18 @@ export async function getItemsRepository(
   db: PostgresClient,
   uid: string
 ): Promise<Item[]> {
+  if (!uid || typeof uid !== "string") {
+    throw new Error("Invalid UID parameter");
+  }
+
   const numWords: number = config.round;
 
   const runQuery = async (): Promise<Item[]> => {
     const query = `
-	    WITH user_cte AS (
-        SELECT id AS user_id FROM users WHERE uid = $1
+      WITH user_cte AS (
+        SELECT id AS user_id 
+        FROM users 
+        WHERE uid = $1
       ),
       has_info_cte AS (
         SELECT bi.item_id
@@ -40,26 +49,30 @@ export async function getItemsRepository(
         EXISTS (
           SELECT 1
           FROM has_info_cte
-          WHERE has_info_cte.item_id = i.id AND i.item_order = 1 AND ui.progress = 0
+          WHERE has_info_cte.item_id = i.id AND i.sequence = 1 AND (ui.progress = 0 OR ui.progress IS NULL)
         ) AS "showContextInfo"
       FROM items i 
       LEFT JOIN user_items ui ON i.id = ui.item_id AND ui.user_id = (SELECT user_id FROM user_cte)
-      LEFT JOIN block_items bi on i.id = bi.item_id
-      LEFT JOIN blocks b on bi.block_id = b.id 
+      LEFT JOIN block_items bi ON i.id = bi.item_id
+      LEFT JOIN blocks b ON bi.block_id = b.id 
       WHERE ui.mastered_at IS NULL
         AND (ui.next_at IS NULL OR ui.next_at < NOW())
-        AND (b.category_id IN (0, 1) OR b.category_id IS NULL)
-      order by
-      	ui.next_at ASC NULLS last,
- 	      COALESCE(b.block_order, i.item_order) ASC NULLS LAST,
- 	      i.item_order,
-      	i.id
-      limit $2;
+        AND b.category_id IN (0, 1) OR b.category_id IS NULL
+      ORDER BY
+        ui.next_at ASC NULLS LAST,
+        COALESCE(b.sequence, i.sequence) ASC NULLS LAST,
+        i.sequence ASC NULLS LAST,
+        i.id
+      LIMIT $2;
     `;
 
     const res = await withDbClient(db, async (client) => {
       return await client.query(query, [uid, numWords]);
     });
+
+    if (res.rows.length === 0) {
+      throw new Error("No items found for the user.");
+    }
 
     return res.rows;
   };
@@ -124,10 +137,10 @@ export async function patchItemsRepository(
   `;
 
   const query2 = `
-    INSERT INTO user_score (user_id, day, blockCount)
+    INSERT INTO user_score (user_id, day, count)
     VALUES ((SELECT id FROM users WHERE uid = $1), CURRENT_DATE, 1)
     ON CONFLICT (user_id, day) 
-    DO UPDATE SET blockCount = user_score.blockCount + 1;
+    DO UPDATE SET count = user_score.count + 1;
   `;
 
   const values = [uid, itemIds, progresses, nextAt, learnedAt, masteredAt];
@@ -154,7 +167,7 @@ export async function getScoreRepository(
       WHERE uid = $1
     ),
     blocks_cte AS (
-      SELECT ARRAY_AGG(COALESCE(us.blockCount, 0) ORDER BY d.day DESC) AS blockCount
+      SELECT ARRAY_AGG(COALESCE(us.count, 0) ORDER BY d.day DESC) AS count
       FROM (
         SELECT generate_series(
           CURRENT_DATE - INTERVAL '6 days',
@@ -176,38 +189,22 @@ export async function getScoreRepository(
     ),
     learned_counts_cte AS (
       SELECT 
-        COALESCE(cl.level, 'none') AS level_id, -- Replace NULL level_id with 'none'
+        COALESCE(cl.level, 'none') AS level_id, 
         COUNT(*) FILTER (WHERE ui.progress > 5 AND DATE(ui.learned_at AT TIME ZONE 'UTC') = CURRENT_DATE) AS learnedCountTodayByLevel,
         COUNT(*) FILTER (WHERE ui.progress > 5 AND DATE(ui.learned_at AT TIME ZONE 'UTC') != CURRENT_DATE) AS learnedCountByLevel
       FROM user_items ui
       JOIN items i ON ui.item_id = i.id
       LEFT JOIN cefr_levels cl ON i.level_id = cl.id
       WHERE ui.user_id = (SELECT user_id FROM user_cte)
-      GROUP BY COALESCE(cl.level, 'none') -- Ensure grouping by non-NULL level_id
-    ),
-    started_cte AS (
-      SELECT 
-        COUNT(*) FILTER (WHERE DATE(ui.started_at AT TIME ZONE 'UTC') = CURRENT_DATE) AS startedCountToday,
-        COUNT(*) AS startedCount
-      FROM user_items ui
-      WHERE ui.user_id = (SELECT user_id FROM user_cte)
-    ),
-    total_cte AS (
-      SELECT COUNT(*) AS itemsTotal
-      FROM items
+      GROUP BY COALESCE(cl.level, 'none')
     )
     SELECT 
-      (SELECT blockCount FROM blocks_cte) AS "blockCount", 
-      started_cte.startedCountToday AS "startedCountToday",
-      started_cte.startedCount AS "startedCount",
-      JSON_OBJECT_AGG(DISTINCT ic.level_id, ic.itemsCount) AS "itemsCountByLevel", 
-      JSON_OBJECT_AGG(DISTINCT lc.level_id, lc.learnedCountTodayByLevel) AS "learnedCountTodayByLevel",
-      JSON_OBJECT_AGG(DISTINCT lc.level_id, lc.learnedCountByLevel) AS "learnedCountByLevel",
-      total_cte.itemsTotal AS "itemsTotal"
-    FROM started_cte, total_cte
-    LEFT JOIN items_count_cte ic ON true 
-    LEFT JOIN learned_counts_cte lc ON true 
-    GROUP BY started_cte.startedCountToday, started_cte.startedCount, total_cte.itemsTotal;
+      (SELECT count FROM blocks_cte) AS "count", 
+      JSON_OBJECT_AGG(ic.level_id, ic.itemsCount) AS "itemsCountByLevel", 
+      JSON_OBJECT_AGG(lc.level_id, lc.learnedCountTodayByLevel) AS "learnedCountTodayByLevel",
+      JSON_OBJECT_AGG(lc.level_id, lc.learnedCountByLevel) AS "learnedCountByLevel"
+    FROM items_count_cte ic
+    JOIN learned_counts_cte lc ON ic.level_id = lc.level_id;
   `;
 
   return await withDbClient(db, async (client) => {
@@ -215,13 +212,10 @@ export async function getScoreRepository(
     const row = result.rows[0];
 
     return {
-      blockCount: row.blockCount,
-      startedCountToday: parseInt(row.startedCountToday, 10),
-      startedCount: parseInt(row.startedCount, 10),
+      blockCount: row.count,
       itemsCountByLevel: row.itemsCountByLevel,
       learnedCountTodayByLevel: row.learnedCountTodayByLevel,
       learnedCountByLevel: row.learnedCountByLevel,
-      itemsTotal: parseInt(row.itemsTotal, 10),
     };
   });
 }
@@ -232,13 +226,13 @@ export async function getScoreRepository(
 export async function getItemInfoRepository(
   db: PostgresClient,
   item_id: number
-): Promise<ItemInfo[]> {
+): Promise<BlockExplanation[]> {
   const query = `
     SELECT 
       b.id,
-      b.block_order,
-      b.block_name,
-      b.block_explanation
+      b.sequence,
+      b.name,
+      b.explanation
     FROM blocks b
     JOIN block_items bi ON b.id = bi.block_id
     WHERE bi.item_id = $1
@@ -247,6 +241,13 @@ export async function getItemInfoRepository(
 
   return await withDbClient(db, async (client) => {
     const result = await client.query(query, [item_id]);
-    return result.rows;
+    return result.rows.map((row) => {
+      return {
+        blockId: row.id,
+        blockSequence: row.sequence,
+        blockName: row.name,
+        blockExplanation: row.explanation,
+      };
+    });
   });
 }

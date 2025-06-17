@@ -1,37 +1,44 @@
 import { PostgresClient } from "../types/dataTypes";
 import { withDbClient } from "../utils/database.utils";
-import { Block } from "../../../shared/types/dataTypes";
+import { BlockExplanation } from "../../../shared/types/dataTypes";
 
 export async function getGrammarListRepository(
   db: PostgresClient,
   uid: string
-): Promise<Block[]> {
+): Promise<BlockExplanation[]> {
   try {
     const query = `
       WITH user_cte AS (
-        SELECT id AS user_id FROM users WHERE uid = $1
+        SELECT id AS user_id 
+        FROM users 
+        WHERE uid = $1
       ),
-      user_words_count_cte AS (
-        SELECT COUNT(*) AS user_words_count
-        FROM items i
-        JOIN user_items ui ON i.id = ui.item_id
+      blocks_started_cte AS (
+        SELECT DISTINCT bi.block_id AS blocks_started
+        FROM block_items bi
+        JOIN items i ON i.id = bi.item_id
+        JOIN user_items ui ON i.id = ui.item_id        
         WHERE ui.user_id = (SELECT user_id FROM user_cte)
-          AND i.item_order IS NOT NULL
+        GROUP BY ui.user_id, i.id, bi.block_id
       )
       SELECT 
-        b.id AS block_id,
-        b.block_order,
-        b.block_name,
-        b.block_explanation,      
-        b.category_id
+        b.id,
+        b.sequence,
+        b.name,
+        b.explanation,      
       FROM blocks b
-      WHERE b.block_order <= (SELECT user_words_count FROM user_words_count_cte)
+      WHERE b.id IN (SELECT blocks_started FROM blocks_started_cte)
         and b.category_id = 1
     `;
 
     return await withDbClient(db, async (client) => {
       const result = await client.query(query, [uid]);
-      return result.rows;
+      return result.rows.map((row) => ({
+        blockId: row.id,
+        blockSequence: row.sequence,
+        blockName: row.name,
+        blockExplanation: row.explanation,
+      }));
     });
   } catch (error) {
     throw new Error(

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { postgresDBPool } from "../config/database.config.postgres";
-import { Block } from "../../../shared/types/dataTypes";
+import { BlockExplanation } from "../../../shared/types/dataTypes";
 import { getGrammarListRepository } from "../repository/blocks.repository.postgres";
 
 /**
@@ -15,7 +15,10 @@ export async function getGrammarListController(
   try {
     const uid: string = (req as any).user.uid;
 
-    const data: Block[] = await getGrammarListRepository(postgresDBPool, uid);
+    const data: BlockExplanation[] = await getGrammarListRepository(
+      postgresDBPool,
+      uid
+    );
 
     res.status(200).json({
       message: "Grammar list retrieved successfully.",

@@ -1,5 +1,9 @@
 import { PostgresClient } from "../types/dataTypes";
-import { UserScore, Item, ItemInfo } from "../../../shared/types/dataTypes";
+import {
+  UserScore,
+  Item,
+  BlockExplanation,
+} from "../../../shared/types/dataTypes";
 import {
   getItemsRepository,
   patchItemsRepository,
@@ -61,22 +65,18 @@ export async function patchItemsService(
 export async function getItemInfoService(
   db: PostgresClient,
   itemId: number
-): Promise<ItemInfo[]> {
+): Promise<BlockExplanation[]> {
   try {
-    const itemInfo: ItemInfo[] = await getItemInfoRepository(db, itemId);
+    const itemInfo: BlockExplanation[] = await getItemInfoRepository(
+      db,
+      itemId
+    );
 
     if (!itemInfo || itemInfo.length === 0) {
       throw new Error(`No item info found for itemId: ${itemId}`);
     }
 
-    return itemInfo.map((item) => ({
-      ...item,
-      items:
-        item.items?.map((word) => ({
-          ...word,
-          audio: addAudioPath(word.audio),
-        })) || [],
-    }));
+    return itemInfo;
   } catch (error) {
     throw new Error(
       `Error in getItemInfoService: ${

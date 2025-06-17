@@ -1,6 +1,10 @@
 import { Request, Response } from "express";
 import { postgresDBPool } from "../config/database.config.postgres";
-import { UserScore, Item, ItemInfo } from "../../../shared/types/dataTypes";
+import {
+  UserScore,
+  Item,
+  BlockExplanation,
+} from "../../../shared/types/dataTypes";
 import {
   getItemsService,
   patchItemsService,
@@ -77,7 +81,10 @@ export async function getInfoController(
   try {
     const itemId: number = parseInt((req as any).params.itemId, 10);
 
-    const data: ItemInfo[] = await getItemInfoService(postgresDBPool, itemId);
+    const data: BlockExplanation[] = await getItemInfoService(
+      postgresDBPool,
+      itemId
+    );
 
     res.status(200).json({
       message: "Item info retrieved successfully.",
