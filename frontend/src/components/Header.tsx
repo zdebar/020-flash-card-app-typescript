@@ -1,9 +1,11 @@
 import { UserIcon, HomeIcon, AcademicCapIcon } from './common/Icons';
 import { useUser } from '../hooks/useUser';
 import ButtonLink from './common/ButtonLink';
+import { useLocation } from 'react-router-dom';
 
 export default function Header() {
   const { userInfo } = useUser();
+  const location = useLocation();
 
   return (
     <header className="header z-2 flex w-full justify-between">
@@ -12,7 +14,11 @@ export default function Header() {
         role="navigation"
         aria-label="Hlavní navigace"
       >
-        <ButtonLink className="button-round" to="/" aria-label="Domů">
+        <ButtonLink
+          className={`button-round ${location.pathname === '/' ? 'outline-4' : ''}`}
+          to="/"
+          aria-label="Domů"
+        >
           <HomeIcon />
         </ButtonLink>
       </nav>
@@ -22,7 +28,9 @@ export default function Header() {
         aria-label="Uživatelská navigace"
       >
         <ButtonLink
-          className="button-round"
+          className={`button-round ${
+            location.pathname === '/userDashboard' ? 'outline-4' : ''
+          }`}
           buttonColor="color-secondary"
           to="/userDashboard"
           disabled={!userInfo}
@@ -31,7 +39,9 @@ export default function Header() {
           <AcademicCapIcon />
         </ButtonLink>
         <ButtonLink
-          className="button-round"
+          className={`button-round ${
+            location.pathname === '/userSettings' ? 'outline-4' : ''
+          }`}
           to="/userSettings"
           disabled={!userInfo}
           aria-label="Nastavení uživatele"

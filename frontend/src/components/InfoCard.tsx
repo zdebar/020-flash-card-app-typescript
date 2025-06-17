@@ -1,10 +1,9 @@
-import Button from './common/Button';
-import { CloseIcon } from './common/Icons';
 import { Dispatch, SetStateAction } from 'react';
 import PrevNextControls from './common/PrevNextControls';
 import { useArray } from '../hooks/useArray';
 import Loading from './common/Loading';
 import type { BlockExplanation } from '../../../shared/types/dataTypes';
+import ExplanationCard from './ExplanationCard';
 
 export default function InfoCard({
   itemId,
@@ -24,28 +23,10 @@ export default function InfoCard({
 
   return (
     <div className="card">
-      <div className="flex w-full gap-1">
-        <div className="color-disabled shape-rectangular flex flex-col justify-center pl-4">
-          <h2 className="font-semibold">{current.blockName}</h2>
-        </div>
-        <Button
-          name="close"
-          type="button"
-          className="button-rectangular w-23"
-          onClick={() => setVisibility(false)}
-          aria-label="Zavřít informace"
-        >
-          <CloseIcon />
-        </Button>
-      </div>
-      <div className="color-disabled h-full">
-        <div
-          className="flex flex-col justify-center p-4 text-sm"
-          dangerouslySetInnerHTML={{
-            __html: current.blockExplanation,
-          }}
-        ></div>
-      </div>
+      <ExplanationCard
+        block={array[index] || null}
+        setVisibility={setVisibility}
+      />
       <PrevNextControls
         handleNext={nextIndex}
         handlePrevious={prevIndex}
