@@ -280,6 +280,7 @@ export default function PracticeCard() {
                 </p>
               </div>
             </div>
+
             {/* Progress Bar with audi, blockcount and item infor */}
             <div className="flex justify-center gap-1">
               <Button

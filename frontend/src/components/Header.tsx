@@ -15,7 +15,7 @@ export default function Header() {
         aria-label="Hlavní navigace"
       >
         <ButtonLink
-          className={`button-round ${location.pathname === '/' ? 'outline-4' : ''}`}
+          className={`button-round ${location.pathname === '/' ? 'emphasis' : ''}`}
           to="/"
           aria-label="Domů"
         >
@@ -29,7 +29,7 @@ export default function Header() {
       >
         <ButtonLink
           className={`button-round ${
-            location.pathname === '/userDashboard' ? 'outline-4' : ''
+            location.pathname === '/userDashboard' ? 'emphasis' : ''
           }`}
           buttonColor="color-secondary"
           to="/userDashboard"
@@ -40,7 +40,7 @@ export default function Header() {
         </ButtonLink>
         <ButtonLink
           className={`button-round ${
-            location.pathname === '/userSettings' ? 'outline-4' : ''
+            location.pathname === '/userSettings' ? 'emphasis' : ''
           }`}
           to="/userSettings"
           disabled={!userInfo}

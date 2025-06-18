@@ -13,18 +13,9 @@ CREATE TABLE IF NOT EXISTS items (
   english TEXT NOT NULL, 
   pronunciation TEXT, -- IPA phonetic transcription
   audio TEXT, -- audio file name, without extension
-  part_id INTEGER, -- part of speech (noun, verb, adjective, adverb, etc.) -- NEW
   level_id INTEGER, -- CEFR level (A1, A2, B1, B2, C1, C2) -- NEW
-  item_order INTEGER CHECK (item_order >= 0), -- learning order of words; INTEGER for words, NULL for grammar
-  FOREIGN KEY (part_id) REFERENCES parts(id) ON DELETE SET NULL, -- NEW
+  sequence INTEGER CHECK (item_order >= 0), -- learning order of words; INTEGER for words, NULL for grammar
   FOREIGN KEY (level_id) REFERENCES cefr_levels(id) ON DELETE SET NULL, -- NEW
-);
-
-CREATE TABLE IF NOT EXISTS parts ( -- part of speech, e.g. noun, verb, adjective, adverb, etc. -- NEW
-  id SERIAL PRIMARY KEY,
-  name TEXT NOT NULL UNIQUE,
-  explanation TEXT,
-  example TEXT,  
 );
 
 CREATE TABLE IF NOT EXISTS cefr_levels ( -- Common European Framework of Reference for Languages (CEFR) levels -- NEW

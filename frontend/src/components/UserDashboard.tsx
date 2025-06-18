@@ -1,8 +1,7 @@
 import { useUser } from '../hooks/useUser';
-
-import DashboardBar from './common/DashboardBar';
+import ProgressBar from './common/ProgressBar.js';
 import ButtonLink from './common/ButtonLink';
-import LanguageBar from './common/languageBar';
+import LevelBar from './common/LevelBar';
 
 export default function UserDashboard() {
   const { userScore } = useUser();
@@ -24,7 +23,7 @@ export default function UserDashboard() {
         className={`color-disabled shape-rectangular flex flex-1 flex-col items-center justify-center pb-2`}
       >
         {userScore && (
-          <LanguageBar
+          <LevelBar
             learned={userScore?.learnedCountByLevel ?? {}}
             learnedToday={userScore?.learnedCountTodayByLevel ?? {}}
             levels={userScore?.itemsCountByLevel ?? {}}
@@ -38,7 +37,7 @@ export default function UserDashboard() {
               className="flex items-center justify-center gap-2 pr-8"
             >
               <p className="w-8 text-right text-xs">{item}</p>
-              <DashboardBar blocks={item} />
+              <ProgressBar progress={item} />
             </div>
           ))}
       </div>

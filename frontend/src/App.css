@@ -50,6 +50,10 @@
     @apply bg-gray-200 dark:bg-gray-700;
   }
 
+  .emphasis {
+    @apply outline-4 outline-black dark:outline-white;
+  }
+
   .color-error {
     @apply text-red-500;
   }
