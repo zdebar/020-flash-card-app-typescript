@@ -15,9 +15,10 @@ export default function Header() {
         aria-label="Hlavní navigace"
       >
         <ButtonLink
-          className={`button-round ${location.pathname === '/' ? 'emphasis' : ''}`}
+          className={`button-round ${location.pathname === '/' ? 'color-disabled' : ''} color-header`}
           to="/"
           aria-label="Domů"
+          buttonColor="color-header"
         >
           <HomeIcon />
         </ButtonLink>
@@ -29,9 +30,9 @@ export default function Header() {
       >
         <ButtonLink
           className={`button-round ${
-            location.pathname === '/userDashboard' ? 'emphasis' : ''
+            location.pathname === '/userDashboard' ? 'color-disabled' : ''
           }`}
-          buttonColor="color-secondary"
+          buttonColor="color-header"
           to="/userDashboard"
           disabled={!userInfo}
           aria-label="Uživatelský dashboard"
@@ -40,9 +41,10 @@ export default function Header() {
         </ButtonLink>
         <ButtonLink
           className={`button-round ${
-            location.pathname === '/userSettings' ? 'emphasis' : ''
+            location.pathname === '/userSettings' ? 'color-disabled' : ''
           }`}
           to="/userSettings"
+          buttonColor="color-header"
           disabled={!userInfo}
           aria-label="Nastavení uživatele"
         >

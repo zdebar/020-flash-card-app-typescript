@@ -21,10 +21,11 @@ export default function ExplanationCard({
               textAlign: 'right',
               marginRight: '0.75em',
             }}
+            className="font-display font-semibold"
           >
             {block.blockSequence}
           </h2>
-          <h2 className="ml-2 font-semibold">{block.blockName}</h2>
+          <h2 className="font-display ml-2 font-semibold">{block.blockName}</h2>
         </div>
         <Button
           name="close"

@@ -2,6 +2,11 @@ import { PostgresClient } from "../types/dataTypes";
 import { UserSettings } from "../../../shared/types/dataTypes";
 import { QueryResult } from "pg";
 import { withDbClient } from "../utils/database.utils";
+import {
+  validateUid,
+  validateEmail,
+  validateName,
+} from "../utils/validate.utils";
 
 /**
  * Finds User by userUid. Creates a new user if not found.
@@ -13,6 +18,16 @@ export async function getUserRepository(
   name: string | null,
   email: string | null
 ): Promise<UserSettings> {
+  validateUid(uid);
+
+  if (!validateName(name)) {
+    name = null;
+  }
+
+  if (!validateEmail(email)) {
+    email = null;
+  }
+
   try {
     return withDbClient(db, async (client) => {
       const user: QueryResult<UserSettings> = await client.query(

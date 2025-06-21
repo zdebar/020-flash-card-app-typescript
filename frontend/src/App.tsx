@@ -35,10 +35,14 @@ export default function App() {
             <Route
               path="/"
               element={
-                <div className="font-display flex w-full max-w-[480px] flex-col items-center justify-start gap-4 pt-4 text-center text-xl">
-                  <h1 className="">Angličtina jednoduše</h1>
-                  <p className="color-error">aplikace v testovacím režimu</p>
-                  <p>Bez lekcí, beze stresu, od slovíček po gramatiku.</p>
+                <div className="flex w-full max-w-[480px] flex-col items-center justify-start gap-4 pt-4 text-center text-xl">
+                  <h1 className="font-display">Angličtina jednoduše</h1>
+                  <p className="color-error font-Mansalva">
+                    aplikace v testovacím režimu
+                  </p>
+                  <p className="intro">
+                    Bez lekcí, beze stresu, od slovíček po gramatiku.
+                  </p>
 
                   {!userInfo && (
                     <div className="max-w-card items">
@@ -48,7 +52,7 @@ export default function App() {
                     </div>
                   )}
 
-                  <p>
+                  <p className="intro">
                     Aplikace sama kombinuje učení slovíček a gramatiky. Jedno
                     tlačítko a procvičujte kolikrát denně jenom budete chtít.
                   </p>

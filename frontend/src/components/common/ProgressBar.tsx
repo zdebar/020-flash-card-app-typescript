@@ -1,3 +1,5 @@
+import config from '../../config/config';
+
 export default function ProgressBar({
   progress,
   maxProgress = 100,
@@ -11,7 +13,8 @@ export default function ProgressBar({
   divisions?: number;
   width?: string;
 }) {
-  const color = ['bg-blue-400', 'bg-blue-500', 'bg-blue-600', 'bg-blue-700'];
+  const color = config.colors;
+  const colorProgress = config.colorProgressBg;
   const progressPercentage = (progress / maxProgress) * 100;
   const newProgressPercentage = (newProgress / maxProgress) * 100;
   const progressBlocks = Math.floor((progress * 4) / maxProgress);
@@ -35,7 +38,7 @@ export default function ProgressBar({
       </div>
 
       <div
-        className="absolute top-0 h-full bg-green-500"
+        className={`absolute top-0 h-full ${colorProgress}`}
         style={{
           width: `${newProgressPercentage}%`,
           left: `${progressPercentage}%`,

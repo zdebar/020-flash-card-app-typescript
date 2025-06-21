@@ -1,11 +1,14 @@
 import { PostgresClient } from "../types/dataTypes";
 import { withDbClient } from "../utils/database.utils";
 import { BlockExplanation } from "../../../shared/types/dataTypes";
+import { validateUid } from "../utils/validate.utils";
 
 export async function getGrammarListRepository(
   db: PostgresClient,
   uid: string
 ): Promise<BlockExplanation[]> {
+  validateUid(uid);
+
   try {
     const query = `
       WITH user_cte AS (
@@ -14,7 +17,7 @@ export async function getGrammarListRepository(
         WHERE uid = $1
       ),
       blocks_started_cte AS (
-        SELECT DISTINCT bi.block_id AS blocks_started
+        SELECT bi.block_id AS blocks_started
         FROM block_items bi
         JOIN items i ON i.id = bi.item_id
         JOIN user_items ui ON i.id = ui.item_id        

@@ -1,4 +1,5 @@
 import ProgressBar from './ProgressBar';
+import config from '../../config/config';
 
 export default function LevelBar({
   learned,
@@ -30,7 +31,7 @@ export default function LevelBar({
                 width="w-40"
               />
 
-              <span className="text-xs text-green-500">
+              <span className={`text-xs ${config.colorProgressText}`}>
                 +{learnedToday[key]}
               </span>
             </div>

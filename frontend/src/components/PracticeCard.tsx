@@ -199,7 +199,7 @@ export default function PracticeCard() {
           <div className="card">
             {/* Card content with item details */}
             <div
-              className={`color-disabled relative flex h-full w-full flex-col items-center justify-between px-4 pt-3 pb-2 ${!direction && 'color-highlighted'} `}
+              className={`color-card relative flex h-full w-full flex-col items-center justify-between px-4 pt-3 pb-2 ${!direction && 'color-highlighted'} `}
             >
               <GuideHint
                 visibility={secondOverlay}
@@ -357,7 +357,7 @@ export default function PracticeCard() {
                     onClick={() => {
                       updateItemArray(config.minusProgress);
                     }}
-                    className="button-rectangular color-secondary relative"
+                    className="button-rectangular relative"
                     aria-label="Snížit skore"
                   >
                     <GuideHint
@@ -373,7 +373,7 @@ export default function PracticeCard() {
                     onClick={() => {
                       updateItemArray(config.plusProgress);
                     }}
-                    className="button-rectangular color-secondary relative"
+                    className="button-rectangular relative"
                     aria-label="Zvýšit skore"
                   >
                     <GuideHint

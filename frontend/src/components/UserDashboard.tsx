@@ -8,19 +8,15 @@ export default function UserDashboard() {
 
   return (
     <div className="card">
-      <ButtonLink
-        to="/practice"
-        className="button-rectangular"
-        buttonColor="color-secondary"
-      >
+      <ButtonLink to="/practice" className="button-rectangular">
         Procvičovat
       </ButtonLink>
-      <ButtonLink to="/grammarList" className="button-rectangular">
+      <ButtonLink to="/grammarList " className="button-rectangular">
         Přehled gramatiky
       </ButtonLink>
 
       <div
-        className={`color-disabled shape-rectangular flex flex-1 flex-col items-center justify-center pb-2`}
+        className={`color-card shape-rectangular flex flex-1 flex-col items-center justify-center pb-2`}
       >
         {userScore && (
           <LevelBar
@@ -29,7 +25,9 @@ export default function UserDashboard() {
             levels={userScore?.itemsCountByLevel ?? {}}
           />
         )}
-        <p className="font-display py-2">cvičební bloky za posledních 5 dní</p>
+        <p className="font-Mansalva py-2 text-sm">
+          cvičební bloky za posledních 5 dní
+        </p>
         {userScore &&
           userScore.blockCount.slice(0, 5).map((item, idx) => (
             <div

@@ -7,6 +7,14 @@ export function extractPhonemes(textGrid: string): string[] {
   return intervals.map((interval) => interval.replace(/text = "|"/g, ""));
 }
 
+/**
+ * Compares two arrays of phonemes and returns an array of similarity scores.
+ * Each score is 1 for an exact match, 0.5 for a partial match, and 0 for no match.
+ *
+ * @param aligned - The array of phonemes from the aligned audio.
+ * @param expected - The array of expected phonemes.
+ * @returns An array of similarity scores.
+ */
 export function comparePhonemes(
   aligned: string[],
   expected: string[]
