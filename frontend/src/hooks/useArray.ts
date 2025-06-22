@@ -32,11 +32,12 @@ export function useArray<T>(apiPath: string) {
         }>(apiPath);
 
         setArray(response?.data || []);
-        setIndex(0);
-        setReload(false);
       } catch (error) {
         console.error('Error in fetching data:', error);
+        setArray([]);
       }
+      setIndex(0);
+      setReload(false);
     };
     fetchData();
   }, [loading, apiPath, reload]);

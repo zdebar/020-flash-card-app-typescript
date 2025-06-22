@@ -70,10 +70,6 @@ export async function getItemsRepository(
         return await client.query(query, [uid, numWords]);
       });
 
-      if (res.rows.length === 0) {
-        throw new Error("No items found for the user.");
-      }
-
       return res.rows;
     };
 

@@ -21,7 +21,7 @@ export default function ThemeDropdown() {
         id="theme-select"
         value={theme}
         onChange={handleChange}
-        className="button-rectangular color-disabled p-2"
+        className="button-rectangular bg-white p-2 dark:bg-gray-900 dark:text-white"
         aria-label="Změna motivu"
       >
         {themes.map((t) => (

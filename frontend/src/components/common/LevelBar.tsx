@@ -20,9 +20,10 @@ export default function LevelBar({
         .slice(-2)
         .map((key) => {
           return (
-            <div key={key} className="flex items-center gap-2 pr-2">
-              <span className="w-10 text-right text-sm">{key}</span>
-
+            <div key={key} className="flex items-center gap-2 pl-4.5">
+              <p>
+                <span className="w-10 text-right text-sm">{key}</span>
+              </p>
               <ProgressBar
                 progress={learned[key]}
                 maxProgress={levels[key]}
@@ -30,10 +31,11 @@ export default function LevelBar({
                 divisions={20}
                 width="w-40"
               />
-
-              <span className={`text-xs ${config.colorProgressText}`}>
-                +{learnedToday[key]}
-              </span>
+              <p>
+                <span className={`text-xs ${config.colorProgressText}`}>
+                  +{learnedToday[key]}
+                </span>
+              </p>
             </div>
           );
         })}

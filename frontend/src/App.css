@@ -20,7 +20,7 @@
   label,
   option,
   select {
-    @apply font-sans text-black dark:text-white;
+    @apply font-serif text-black dark:text-white;
   }
 
   h1 {
@@ -32,7 +32,7 @@
   }
 
   .intro {
-    @apply font-Mansalva;
+    @apply font-serif;
   }
 }
 
@@ -57,7 +57,7 @@
   }
 
   .color-primary {
-    @apply font-display bg-[#2d9ab0] text-white shadow-[2px_2px_2px_rgba(0,0,0,0.35)] hover:bg-[#699cb7] hover:text-white dark:bg-blue-800 dark:text-white dark:hover:bg-blue-950;
+    @apply font-display bg-[#2d9ab0] text-white shadow-[2px_2px_2px_rgba(0,0,0,0.35)] hover:bg-[#699cb7] hover:text-white dark:bg-[#438b99] dark:text-white dark:hover:bg-[#2d9ab0];
   }
 
   .color-card {
@@ -65,11 +65,11 @@
   }
 
   .color-highlighted {
-    @apply bg-gray-100 dark:bg-gray-700;
+    @apply bg-gray-200 dark:bg-gray-700;
   }
 
   .color-disabled {
-    @apply bg-white shadow-none hover:bg-white dark:bg-gray-800 dark:hover:bg-gray-800 dark:hover:text-white;
+    @apply bg-white text-black shadow-none hover:bg-white dark:text-black;
   }
 
   .color-error {
