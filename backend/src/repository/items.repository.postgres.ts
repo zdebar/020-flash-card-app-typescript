@@ -57,7 +57,7 @@ export async function getItemsRepository(
         LEFT JOIN blocks b ON bi.block_id = b.id 
         WHERE ui.mastered_at IS NULL
           AND (ui.next_at IS NULL OR ui.next_at < NOW())
-          AND b.category_id IN (0, 1) OR b.category_id IS NULL
+          AND (b.category_id IN (0, 1) OR b.category_id IS NULL)
         ORDER BY
           ui.next_at ASC NULLS LAST,
           COALESCE(b.sequence, i.sequence) ASC NULLS LAST,

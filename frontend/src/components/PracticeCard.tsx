@@ -302,7 +302,6 @@ export default function PracticeCard() {
               <Button
                 onClick={() => setInfoVisibility(true)}
                 disabled={!currentItem?.hasContextInfo || !revealed}
-                buttonColor="color-secondary"
                 className="button-rectangular relative flex-1"
                 aria-label="Zobrazit informace"
               >

@@ -4,10 +4,10 @@ const config = {
   minusProgress: -2,
   blockFillSize: 5,
   colors: [
-    'bg-[#00A2BC]', // 1–5
-    'bg-[#188292]', // 6–10
-    'bg-[#235E68]', // 11–15
-    'bg-[#1F393D]', // 16–20
+    'bg-[#6FBBCF]', // 1–5
+    'bg-[#2E9AB0]', // 6–10
+    'bg-[#257F92]', // 11–15
+    'bg-[#1C6676]', // 16–20
   ],
   colorProgressBg: 'bg-[#F7B740]',
   colorProgressText: 'text-[#F7B740]',

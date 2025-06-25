@@ -40,9 +40,7 @@ export default function App() {
                   <p className="color-error font-Mansalva">
                     aplikace v testovacím režimu
                   </p>
-                  <p className="intro">
-                    Bez lekcí, beze stresu, od slovíček po gramatiku.
-                  </p>
+                  <p>Bez lekcí, beze stresu, od slovíček po gramatiku.</p>
 
                   {!userInfo && (
                     <div className="max-w-card items">
@@ -52,7 +50,7 @@ export default function App() {
                     </div>
                   )}
 
-                  <p className="intro">
+                  <p>
                     Aplikace sama kombinuje učení slovíček a gramatiky. Jedno
                     tlačítko a procvičujte kolikrát denně jenom budete chtít.
                   </p>

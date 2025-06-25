@@ -13,7 +13,7 @@ export default function LevelBar({
   const levelSort = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
 
   return (
-    <div className="flex flex-col items-start justify-start">
+    <div className="flex flex-col items-start justify-start pr-1">
       {Object.keys(levels)
         .filter((key) => key !== 'none')
         .sort((a, b) => levelSort.indexOf(a) - levelSort.indexOf(b))
