@@ -67,7 +67,7 @@
   }
 
   .color-error {
-    @apply font-bold text-red-700 dark:text-red-500;
+    @apply font-Mansalva font-bold text-red-700 dark:text-red-500;
   }
 
   .shape-rectangular {
