@@ -4,8 +4,8 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --font-display: 'Nova Round', 'sans-serif';
-  --font-Mansalva: 'Mansalva', 'sans-serif';
+  --font-display: 'Nova Round', 'sans';
+  --font-Mansalva: 'Mansalva', 'sans';
   --color-background-light: #f7b740;
   --color-background-dark: #111827;
   --color-blue-1: #6fbbcf;
@@ -26,7 +26,7 @@
   label,
   option,
   select {
-    @apply font-serif text-black dark:text-white;
+    @apply font-sans text-black dark:text-white;
   }
 
   h1 {
