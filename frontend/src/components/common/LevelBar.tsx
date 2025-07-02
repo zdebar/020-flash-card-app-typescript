@@ -10,7 +10,7 @@ export default function LevelBar({
   learnedToday: Record<string, number>;
   levels: Record<string, number>;
 }) {
-  const levelSort = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
+  const levelSort = config.levelSort;
 
   return (
     <div className="flex flex-col items-start justify-start pr-1">
@@ -32,7 +32,7 @@ export default function LevelBar({
                 width="w-40"
               />
               <p>
-                <span className={`text-xs ${config.colorProgressText}`}>
+                <span className={`color-learned-today text-xs`}>
                   +{learnedToday[key]}
                 </span>
               </p>

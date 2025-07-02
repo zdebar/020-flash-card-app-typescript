@@ -32,5 +32,5 @@ def check_duplicates(file_path: str):
 
 # Example usage
 if __name__ == "__main__":
-    file_path = r"d:/Active/020-flash-card-app-typescript/data/en-source/blocks/04_předložky/01_předložky.csv"
+    file_path = r"D:/Active/020-flash-card-app-typescript/data/basic_vocabulary.csv"
     check_duplicates(file_path)

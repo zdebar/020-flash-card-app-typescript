@@ -12,7 +12,7 @@ async def prepare_english_words(file_name: str, output_file: str, audio_folder: 
     # Load the first word_number words from the CSV file, ensuring required columns exist
     df = pd.read_csv(file_name, header=0)
 
-    required_columns = ["id", "czech", "english", "pronunciation", "audio", "item_order"]
+    required_columns = ["id", "czech", "english", "pronunciation", "audio", "sequence"]
     for column in required_columns:
         if column not in df.columns:
             df[column] = "" 
@@ -24,7 +24,7 @@ async def prepare_english_words(file_name: str, output_file: str, audio_folder: 
     df["czech"] = await asyncio.gather(
         *[
             asyncio.to_thread(translate_to_czech_Google_Translate, word.replace(",", ""))
-            if czech else asyncio.to_thread(lambda x: x, czech)  
+            if not czech else czech  # Translate only if 'czech' is empty
             for word, czech in zip(df["english"], df["czech"])
         ]
     )
@@ -68,8 +68,8 @@ async def prepare_english_words(file_name: str, output_file: str, audio_folder: 
 
     df['audio'] = audio_files
 
-    # Assign sequential numbers to 'item_order' starting from 1
-    df['item_order'] = range(1, len(df) + 1)
+    # Assign sequential numbers to 'sequence' starting from 1
+    df['sequence'] = range(1, len(df) + 1)
 
     # Remove the output file if it already exists
     if os.path.exists(output_file):
@@ -91,10 +91,10 @@ async def process_all_files_in_directory(input_directory: str, output_directory:
             await prepare_english_words(input_file, output_file, audio_folder, opus_folder)
 
 if __name__ == "__main__":
-    input_directory = os.path.abspath("../data/prepared")  # Directory containing input CSV files
-    output_directory = os.path.abspath("../data/prepared/processed")  # Directory to save processed files
-    audio_folder = os.path.abspath("../data/prepared/audio")
-    opus_folder = os.path.abspath("../data/prepared/opus")
+    input_directory = os.path.abspath("../data/prepare")  # Directory containing input CSV files
+    output_directory = os.path.abspath("../data/prepare/processed")  # Directory to save processed files
+    audio_folder = os.path.abspath("../data/prepare/audio")
+    opus_folder = os.path.abspath("../data/prepare/opus")
 
     asyncio.run(process_all_files_in_directory(input_directory, output_directory, audio_folder, opus_folder))
 

@@ -70,6 +70,22 @@
     @apply font-Mansalva font-bold text-red-700 dark:text-red-500;
   }
 
+  .color-notice {
+    @apply font-Mansalva font-bold text-[var(--color-blue-4)] dark:text-[var(--color-blue-1)];
+  }
+
+  .color-learned-today {
+    @apply text-[var(--color-blue-4)] dark:text-[var(--color-blue-1)];
+  }
+
+  .color-guide {
+    @apply font-Mansalva;
+  }
+
+  .color-modal {
+    @apply bg-white shadow-sm dark:bg-gray-700;
+  }
+
   .shape-rectangular {
     @apply h-full w-full;
   }

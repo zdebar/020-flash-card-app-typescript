@@ -14,7 +14,7 @@ export default function ConfirmModal({
   if (!isVisible) return null;
 
   return (
-    <div className="max-w-card absolute shadow-lg dark:bg-gray-700">
+    <div className="max-w-card color-modal absolute">
       <div className="p-6 text-center">
         <h2 className="mb-6 text-lg font-bold">{text}</h2>
         <div className="flex justify-center gap-4">

@@ -10,7 +10,7 @@ export default function GuideHint({
   return (
     visibility && (
       <p
-        className="font-Mansalva absolute z-20 pt-6"
+        className="color-guide absolute z-20 pt-6"
         style={{
           whiteSpace: 'nowrap',
           pointerEvents: 'none',

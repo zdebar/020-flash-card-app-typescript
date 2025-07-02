@@ -9,8 +9,9 @@ const config = {
     'bg-[#257F92]', // 11–15
     'bg-[#1C6676]', // 16–20
   ],
-  colorProgressBg: 'bg-[#F7B740]',
-  colorProgressText: 'text-[#F7B740]',
+  colorProgressBg: 'bg-[#257F92]',
+  colorProgressText: 'text-[#257F92]',
+  levelSort: ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'],
 };
 
 export default config;

@@ -25,7 +25,7 @@ export async function getGrammarListController(
       data,
     });
   } catch (err) {
-    (err as any).message = `Erro in getGrammarListController: ${
+    (err as any).message = `Error in getGrammarListController: ${
       (err as any).message
     } | uid: ${(req as any).user.uid}`;
     next(err);
