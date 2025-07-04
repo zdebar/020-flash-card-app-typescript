@@ -63,7 +63,7 @@
   }
 
   .color-disabled {
-    @apply bg-white text-black shadow-none hover:bg-white dark:text-black;
+    @apply bg-white text-black shadow-none hover:bg-white dark:bg-gray-800 dark:text-white dark:hover:bg-gray-800;
   }
 
   .color-error {
@@ -76,6 +76,10 @@
 
   .color-learned-today {
     @apply text-[var(--color-blue-4)] dark:text-[var(--color-blue-1)];
+  }
+
+  .color-selected {
+    @apply bg-white text-black shadow-none hover:bg-white;
   }
 
   .color-guide {

@@ -15,14 +15,6 @@ export async function getGrammarListRepository(
         SELECT id AS user_id 
         FROM users 
         WHERE uid = $1
-      ),
-      blocks_started_cte AS (
-        SELECT bi.block_id AS blocks_started
-        FROM block_items bi
-        JOIN items i ON i.id = bi.item_id
-        JOIN user_items ui ON i.id = ui.item_id        
-        WHERE ui.user_id = (SELECT user_id FROM user_cte)
-        GROUP BY ui.user_id, i.id, bi.block_id
       )
       SELECT 
         b.id,
@@ -30,8 +22,15 @@ export async function getGrammarListRepository(
         b.name,
         b.explanation      
       FROM blocks b
-      WHERE b.id IN (SELECT blocks_started FROM blocks_started_cte)
-        and b.category_id = 1
+      WHERE EXISTS (
+        SELECT 1
+        FROM block_items bi
+        JOIN items i ON i.id = bi.item_id
+        JOIN user_items ui ON i.id = ui.item_id
+        WHERE ui.user_id = (SELECT user_id FROM user_cte)
+          AND bi.block_id = b.id
+      )
+      AND b.category_id = 1;
     `;
 
     return await withDbClient(db, async (client) => {

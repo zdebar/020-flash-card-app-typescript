@@ -281,7 +281,7 @@ export default function PracticeCard() {
               </div>
             </div>
 
-            {/* Progress Bar with audi, blockcount and item infor */}
+            {/* Practice Controls */}
             <div className="flex justify-center gap-1">
               <Button
                 onClick={() => {
@@ -313,7 +313,6 @@ export default function PracticeCard() {
                 <InfoIcon />
               </Button>
             </div>
-            {/* Practice Controls */}
             <div className="flex w-full justify-between gap-1">
               {!revealed ? (
                 <>
