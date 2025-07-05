@@ -30,7 +30,8 @@ export async function getGrammarListRepository(
         WHERE ui.user_id = (SELECT user_id FROM user_cte)
           AND bi.block_id = b.id
       )
-      AND b.category_id = 1;
+      AND b.category_id = 1
+      ORDER BY b.sequence;
     `;
 
     return await withDbClient(db, async (client) => {

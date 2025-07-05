@@ -8,11 +8,26 @@ from utils.prepare_words import clean_DataFrame
 from utils.helpers import async_save_csv
 from utils.convert_to_opus import convert_mp3_to_opus
 
+parts = {
+    "noun": 1,
+    "pronoun": 2,
+    "verb": 3,
+    "adjective": 4,
+    "adverb": 5,
+    "preposition": 6,
+    "conjunction": 7,
+    "interjection": 8,
+    "noun phrase": 9,
+    "verb phrase": 10,
+    "numeral": 11,
+    "determiner": 12
+}
+
 async def prepare_english_words(file_name: str, output_file: str, audio_folder: str, opus_folder: str) -> None:
     # Load the first word_number words from the CSV file, ensuring required columns exist
-    df = pd.read_csv(file_name, header=0)
+    df = pd.read_csv(file_name, header=0, na_filter=False)
 
-    required_columns = ["id", "czech", "english", "pronunciation", "audio", "sequence"]
+    required_columns = ["id", "czech", "english", "part_id", "pronunciation", "audio", "sequence"]
     for column in required_columns:
         if column not in df.columns:
             df[column] = "" 
@@ -21,18 +36,30 @@ async def prepare_english_words(file_name: str, output_file: str, audio_folder: 
     df = clean_DataFrame(df)
 
     # Get Czech translation for each word if it does not already exist
-    df["czech"] = await asyncio.gather(
-        *[
-            asyncio.to_thread(translate_to_czech_Google_Translate, word.replace(",", ""))
-            if not czech else czech  # Translate only if 'czech' is empty
-            for word, czech in zip(df["english"], df["czech"])
-        ]
-    )
+    czech_translations = []
+    for english, czech in zip(df["english"], df["czech"]):
+        if not czech: 
+            translation = await asyncio.to_thread(translate_to_czech_Google_Translate, english.replace(",", ""))
+            czech_translations.append(translation)
+        else: 
+            czech_translations.append(czech)
+
+    df["czech"] = czech_translations
 
     # Get IPA pronunciation for each word
-    df["pronunciation"] = await asyncio.gather(
-        *[get_IPA_pronunciation(word.replace(",", ""), "en-us") for word in df["english"]]
-    )
+    pronunciations = []
+    for english in df["english"]:
+        try:
+            if english:
+                pronunciation = await get_IPA_pronunciation(english.replace(",", ""), "en-us")
+            else:
+                pronunciation = ""  # Default value if no English word is provided
+        except Exception as e:
+            print(f"Error getting IPA pronunciation for '{english}': {e}")
+            pronunciation = ""  # Default value in case of an error
+        pronunciations.append(pronunciation)
+
+    df["pronunciation"] = pronunciations
 
     # Ensure the audio folder exists
     os.makedirs(audio_folder, exist_ok=True)
@@ -68,6 +95,9 @@ async def prepare_english_words(file_name: str, output_file: str, audio_folder: 
 
     df['audio'] = audio_files
 
+    # Convert part to numeric value
+    df["part_id"] = df["part_id"].apply(lambda x: int(parts.get(x)) if parts.get(x) is not None else None)
+
     # Assign sequential numbers to 'sequence' starting from 1
     df['sequence'] = range(1, len(df) + 1)
 
@@ -95,6 +125,7 @@ if __name__ == "__main__":
     output_directory = os.path.abspath("../data/prepare/processed")  # Directory to save processed files
     audio_folder = os.path.abspath("../data/prepare/audio")
     opus_folder = os.path.abspath("../data/prepare/opus")
+    
 
     asyncio.run(process_all_files_in_directory(input_directory, output_directory, audio_folder, opus_folder))
 

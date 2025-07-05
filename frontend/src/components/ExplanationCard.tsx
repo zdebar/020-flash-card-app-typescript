@@ -13,13 +13,13 @@ export default function ExplanationCard({
   return (
     <div className="flex h-full w-full flex-col gap-1">
       <div className="button-rectangular flex gap-1">
-        <div className="color-disabled shape-rectangular flex flex-10 items-center justify-start">
+        <div className="color-disabled shape-rectangular flex flex-10 items-center justify-start pt-1">
           <h2
             style={{
               display: 'inline-block',
-              width: '2.5em',
+              width: '4em',
               textAlign: 'right',
-              marginRight: '0.75em',
+              marginRight: '0em',
             }}
             className="font-display font-semibold"
           >
@@ -37,11 +37,14 @@ export default function ExplanationCard({
           <CloseIcon />
         </Button>
       </div>
-      <div className="color-disabled h-full p-4">
+      <div className="color-disabled h-full px-6 py-4">
         <div
-          className="flex flex-col justify-center"
           dangerouslySetInnerHTML={{
             __html: block.blockExplanation,
+          }}
+          style={{
+            margin: 0,
+            lineHeight: '1.2',
           }}
         ></div>
       </div>

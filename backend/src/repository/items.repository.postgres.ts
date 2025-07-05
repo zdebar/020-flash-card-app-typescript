@@ -209,8 +209,8 @@ export async function getScoreRepository(
       learned_counts_cte AS (
         SELECT 
           COALESCE(cl.level, 'none') AS level_id, 
-          COUNT(*) FILTER (WHERE ui.progress > 5 AND DATE(ui.learned_at AT TIME ZONE 'UTC') = CURRENT_DATE) AS learnedCountTodayByLevel,
-          COUNT(*) FILTER (WHERE ui.progress > 5 AND DATE(ui.learned_at AT TIME ZONE 'UTC') != CURRENT_DATE) AS learnedCountByLevel
+          COUNT(*) FILTER (WHERE ui.learned_at IS NOT NULL AND DATE(ui.learned_at AT TIME ZONE 'UTC') = CURRENT_DATE) AS learnedCountTodayByLevel,
+          COUNT(*) FILTER (WHERE ui.learned_at IS NOT NULL AND DATE(ui.learned_at AT TIME ZONE 'UTC') != CURRENT_DATE) AS learnedCountByLevel
         FROM user_items ui
         JOIN items i ON ui.item_id = i.id
         LEFT JOIN cefr_levels cl ON i.level_id = cl.id

@@ -20,7 +20,7 @@ export default function LevelBar({
         .slice(-2)
         .map((key) => {
           return (
-            <div key={key} className="flex items-center gap-2 pl-4.5">
+            <div key={key} className="flex items-center gap-2 pl-7">
               <p>
                 <span className="w-10 text-right text-sm">{key}</span>
               </p>
@@ -32,7 +32,7 @@ export default function LevelBar({
                 width="w-40"
               />
               <p>
-                <span className={`color-learned-today text-xs`}>
+                <span className={`color-learned-today text-xs font-bold`}>
                   +{learnedToday[key]}
                 </span>
               </p>

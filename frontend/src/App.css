@@ -71,11 +71,15 @@
   }
 
   .color-notice {
-    @apply font-Mansalva font-bold text-[var(--color-blue-4)] dark:text-[var(--color-blue-1)];
+    @apply font-Mansalva text-[var(--color-blue-4)] dark:text-[var(--color-blue-1)];
   }
 
-  .color-learned-today {
+  /* .color-learned-today {
     @apply text-[var(--color-blue-4)] dark:text-[var(--color-blue-1)];
+  } */
+
+  .color-learned-today {
+    @apply text-[var(--color-blue-4)] dark:text-[var(--color-background-light)];
   }
 
   .color-selected {
