@@ -37,7 +37,7 @@ export default function ExplanationCard({
           <CloseIcon />
         </Button>
       </div>
-      <div className="color-disabled h-full px-6 py-4">
+      <div className="color-disabled overflow-y-auto px-6 py-4">
         <div
           dangerouslySetInnerHTML={{
             __html: block.blockExplanation,

@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import { BlockExplanation } from '../../../shared/types/dataTypes';
-import PrevNextControls from './common/PrevNextControls';
 import Loading from './common/Loading';
 import Button from './common/Button';
-import ExplanationCard from './ExplanationCard';
+import InfoCard from './InfoCard';
 
 import { useArray } from '../hooks/useArray';
 
@@ -43,18 +42,14 @@ export default function GrammarList() {
           ))}
         </div>
       ) : (
-        <div className="card">
-          <ExplanationCard
-            block={array[index] || null}
-            setVisibility={setShowExplanation}
-          />
-          <PrevNextControls
-            handleNext={nextIndex}
-            handlePrevious={prevIndex}
-            index={index}
-            arrayLength={arrayLength}
-          />
-        </div>
+        <InfoCard
+          block={array[index] || null}
+          setVisibility={setShowExplanation}
+          handleNext={nextIndex}
+          handlePrevious={prevIndex}
+          index={index}
+          arrayLength={arrayLength}
+        />
       )}
     </>
   );

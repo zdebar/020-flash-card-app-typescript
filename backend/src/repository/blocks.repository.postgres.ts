@@ -15,22 +15,26 @@ export async function getGrammarListRepository(
         SELECT id AS user_id 
         FROM users 
         WHERE uid = $1
+      ),
+      user_items_cte AS (
+        SELECT ui.item_id
+        FROM user_items ui
+        WHERE ui.user_id = (SELECT user_id FROM user_cte)
+      ),
+      block_items_cte AS (
+        SELECT bi.block_id
+        FROM block_items bi
+        JOIN items i ON i.id = bi.item_id
+        WHERE bi.item_id IN (SELECT item_id FROM user_items_cte)
       )
       SELECT 
         b.id,
         b.sequence,
         b.name,
-        b.explanation      
+        b.explanation
       FROM blocks b
-      WHERE EXISTS (
-        SELECT 1
-        FROM block_items bi
-        JOIN items i ON i.id = bi.item_id
-        JOIN user_items ui ON i.id = ui.item_id
-        WHERE ui.user_id = (SELECT user_id FROM user_cte)
-          AND bi.block_id = b.id
-      )
-      AND b.category_id = 1
+      WHERE b.id IN (SELECT block_id FROM block_items_cte)
+        AND b.category_id = 1
       ORDER BY b.sequence;
     `;
 

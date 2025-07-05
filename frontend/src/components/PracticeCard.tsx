@@ -20,7 +20,7 @@ import { usePatchOnUnmount } from '../hooks/usePatchOnUnmount';
 import { fetchWithAuthAndParse } from '../utils/auth.utils';
 import { useUser } from '../hooks/useUser';
 import { useArray } from '../hooks/useArray';
-import InfoCard from './InfoCard';
+import ContextCard from './ContextCard';
 import Loading from './common/Loading';
 import { getErrorMessage } from '../utils/error.utils';
 import { alternateDirection } from '../utils/practice.utils';
@@ -186,7 +186,10 @@ export default function PracticeCard() {
     <>
       {/* Main content */}
       {infoVisibility ? (
-        <InfoCard itemId={currentItem?.id} setVisibility={setInfoVisibility} />
+        <ContextCard
+          itemId={currentItem?.id}
+          setVisibility={setInfoVisibility}
+        />
       ) : (
         <>
           {/* First Overlay */}
