@@ -1,6 +1,6 @@
 import './App.css';
-import { useEffect } from 'react';
-import { Routes, Route, useLocation, useSearchParams } from 'react-router-dom';
+
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { useUser } from './hooks/useUser';
 import ButtonLink from './components/common/ButtonLink';
 import Header from './components/Header';
@@ -15,15 +15,6 @@ export default function App() {
   const { userInfo } = useUser();
   const location = useLocation();
   const showFooterRoutes = ['/', '/login'];
-  const [searchParams] = useSearchParams();
-
-  useEffect(() => {
-    const query = searchParams.get('q');
-    if (query) {
-      console.log('Custom protocol query:', query);
-      // Handle the query parameter (e.g., navigate or perform an action)
-    }
-  }, [searchParams]);
 
   return (
     <div className="color-background min-h-screen">
