@@ -7,6 +7,10 @@ export default function Header() {
   const { userInfo } = useUser();
   const location = useLocation();
 
+  function getSelectedClass(pathname: string, targetPath: string): string {
+    return pathname === targetPath ? 'color-selected' : '';
+  }
+
   return (
     <header className="header z-2 flex w-full justify-between">
       <nav
@@ -15,7 +19,7 @@ export default function Header() {
         aria-label="Hlavní navigace"
       >
         <ButtonLink
-          className={`button-round ${location.pathname === '/' ? 'color-disabled' : ''} color-header`}
+          className={`button-round ${getSelectedClass(location.pathname, '/')} color-header`}
           to="/"
           aria-label="Domů"
           buttonColor="color-header"
@@ -29,9 +33,7 @@ export default function Header() {
         aria-label="Uživatelská navigace"
       >
         <ButtonLink
-          className={`button-round ${
-            location.pathname === '/userDashboard' ? 'color-disabled' : ''
-          }`}
+          className={`button-round ${getSelectedClass(location.pathname, '/userDashboard')}`}
           buttonColor="color-header"
           to="/userDashboard"
           disabled={!userInfo}
@@ -40,9 +42,7 @@ export default function Header() {
           <AcademicCapIcon />
         </ButtonLink>
         <ButtonLink
-          className={`button-round ${
-            location.pathname === '/userSettings' ? 'color-disabled' : ''
-          }`}
+          className={`button-round ${getSelectedClass(location.pathname, '/userSettings')}`}
           to="/userSettings"
           buttonColor="color-header"
           disabled={!userInfo}

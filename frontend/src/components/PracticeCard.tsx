@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import Button from './common/Button';
 import {
   InfoIcon,
-  AudioIcon,
+  SkipIcon,
   HintIcon,
   EyeIcon,
   PlusIcon,
@@ -20,7 +20,7 @@ import { usePatchOnUnmount } from '../hooks/usePatchOnUnmount';
 import { fetchWithAuthAndParse } from '../utils/auth.utils';
 import { useUser } from '../hooks/useUser';
 import { useArray } from '../hooks/useArray';
-import InfoCard from './InfoCard';
+import ContextCard from './ContextCard';
 import Loading from './common/Loading';
 import { getErrorMessage } from '../utils/error.utils';
 import { alternateDirection } from '../utils/practice.utils';
@@ -180,13 +180,16 @@ export default function PracticeCard() {
   };
 
   if (!arrayLength)
-    return <Loading text="Nic k procvičování. Zkuste to později." />;
+    return <Loading text="Nic k procvičování. Zkuste to znovu později." />;
 
   return (
     <>
       {/* Main content */}
       {infoVisibility ? (
-        <InfoCard itemId={currentItem?.id} setVisibility={setInfoVisibility} />
+        <ContextCard
+          itemId={currentItem?.id}
+          setVisibility={setInfoVisibility}
+        />
       ) : (
         <>
           {/* First Overlay */}
@@ -199,13 +202,26 @@ export default function PracticeCard() {
           <div className="card">
             {/* Card content with item details */}
             <div
-              className={`color-card relative flex h-full w-full flex-col items-center justify-between px-4 pt-3 pb-2 ${!direction && 'color-highlighted'} `}
+              className={`color-card relative flex h-full w-full flex-col items-center justify-between px-4 pt-3 pb-2 ${!isAudioDisabled && 'color-highlighted'} `}
+              onClick={() => {
+                if (!isAudioDisabled) playAudio(currentItem.audio);
+              }}
+              aria-label="Přehrát audio"
             >
               <GuideHint
                 visibility={secondOverlay}
-                text="vyslovte slovíčko nahlas"
+                text="vyslovte slovíčko několikrát nahlas"
                 style={{
                   top: '20px',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                }}
+              />
+              <GuideHint
+                visibility={secondOverlay}
+                text="kliknutím na kartu se znovu přehraje audio "
+                style={{
+                  bottom: '40px',
                   left: '50%',
                   transform: 'translateX(-50%)',
                 }}
@@ -281,24 +297,8 @@ export default function PracticeCard() {
               </div>
             </div>
 
-            {/* Progress Bar with audi, blockcount and item infor */}
+            {/* Practice Controls */}
             <div className="flex justify-center gap-1">
-              <Button
-                onClick={() => {
-                  if (currentItem?.audio) playAudio(currentItem.audio);
-                }}
-                disabled={isAudioDisabled}
-                className="button-rectangular relative flex-1"
-                aria-label="Přehrát audio"
-              >
-                <GuideHint
-                  visibility={firstOverlay}
-                  text="přehrát audio"
-                  style={{ left: '5px' }}
-                />
-                <AudioIcon></AudioIcon>
-              </Button>
-
               <Button
                 onClick={() => setInfoVisibility(true)}
                 disabled={!currentItem?.hasContextInfo || !revealed}
@@ -306,14 +306,28 @@ export default function PracticeCard() {
                 aria-label="Zobrazit informace"
               >
                 <GuideHint
-                  visibility={firstOverlay}
+                  visibility={secondOverlay}
                   text="gramatika"
-                  style={{ right: '5px' }}
+                  style={{ left: '5px' }}
                 />
                 <InfoIcon />
               </Button>
+              <Button
+                onClick={() => {
+                  updateItemArray(config.skipProgress);
+                }}
+                disabled={!revealed}
+                className="button-rectangular relative flex-1"
+                aria-label="Přeskočit slovíčko"
+              >
+                <GuideHint
+                  visibility={secondOverlay}
+                  text="přeskočit slovíčko"
+                  style={{ right: '5px' }}
+                />
+                <SkipIcon></SkipIcon>
+              </Button>
             </div>
-            {/* Practice Controls */}
             <div className="flex w-full justify-between gap-1">
               {!revealed ? (
                 <>

@@ -84,6 +84,82 @@ export async function getItemsRepository(
 }
 
 /**
+ * Returns grammar block of category 1 for the given wordId.
+ * @param db
+ * @param uid
+ * @param wordId
+ * @returns
+ */
+export async function getGrammarBlockRepository(
+  db: PostgresClient,
+  uid: string,
+  wordId: number
+): Promise<Item[]> {
+  validateUid(uid);
+  try {
+    const runQuery = async (): Promise<Item[]> => {
+      const query = `
+        WITH user_cte AS (
+          SELECT id AS user_id 
+          FROM users 
+          WHERE uid = $1
+        ),
+        has_info_cte AS (
+          SELECT bi.item_id
+          FROM block_items bi
+          JOIN blocks b ON bi.block_id = b.id
+          WHERE b.category_id = 1
+        )
+        SELECT
+          i.id,
+          i.czech,
+          i.english,
+          i.pronunciation,
+          i.audio,
+          COALESCE(ui.progress, 0) AS progress,
+          EXISTS (
+            SELECT 1
+            FROM has_info_cte
+            WHERE has_info_cte.item_id = i.id
+          ) AS "hasContextInfo",
+          EXISTS (
+            SELECT 1
+            FROM has_info_cte
+            WHERE has_info_cte.item_id = i.id AND i.sequence = 1 AND (ui.progress = 0 OR ui.progress IS NULL)
+          ) AS "showContextInfo"
+        FROM items i 
+        LEFT JOIN user_items ui ON i.id = ui.item_id AND ui.user_id = (SELECT user_id FROM user_cte)
+        LEFT JOIN block_items bi ON i.id = bi.item_id
+        LEFT JOIN blocks b ON bi.block_id = b.id 
+        WHERE bi.block_id = (
+          SELECT bi.block_id
+          FROM block_items bi
+          JOIN blocks b ON bi.block_id = b.id
+          WHERE bi.item_id = $2
+            AND b.category_id = 1
+          LIMIT 1
+        )
+        ORDER BY i.sequence;
+      `;
+
+      const res = await withDbClient(db, async (client) => {
+        return await client.query(query, [uid, wordId]);
+      });
+
+      return res.rows;
+    };
+
+    return await runQuery();
+  } catch (error) {
+    throw new Error(
+      `Error in getGrammarBlockRepository: ${
+        (error as any).message
+      } | db type: ${typeof db} | uid: ${uid} | wordId: ${wordId}`
+    );
+  }
+}
+
+/**
  * Updates the user's word progress in a PostgreSQL database. --- learned_at a mastered_at se mění pouze při hraničním času
  */
 export async function patchItemsRepository(
@@ -209,8 +285,8 @@ export async function getScoreRepository(
       learned_counts_cte AS (
         SELECT 
           COALESCE(cl.level, 'none') AS level_id, 
-          COUNT(*) FILTER (WHERE ui.progress > 5 AND DATE(ui.learned_at AT TIME ZONE 'UTC') = CURRENT_DATE) AS learnedCountTodayByLevel,
-          COUNT(*) FILTER (WHERE ui.progress > 5 AND DATE(ui.learned_at AT TIME ZONE 'UTC') != CURRENT_DATE) AS learnedCountByLevel
+          COUNT(*) FILTER (WHERE ui.learned_at IS NOT NULL AND DATE(ui.learned_at AT TIME ZONE 'UTC') = CURRENT_DATE) AS learnedCountTodayByLevel,
+          COUNT(*) FILTER (WHERE ui.learned_at IS NOT NULL AND DATE(ui.learned_at AT TIME ZONE 'UTC') != CURRENT_DATE) AS learnedCountByLevel
         FROM user_items ui
         JOIN items i ON ui.item_id = i.id
         LEFT JOIN cefr_levels cl ON i.level_id = cl.id

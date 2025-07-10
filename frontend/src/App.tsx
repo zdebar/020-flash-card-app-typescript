@@ -1,6 +1,6 @@
 import './App.css';
-import { useEffect } from 'react';
-import { Routes, Route, useLocation, useSearchParams } from 'react-router-dom';
+
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { useUser } from './hooks/useUser';
 import ButtonLink from './components/common/ButtonLink';
 import Header from './components/Header';
@@ -15,15 +15,6 @@ export default function App() {
   const { userInfo } = useUser();
   const location = useLocation();
   const showFooterRoutes = ['/', '/login'];
-  const [searchParams] = useSearchParams();
-
-  useEffect(() => {
-    const query = searchParams.get('q');
-    if (query) {
-      console.log('Custom protocol query:', query);
-      // Handle the query parameter (e.g., navigate or perform an action)
-    }
-  }, [searchParams]);
 
   return (
     <div className="color-background min-h-screen">
@@ -35,12 +26,15 @@ export default function App() {
             <Route
               path="/"
               element={
-                <div className="flex w-full max-w-[480px] flex-col items-center justify-start gap-4 pt-4 text-center text-xl">
+                <div className="flex w-full max-w-[480px] flex-col items-center justify-start gap-4 p-4 text-center text-xl">
                   <h1 className="font-display">Angličtina jednoduše</h1>
                   <p className="color-notice font-Mansalva">
                     aplikace v testovacím režimu
                   </p>
-                  <p>Bez lekcí, beze stresu, od slovíček po gramatiku.</p>
+                  <p>
+                    Trénujte až 1000 slovíček či 500 vět za hodinu, a dosáhněte
+                    přirozenosti jazyka za zlomek běžného učebního času.
+                  </p>
 
                   {!userInfo && (
                     <div className="max-w-card items">
@@ -52,7 +46,6 @@ export default function App() {
                 </div>
               }
             />
-
             <Route path="/login" element={<Login />} />
             <Route path="/practice" element={<PracticeCard />} />
             <Route path="/userSettings" element={<UserSettings />} />

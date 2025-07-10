@@ -7,15 +7,9 @@ CREATE TABLE IF NOT EXISTS users (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE TABLE IF NOT EXISTS items (
+CREATE TABLE IF NOT EXISTS parts_of_speech (
   id SERIAL PRIMARY KEY,
-  czech TEXT NOT NULL, 
-  english TEXT NOT NULL, 
-  pronunciation TEXT, -- IPA phonetic transcription
-  audio TEXT, -- audio file name, without extension
-  level_id INTEGER, -- CEFR level (A1, A2, B1, B2, C1, C2) -- NEW
-  sequence INTEGER CHECK (item_order >= 0), -- learning order of words; INTEGER for words, NULL for grammar
-  FOREIGN KEY (level_id) REFERENCES cefr_levels(id) ON DELETE SET NULL, -- NEW
+  part_of_speech TEXT NOT NULL UNIQUE -- e.g. noun, verb, adjective, adverb, preposition, conjunction, pronoun
 );
 
 CREATE TABLE IF NOT EXISTS cefr_levels ( -- Common European Framework of Reference for Languages (CEFR) levels -- NEW
@@ -28,6 +22,19 @@ CREATE TABLE IF NOT EXISTS categories (
   id SERIAL PRIMARY KEY,
   category_name TEXT NOT NULL UNIQUE,
   category_explanation TEXT
+);
+
+CREATE TABLE IF NOT EXISTS items (
+  id SERIAL PRIMARY KEY,
+  czech TEXT NOT NULL, 
+  english TEXT NOT NULL, 
+  pronunciation TEXT, -- IPA phonetic transcription
+  audio TEXT, -- audio file name, without extension
+  level_id INTEGER, -- CEFR level (A1, A2, B1, B2, C1, C2) -- NEW
+  part_id INTEGER, -- part of speech id
+  sequence INTEGER CHECK (item_order >= 0), -- learning order of words; INTEGER for words, NULL for grammar
+  FOREIGN KEY (level_id) REFERENCES cefr_levels(id) ON DELETE SET NULL, -- NEW
+  FOREIGN KEY (part_id) REFERENCES parts_of_speech(id) ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS blocks (
@@ -68,8 +75,11 @@ CREATE TABLE IF NOT EXISTS block_items (
   PRIMARY KEY (block_id, item_id)
 );
 
+
+
 -- Create indexes
 CREATE UNIQUE INDEX user_items_user_id_item_id_idx ON user_items(user_id, item_id);
 CREATE INDEX idx_blocks_category_id ON blocks(category_id); 
 CREATE INDEX idx_user_items_user_id ON user_items(user_id); 
+CREATE INDEX idx_items_part_id ON items(part_id);
 
