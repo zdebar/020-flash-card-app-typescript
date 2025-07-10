@@ -2,6 +2,7 @@ const config = {
   backendURL: import.meta.env.VITE_API_URL || 'http://localhost:3000',
   plusProgress: 1,
   minusProgress: -2,
+  skipProgress: 100,
   blockFillSize: 5,
   colors: [
     'bg-[#6FBBCF]', // 1–5

@@ -12,6 +12,7 @@
   --color-blue-2: #2e9ab0;
   --color-blue-3: #257f92;
   --color-blue-4: #1c6676;
+  --color-blue-5: #113c61;
 }
 
 @layer base {
@@ -73,11 +74,11 @@
 
   /** Text Colors  */
   .color-notice {
-    @apply font-Mansalva text-[var(--color-blue-4)] dark:text-[var(--color-blue-1)];
+    @apply font-Mansalva text-[var(--color-blue-5)] dark:text-[var(--color-blue-1)];
   }
 
   .color-learned-today {
-    @apply text-[var(--color-blue-4)] dark:text-[var(--color-background-light)];
+    @apply text-black dark:text-[var(--color-background-light)];
   }
 
   .color-guide {

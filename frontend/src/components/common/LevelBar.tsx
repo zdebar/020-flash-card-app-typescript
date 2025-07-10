@@ -31,11 +31,13 @@ export default function LevelBar({
                 divisions={20}
                 width="w-40"
               />
-              <p>
-                <span className={`color-learned-today text-xs font-bold`}>
-                  +{learnedToday[key]}
-                </span>
-              </p>
+              {learnedToday[key] !== 0 && (
+                <p>
+                  <span className={`color-learned-today text-xs font-bold`}>
+                    +{learnedToday[key]}
+                  </span>
+                </p>
+              )}
             </div>
           );
         })}
