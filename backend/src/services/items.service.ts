@@ -19,10 +19,11 @@ import sortItemsByProgress from "../utils/items.utils";
  */
 export async function getItemsService(
   db: PostgresClient,
-  uid: string
+  uid: string,
+  languageID: number
 ): Promise<Item[]> {
   try {
-    let words: Item[] = await getItemsRepository(db, uid);
+    let words: Item[] = await getItemsRepository(db, uid, languageID);
 
     let foundNewGrammar = false;
     let grammarWords: Item[] = [];
@@ -46,7 +47,9 @@ export async function getItemsService(
     }));
   } catch (error) {
     throw new Error(
-      `Error in getItemsService: ${(error as any).message} | uid: ${uid}`
+      `Error in getItemsService: ${
+        (error as any).message
+      } | uid: ${uid} | languageID: ${languageID}`
     );
   }
 }
@@ -58,10 +61,11 @@ export async function patchItemsService(
   db: PostgresClient,
   uid: string,
   items: Item[],
-  onBlockEnd: boolean
-): Promise<UserScore> {
+  onBlockEnd: boolean,
+  languageID: number
+): Promise<UserScore[]> {
   try {
-    await patchItemsRepository(db, uid, items, onBlockEnd);
+    await patchItemsRepository(db, uid, items, onBlockEnd, languageID);
     return await getScoreRepository(db, uid);
   } catch (error) {
     throw new Error(
@@ -69,7 +73,7 @@ export async function patchItemsService(
         (error as any).message
       } | uid: ${uid} | items: ${JSON.stringify(
         items
-      )} | onBlockEnd: ${onBlockEnd}`
+      )} | onBlockEnd: ${onBlockEnd} | languageID: ${languageID}`
     );
   }
 }

@@ -273,10 +273,10 @@ export default function PracticeCard() {
                 </p>
                 <p className="text-center">
                   {revealed || (noAudio && !direction)
-                    ? currentItem?.english
-                    : currentItem?.english
-                        .slice(0, hintIndex ?? currentItem?.english.length)
-                        .padEnd(currentItem?.english.length, '\u00A0')}
+                    ? currentItem?.translation
+                    : currentItem?.translation
+                        .slice(0, hintIndex ?? currentItem?.translation.length)
+                        .padEnd(currentItem?.translation.length, '\u00A0')}
                 </p>
                 <p className="text-center">
                   {revealed ? currentItem?.pronunciation || '\u00A0' : '\u00A0'}

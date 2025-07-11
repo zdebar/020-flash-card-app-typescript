@@ -5,11 +5,12 @@ import { validateUid } from "../utils/validate.utils";
 
 export async function getGrammarListRepository(
   db: PostgresClient,
-  uid: string
+  uid: string,
+  languageID: number
 ): Promise<BlockExplanation[]> {
-  validateUid(uid);
-
   try {
+    validateUid(uid);
+
     const query = `
       WITH user_cte AS (
         SELECT id AS user_id 
@@ -35,11 +36,12 @@ export async function getGrammarListRepository(
       FROM blocks b
       WHERE b.id IN (SELECT block_id FROM block_items_cte)
         AND b.category_id = 1
+        AND b.language_id = $2
       ORDER BY b.sequence;
     `;
 
     return await withDbClient(db, async (client) => {
-      const result = await client.query(query, [uid]);
+      const result = await client.query(query, [uid, languageID]);
       return result.rows.map((row) => ({
         blockId: row.id,
         blockSequence: row.sequence,
@@ -51,7 +53,7 @@ export async function getGrammarListRepository(
     throw new Error(
       `Error in getGrammarListRepository: ${
         (error as any).message
-      } | db type: ${typeof db} | uid: ${uid}`
+      } | db type: ${typeof db} | uid: ${uid} | languageID: ${languageID}`
     );
   }
 }

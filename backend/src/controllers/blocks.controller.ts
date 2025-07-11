@@ -14,10 +14,16 @@ export async function getGrammarListController(
 ): Promise<void> {
   try {
     const uid: string = (req as any).user.uid;
+    const { languageID }: { languageID: number } = req.body;
+
+    if (!languageID || typeof languageID !== "number") {
+      throw new Error("Invalid languageID provided.");
+    }
 
     const data: BlockExplanation[] = await getGrammarListRepository(
       postgresDBPool,
-      uid
+      uid,
+      languageID
     );
 
     res.status(200).json({
@@ -27,7 +33,9 @@ export async function getGrammarListController(
   } catch (err) {
     (err as any).message = `Error in getGrammarListController: ${
       (err as any).message
-    } | uid: ${(req as any).user.uid}`;
+    } | uid: ${(req as any).user.uid} | languageID: ${
+      req.body.languageID || "undefined"
+    }`;
     next(err);
   }
 }

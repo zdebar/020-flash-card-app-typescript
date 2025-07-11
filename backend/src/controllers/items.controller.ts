@@ -21,8 +21,13 @@ export async function getItemsController(
 ): Promise<void> {
   try {
     const uid: string = (req as any).user.uid;
+    const { languageID }: { languageID: number } = req.body;
 
-    const data: Item[] = await getItemsService(postgresDBPool, uid);
+    if (!languageID || typeof languageID !== "number") {
+      throw new Error("Invalid languageID provided.");
+    }
+
+    const data: Item[] = await getItemsService(postgresDBPool, uid, languageID);
 
     res.status(200).json({
       message: "User words retrieved successfully.",
@@ -31,7 +36,9 @@ export async function getItemsController(
   } catch (err) {
     (err as any).message = `Error in getItemsController: ${
       (err as any).message
-    } | uid: ${(req as any).user.uid}`;
+    } | uid: ${(req as any).user.uid} | languageID: ${
+      req.body.languageID || "undefined"
+    }`;
     next(err);
   }
 }
@@ -46,14 +53,26 @@ export async function patchItemsController(
 ): Promise<void> {
   try {
     const uid: string = (req as any).user.uid;
-    const { items, onBlockEnd }: { items: Item[]; onBlockEnd: boolean } =
-      req.body;
+    const {
+      items,
+      onBlockEnd,
+      languageID,
+    }: { items: Item[]; onBlockEnd: boolean; languageID: number } = req.body;
 
-    const score: UserScore = await patchItemsService(
+    if (!onBlockEnd || typeof onBlockEnd !== "boolean") {
+      throw new Error("Invalid onBlockEnd provided.");
+    }
+
+    if (!languageID || typeof languageID !== "number") {
+      throw new Error("Invalid languageID provided.");
+    }
+
+    const score: UserScore[] = await patchItemsService(
       postgresDBPool,
       uid,
       items,
-      onBlockEnd
+      onBlockEnd,
+      languageID
     );
 
     res.status(200).json({
@@ -65,13 +84,15 @@ export async function patchItemsController(
       (err as any).message
     } | uid: ${(req as any).user.uid} | items: ${JSON.stringify(
       (req as any).body.items
-    )} | onBlockEnd: ${(req as any).body.onBlockEnd}`;
+    )} | onBlockEnd: ${(req as any).body.onBlockEnd} | languageID: ${
+      req.body.languageID || "undefined"
+    }`;
     next(err);
   }
 }
 
 /**
- * Get context information for a specific word.
+ * Get context information for a specific item.
  */
 export async function getInfoController(
   req: Request,
@@ -93,7 +114,7 @@ export async function getInfoController(
   } catch (err) {
     (err as any).message = `Error in getInfoController: ${
       (err as any).message
-    } | uid: ${(req as any).params.itemId}`;
+    } | itemId: ${(req as any).params.itemId}`;
     next(err);
   }
 }

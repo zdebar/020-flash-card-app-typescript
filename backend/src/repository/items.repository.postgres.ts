@@ -14,11 +14,16 @@ import { validateUid } from "../utils/validate.utils";
  */
 export async function getItemsRepository(
   db: PostgresClient,
-  uid: string
+  uid: string,
+  languageID: number
 ): Promise<Item[]> {
-  validateUid(uid);
-
   try {
+    validateUid(uid);
+
+    if (!languageID || typeof languageID !== "number") {
+      throw new Error("Invalid languageID provided.");
+    }
+
     const numWords: number = config.round;
 
     const runQuery = async (): Promise<Item[]> => {
@@ -33,11 +38,12 @@ export async function getItemsRepository(
           FROM block_items bi
           JOIN blocks b ON bi.block_id = b.id
           WHERE b.category_id = 1
+          AND b.language_id = $2
         )
         SELECT
           i.id,
           i.czech,
-          i.english,
+          i.translation,
           i.pronunciation,
           i.audio,
           COALESCE(ui.progress, 0) AS progress,
@@ -58,16 +64,18 @@ export async function getItemsRepository(
         WHERE ui.mastered_at IS NULL
           AND (ui.next_at IS NULL OR ui.next_at < NOW())
           AND (b.category_id IN (0, 1) OR b.category_id IS NULL)
+          AND i.language_id = $2
+          AND (b.language_id IS NULL OR b.language_id = $2)
         ORDER BY
           ui.next_at ASC NULLS LAST,
           COALESCE(b.sequence, i.sequence) ASC NULLS LAST,
           i.sequence ASC NULLS LAST,
           i.id
-        LIMIT $2;
+        LIMIT $3;
       `;
 
       const res = await withDbClient(db, async (client) => {
-        return await client.query(query, [uid, numWords]);
+        return await client.query(query, [uid, languageID, numWords]);
       });
 
       return res.rows;
@@ -78,25 +86,22 @@ export async function getItemsRepository(
     throw new Error(
       `Error in getItemsRepository: ${
         (error as any).message
-      } | db type: ${typeof db} | uid: ${uid}`
+      } | db type: ${typeof db} | uid: ${uid} | languageID: ${languageID}`
     );
   }
 }
 
 /**
  * Returns grammar block of category 1 for the given wordId.
- * @param db
- * @param uid
- * @param wordId
- * @returns
  */
 export async function getGrammarBlockRepository(
   db: PostgresClient,
   uid: string,
   wordId: number
 ): Promise<Item[]> {
-  validateUid(uid);
   try {
+    validateUid(uid);
+
     const runQuery = async (): Promise<Item[]> => {
       const query = `
         WITH user_cte AS (
@@ -166,7 +171,8 @@ export async function patchItemsRepository(
   db: PostgresClient,
   uid: string,
   items: Item[],
-  onBlockEnd: boolean
+  onBlockEnd: boolean,
+  languageID: number
 ): Promise<void> {
   validateUid(uid);
   if (items.length === 0) {
@@ -220,9 +226,9 @@ export async function patchItemsRepository(
     `;
 
     const query2 = `
-      INSERT INTO user_score (user_id, day, count)
-      VALUES ((SELECT id FROM users WHERE uid = $1), CURRENT_DATE, 1)
-      ON CONFLICT (user_id, day) 
+      INSERT INTO user_score (user_id, day, count, language_id)
+      VALUES ((SELECT id FROM users WHERE uid = $1), CURRENT_DATE, 1, $2)
+      ON CONFLICT (user_id, day, language_id) 
       DO UPDATE SET count = user_score.count + 1;
     `;
 
@@ -231,7 +237,7 @@ export async function patchItemsRepository(
     await withDbClient(db, async (client) => {
       await client.query(query1, values);
       if (onBlockEnd) {
-        await client.query(query2, [uid]);
+        await client.query(query2, [uid, languageID]);
       }
     });
   } catch (error) {
@@ -240,7 +246,7 @@ export async function patchItemsRepository(
         (error as any).message
       } | db type: ${typeof db} | uid: ${uid} | items: ${JSON.stringify(
         items
-      )} | onBlockEnd: ${onBlockEnd}`
+      )} | onBlockEnd: ${onBlockEnd} | languageID: ${languageID}`
     );
   }
 }
@@ -251,7 +257,7 @@ export async function patchItemsRepository(
 export async function getScoreRepository(
   db: PostgresClient,
   uid: string
-): Promise<UserScore> {
+): Promise<UserScore[]> {
   validateUid(uid);
 
   try {
@@ -261,57 +267,82 @@ export async function getScoreRepository(
         FROM users 
         WHERE uid = $1
       ),
-      blocks_cte AS (
-        SELECT ARRAY_AGG(COALESCE(us.count, 0) ORDER BY d.day DESC) AS count
-        FROM (
-          SELECT generate_series(
-            CURRENT_DATE - INTERVAL '6 days',
-            CURRENT_DATE,
-            INTERVAL '1 day'
-          )::date AS day
-        ) d
-        LEFT JOIN user_score us
-          ON us.user_id = (SELECT user_id FROM user_cte)
+      user_languages_cte AS (
+        SELECT ul.language_id, l.name AS language_name
+        FROM user_languages ul
+        JOIN languages l ON ul.language_id = l.id
+        WHERE ul.user_id = (SELECT user_id FROM user_cte)
+      ),
+      days_cte AS (
+        SELECT generate_series(
+          CURRENT_DATE - INTERVAL '4 days',
+          CURRENT_DATE,
+          INTERVAL '1 day'
+        )::date AS day
+      ),
+      blocks_cte as ( 
+        SELECT 
+          ul.language_id,
+          ARRAY_AGG(COALESCE(us.count, 0) ORDER BY d.day DESC) AS count
+        FROM 
+          user_languages_cte ul
+        CROSS JOIN 
+          days_cte d
+        LEFT JOIN 
+          user_score us 
+            ON us.user_id = (SELECT user_id FROM user_cte)
+          AND us.language_id = ul.language_id
           AND us.day = d.day
+        GROUP BY 
+          ul.language_id
       ),
       items_count_cte AS (
-        SELECT 
-          COALESCE(cl.level, 'none') AS level_id, 
-          COUNT(*) AS itemsCount
+        SELECT ul.language_id,
+              COALESCE(cl.level, 'none') AS level_id, 
+              COUNT(*) AS itemsCount
         FROM items i
         LEFT JOIN cefr_levels cl ON i.level_id = cl.id
-        GROUP BY COALESCE(cl.level, 'none')
+        JOIN user_languages_cte ul
+          ON ul.language_id = i.language_id
+        GROUP BY ul.language_id, COALESCE(cl.level, 'none')
       ),
       learned_counts_cte AS (
-        SELECT 
-          COALESCE(cl.level, 'none') AS level_id, 
-          COUNT(*) FILTER (WHERE ui.learned_at IS NOT NULL AND DATE(ui.learned_at AT TIME ZONE 'UTC') = CURRENT_DATE) AS learnedCountTodayByLevel,
-          COUNT(*) FILTER (WHERE ui.learned_at IS NOT NULL AND DATE(ui.learned_at AT TIME ZONE 'UTC') != CURRENT_DATE) AS learnedCountByLevel
+        SELECT ul.language_id,
+              COALESCE(cl.level, 'none') AS level_id, 
+              COUNT(*) FILTER (WHERE ui.learned_at IS NOT NULL AND DATE(ui.learned_at AT TIME ZONE 'UTC') = CURRENT_DATE) AS learnedCountTodayByLevel,
+              COUNT(*) FILTER (WHERE ui.learned_at IS NOT NULL AND DATE(ui.learned_at AT TIME ZONE 'UTC') != CURRENT_DATE) AS learnedCountByLevel
         FROM user_items ui
         JOIN items i ON ui.item_id = i.id
         LEFT JOIN cefr_levels cl ON i.level_id = cl.id
+        JOIN user_languages_cte ul
+          ON ul.language_id = i.language_id
         WHERE ui.user_id = (SELECT user_id FROM user_cte)
-        GROUP BY COALESCE(cl.level, 'none')
+        GROUP BY ul.language_id, COALESCE(cl.level, 'none')
       )
       SELECT 
-        (SELECT count FROM blocks_cte) AS "count", 
-        JSON_OBJECT_AGG(ic.level_id, ic.itemsCount) AS "itemsCountByLevel", 
-        JSON_OBJECT_AGG(lc.level_id, lc.learnedCountTodayByLevel) AS "learnedCountTodayByLevel",
-        JSON_OBJECT_AGG(lc.level_id, lc.learnedCountByLevel) AS "learnedCountByLevel"
-      FROM items_count_cte ic
-      JOIN learned_counts_cte lc ON ic.level_id = lc.level_id;
+        ul.language_id AS "languageID",
+        ul.language_name AS "languageName",
+        (SELECT count FROM blocks_cte WHERE blocks_cte.language_id = ul.language_id) AS "blockCount",
+        JSON_OBJECT_AGG(COALESCE(ic.level_id, 'none'), COALESCE(ic.itemsCount, 0)) AS "itemsCountByLevel", 
+        JSON_OBJECT_AGG(COALESCE(lc.level_id, 'none'), COALESCE(lc.learnedCountTodayByLevel, 0)) AS "learnedCountTodayByLevel",
+        JSON_OBJECT_AGG(COALESCE(lc.level_id, 'none'), COALESCE(lc.learnedCountByLevel, 0)) AS "learnedCountByLevel"
+      FROM user_languages_cte ul
+      LEFT JOIN items_count_cte ic ON ul.language_id = ic.language_id
+      LEFT JOIN learned_counts_cte lc ON ul.language_id = lc.language_id
+      GROUP BY ul.language_id, ul.language_name;
     `;
 
     return await withDbClient(db, async (client) => {
       const result = await client.query(query, [uid]);
-      const row = result.rows[0];
 
-      return {
-        blockCount: row.count,
+      return result.rows.map((row) => ({
+        languageID: row.languageID,
+        languageName: row.languageName,
+        blockCount: row.blockCount,
         itemsCountByLevel: row.itemsCountByLevel,
         learnedCountTodayByLevel: row.learnedCountTodayByLevel,
         learnedCountByLevel: row.learnedCountByLevel,
-      };
+      }));
     });
   } catch (error) {
     throw new Error(

@@ -2,7 +2,7 @@
 export interface Item {
   id: number;
   czech: string;
-  english: string;
+  translation: string;
   pronunciation: string | null;
   audio: string | null;
   progress: number;
@@ -32,6 +32,8 @@ export interface UserInfo {
 }
 
 export interface UserScore {
+  languageID: number;
+  languageName: string;
   blockCount: number[];
   itemsCountByLevel: Record<string, number>; // all items by cefr level
   learnedCountTodayByLevel: Record<string, number>; // items with progress > 5 by cefr level
