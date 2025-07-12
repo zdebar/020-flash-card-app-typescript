@@ -36,7 +36,7 @@ export default function UserDashboard() {
           currLanguage.blockCount.map((item, idx) => (
             <div
               key={idx}
-              className="flex items-center justify-center gap-2 pr-8"
+              className="flex w-60 items-center justify-start gap-2 pr-8"
             >
               <p className="w-8 text-right text-xs">{item}</p>
               <ProgressBar progress={item} />
