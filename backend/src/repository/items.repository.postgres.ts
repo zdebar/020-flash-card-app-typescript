@@ -20,7 +20,7 @@ export async function getItemsRepository(
   try {
     validateUid(uid);
 
-    if (!languageID || typeof languageID !== "number") {
+    if (!languageID || isNaN(languageID)) {
       throw new Error("Invalid languageID provided.");
     }
 
@@ -267,12 +267,6 @@ export async function getScoreRepository(
         FROM users 
         WHERE uid = $1
       ),
-      user_languages_cte AS (
-        SELECT ul.language_id, l.name AS language_name
-        FROM user_languages ul
-        JOIN languages l ON ul.language_id = l.id
-        WHERE ul.user_id = (SELECT user_id FROM user_cte)
-      ),
       days_cte AS (
         SELECT generate_series(
           CURRENT_DATE - INTERVAL '4 days',
@@ -282,54 +276,54 @@ export async function getScoreRepository(
       ),
       blocks_cte as ( 
         SELECT 
-          ul.language_id,
+          l.id as language_id,
           ARRAY_AGG(COALESCE(us.count, 0) ORDER BY d.day DESC) AS count
         FROM 
-          user_languages_cte ul
+          languages l
         CROSS JOIN 
           days_cte d
         LEFT JOIN 
           user_score us 
             ON us.user_id = (SELECT user_id FROM user_cte)
-          AND us.language_id = ul.language_id
+          AND us.language_id = l.id
           AND us.day = d.day
         GROUP BY 
-          ul.language_id
+          l.id
       ),
       items_count_cte AS (
-        SELECT ul.language_id,
+        SELECT l.id as language_id,
               COALESCE(cl.level, 'none') AS level_id, 
               COUNT(*) AS itemsCount
         FROM items i
         LEFT JOIN cefr_levels cl ON i.level_id = cl.id
-        JOIN user_languages_cte ul
-          ON ul.language_id = i.language_id
-        GROUP BY ul.language_id, COALESCE(cl.level, 'none')
+        JOIN languages l
+          ON l.id = i.language_id
+        GROUP BY l.id, COALESCE(cl.level, 'none')
       ),
       learned_counts_cte AS (
-        SELECT ul.language_id,
+        SELECT l.id as language_id,
               COALESCE(cl.level, 'none') AS level_id, 
               COUNT(*) FILTER (WHERE ui.learned_at IS NOT NULL AND DATE(ui.learned_at AT TIME ZONE 'UTC') = CURRENT_DATE) AS learnedCountTodayByLevel,
               COUNT(*) FILTER (WHERE ui.learned_at IS NOT NULL AND DATE(ui.learned_at AT TIME ZONE 'UTC') != CURRENT_DATE) AS learnedCountByLevel
         FROM user_items ui
         JOIN items i ON ui.item_id = i.id
         LEFT JOIN cefr_levels cl ON i.level_id = cl.id
-        JOIN user_languages_cte ul
-          ON ul.language_id = i.language_id
+        JOIN languages l
+          ON l.id = i.language_id
         WHERE ui.user_id = (SELECT user_id FROM user_cte)
-        GROUP BY ul.language_id, COALESCE(cl.level, 'none')
+        GROUP BY l.id, COALESCE(cl.level, 'none')
       )
       SELECT 
-        ul.language_id AS "languageID",
-        ul.language_name AS "languageName",
-        (SELECT count FROM blocks_cte WHERE blocks_cte.language_id = ul.language_id) AS "blockCount",
+        l.id AS "languageID",
+        l.name AS "languageName",
+        (SELECT count FROM blocks_cte WHERE blocks_cte.language_id = l.id) AS "blockCount",
         JSON_OBJECT_AGG(COALESCE(ic.level_id, 'none'), COALESCE(ic.itemsCount, 0)) AS "itemsCountByLevel", 
         JSON_OBJECT_AGG(COALESCE(lc.level_id, 'none'), COALESCE(lc.learnedCountTodayByLevel, 0)) AS "learnedCountTodayByLevel",
         JSON_OBJECT_AGG(COALESCE(lc.level_id, 'none'), COALESCE(lc.learnedCountByLevel, 0)) AS "learnedCountByLevel"
-      FROM user_languages_cte ul
-      LEFT JOIN items_count_cte ic ON ul.language_id = ic.language_id
-      LEFT JOIN learned_counts_cte lc ON ul.language_id = lc.language_id
-      GROUP BY ul.language_id, ul.language_name;
+      FROM languages l
+      LEFT JOIN items_count_cte ic ON l.id = ic.language_id
+      LEFT JOIN learned_counts_cte lc ON l.id = lc.language_id
+      GROUP BY l.id, l.name;
     `;
 
     return await withDbClient(db, async (client) => {

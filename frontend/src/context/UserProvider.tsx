@@ -13,8 +13,11 @@ import { UserTheme } from '../../../shared/types/dataTypes';
 export function UserProvider({ children }: { children: ReactNode }) {
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [userSettings, setUserSettings] = useState<UserSettings | null>(null);
-  const [userScore, setUserScore] = useState<UserScore | null>(null);
+  const [userScore, setUserScore] = useState<UserScore[] | null>(null);
   const [loading, setLoading] = useState(true);
+  const [languageID, setLanguageID] = useState<number>(
+    parseInt(localStorage.getItem('selectedLanguageID') || '1', 10)
+  );
   const [theme, setTheme] = useState<UserTheme>('system');
 
   useEffect(() => {
@@ -24,7 +27,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
           setLoading(true);
           const data = await fetchWithAuthAndParse<{
             userSettings: UserSettings | null;
-            userScore: UserScore | null;
+            userScore: UserScore[] | null;
           }>(`/api/users`);
 
           const userScore = data?.userScore || null;
@@ -112,8 +115,10 @@ export function UserProvider({ children }: { children: ReactNode }) {
         userInfo,
         userSettings,
         userScore,
+        languageID,
         loading,
         setUserInfo,
+        setLanguageID,
         setUserSettings,
         setUserScore,
         setLoading,

@@ -4,7 +4,11 @@ import ButtonLink from './common/ButtonLink';
 import LevelBar from './common/LevelBar';
 
 export default function UserDashboard() {
-  const { userScore } = useUser();
+  const { userScore, languageID } = useUser();
+
+  const currLanguage = userScore?.find(
+    (lang) => lang.languageID === languageID
+  );
 
   return (
     <div className="card">
@@ -18,18 +22,18 @@ export default function UserDashboard() {
       <div
         className={`color-card shape-rectangular flex flex-1 flex-col items-center justify-center pb-2`}
       >
-        {userScore && (
+        {currLanguage && (
           <LevelBar
-            learned={userScore?.learnedCountByLevel ?? {}}
-            learnedToday={userScore?.learnedCountTodayByLevel ?? {}}
-            levels={userScore?.itemsCountByLevel ?? {}}
+            learned={currLanguage?.learnedCountByLevel ?? {}}
+            learnedToday={currLanguage?.learnedCountTodayByLevel ?? {}}
+            levels={currLanguage?.itemsCountByLevel ?? {}}
           />
         )}
         <p className="font-Mansalva py-2 text-sm">
           cvičební bloky za posledních 5 dní
         </p>
-        {userScore &&
-          userScore.blockCount.slice(0, 5).map((item, idx) => (
+        {currLanguage &&
+          currLanguage.blockCount.map((item, idx) => (
             <div
               key={idx}
               className="flex items-center justify-center gap-2 pr-8"

@@ -14,10 +14,10 @@ export default function LevelBar({
 
   return (
     <div className="flex flex-col items-start justify-start pr-1">
-      {Object.keys(levels)
+      {Object.keys(learned)
         .filter((key) => key !== 'none')
         .sort((a, b) => levelSort.indexOf(a) - levelSort.indexOf(b))
-        .slice(-2)
+        .slice(-2) // Limit to last two levels in learning
         .map((key) => {
           return (
             <div key={key} className="flex items-center gap-2 pl-7">
@@ -31,7 +31,7 @@ export default function LevelBar({
                 divisions={20}
                 width="w-40"
               />
-              {learnedToday[key] !== 0 && (
+              {learnedToday[key] > 0 && (
                 <p>
                   <span className={`color-learned-today text-xs font-bold`}>
                     +{learnedToday[key]}

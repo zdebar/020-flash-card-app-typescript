@@ -7,6 +7,6 @@ import {
 const usersRouter = express.Router();
 
 usersRouter.get("/", getUserController); // sends user settings, user score
-usersRouter.post("/resetLanguage", resetUserLanguageController); // resets user language items and sends updated score
+usersRouter.delete("/reset-language", resetUserLanguageController); // deletes user language items and sends back updated score
 
 export default usersRouter;

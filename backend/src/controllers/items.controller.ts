@@ -23,7 +23,7 @@ export async function getItemsController(
     const uid: string = (req as any).user.uid;
     const { languageID }: { languageID: number } = req.body;
 
-    if (!languageID || typeof languageID !== "number") {
+    if (!languageID || isNaN(languageID)) {
       throw new Error("Invalid languageID provided.");
     }
 
@@ -63,7 +63,7 @@ export async function patchItemsController(
       throw new Error("Invalid onBlockEnd provided.");
     }
 
-    if (!languageID || typeof languageID !== "number") {
+    if (!languageID || isNaN(languageID)) {
       throw new Error("Invalid languageID provided.");
     }
 

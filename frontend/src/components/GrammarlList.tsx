@@ -5,10 +5,12 @@ import Button from './common/Button';
 import InfoCard from './InfoCard';
 
 import { useArray } from '../hooks/useArray';
+import { useUser } from '../hooks/useUser';
 
 export default function GrammarList() {
+  const { languageID } = useUser();
   const { array, index, setIndex, nextIndex, prevIndex, arrayLength } =
-    useArray<BlockExplanation>('/api/blocks/grammar');
+    useArray<BlockExplanation>('/api/blocks/grammar', String(languageID));
   const [showExplanation, setShowExplanation] = useState(false);
 
   if (!arrayLength)

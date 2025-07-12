@@ -27,7 +27,7 @@ export default function UserSettings() {
   };
 
   return (
-    <div className="max-w-card flex flex-col gap-1">
+    <div className="max-w-card flex flex-col gap-2">
       <Button
         onClick={() => setModalVisible(true)}
         className="button-rectangular"

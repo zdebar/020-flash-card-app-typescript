@@ -3,7 +3,7 @@ export default function Footer({ className }: { className?: string }) {
 
   return (
     <footer className={`w-full py-4 text-center ${className}`}>
-      <p className="text-sm">&copy; {currentYear} zdebarth@gmail.com</p>
+      <p className="text-sm">&copy; {currentYear} zdenekbarth.cz</p>
     </footer>
   );
 }

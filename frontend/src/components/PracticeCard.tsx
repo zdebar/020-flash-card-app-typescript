@@ -29,8 +29,9 @@ import GuideHint from './common/GuideHint';
 
 export default function PracticeCard() {
   const apiPath = '/api/items';
+  const { setUserScore, languageID } = useUser();
   const { array, index, nextIndex, arrayLength, setReload, currentItem } =
-    useArray<Item>(apiPath);
+    useArray<Item>(apiPath, String(languageID));
   const {
     playAudio,
     setVolume,
@@ -49,8 +50,6 @@ export default function PracticeCard() {
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
   const [volume, setVolumeState] = useState(1);
   const [activeOverlay, setActiveOverlay] = useState<string | null>('first');
-
-  const { setUserScore } = useUser();
 
   const direction = alternateDirection(currentItem?.progress);
   const isAudioDisabled = (direction && !revealed) || !currentItem?.audio;
@@ -85,13 +84,14 @@ export default function PracticeCard() {
 
       try {
         const response = await fetchWithAuthAndParse<{
-          score: UserScore | null;
+          score: UserScore[] | null;
         }>(apiPath, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             items: updatedArray,
             onBlockEnd,
+            languageID,
           }),
         });
 
@@ -101,7 +101,7 @@ export default function PracticeCard() {
         console.error('Error posting words:', error);
       }
     },
-    [apiPath, setUserScore, array]
+    [apiPath, setUserScore, array, languageID]
   );
 
   // Update userProgress, if end of array reached, patch items

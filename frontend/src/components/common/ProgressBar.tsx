@@ -1,7 +1,7 @@
 import config from '../../config/config';
 
 export default function ProgressBar({
-  progress,
+  progress = 0,
   maxProgress = 100,
   newProgress = 0,
   divisions = 20,
@@ -17,6 +17,7 @@ export default function ProgressBar({
   const colorProgress = config.colorProgressBg;
   const progressPercentage = (progress / maxProgress) * 100;
   const newProgressPercentage = (newProgress / maxProgress) * 100;
+
   const progressBlocks = Math.floor((progress * 4) / maxProgress);
   const divisionArray = [
     ...Array(progressBlocks).fill(25),

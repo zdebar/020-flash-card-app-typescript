@@ -14,14 +14,14 @@ export default function ThemeDropdown() {
 
   return (
     <div className="flex items-center gap-4">
-      <label htmlFor="theme-select" className="text-sm font-medium">
-        Theme:
+      <label htmlFor="theme-select" className="w-40">
+        Barevnost:
       </label>
       <select
         id="theme-select"
         value={theme}
         onChange={handleChange}
-        className="button-rectangular bg-white p-2 dark:bg-gray-900 dark:text-white"
+        className="button-rectangular h-12 bg-white p-2 dark:bg-gray-900 dark:text-white"
         aria-label="Změna motivu"
       >
         {themes.map((t) => (
