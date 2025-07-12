@@ -33,14 +33,6 @@ export async function resetUserLanguageService(
   uid: string,
   languageID: number
 ): Promise<UserScore[]> {
-  try {
-    await resetUserLanguageRepository(db, uid, languageID);
-    return await getScoreRepository(db, uid);
-  } catch (error) {
-    throw new Error(
-      `Error in patchItemsService: ${
-        (error as any).message
-      } | uid: ${uid} | languageID: ${languageID}`
-    );
-  }
+  await resetUserLanguageRepository(db, uid, languageID);
+  return await getScoreRepository(db, uid);
 }

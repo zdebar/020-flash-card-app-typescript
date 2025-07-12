@@ -7,7 +7,6 @@ import {
   Item,
   BlockExplanation,
 } from "../../../shared/types/dataTypes";
-import { validateUid } from "../utils/validate.utils";
 
 /**
  * Return required items for the user from PostgreSQL database.
@@ -18,12 +17,6 @@ export async function getItemsRepository(
   languageID: number
 ): Promise<Item[]> {
   try {
-    validateUid(uid);
-
-    if (!languageID || isNaN(languageID)) {
-      throw new Error("Invalid languageID provided.");
-    }
-
     const numWords: number = config.round;
 
     const runQuery = async (): Promise<Item[]> => {
@@ -100,8 +93,6 @@ export async function getGrammarBlockRepository(
   wordId: number
 ): Promise<Item[]> {
   try {
-    validateUid(uid);
-
     const runQuery = async (): Promise<Item[]> => {
       const query = `
         WITH user_cte AS (
@@ -174,13 +165,6 @@ export async function patchItemsRepository(
   onBlockEnd: boolean,
   languageID: number
 ): Promise<void> {
-  validateUid(uid);
-  if (items.length === 0) {
-    throw new Error(
-      "No items to update in patchItemsRepository for uid: " + uid
-    );
-  }
-
   try {
     const itemIds = items.map((item) => item.id);
     const progresses = items.map((item) => item.progress);
@@ -258,8 +242,6 @@ export async function getScoreRepository(
   db: PostgresClient,
   uid: string
 ): Promise<UserScore[]> {
-  validateUid(uid);
-
   try {
     const query = `
       WITH user_cte AS (
@@ -354,10 +336,6 @@ export async function getItemInfoRepository(
   db: PostgresClient,
   itemId: number
 ): Promise<BlockExplanation[]> {
-  if (!itemId || typeof itemId !== "number") {
-    throw new Error(`Invalid item_id parameter: ${itemId}`);
-  }
-
   try {
     const query = `
       SELECT 

@@ -16,8 +16,7 @@ export async function getGrammarListController(
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      res.status(400).json({ errors: errors.array() });
-      return;
+      throw new Error(`Validation errors: ${JSON.stringify(errors.array())}`);
     }
 
     const uid: string = (req as any).user.uid;
@@ -34,11 +33,6 @@ export async function getGrammarListController(
       data,
     });
   } catch (err) {
-    (err as any).message = `Error in getGrammarListController: ${
-      (err as any).message
-    } | uid: ${(req as any).user.uid} | languageID: ${
-      req.body.languageID || "undefined"
-    }`;
     next(err);
   }
 }

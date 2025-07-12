@@ -10,6 +10,7 @@ import {
   patchItemsService,
   getItemInfoService,
 } from "../services/items.service";
+import { validationResult } from "express-validator";
 
 /**
  * Controller function to retrieve user-specific practice words.
@@ -20,12 +21,13 @@ export async function getItemsController(
   next: Function
 ): Promise<void> {
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      throw new Error(`Validation errors: ${JSON.stringify(errors.array())}`);
+    }
+
     const uid: string = (req as any).user.uid;
     const { languageID }: { languageID: number } = req.body;
-
-    if (!languageID || isNaN(languageID)) {
-      throw new Error("Invalid languageID provided.");
-    }
 
     const data: Item[] = await getItemsService(postgresDBPool, uid, languageID);
 
@@ -34,11 +36,6 @@ export async function getItemsController(
       data,
     });
   } catch (err) {
-    (err as any).message = `Error in getItemsController: ${
-      (err as any).message
-    } | uid: ${(req as any).user.uid} | languageID: ${
-      req.body.languageID || "undefined"
-    }`;
     next(err);
   }
 }
@@ -52,20 +49,17 @@ export async function patchItemsController(
   next: Function
 ): Promise<void> {
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      throw new Error(`Validation errors: ${JSON.stringify(errors.array())}`);
+    }
+
     const uid: string = (req as any).user.uid;
     const {
       items,
       onBlockEnd,
       languageID,
     }: { items: Item[]; onBlockEnd: boolean; languageID: number } = req.body;
-
-    if (!onBlockEnd || typeof onBlockEnd !== "boolean") {
-      throw new Error("Invalid onBlockEnd provided.");
-    }
-
-    if (!languageID || isNaN(languageID)) {
-      throw new Error("Invalid languageID provided.");
-    }
 
     const score: UserScore[] = await patchItemsService(
       postgresDBPool,
@@ -80,13 +74,6 @@ export async function patchItemsController(
       score,
     });
   } catch (err) {
-    (err as any).message = `Error in patchItemsController: ${
-      (err as any).message
-    } | uid: ${(req as any).user.uid} | items: ${JSON.stringify(
-      (req as any).body.items
-    )} | onBlockEnd: ${(req as any).body.onBlockEnd} | languageID: ${
-      req.body.languageID || "undefined"
-    }`;
     next(err);
   }
 }
@@ -100,6 +87,11 @@ export async function getInfoController(
   next: Function
 ): Promise<void> {
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      throw new Error(`Validation errors: ${JSON.stringify(errors.array())}`);
+    }
+
     const itemId: number = parseInt((req as any).params.itemId, 10);
 
     const data: BlockExplanation[] = await getItemInfoService(
@@ -112,9 +104,6 @@ export async function getInfoController(
       data,
     });
   } catch (err) {
-    (err as any).message = `Error in getInfoController: ${
-      (err as any).message
-    } | itemId: ${(req as any).params.itemId}`;
     next(err);
   }
 }

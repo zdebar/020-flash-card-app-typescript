@@ -4,6 +4,55 @@ import { body, validationResult } from "express-validator";
 export const validateLanguageID = [
   body("languageID")
     .isInt({ min: 1 })
-    .withMessage("languageID must be a positive integer.")
+    .withMessage(
+      (value) =>
+        `Invalid languageID provided: '${value}'. It must be a positive integer.`
+    )
+    .toInt(),
+];
+
+// Middleware for validating uid
+export const validateUID = [
+  body("uid").custom((value, { req }) => {
+    const uid = req.user?.uid;
+    if (!uid || typeof uid !== "string" || uid.trim() === "") {
+      throw new Error(
+        `Invalid uid provided: '${uid}'. It must be a non-empty string.`
+      );
+    }
+    return true;
+  }),
+];
+
+// Middleware for validating onBlockEnd
+export const validateOnBlockEnd = [
+  body("onBlockEnd")
+    .isBoolean()
+    .withMessage(
+      (value) => `Invalid onBlockEnd value: '${value}'. It must be a boolean.`
+    ),
+];
+
+// Middleware for validating items
+export const validateItems = [
+  body("items")
+    .isArray()
+    .withMessage(
+      (value) => `Invalid items value: '${value}'. It must be an array.`
+    )
+    .notEmpty()
+    .withMessage(
+      (value) => `Invalid items value: '${value}'. It cannot be empty.`
+    ),
+];
+
+// Middleware for validating itemID
+export const validateItemID = [
+  body("itemID")
+    .isInt({ min: 1 })
+    .withMessage(
+      (value) =>
+        `Invalid itemID provided: '${value}'. It must be a positive integer.`
+    )
     .toInt(),
 ];

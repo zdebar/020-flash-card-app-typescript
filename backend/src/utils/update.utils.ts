@@ -1,4 +1,5 @@
 import config from "../config/config";
+import { Item } from "../../../shared/types/dataTypes";
 
 /**
  * Returns the next review date based on the progress and SRS intervals.
@@ -62,4 +63,16 @@ export function addAudioPath(audio: string | null): string | null {
       `Error in addAudioPath: ${(error as any).message} | audio: ${audio}`
     );
   }
+}
+
+/**
+ * Adds audio paths to a list of words.
+ * @param words - Array of Item objects.
+ * @returns Array of Item objects with updated audio paths.
+ */
+export function addAudioPathsToWords(words: Item[]): Item[] {
+  return words.map((word) => ({
+    ...word,
+    audio: addAudioPath(word.audio),
+  }));
 }

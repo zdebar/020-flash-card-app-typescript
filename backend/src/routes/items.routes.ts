@@ -4,11 +4,25 @@ import {
   patchItemsController,
   getInfoController,
 } from "../controllers/items.controller";
+import {
+  validateLanguageID,
+  validateUID,
+  validateItems,
+  validateOnBlockEnd,
+  validateItemID,
+} from "../middlewares/validation.middleware";
 
 const itemsRouter = express.Router();
 
-itemsRouter.post("/", getItemsController); // sends array of items (words) for practice
-itemsRouter.patch("/", patchItemsController); // updates user items (words), sends user score
-itemsRouter.get("/:itemId/info", getInfoController); // sends info relevant to the given item
+itemsRouter.post("/", validateUID, validateLanguageID, getItemsController); // sends array of items (words) for practice
+itemsRouter.patch(
+  "/",
+  validateUID,
+  validateLanguageID,
+  validateOnBlockEnd,
+  validateItems,
+  patchItemsController
+); // updates user items (words), sends user score
+itemsRouter.get("/:itemId/info", validateItemID, getInfoController); // sends info relevant to the given item
 
 export default itemsRouter;

@@ -1,7 +1,6 @@
 import { PostgresClient } from "../types/dataTypes";
 import { withDbClient } from "../utils/database.utils";
 import { BlockExplanation } from "../../../shared/types/dataTypes";
-import { validateUid } from "../utils/validate.utils";
 
 export async function getGrammarListRepository(
   db: PostgresClient,
@@ -9,8 +8,6 @@ export async function getGrammarListRepository(
   languageID: number
 ): Promise<BlockExplanation[]> {
   try {
-    validateUid(uid);
-
     const query = `
       WITH user_cte AS (
         SELECT id AS user_id 

@@ -5,6 +5,7 @@ import {
 } from "../services/user.service";
 import { postgresDBPool } from "../config/database.config.postgres";
 import { UserScore, UserSettings } from "../../../shared/types/dataTypes";
+import { validationResult } from "express-validator";
 
 /**
  * Gets user profile and score from the database. If the user is not found, it creates a new user.
@@ -15,6 +16,10 @@ export async function getUserController(
   next: NextFunction
 ): Promise<void> {
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      throw new Error(`Validation errors: ${JSON.stringify(errors.array())}`);
+    }
     const { uid, name, email } = (req as any).user;
 
     if (!["demo@example.com", "zdebarth@gmail.com"].includes(email)) {
@@ -36,11 +41,6 @@ export async function getUserController(
       userScore,
     });
   } catch (err) {
-    (err as any).message = `Error in getUserController: ${
-      (err as any).message
-    } | uid: ${(req as any).user.uid} | name: ${
-      (req as any).user.name
-    } | email: ${(req as any).user.email}`;
     next(err);
   }
 }
@@ -54,12 +54,13 @@ export async function resetUserLanguageController(
   next: NextFunction
 ): Promise<void> {
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      throw new Error(`Validation errors: ${JSON.stringify(errors.array())}`);
+    }
+
     const { uid } = (req as any).user;
     const { languageID }: { languageID: number } = req.body;
-
-    if (!languageID || typeof languageID !== "number") {
-      throw new Error("Invalid languageID provided.");
-    }
 
     const userScore: UserScore[] = await resetUserLanguageService(
       postgresDBPool,
@@ -72,11 +73,6 @@ export async function resetUserLanguageController(
       userScore,
     });
   } catch (err) {
-    (err as any).message = `Error in getUserController: ${
-      (err as any).message
-    } | uid: ${(req as any).user.uid} | name: ${
-      (req as any).user.name
-    } | email: ${(req as any).user.email}`;
     next(err);
   }
 }

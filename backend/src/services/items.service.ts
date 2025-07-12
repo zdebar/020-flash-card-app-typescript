@@ -11,7 +11,7 @@ import {
   getItemInfoRepository,
   getGrammarBlockRepository,
 } from "../repository/items.repository.postgres";
-import { addAudioPath } from "../utils/update.utils";
+import { addAudioPath, addAudioPathsToWords } from "../utils/update.utils";
 import sortItemsByProgress from "../utils/items.utils";
 
 /**
@@ -22,36 +22,25 @@ export async function getItemsService(
   uid: string,
   languageID: number
 ): Promise<Item[]> {
-  try {
-    let words: Item[] = await getItemsRepository(db, uid, languageID);
+  let words: Item[] = await getItemsRepository(db, uid, languageID);
+  let foundNewGrammar = false;
+  let grammarWords: Item[] = [];
 
-    let foundNewGrammar = false;
-    let grammarWords: Item[] = [];
-    for (const word of words) {
-      if (word.showContextInfo) {
-        grammarWords = await getGrammarBlockRepository(db, uid, word.id);
-        foundNewGrammar = true;
-        break;
-      }
+  for (const word of words) {
+    if (word.showContextInfo) {
+      grammarWords = await getGrammarBlockRepository(db, uid, word.id);
+      foundNewGrammar = true;
+      break;
     }
-
-    if (!foundNewGrammar) {
-      sortItemsByProgress(words);
-    } else {
-      words = grammarWords;
-    }
-
-    return words.map((word) => ({
-      ...word,
-      audio: addAudioPath(word.audio),
-    }));
-  } catch (error) {
-    throw new Error(
-      `Error in getItemsService: ${
-        (error as any).message
-      } | uid: ${uid} | languageID: ${languageID}`
-    );
   }
+
+  if (!foundNewGrammar) {
+    sortItemsByProgress(words);
+  } else {
+    words = grammarWords;
+  }
+
+  return addAudioPathsToWords(words);
 }
 
 /**
@@ -64,18 +53,8 @@ export async function patchItemsService(
   onBlockEnd: boolean,
   languageID: number
 ): Promise<UserScore[]> {
-  try {
-    await patchItemsRepository(db, uid, items, onBlockEnd, languageID);
-    return await getScoreRepository(db, uid);
-  } catch (error) {
-    throw new Error(
-      `Error in patchItemsService: ${
-        (error as any).message
-      } | uid: ${uid} | items: ${JSON.stringify(
-        items
-      )} | onBlockEnd: ${onBlockEnd} | languageID: ${languageID}`
-    );
-  }
+  await patchItemsRepository(db, uid, items, onBlockEnd, languageID);
+  return await getScoreRepository(db, uid);
 }
 
 /**
@@ -85,22 +64,11 @@ export async function getItemInfoService(
   db: PostgresClient,
   itemId: number
 ): Promise<BlockExplanation[]> {
-  try {
-    const itemInfo: BlockExplanation[] = await getItemInfoRepository(
-      db,
-      itemId
-    );
+  const itemInfo: BlockExplanation[] = await getItemInfoRepository(db, itemId);
 
-    if (!itemInfo || itemInfo.length === 0) {
-      throw new Error(`No item info found for itemId: ${itemId}`);
-    }
-
-    return itemInfo;
-  } catch (error) {
-    throw new Error(
-      `Error in getItemInfoService: ${
-        (error as any).message
-      } | itemId: ${itemId}`
-    );
+  if (!itemInfo || itemInfo.length === 0) {
+    throw new Error(`No item info found for itemId: ${itemId}`);
   }
+
+  return itemInfo;
 }
