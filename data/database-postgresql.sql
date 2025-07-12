@@ -12,6 +12,11 @@ CREATE TABLE IF NOT EXISTS parts_of_speech (
   part_of_speech TEXT NOT NULL UNIQUE -- e.g. noun, verb, adjective, adverb, preposition, conjunction, pronoun
 );
 
+CREATE TABLE IF NOT EXISTS languages (
+  id SERIAL PRIMARY KEY,
+  "name" TEXT NOT NULL UNIQUE -- e.g. English, Spanish, German
+);
+
 CREATE TABLE IF NOT EXISTS cefr_levels ( -- Common European Framework of Reference for Languages (CEFR) levels -- NEW
   id SERIAL PRIMARY KEY,
   level TEXT NOT NULL UNIQUE, -- e.g. A1, A2, B1, B2, C1, C2
@@ -27,14 +32,16 @@ CREATE TABLE IF NOT EXISTS categories (
 CREATE TABLE IF NOT EXISTS items (
   id SERIAL PRIMARY KEY,
   czech TEXT NOT NULL, 
-  english TEXT NOT NULL, 
+  translation TEXT NOT NULL, 
   pronunciation TEXT, -- IPA phonetic transcription
   audio TEXT, -- audio file name, without extension
   level_id INTEGER, -- CEFR level (A1, A2, B1, B2, C1, C2) -- NEW
   part_id INTEGER, -- part of speech id
+  language_id INTEGER, -- language id
   sequence INTEGER CHECK (item_order >= 0), -- learning order of words; INTEGER for words, NULL for grammar
   FOREIGN KEY (level_id) REFERENCES cefr_levels(id) ON DELETE SET NULL, -- NEW
-  FOREIGN KEY (part_id) REFERENCES parts_of_speech(id) ON DELETE SET NULL
+  FOREIGN KEY (part_id) REFERENCES parts_of_speech(id) ON DELETE SET NULL,
+  FOREIGN KEY (language_id) REFERENCES languages(id) ON DELETE SET NULL;
 );
 
 CREATE TABLE IF NOT EXISTS blocks (
@@ -43,7 +50,9 @@ CREATE TABLE IF NOT EXISTS blocks (
   block_explanation TEXT, -- html code
   block_order INTEGER CHECK (block_order >= 0), -- after whick item_order will the block be shown
   category_id INTEGER, 
-  FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
+  language_id INTEGER, -- language id
+  FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL,
+  FOREIGN KEY (language_id) REFERENCES languages(id) ON DELETE SET NULL;
 );
 
 CREATE TABLE IF NOT EXISTS user_items (
@@ -63,8 +72,10 @@ CREATE TABLE IF NOT EXISTS user_score (
   user_id INTEGER NOT NULL,
   day DATE DEFAULT CURRENT_DATE,
   blockcount INTEGER DEFAULT 0,
+  language_id INTEGER, -- language id
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-  PRIMARY KEY (user_id, day)
+  FOREIGN KEY (language_id) REFERENCES languages(id) ON DELETE SET NULL,
+  PRIMARY KEY (user_id, day, language_id)
 );
 
 CREATE TABLE IF NOT EXISTS block_items (
