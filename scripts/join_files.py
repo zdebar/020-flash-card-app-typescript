@@ -32,6 +32,7 @@ def combine_csv_files(directory, output_file):
         print("No valid CSV files to combine.")
 
 # Example usage
-directory = '../data/imported'  # Replace with your directory path
-output_file = '../data/imported/combined_output.csv'       # Replace with your desired output file name
+directory = '../data-spanish/import/processed'  # Replace with your directory path
+output_file = '../data-spanish/import/processed/combined_output.csv'       # Replace with your desired output file name
 combine_csv_files(directory, output_file)
+

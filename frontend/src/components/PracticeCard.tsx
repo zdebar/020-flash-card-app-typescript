@@ -291,7 +291,7 @@ export default function PracticeCard() {
                     style={{ left: '-10px', top: '-55px' }}
                   />
                 </p>
-                <p className="color-error whitespace-nowrap">
+                <p className="color-error h-5 whitespace-nowrap">
                   {getErrorMessage(error)}
                 </p>
               </div>

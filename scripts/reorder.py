@@ -1,9 +1,9 @@
 import os
 import pandas as pd
 
-def reorder_item_order_in_directory(directory):
+def resequence_in_directory(directory):
     """
-    Reorder the 'item_order' column in all CSV files within the specified directory.
+    Reorder the 'sequence' column in all CSV files within the specified directory.
     """
     # Get a list of all CSV files in the directory
     csv_files = [f for f in os.listdir(directory) if f.endswith('.csv')]
@@ -15,15 +15,15 @@ def reorder_item_order_in_directory(directory):
         # Load the CSV file
         df = pd.read_csv(input_file)
 
-        # Recalculate the 'item_order' column starting from 1
-        if 'item_order' in df.columns:
-            df['item_order'] = range(1, len(df) + 1)
+        # Recalculate the 'sequence' column starting from 1
+        if 'sequence' in df.columns:
+            df['sequence'] = range(1, len(df) + 1)
             # Save the updated DataFrame to a new CSV file
             df.to_csv(output_file, index=False)
             print(f"Reordered CSV saved to {output_file}")
         else:
-            print(f"Column 'item_order' not found in {file}. Skipping.")
+            print(f"Column 'sequence' not found in {file}. Skipping.")
 
 # Example usage
-directory = '../data/imported'  # Replace with your directory path
-reorder_item_order_in_directory(directory)
+directory = '../data-spanish/import'  
+resequence_in_directory(directory)

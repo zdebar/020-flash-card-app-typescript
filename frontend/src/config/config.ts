@@ -15,7 +15,7 @@ const config = {
   levelSort: ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'],
   languages: [
     { id: 1, name: 'Angličtina', code: 'en' },
-    // { id: 2, name: 'Němčina', code: 'de' },
+    { id: 2, name: 'Němčina', code: 'de' },
     { id: 3, name: 'Španělština', code: 'es' },
   ],
 };
