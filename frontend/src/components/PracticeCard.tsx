@@ -265,17 +265,6 @@ export default function PracticeCard() {
                   <GuideHint
                     visibility={firstOverlay}
                     text="slovíčka v bloku"
-                    style={{
-                      justifyContent: 'center',
-                      transform: 'translateX(35px)',
-                    }}
-                  />
-                </p>
-                <p className="relative flex w-full justify-end text-sm">
-                  {currLanguage?.blockCount[0]} / 100
-                  <GuideHint
-                    visibility={firstOverlay}
-                    text="bloků dnes"
                     style={{ right: '-10px' }}
                   />
                 </p>
@@ -307,6 +296,14 @@ export default function PracticeCard() {
                 </p>
                 <p className="color-error h-5 whitespace-nowrap">
                   {getErrorMessage(error)}
+                </p>
+                <p className="relative flex w-full justify-end text-sm">
+                  {currLanguage?.blockCount[0]} / 100
+                  <GuideHint
+                    visibility={firstOverlay}
+                    text="bloků dnes"
+                    style={{ right: '-10px', top: '-55px' }}
+                  />
                 </p>
               </div>
             </div>
