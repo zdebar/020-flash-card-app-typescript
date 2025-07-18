@@ -34,7 +34,7 @@ export default function App() {
                   </p>
                   <p>
                     Trénujte až 1000 slovíček či 500 vět za hodinu, a dosáhněte
-                    přirozenosti jazyka za zlomek běžného učebního času.
+                    základní znalosti jazyka za zlomek běžného učebního času.
                   </p>
 
                   {!userInfo && (
