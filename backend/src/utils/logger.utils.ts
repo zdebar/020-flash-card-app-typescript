@@ -43,6 +43,21 @@ if (!isProduction) {
   );
 }
 
+if (isProduction) {
+  transports.push(
+    new winston.transports.Console({
+      format: combine(
+        timestamp(),
+        printf(({ timestamp, level, message, ...meta }) => {
+          return `${timestamp} [${level}]: ${message} ${
+            Object.keys(meta).length ? JSON.stringify(meta) : ""
+          }`;
+        })
+      ),
+    })
+  );
+}
+
 const logger = winston.createLogger({
   level: process.env.LOGGER_LEVEL || "info",
   transports,
