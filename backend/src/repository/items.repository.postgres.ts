@@ -176,6 +176,9 @@ export async function patchItemsRepository(
       WITH user_id_cte AS (
         SELECT id AS user_id FROM users WHERE uid = $1
       ),
+      valid_items_cte AS (
+        SELECT id AS item_id FROM items WHERE id = ANY($2::int[])
+      ),
       item_data AS (
         SELECT 
           unnest($2::int[]) AS item_id,
@@ -193,6 +196,7 @@ export async function patchItemsRepository(
         wd.learned_at,
         wd.mastered_at
       FROM user_id_cte, item_data wd
+      JOIN valid_items_cte vi ON wd.item_id = vi.item_id
       ON CONFLICT(user_id, item_id) 
       DO UPDATE SET 
         progress = EXCLUDED.progress, 
