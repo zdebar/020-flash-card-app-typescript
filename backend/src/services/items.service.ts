@@ -6,7 +6,8 @@ import {
 } from "../../../shared/types/dataTypes";
 import {
   getItemsRepository,
-  patchItemsRepository,
+  updateUserItemsRepository,
+  updateUserScoreRepository,
   getScoreRepository,
   getItemInfoRepository,
   getGrammarBlockRepository,
@@ -53,7 +54,10 @@ export async function patchItemsService(
   onBlockEnd: boolean,
   languageID: number
 ): Promise<UserScore[]> {
-  await patchItemsRepository(db, uid, items, onBlockEnd, languageID);
+  await updateUserItemsRepository(db, uid, items);
+  if (onBlockEnd) {
+    await updateUserScoreRepository(db, uid, languageID);
+  }
   return await getScoreRepository(db, uid);
 }
 
