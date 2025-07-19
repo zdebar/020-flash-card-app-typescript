@@ -2,6 +2,13 @@ import { PostgresClient } from "../types/dataTypes";
 import { withDbClient } from "../utils/database.utils";
 import { BlockExplanation } from "../../../shared/types/dataTypes";
 
+/**
+ * Provides a list of unlocked grammar blocks for a specific user and language.
+ * @param db
+ * @param uid
+ * @param languageID
+ * @returns
+ */
 export async function getGrammarListRepository(
   db: PostgresClient,
   uid: string,
