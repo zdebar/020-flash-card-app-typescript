@@ -12,7 +12,7 @@ import {
   getItemInfoRepository,
   getGrammarBlockRepository,
 } from "../repository/items.repository.postgres";
-import { addAudioPath, addAudioPathsToWords } from "../utils/update.utils";
+import { addAudioPathsToWords } from "../utils/update.utils";
 import sortItemsByProgress from "../utils/items.utils";
 
 /**

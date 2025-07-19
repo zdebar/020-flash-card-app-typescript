@@ -29,7 +29,7 @@ import GuideHint from './common/GuideHint';
 
 export default function PracticeCard() {
   const apiPath = '/api/items';
-  const { setUserScore, languageID } = useUser();
+  const { userScore, setUserScore, languageID } = useUser();
   const { array, index, nextIndex, arrayLength, setReload, currentItem } =
     useArray<Item>(apiPath, String(languageID));
   const {
@@ -56,6 +56,9 @@ export default function PracticeCard() {
   const noAudio = error === PracticeError.NoAudio;
   const firstOverlay = activeOverlay === 'first';
   const secondOverlay = activeOverlay === 'second';
+  const currLanguage = userScore?.find(
+    (lang) => lang.languageID === languageID
+  );
 
   // Show Info by default if the item has showContextInfo set to true
   useEffect(() => {
@@ -257,7 +260,7 @@ export default function PracticeCard() {
                     />
                   )}
                 </div>
-                <p className="relative flex w-full justify-end text-sm">
+                <p className="relative flex w-full justify-end pl-8 text-sm">
                   {index + 1} / {arrayLength}
                   <GuideHint
                     visibility={firstOverlay}
@@ -291,8 +294,16 @@ export default function PracticeCard() {
                     style={{ left: '-10px', top: '-55px' }}
                   />
                 </p>
-                <p className="color-error whitespace-nowrap">
+                <p className="color-error h-5 whitespace-nowrap">
                   {getErrorMessage(error)}
+                </p>
+                <p className="relative flex w-full justify-end text-sm">
+                  {currLanguage?.blockCount[0]} / 100
+                  <GuideHint
+                    visibility={firstOverlay}
+                    text="bloků dnes"
+                    style={{ right: '-10px', top: '-55px' }}
+                  />
                 </p>
               </div>
             </div>

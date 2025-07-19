@@ -1,5 +1,6 @@
 import asyncio
 import re
+import unicodedata
 from gtts import gTTS
 import os
 import pandas as pd
@@ -19,9 +20,12 @@ async def generate_audio_with_google_cloud(df: pd.DataFrame, audio_folder: str, 
 
     def clean_filename(filename: str) -> str:
         filename = filename.lower()
+        # Normalize to remove accents
+        filename = unicodedata.normalize('NFD', filename)
+        filename = ''.join(char for char in filename if unicodedata.category(char) != 'Mn')  # Remove diacritical marks
         filename = re.sub(r'[^\w\s]', '', filename)  # Remove special characters (keep alphanumeric and spaces)
         filename = filename.replace(" ", "_")  # Replace spaces with underscores
-        return filename
+        return language_code + "_" + filename
 
     def add_extension(filename: str) -> str:
         return filename + ".mp3"
