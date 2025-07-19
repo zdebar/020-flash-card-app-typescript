@@ -163,54 +163,62 @@ export async function updateUserItemsRepository(
   uid: string,
   items: Item[]
 ): Promise<void> {
-  const itemIds = items.map((item) => item.id);
-  const progresses = items.map((item) => item.progress);
-  const nextAt = items.map((item) => getNextAt(item.progress));
-  const learnedAt = items.map((item) => getLearnedAt(item.progress));
-  const masteredAt = items.map((item) => getMasteredAt(item.progress));
+  try {
+    const itemIds = items.map((item) => item.id);
+    const progresses = items.map((item) => item.progress);
+    const nextAt = items.map((item) => getNextAt(item.progress));
+    const learnedAt = items.map((item) => getLearnedAt(item.progress));
+    const masteredAt = items.map((item) => getMasteredAt(item.progress));
 
-  const query = `
-    WITH user_id_cte AS (
-      SELECT id AS user_id FROM users WHERE uid = $1
-    ),
-    item_data AS (
+    const query = `
+      WITH user_id_cte AS (
+        SELECT id AS user_id FROM users WHERE uid = $1
+      ),
+      item_data AS (
+        SELECT 
+          unnest($2::int[]) AS item_id,
+          unnest($3::int[]) AS progress,
+          unnest($4::timestamptz[]) AS next_at,
+          unnest($5::timestamptz[]) AS learned_at,
+          unnest($6::timestamptz[]) AS mastered_at
+      )
+      INSERT INTO user_items (user_id, item_id, progress, next_at, learned_at, mastered_at)
       SELECT 
-        unnest($2::int[]) AS item_id,
-        unnest($3::int[]) AS progress,
-        unnest($4::timestamptz[]) AS next_at,
-        unnest($5::timestamptz[]) AS learned_at,
-        unnest($6::timestamptz[]) AS mastered_at
-    )
-    INSERT INTO user_items (user_id, item_id, progress, next_at, learned_at, mastered_at)
-    SELECT 
-      user_id,
-      wd.item_id,
-      wd.progress,
-      wd.next_at,
-      wd.learned_at,
-      wd.mastered_at
-    FROM user_id_cte, item_data wd
-    ON CONFLICT(user_id, item_id) 
-    DO UPDATE SET 
-      progress = EXCLUDED.progress, 
-      next_at = EXCLUDED.next_at, 
-      learned_at = CASE 
-        WHEN user_items.learned_at IS NULL AND EXCLUDED.learned_at IS NOT NULL 
-        THEN EXCLUDED.learned_at 
-        ELSE user_items.learned_at 
-      END,
-      mastered_at = CASE 
-        WHEN user_items.mastered_at IS NULL AND EXCLUDED.mastered_at IS NOT NULL 
-        THEN EXCLUDED.mastered_at 
-        ELSE user_items.mastered_at 
-      END;
-    `;
+        user_id,
+        wd.item_id,
+        wd.progress,
+        wd.next_at,
+        wd.learned_at,
+        wd.mastered_at
+      FROM user_id_cte, item_data wd
+      ON CONFLICT(user_id, item_id) 
+      DO UPDATE SET 
+        progress = EXCLUDED.progress, 
+        next_at = EXCLUDED.next_at, 
+        learned_at = CASE 
+          WHEN user_items.learned_at IS NULL AND EXCLUDED.learned_at IS NOT NULL 
+          THEN EXCLUDED.learned_at 
+          ELSE user_items.learned_at 
+        END,
+        mastered_at = CASE 
+          WHEN user_items.mastered_at IS NULL AND EXCLUDED.mastered_at IS NOT NULL 
+          THEN EXCLUDED.mastered_at 
+          ELSE user_items.mastered_at 
+        END;
+      `;
 
-  const values = [uid, itemIds, progresses, nextAt, learnedAt, masteredAt];
+    const values = [uid, itemIds, progresses, nextAt, learnedAt, masteredAt];
 
-  await withDbClient(db, async (client) => {
-    await client.query(query, values);
-  });
+    await withDbClient(db, async (client) => {
+      await client.query(query, values);
+    });
+  } catch (error) {
+    throw new Error(
+      `Error in updateUserItemsRepository: ${
+        (error as any).message
+      } | db type: ${typeof db} | uid: ${uid} | items: ${JSON.stringify(items)}`
+    );
+  }
 }
 
 /**
@@ -224,16 +232,24 @@ export async function updateUserScoreRepository(
   uid: string,
   languageID: number
 ): Promise<void> {
-  const query = `
-    INSERT INTO user_score (user_id, day, count, language_id)
-    VALUES ((SELECT id FROM users WHERE uid = $1), CURRENT_DATE, 1, $2)
-    ON CONFLICT (user_id, day, language_id) 
-    DO UPDATE SET count = user_score.count + 1;
-  `;
+  try {
+    const query = `
+      INSERT INTO user_score (user_id, day, count, language_id)
+      VALUES ((SELECT id FROM users WHERE uid = $1), CURRENT_DATE, 1, $2)
+      ON CONFLICT (user_id, day, language_id) 
+      DO UPDATE SET count = user_score.count + 1;
+    `;
 
-  await withDbClient(db, async (client) => {
-    await client.query(query, [uid, languageID]);
-  });
+    await withDbClient(db, async (client) => {
+      await client.query(query, [uid, languageID]);
+    });
+  } catch (error) {
+    throw new Error(
+      `Error in updateUserItemsRepository: ${
+        (error as any).message
+      } | db type: ${typeof db} | uid: ${uid} | languageID: ${languageID}`
+    );
+  }
 }
 
 /**
