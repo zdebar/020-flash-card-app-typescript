@@ -7,7 +7,8 @@ import ThemeDropdown from './common/ThemeDropdown';
 import ConfirmModal from './common/ConfirmModal';
 
 export default function UserSettings() {
-  const { setUserInfo, setUserSettings, setUserScore, setLoading } = useUser();
+  const { setUserInfo, setUserSettings, setUserScore, setLoading, userInfo } =
+    useUser();
   const navigate = useNavigate();
   const [isModalVisible, setModalVisible] = useState(false);
 
@@ -28,6 +29,7 @@ export default function UserSettings() {
 
   return (
     <div className="max-w-card flex flex-col gap-2">
+      <p className="py-2">Uživatel: {userInfo?.name}</p>
       <Button
         onClick={() => setModalVisible(true)}
         className="button-rectangular"

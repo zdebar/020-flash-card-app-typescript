@@ -12,7 +12,7 @@ export default function ContextCard({
   setVisibility: Dispatch<SetStateAction<boolean>>;
 }) {
   const { array, index, nextIndex, prevIndex, arrayLength } =
-    useArray<BlockExplanation>(`/api/items/${itemId}/info`);
+    useArray<BlockExplanation>(`/api/items/${itemId}/info`, undefined, 'GET');
 
   const current = array?.[index];
 

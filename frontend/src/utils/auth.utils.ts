@@ -15,15 +15,22 @@ export const fetchWithAuthAndParse = async <T>(
 
   const token = await user.getIdToken();
 
+  const { method = 'GET', body, headers, ...restOptions } = options;
+
+  // Remove body for GET/HEAD requests
+  const requestOptions: RequestInit = {
+    method,
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+      ...headers,
+    },
+    ...(method !== 'GET' && method !== 'HEAD' ? { body } : {}), // Include body only for allowed methods
+    ...restOptions,
+  };
+
   try {
-    const response = await fetch(urlPath, {
-      ...options,
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-        ...options.headers,
-      },
-    });
+    const response = await fetch(urlPath, requestOptions);
 
     if (!response.ok) {
       if (response.status === 401) {

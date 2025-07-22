@@ -88,6 +88,7 @@ export async function getInfoController(
 ): Promise<void> {
   try {
     const errors = validationResult(req);
+
     if (!errors.isEmpty()) {
       throw new Error(`Validation errors: ${JSON.stringify(errors.array())}`);
     }

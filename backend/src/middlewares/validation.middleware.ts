@@ -1,4 +1,4 @@
-import { body, validationResult } from "express-validator";
+import { body, param } from "express-validator";
 
 // Middleware for sanitizing input
 export const validateLanguageID = [
@@ -48,11 +48,11 @@ export const validateItems = [
 
 // Middleware for validating itemID
 export const validateItemID = [
-  body("itemID")
+  param("itemId")
     .isInt({ min: 1 })
     .withMessage(
       (value) =>
-        `Invalid itemID provided: '${value}'. It must be a positive integer.`
+        `Invalid itemId provided: '${value}'. It must be a positive integer.`
     )
     .toInt(),
 ];

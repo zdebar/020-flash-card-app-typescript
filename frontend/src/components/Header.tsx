@@ -30,7 +30,8 @@ export default function Header() {
         <ButtonLink
           className={`button-round ${getSelectedClass(location.pathname, '/userLanguages')} color-header pb-1 text-2xl font-bold`}
           to="/userLanguages"
-          aria-label="Domů"
+          aria-label="Uživatelské jazyky"
+          disabled={!userInfo}
           buttonColor="color-header"
         >
           {config.languages.find((lang) => lang.id === languageID)?.code}
