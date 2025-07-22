@@ -109,7 +109,7 @@ export async function getGrammarBlockRepository(
         SELECT
           i.id,
           i.czech,
-          i.english,
+          i.translation,
           i.pronunciation,
           i.audio,
           COALESCE(ui.progress, 0) AS progress,

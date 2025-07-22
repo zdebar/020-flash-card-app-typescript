@@ -8,11 +8,13 @@
   --font-Mansalva: 'Mansalva', 'sans';
   --color-background-light: #f7b740;
   --color-background-dark: #111827;
+  --color-blue-0: #87d5e8;
   --color-blue-1: #6fbbcf;
   --color-blue-2: #2e9ab0;
   --color-blue-3: #257f92;
   --color-blue-4: #1c6676;
   --color-blue-5: #113c61;
+  --color-blue-6: #0d2c47;
 }
 
 @layer base {
@@ -74,7 +76,7 @@
 
   /** Text Colors  */
   .color-notice {
-    @apply font-Mansalva text-[var(--color-blue-5)] dark:text-[var(--color-blue-1)];
+    @apply font-Mansalva text-[var(--color-blue-6)] dark:text-[var(--color-blue-0)];
   }
 
   .color-learned-today {
