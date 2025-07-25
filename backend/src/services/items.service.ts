@@ -10,7 +10,6 @@ import {
   updateUserScoreRepository,
   getScoreRepository,
   getItemInfoRepository,
-  getGrammarBlockRepository,
 } from "../repository/items.repository.postgres";
 import { addAudioPathsToWords } from "../utils/update.utils";
 import sortItemsByProgress from "../utils/items.utils";
@@ -23,24 +22,8 @@ export async function getItemsService(
   uid: string,
   languageID: number
 ): Promise<Item[]> {
-  let words: Item[] = await getItemsRepository(db, uid, languageID);
-  let foundNewGrammar = false;
-  let grammarWords: Item[] = [];
-
-  for (const word of words) {
-    if (word.showContextInfo) {
-      grammarWords = await getGrammarBlockRepository(db, uid, word.id);
-      foundNewGrammar = true;
-      break;
-    }
-  }
-
-  if (!foundNewGrammar) {
-    sortItemsByProgress(words);
-  } else {
-    words = grammarWords;
-  }
-
+  const words: Item[] = await getItemsRepository(db, uid, languageID);
+  sortItemsByProgress(words);
   return addAudioPathsToWords(words);
 }
 

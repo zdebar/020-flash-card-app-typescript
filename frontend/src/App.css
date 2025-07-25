@@ -88,7 +88,7 @@
   }
 
   .color-error {
-    @apply font-Mansalva font-bold text-red-700 dark:text-red-500;
+    @apply font-Mansalva font-bold text-red-800 dark:text-red-500;
   }
 
   .color-modal {
@@ -110,6 +110,10 @@
 
   .card {
     @apply flex h-full max-h-[360px] min-h-[320px] w-full max-w-[360px] min-w-[320px] flex-col justify-between gap-1;
+  }
+
+  .card-list {
+    @apply flex h-full min-h-[320px] w-full max-w-[360px] min-w-[320px] flex-col gap-1;
   }
 
   .max-w-card {

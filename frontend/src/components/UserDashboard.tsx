@@ -15,8 +15,8 @@ export default function UserDashboard() {
       <ButtonLink to="/practice" className="button-rectangular">
         Procvičovat
       </ButtonLink>
-      <ButtonLink to="/grammarList " className="button-rectangular">
-        Přehled gramatiky
+      <ButtonLink to="/userOverview " className="button-rectangular">
+        Přehled
       </ButtonLink>
 
       <div

@@ -51,6 +51,7 @@ export default function GrammarList() {
           handlePrevious={prevIndex}
           index={index}
           arrayLength={arrayLength}
+          canReset={true}
         />
       )}
     </>

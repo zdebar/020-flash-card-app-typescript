@@ -1,5 +1,4 @@
 import './App.css';
-
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { useUser } from './hooks/useUser';
 import ButtonLink from './components/common/ButtonLink';
@@ -11,6 +10,8 @@ import UserDashboard from './components/UserDashboard';
 import GrammarList from './components/GrammarlList';
 import Footer from './components/Footer';
 import UserLanguages from './components/UserLanguages';
+import UserOverview from './components/UserOverview';
+import WordList from './components/wordList';
 
 export default function App() {
   const { userInfo } = useUser();
@@ -28,7 +29,7 @@ export default function App() {
               path="/"
               element={
                 <div className="flex w-full max-w-[480px] flex-col items-center justify-start gap-4 p-4 text-center text-xl">
-                  <h1 className="font-display">Jazyky jednoduše</h1>
+                  <h1 className="font-display">Angličtina jednoduše</h1>
                   <p className="color-notice font-Mansalva">
                     aplikace v testovacím režimu
                   </p>
@@ -52,7 +53,9 @@ export default function App() {
             <Route path="/userSettings" element={<UserSettings />} />
             <Route path="/userDashboard" element={<UserDashboard />} />
             <Route path="/userLanguages" element={<UserLanguages />} />
+            <Route path="/userOverview" element={<UserOverview />} />
             <Route path="/grammarList" element={<GrammarList />} />
+            <Route path="/wordList" element={<WordList />} />
           </Routes>
         </div>
         {showFooterRoutes.includes(location.pathname) && <Footer />}

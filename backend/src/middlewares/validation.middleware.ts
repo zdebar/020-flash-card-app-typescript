@@ -1,8 +1,18 @@
 import { body, param } from "express-validator";
 
 // Middleware for sanitizing input
-export const validateLanguageID = [
+export const validateLanguageIDBody = [
   body("languageID")
+    .isInt({ min: 1 })
+    .withMessage(
+      (value) =>
+        `Invalid languageID provided: '${value}'. It must be a positive integer.`
+    )
+    .toInt(),
+];
+
+export const validateLanguageIDParams = [
+  param("languageID")
     .isInt({ min: 1 })
     .withMessage(
       (value) =>
@@ -53,6 +63,17 @@ export const validateItemID = [
     .withMessage(
       (value) =>
         `Invalid itemId provided: '${value}'. It must be a positive integer.`
+    )
+    .toInt(),
+];
+
+// Middleware for validating blockID
+export const validateBlockID = [
+  param("blockID")
+    .isInt({ min: 1 })
+    .withMessage(
+      (value) =>
+        `Invalid blockID provided: '${value}'. It must be a positive integer.`
     )
     .toInt(),
 ];

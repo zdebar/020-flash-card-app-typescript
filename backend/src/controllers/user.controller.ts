@@ -60,17 +60,17 @@ export async function resetUserLanguageController(
     }
 
     const { uid } = (req as any).user;
-    const { languageID }: { languageID: number } = req.body;
+    const languageID: number = parseInt((req as any).params.languageID, 10);
 
-    const userScore: UserScore[] = await resetUserLanguageService(
+    const score: UserScore[] = await resetUserLanguageService(
       postgresDBPool,
       uid,
       languageID
     );
 
     res.status(200).json({
-      message: "User settings and score retrieved successfully.",
-      userScore,
+      message: "User language restarted and score retrieved successfully.",
+      score,
     });
   } catch (err) {
     next(err);

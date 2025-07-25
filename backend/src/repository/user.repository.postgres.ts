@@ -52,13 +52,12 @@ export async function resetUserLanguageRepository(
         `
         WITH user_cte AS (
           SELECT id AS user_id FROM users WHERE uid = $1
-        ),
-        items_cte AS (
-          SELECT id AS item_id FROM items WHERE language_id = $2
         )
         DELETE FROM user_items
-        WHERE user_id = (SELECT user_id FROM user_cte)
-          AND item_id IN (SELECT item_id FROM items_cte);
+        USING items, user_cte
+        WHERE user_items.item_id = items.id
+          AND items.language_id = $2
+          AND user_items.user_id = user_cte.user_id;
         `,
         [uid, languageID]
       );

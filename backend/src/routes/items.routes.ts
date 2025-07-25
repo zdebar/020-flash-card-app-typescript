@@ -5,7 +5,7 @@ import {
   getInfoController,
 } from "../controllers/items.controller";
 import {
-  validateLanguageID,
+  validateLanguageIDBody,
   validateUID,
   validateItems,
   validateOnBlockEnd,
@@ -14,11 +14,11 @@ import {
 
 const itemsRouter = express.Router();
 
-itemsRouter.post("/", validateUID, validateLanguageID, getItemsController); // sends array of items (words) for practice
+itemsRouter.post("/", validateUID, validateLanguageIDBody, getItemsController); // sends array of items (words) for practice
 itemsRouter.patch(
   "/",
   validateUID,
-  validateLanguageID,
+  validateLanguageIDBody,
   validateOnBlockEnd,
   validateItems,
   patchItemsController

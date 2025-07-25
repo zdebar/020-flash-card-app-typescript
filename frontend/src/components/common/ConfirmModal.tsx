@@ -3,6 +3,7 @@ interface ConfirmModalProps {
   text?: string;
   onConfirm: () => void;
   onCancel: () => void;
+  className?: string;
 }
 
 export default function ConfirmModal({
@@ -10,11 +11,12 @@ export default function ConfirmModal({
   text,
   onConfirm,
   onCancel,
+  className,
 }: ConfirmModalProps) {
   if (!isVisible) return null;
 
   return (
-    <div className="max-w-card color-modal absolute">
+    <div className={`max-w-card color-modal absolute ${className}`}>
       <div className="p-6 text-center">
         <h2 className="mb-6 text-lg font-bold">{text}</h2>
         <div className="flex justify-center gap-4">

@@ -2,6 +2,7 @@ import { Dispatch, SetStateAction } from 'react';
 import { CloseIcon, NextIcon, PreviousIcon } from './common/Icons';
 import Button from './common/Button';
 import type { BlockExplanation } from '../../../shared/types/dataTypes';
+import ButtonReset from './common/ButtonReset';
 
 export default function InfoCard({
   block,
@@ -10,6 +11,7 @@ export default function InfoCard({
   handlePrevious,
   index,
   arrayLength,
+  canReset = false,
 }: {
   block: BlockExplanation;
   setVisibility: Dispatch<SetStateAction<boolean>>;
@@ -17,24 +19,34 @@ export default function InfoCard({
   handlePrevious: () => void;
   index: number;
   arrayLength: number;
+  canReset?: boolean;
 }) {
   return (
     <div className="card flex h-full flex-col gap-1">
       <div className="button-rectangular flex gap-1">
-        <div className="color-disabled shape-rectangular flex flex-10 items-center justify-start pt-1">
-          <h2
-            style={{
-              display: 'inline-block',
-              width: '4em',
-              textAlign: 'right',
-              marginRight: '0em',
-            }}
-            className="font-display font-semibold"
-          >
-            {block.blockSequence}
-          </h2>
-          <h2 className="font-display ml-2 font-semibold">{block.blockName}</h2>
-        </div>
+        <ButtonReset
+          canReset={canReset}
+          apiPath={`/api/blocks/${block.blockId}`}
+          modalMessage="Opravdu chcete restartovat blok? Veškerý pokrok souvisejících položek bude ztracen."
+          className="flex-10 justify-start"
+        >
+          <div className="flex items-center gap-2">
+            <h2
+              style={{
+                display: 'inline-block',
+                width: '4em',
+                textAlign: 'right',
+                marginRight: '0em',
+              }}
+              className="font-display font-semibold"
+            >
+              {block.blockSequence}
+            </h2>
+            <h2 className="font-display ml-2 font-semibold">
+              {block.blockName}
+            </h2>
+          </div>
+        </ButtonReset>
         <Button
           name="close"
           type="button"

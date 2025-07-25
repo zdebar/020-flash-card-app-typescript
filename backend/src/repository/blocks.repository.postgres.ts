@@ -61,3 +61,38 @@ export async function getGrammarListRepository(
     );
   }
 }
+
+export async function resetBlockRepository(
+  db: PostgresClient,
+  uid: string,
+  blockID: number
+): Promise<void> {
+  try {
+    const query = `
+      WITH user_cte AS (
+        SELECT id AS user_id 
+        FROM users 
+        WHERE uid = $1
+      ),
+      block_items_cte AS (
+        SELECT bi.item_id
+        FROM block_items bi
+        WHERE bi.block_id = $2
+      )
+      DELETE FROM user_items
+      USING block_items_cte, user_cte
+      WHERE user_items.item_id = block_items_cte.item_id
+        AND user_items.user_id = user_cte.user_id;
+    `;
+
+    await withDbClient(db, async (client) => {
+      await client.query(query, [uid, blockID]);
+    });
+  } catch (error) {
+    throw new Error(
+      `Error in getGrammarListRepository: ${
+        (error as any).message
+      } | db type: ${typeof db} | uid: ${uid} | blockID: ${blockID}`
+    );
+  }
+}
