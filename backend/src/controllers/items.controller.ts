@@ -22,12 +22,13 @@ export async function getItemsController(
 ): Promise<void> {
   try {
     const errors = validationResult(req);
+
     if (!errors.isEmpty()) {
       throw new Error(`Validation errors: ${JSON.stringify(errors.array())}`);
     }
 
     const uid: string = (req as any).user.uid;
-    const { languageID }: { languageID: number } = req.body;
+    const languageID: number = parseInt((req as any).params.languageID, 10);
 
     const data: Item[] = await getItemsService(postgresDBPool, uid, languageID);
 
@@ -41,7 +42,7 @@ export async function getItemsController(
 }
 
 /**
- * Updates practice user_words progress. Sends back the updated score.
+ * Updates practice user_items progress. Sends back the updated score.
  */
 export async function patchItemsController(
   req: Request,
@@ -50,6 +51,7 @@ export async function patchItemsController(
 ): Promise<void> {
   try {
     const errors = validationResult(req);
+
     if (!errors.isEmpty()) {
       throw new Error(`Validation errors: ${JSON.stringify(errors.array())}`);
     }
@@ -93,11 +95,11 @@ export async function getInfoController(
       throw new Error(`Validation errors: ${JSON.stringify(errors.array())}`);
     }
 
-    const itemId: number = parseInt((req as any).params.itemId, 10);
+    const itemID: number = parseInt((req as any).params.itemId, 10);
 
     const data: BlockExplanation[] = await getItemInfoService(
       postgresDBPool,
-      itemId
+      itemID
     );
 
     res.status(200).json({

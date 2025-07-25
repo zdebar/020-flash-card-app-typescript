@@ -2,11 +2,7 @@ import { useState, useEffect } from 'react';
 import { fetchWithAuthAndParse } from '../utils/auth.utils';
 import { useUser } from '../hooks/useUser';
 
-export function useArray<T>(
-  apiPath: string,
-  languageID?: string,
-  method: string = 'POST'
-) {
+export function useArray<T>(apiPath: string, method: string = 'POST') {
   const [array, setArray] = useState<T[]>([]);
   const [index, setIndex] = useState(0);
   const [reload, setReload] = useState(true);
@@ -35,7 +31,6 @@ export function useArray<T>(
           data: T[] | null;
         }>(apiPath, {
           method,
-          body: JSON.stringify(languageID ? { languageID } : {}),
         });
 
         setArray(response?.data || []);
@@ -47,7 +42,7 @@ export function useArray<T>(
       setReload(false);
     };
     fetchData();
-  }, [loading, apiPath, reload, languageID, method]);
+  }, [loading, apiPath, reload, method]);
 
   return {
     array,

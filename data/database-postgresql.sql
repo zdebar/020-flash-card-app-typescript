@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS languages (
   "name" TEXT NOT NULL UNIQUE -- e.g. English, Spanish, German
 );
 
-CREATE TABLE IF NOT EXISTS cefr_levels ( -- Common European Framework of Reference for Languages (CEFR) levels -- NEW
+CREATE TABLE IF NOT EXISTS levels ( -- Common European Framework of Reference for Languages (CEFR) levels -- NEW
   id SERIAL PRIMARY KEY,
   level TEXT NOT NULL UNIQUE, -- e.g. A1, A2, B1, B2, C1, C2
   description TEXT -- description of the level

@@ -10,7 +10,7 @@ import { useUser } from '../hooks/useUser';
 export default function GrammarList() {
   const { languageID } = useUser();
   const { array, index, setIndex, nextIndex, prevIndex, arrayLength } =
-    useArray<BlockExplanation>('/api/blocks/grammar', String(languageID));
+    useArray<BlockExplanation>(`/api/blocks/${languageID}`, 'GET');
   const [showExplanation, setShowExplanation] = useState(false);
 
   if (!arrayLength)

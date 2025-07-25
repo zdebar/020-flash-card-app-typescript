@@ -28,10 +28,10 @@ import Overlay from './common/Overlay';
 import GuideHint from './common/GuideHint';
 
 export default function PracticeCard() {
-  const apiPath = '/api/items';
   const { userScore, setUserScore, languageID } = useUser();
+  const apiPath = `/api/items/${languageID}/practice`;
   const { array, index, nextIndex, arrayLength, setReload, currentItem } =
-    useArray<Item>(apiPath, String(languageID));
+    useArray<Item>(apiPath, 'GET');
   const {
     playAudio,
     setVolume,

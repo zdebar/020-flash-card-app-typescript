@@ -4,17 +4,17 @@ import {
   resetBlockController,
 } from "../controllers/blocks.controller";
 import {
-  validateLanguageIDBody,
+  validateLanguageIDParams,
   validateUID,
   validateBlockID,
 } from "../middlewares/validation.middleware";
 
 const itemsRouter = express.Router();
 
-itemsRouter.post(
-  "/grammar",
+itemsRouter.get(
+  "/:languageID",
   validateUID,
-  validateLanguageIDBody,
+  validateLanguageIDParams,
   getGrammarListController
 ); // sends list of grammar blocks
 

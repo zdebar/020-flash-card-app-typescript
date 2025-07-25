@@ -6,8 +6,7 @@ import { validationResult } from "express-validator";
 import { resetBlockService } from "../services/block.service";
 
 /**
- * Controller function to retrieve list of grammar blocks.
- *
+ * Controller function to retrieve list of unlocked grammar blocks.
  */
 export async function getGrammarListController(
   req: Request,
@@ -21,7 +20,7 @@ export async function getGrammarListController(
     }
 
     const uid: string = (req as any).user.uid;
-    const { languageID }: { languageID: number } = req.body;
+    const languageID: number = parseInt((req as any).params.languageID, 10);
 
     const data: BlockExplanation[] = await getGrammarListRepository(
       postgresDBPool,
@@ -38,6 +37,9 @@ export async function getGrammarListController(
   }
 }
 
+/**
+ * Resets a specific block for the user. Will erase all corresponding user_items and return updated score.
+ */
 export async function resetBlockController(
   req: Request,
   res: Response,
@@ -59,7 +61,7 @@ export async function resetBlockController(
     );
 
     res.status(200).json({
-      message: "Block resetted successfully.",
+      message: "Block reset successfully.",
       score,
     });
   } catch (err) {

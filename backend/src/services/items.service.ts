@@ -7,10 +7,12 @@ import {
 import {
   getItemsRepository,
   updateUserItemsRepository,
-  updateUserScoreRepository,
-  getScoreRepository,
   getItemInfoRepository,
 } from "../repository/items.repository.postgres";
+import {
+  getScoreRepository,
+  updateUserScoreRepository,
+} from "../repository/user.repository.postgres";
 import { addAudioPathsToWords } from "../utils/update.utils";
 import sortItemsByProgress from "../utils/items.utils";
 

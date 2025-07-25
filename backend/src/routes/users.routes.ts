@@ -16,6 +16,6 @@ usersRouter.delete(
   validateUID,
   validateLanguageIDParams,
   resetUserLanguageController
-); // deletes user language items and sends back updated score
+); // deletes all user_items for given language and sends back updated score
 
 export default usersRouter;

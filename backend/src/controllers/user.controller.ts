@@ -46,7 +46,7 @@ export async function getUserController(
 }
 
 /**
- * Erase all items connnected to given user and language from user_items table. Sends back the updated score.
+ * Resets a given language for the user. Will erase all corresponding user_items and return updated score.
  */
 export async function resetUserLanguageController(
   req: Request,
@@ -69,7 +69,7 @@ export async function resetUserLanguageController(
     );
 
     res.status(200).json({
-      message: "User language restarted and score retrieved successfully.",
+      message: "User language reset and score retrieved successfully.",
       score,
     });
   } catch (err) {

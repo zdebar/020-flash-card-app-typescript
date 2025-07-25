@@ -1,6 +1,6 @@
 import { PostgresClient } from "../types/dataTypes";
 import { UserScore } from "../../../shared/types/dataTypes";
-import { getScoreRepository } from "../repository/items.repository.postgres";
+import { getScoreRepository } from "../repository/user.repository.postgres";
 import { resetBlockRepository } from "../repository/blocks.repository.postgres";
 
 /**

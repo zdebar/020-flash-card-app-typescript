@@ -35,9 +35,9 @@ export interface UserScore {
   languageID: number;
   languageName: string;
   blockCount: number[];
-  itemsCountByLevel: Record<string, number>; // all items by cefr level
-  learnedCountTodayByLevel: Record<string, number>; // items with progress > 5 by cefr level
-  learnedCountByLevel: Record<string, number>; // items with progress > 5 by cefr level
+  itemsCountByLevel: Record<string, number>; // all items by level
+  learnedCountTodayByLevel: Record<string, number>; // items with progress > 5 by level
+  learnedCountByLevel: Record<string, number>; // items with progress > 5 by level
 }
 
 export class UserError extends Error {

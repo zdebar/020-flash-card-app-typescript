@@ -1,6 +1,6 @@
 import { PostgresClient } from "../types/dataTypes";
 import { UserScore, UserSettings } from "../../../shared/types/dataTypes";
-import { getScoreRepository } from "../repository/items.repository.postgres";
+import { getScoreRepository } from "../repository/user.repository.postgres";
 import {
   getUserRepository,
   resetUserLanguageRepository,
@@ -15,13 +15,10 @@ export async function getUserService(
   name: string | null,
   email: string | null
 ): Promise<{ userSettings: UserSettings; userScore: UserScore[] }> {
-  const userSettings: UserSettings = await getUserRepository(
-    db,
-    uid,
-    name,
-    email
-  );
-  const userScore: UserScore[] = await getScoreRepository(db, uid);
+  const [userSettings, userScore] = await Promise.all([
+    getUserRepository(db, uid, name, email),
+    getScoreRepository(db, uid),
+  ]);
   return { userSettings, userScore };
 }
 
