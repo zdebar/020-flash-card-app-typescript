@@ -60,8 +60,8 @@ export async function patchItemsController(
     const {
       items,
       onBlockEnd,
-      languageID,
     }: { items: Item[]; onBlockEnd: boolean; languageID: number } = req.body;
+    const languageID: number = parseInt((req as any).params.languageID, 10);
 
     const score: UserScore[] = await patchItemsService(
       postgresDBPool,

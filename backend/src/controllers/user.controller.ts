@@ -4,7 +4,7 @@ import {
   resetUserLanguageService,
 } from "../services/user.service";
 import { postgresDBPool } from "../config/database.config.postgres";
-import { UserScore, UserSettings } from "../../../shared/types/dataTypes";
+import { UserScore } from "../../../shared/types/dataTypes";
 import { validationResult } from "express-validator";
 
 /**
@@ -29,15 +29,10 @@ export async function getUserController(
       return;
     }
 
-    const {
-      userSettings,
-      userScore,
-    }: { userSettings: UserSettings; userScore: UserScore[] } =
-      await getUserService(postgresDBPool, uid, name, email);
+    const userScore: UserScore[] = await getUserService(postgresDBPool, uid);
 
     res.status(200).json({
       message: "User settings and score retrieved successfully.",
-      userSettings,
       userScore,
     });
   } catch (err) {

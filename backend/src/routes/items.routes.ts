@@ -5,7 +5,6 @@ import {
   getInfoController,
 } from "../controllers/items.controller";
 import {
-  validateLanguageIDBody,
   validateLanguageIDParams,
   validateUID,
   validateItems,
@@ -22,9 +21,9 @@ itemsRouter.get(
   getItemsController
 ); // sends array of items (words) for practice
 itemsRouter.patch(
-  "/",
+  "/:languageID/practice",
   validateUID,
-  validateLanguageIDBody,
+  validateLanguageIDParams,
   validateOnBlockEnd,
   validateItems,
   patchItemsController

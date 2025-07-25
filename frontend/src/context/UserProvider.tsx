@@ -1,10 +1,6 @@
 import { useState, useEffect, ReactNode } from 'react';
 import { UserContext } from './UserContext';
-import {
-  UserScore,
-  UserInfo,
-  UserSettings,
-} from '../../../shared/types/dataTypes';
+import { UserScore, UserInfo } from '../../../shared/types/dataTypes';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../config/firebase.config';
 import { fetchWithAuthAndParse } from '../utils/auth.utils';
@@ -12,7 +8,6 @@ import { UserTheme } from '../../../shared/types/dataTypes';
 
 export function UserProvider({ children }: { children: ReactNode }) {
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
-  const [userSettings, setUserSettings] = useState<UserSettings | null>(null);
   const [userScore, setUserScore] = useState<UserScore[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [languageID, setLanguageID] = useState<number>(
@@ -26,12 +21,10 @@ export function UserProvider({ children }: { children: ReactNode }) {
         try {
           setLoading(true);
           const data = await fetchWithAuthAndParse<{
-            userSettings: UserSettings | null;
             userScore: UserScore[] | null;
           }>(`/api/users`);
 
           const userScore = data?.userScore || null;
-          const userSettings = data?.userSettings || null;
 
           if (auth.currentUser) {
             const { uid, email, displayName, photoURL } = auth.currentUser;
@@ -44,7 +37,6 @@ export function UserProvider({ children }: { children: ReactNode }) {
           }
 
           setUserScore(userScore);
-          setUserSettings(userSettings);
         } catch (error) {
           console.error('Error fetching user preferences:', error);
         } finally {
@@ -53,7 +45,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
       } else {
         setUserInfo(null);
         setUserScore(null);
-        setUserSettings(null);
+
         setLoading(false);
       }
     });
@@ -113,13 +105,11 @@ export function UserProvider({ children }: { children: ReactNode }) {
       value={{
         theme,
         userInfo,
-        userSettings,
         userScore,
         languageID,
         loading,
         setUserInfo,
         setLanguageID,
-        setUserSettings,
         setUserScore,
         setLoading,
         chooseTheme,

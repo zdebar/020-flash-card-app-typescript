@@ -1,38 +1,29 @@
 import { PostgresClient } from "../types/dataTypes";
-import { UserSettings, UserScore } from "../../../shared/types/dataTypes";
-import { QueryResult } from "pg";
+import { UserScore } from "../../../shared/types/dataTypes";
 import { withDbClient } from "../utils/database.utils";
+import { QueryResult } from "pg";
 
 /**
  * Finds User by userUid. Creates a new user if not found.
  */
-export async function getUserRepository(
+export async function insertUserRepository(
   db: PostgresClient,
-  uid: string,
-  name: string | null,
-  email: string | null
-): Promise<UserSettings> {
+  uid: string
+): Promise<void> {
   try {
-    return withDbClient(db, async (client) => {
-      const user: QueryResult<UserSettings> = await client.query(
-        `
-        INSERT INTO users (uid, name, email)
-        VALUES ($1, $2, $3)
-        ON CONFLICT (uid) DO UPDATE
-        SET name = EXCLUDED.name,
-            email = EXCLUDED.email
-        RETURNING id;
+    const user: QueryResult<any> = await db.query(
+      `
+        INSERT INTO users (uid)
+        VALUES ($1)
+        ON CONFLICT (uid) DO NOTHING;
         `,
-        [uid, name, email]
-      );
-
-      return user.rows[0];
-    });
+      [uid]
+    );
   } catch (error) {
     throw new Error(
       `Error in getUserRepository: ${
         (error as any).message
-      } | db type: ${typeof db} | uid: ${uid} | name: ${name} | email: ${email}`
+      } | db type: ${typeof db} | uid: ${uid} `
     );
   }
 }
@@ -48,7 +39,7 @@ export async function resetUserLanguageRepository(
 ): Promise<void> {
   try {
     await withDbClient(db, async (client) => {
-      const user: QueryResult<UserSettings> = await client.query(
+      await client.query(
         `
         WITH user_cte AS (
           SELECT id AS user_id FROM users WHERE uid = $1

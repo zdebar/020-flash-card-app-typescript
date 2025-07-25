@@ -94,7 +94,6 @@ export default function PracticeCard() {
           body: JSON.stringify({
             items: updatedArray,
             onBlockEnd,
-            languageID,
           }),
         });
 
@@ -104,7 +103,7 @@ export default function PracticeCard() {
         console.error('Error posting words:', error);
       }
     },
-    [apiPath, setUserScore, array, languageID]
+    [apiPath, setUserScore, array]
   );
 
   // Update userProgress, if end of array reached, patch items

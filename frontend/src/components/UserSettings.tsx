@@ -8,14 +8,8 @@ import ConfirmModal from './common/ConfirmModal';
 import ButtonReset from './common/ButtonReset';
 
 export default function UserSettings() {
-  const {
-    setUserInfo,
-    setUserSettings,
-    setUserScore,
-    setLoading,
-    userInfo,
-    languageID,
-  } = useUser();
+  const { setUserInfo, setUserScore, setLoading, userInfo, languageID } =
+    useUser();
   const navigate = useNavigate();
   const [isLogoutVisible, setLogoutVisible] = useState(false);
 
@@ -26,7 +20,6 @@ export default function UserSettings() {
       await signOut(auth);
       setUserInfo(null);
       setUserScore(null);
-      setUserSettings(null);
       setLoading(false);
       navigate('/');
     } catch (error) {

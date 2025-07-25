@@ -17,11 +17,6 @@ export interface BlockExplanation {
   blockExplanation: string;
 }
 
-// User Types
-export interface UserSettings {
-  id: number;
-}
-
 export type UserTheme = "light" | "dark" | "system";
 
 export interface UserInfo {
