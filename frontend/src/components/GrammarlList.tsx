@@ -19,7 +19,7 @@ export default function GrammarList() {
   return (
     <>
       {!showExplanation ? (
-        <div className="max-w-card flex h-full flex-col gap-1 overflow-y-auto">
+        <div className="max-w-card gap-tiny flex h-full flex-col overflow-y-auto">
           {array.map((block, idx) => (
             <Button
               key={idx}

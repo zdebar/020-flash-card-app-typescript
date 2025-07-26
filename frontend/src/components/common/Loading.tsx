@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-export default function Loading({ text = 'Loading...' }: { text?: string }) {
+export default function Loading({ text = 'Načítání...' }: { text?: string }) {
   const [show, setShow] = useState(false);
 
   useEffect(() => {

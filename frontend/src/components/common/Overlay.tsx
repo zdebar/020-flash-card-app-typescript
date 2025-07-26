@@ -1,11 +1,9 @@
 interface OverlayProps {
   onClose: () => void;
-  children?: React.ReactNode; // Accept children components
+  children?: React.ReactNode;
 }
 
 export default function Overlay({ onClose, children }: OverlayProps) {
-  const isDarkMode = document.documentElement.classList.contains('dark');
-
   const handleOverlayClick = (event: React.MouseEvent) => {
     event.stopPropagation(); // Prevent clicks from propagating to elements below
     onClose();
@@ -13,12 +11,9 @@ export default function Overlay({ onClose, children }: OverlayProps) {
 
   return (
     <div
-      className="font-display fixed inset-0 z-10 text-xl"
+      className="font-display color-overlay fixed inset-0 z-10"
       role="dialog"
       style={{
-        backgroundColor: !isDarkMode
-          ? 'rgba(255, 255, 255, 0.4)'
-          : 'rgba(17, 24, 39, 0.6)',
         pointerEvents: 'all', // Ensure overlay captures all interactions
       }}
       aria-modal="true"

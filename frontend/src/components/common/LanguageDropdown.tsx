@@ -1,11 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useUser } from '../../hooks/useUser';
 import config from '../../config/config';
+import Label from './Label';
 
-const LanguageDropdown = () => {
+export default function LanguageDropdown() {
   const { setLanguageID } = useUser();
   const [selectedLanguage, setSelectedLanguage] = useState<number>(
-    parseInt(localStorage.getItem('selectedLanguageID') || '1', 10)
+    parseInt(
+      localStorage.getItem('selectedLanguageID') ||
+        String(config.defaultLanguageID),
+      10
+    )
   );
 
   const handleLanguageChange = (
@@ -22,15 +27,13 @@ const LanguageDropdown = () => {
   }, [selectedLanguage, setLanguageID]);
 
   return (
-    <div className="flex items-center gap-4">
-      <label htmlFor="language-select" className="w-40">
-        Učený jazyk:
-      </label>
+    <div className="shape-settings flex items-center">
+      <Label text="Učený jazyk:" />
       <select
         id="language-select"
         value={selectedLanguage}
         onChange={handleLanguageChange}
-        className="button-rectangular h-12 bg-white p-2 dark:bg-gray-900 dark:text-white"
+        className="shape-settings color-dropdown"
         aria-label="Výběr jazyka"
       >
         {config.languages.map((language) => (
@@ -41,6 +44,4 @@ const LanguageDropdown = () => {
       </select>
     </div>
   );
-};
-
-export default LanguageDropdown;
+}

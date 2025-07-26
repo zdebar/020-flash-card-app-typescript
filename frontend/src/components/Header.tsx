@@ -2,10 +2,10 @@ import { UserIcon, HomeIcon, AcademicCapIcon } from './common/Icons';
 import { useUser } from '../hooks/useUser';
 import ButtonLink from './common/ButtonLink';
 import { useLocation } from 'react-router-dom';
-// import config from '../config/config';
+import config from '../config/config';
 
 export default function Header() {
-  const { userInfo } = useUser();
+  const { userInfo, languageID } = useUser();
   const location = useLocation();
 
   function getSelectedClass(pathname: string, targetPath: string): string {
@@ -27,7 +27,7 @@ export default function Header() {
         >
           <HomeIcon />
         </ButtonLink>
-        {/* <ButtonLink
+        <ButtonLink
           className={`button-round ${getSelectedClass(location.pathname, '/userLanguages')} color-header pb-1 text-2xl font-bold`}
           to="/userLanguages"
           aria-label="Uživatelské jazyky"
@@ -35,7 +35,7 @@ export default function Header() {
           buttonColor="color-header"
         >
           {config.languages.find((lang) => lang.id === languageID)?.code}
-        </ButtonLink> */}
+        </ButtonLink>
       </nav>
       <nav
         className="sideheader m-4 flex gap-4"

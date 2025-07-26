@@ -11,7 +11,7 @@ import GrammarList from './components/GrammarlList';
 import Footer from './components/Footer';
 import UserLanguages from './components/UserLanguages';
 import UserOverview from './components/UserOverview';
-import WordList from './components/wordList';
+// import WordList from './components/wordList';
 
 export default function App() {
   const { userInfo } = useUser();
@@ -55,7 +55,7 @@ export default function App() {
             <Route path="/userLanguages" element={<UserLanguages />} />
             <Route path="/userOverview" element={<UserOverview />} />
             <Route path="/grammarList" element={<GrammarList />} />
-            <Route path="/wordList" element={<WordList />} />
+            {/* <Route path="/wordList" element={<WordList />} /> */}
           </Routes>
         </div>
         {showFooterRoutes.includes(location.pathname) && <Footer />}

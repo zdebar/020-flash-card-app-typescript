@@ -3,7 +3,6 @@ import { CloseIcon, NextIcon, PreviousIcon } from './common/Icons';
 import Button from './common/Button';
 import type { BlockExplanation } from '../../../shared/types/dataTypes';
 import ButtonReset from './common/ButtonReset';
-
 export default function InfoCard({
   block,
   setVisibility,
@@ -22,15 +21,15 @@ export default function InfoCard({
   canReset?: boolean;
 }) {
   return (
-    <div className="card flex h-full flex-col gap-1">
-      <div className="button-rectangular flex gap-1">
+    <div className="card">
+      <div className="button-rectangular gap-tiny flex">
         <ButtonReset
-          canReset={canReset}
+          disabled={!canReset}
           apiPath={`/api/blocks/${block.blockId}`}
           modalMessage="Opravdu chcete restartovat blok? Veškerý pokrok souvisejících položek bude ztracen."
-          className="flex-10 justify-start"
+          className="flex items-center justify-start"
         >
-          <div className="flex items-center gap-2">
+          <div className="gap-small flex items-center">
             <h2
               style={{
                 display: 'inline-block',
@@ -50,7 +49,7 @@ export default function InfoCard({
         <Button
           name="close"
           type="button"
-          className="button-rectangular flex-2"
+          className="button-rectangular w-13 flex-shrink-0 flex-grow-0"
           onClick={() => setVisibility(false)}
           aria-label="Zavřít vysvětlení"
         >

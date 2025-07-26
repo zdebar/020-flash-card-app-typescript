@@ -17,20 +17,21 @@ export default function ButtonLink({
   to,
   ...props
 }: ButtonLinkProps) {
-  const buttonClass = `flex items-center justify-center ${className} ${
-    disabled ? 'color-disabled pointer-events-none' : buttonColor
-  }`;
+  const buttonClass = `flex items-center justify-center ${className} `;
 
   if (disabled) {
     return (
-      <span className={buttonClass} aria-disabled="true">
+      <span
+        className={`${buttonClass} header-disabled pointer-events-none`}
+        aria-disabled="true"
+      >
         {children}
       </span>
     );
   }
 
   return (
-    <Link to={to} className={buttonClass} {...props}>
+    <Link to={to} className={`${buttonClass} ${buttonColor}`} {...props}>
       {children}
     </Link>
   );

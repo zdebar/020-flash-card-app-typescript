@@ -1,6 +1,7 @@
 import React from 'react';
 import { useUser } from '../../hooks/useUser';
 import { UserTheme } from '../../../../shared/types/dataTypes';
+import Label from './Label';
 
 const themes: UserTheme[] = ['light', 'dark', 'system'];
 
@@ -13,15 +14,13 @@ export default function ThemeDropdown({ className }: { className?: string }) {
   };
 
   return (
-    <div className={`flex items-center ${className}`}>
-      <label htmlFor="theme-select" className="w-30">
-        Barevnost:
-      </label>
+    <div className={`shape-settings flex items-center ${className}`}>
+      <Label text="Barevnost:" />
       <select
         id="theme-select"
         value={theme}
         onChange={handleChange}
-        className="button-rectangular bg-white dark:bg-gray-900 dark:text-white"
+        className="color-dropdown shape-settings"
         aria-label="Změna motivu"
       >
         {themes.map((t) => (

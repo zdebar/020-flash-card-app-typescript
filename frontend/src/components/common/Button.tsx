@@ -1,7 +1,7 @@
 import { ButtonHTMLAttributes, ReactNode } from 'react';
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  children?: ReactNode;
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  children: ReactNode;
   buttonColor?: string;
   className?: string;
 }
@@ -12,10 +12,11 @@ export default function Button({
   className = '',
   ...props
 }: ButtonProps) {
-  const buttonClass = `flex items-center justify-center ${className} ${props.disabled ? 'color-disabled' : buttonColor}`;
-
   return (
-    <button className={buttonClass} {...props}>
+    <button
+      className={`${className} ${props.disabled ? 'color-disabled' : buttonColor}`}
+      {...props}
+    >
       {children}
     </button>
   );

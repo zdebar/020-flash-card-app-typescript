@@ -1,17 +1,15 @@
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../hooks/useUser';
-import { useState } from 'react';
 import { getAuth, signOut } from 'firebase/auth';
-import Button from './common/Button';
 import ThemeDropdown from './common/ThemeDropdown';
-import ConfirmModal from './common/ConfirmModal';
 import ButtonReset from './common/ButtonReset';
+import ButtonWithModal from './common/ButtonWithModal';
+import SettingProperty from './common/SettingProperty';
 
 export default function UserSettings() {
   const { setUserInfo, setUserScore, setLoading, userInfo, languageID } =
     useUser();
   const navigate = useNavigate();
-  const [isLogoutVisible, setLogoutVisible] = useState(false);
 
   const handleLogout = async () => {
     const auth = getAuth();
@@ -28,36 +26,29 @@ export default function UserSettings() {
   };
 
   return (
-    <div className="max-w-card flex flex-col gap-2">
-      <p className="px-2">
-        <span className="inline-block w-22">Uživatel:</span> {userInfo?.name}
-      </p>
-      <ThemeDropdown className="px-2" />
-      <Button
-        name="logout"
-        onClick={() => setLogoutVisible(true)}
-        className="button-rectangular"
-      >
-        Logout
-      </Button>
-      <ConfirmModal
-        isVisible={isLogoutVisible}
-        text="Opravdu se chcete odhlásit?"
-        className="mt-14"
-        onConfirm={() => {
-          setLogoutVisible(false);
-          handleLogout();
-        }}
-        onCancel={() => setLogoutVisible(false)}
+    <div className="max-w-card gap-small flex flex-col">
+      <SettingProperty
+        label="Uživatel:"
+        value={userInfo?.name}
+        className="px-2"
       />
+      <ThemeDropdown className="px-2" />
       <ButtonReset
-        canReset={true}
         apiPath={`/api/users/language/${languageID}`}
         modalMessage="Opravdu chcete resetovat? Veškerý pokrok bude ztracen."
         className="justify-center"
       >
-        Reset
+        Reset progres
       </ButtonReset>
+      <ButtonWithModal
+        modalMessage="Opravdu se chcete odhlásit?"
+        onClick={handleLogout}
+        successMessage="odhlášení se zdařilo."
+        failMessage="odhlášení se nezdařilo."
+        className="justify-center"
+      >
+        Logout
+      </ButtonWithModal>
     </div>
   );
 }

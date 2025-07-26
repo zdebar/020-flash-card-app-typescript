@@ -13,7 +13,7 @@ export default function LevelBar({
   const levelSort = config.levelSort;
 
   return (
-    <div className="flex w-60 flex-col items-start justify-center">
+    <div className="w-60 flex-col">
       {Object.keys(learned)
         .filter((key) => key !== 'none')
         .sort((a, b) => levelSort.indexOf(a) - levelSort.indexOf(b))

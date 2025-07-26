@@ -12,15 +12,18 @@ export default function UserDashboard() {
 
   return (
     <div className="card">
-      <ButtonLink to="/practice" className="button-rectangular">
+      <ButtonLink to="/practice" className="button-rectangular flex-shrink-0">
         Procvičovat
       </ButtonLink>
-      <ButtonLink to="/userOverview " className="button-rectangular">
+      <ButtonLink
+        to="/userOverview "
+        className="button-rectangular flex-shrink-0"
+      >
         Přehled
       </ButtonLink>
 
       <div
-        className={`color-card shape-rectangular flex flex-1 flex-col items-center justify-center pb-2`}
+        className={`color-card shape-rectangular flex flex-col items-center justify-center pb-2`}
       >
         {currLanguage && (
           <LevelBar
@@ -36,7 +39,7 @@ export default function UserDashboard() {
           currLanguage.blockCount.map((item, idx) => (
             <div
               key={idx}
-              className="flex w-60 items-center justify-start gap-2 pr-8"
+              className="flex w-60 items-center justify-start gap-2"
             >
               <p className="w-8 text-right text-xs">{item}</p>
               <ProgressBar progress={item} />

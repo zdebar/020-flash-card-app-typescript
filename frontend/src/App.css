@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Nova+Round&display=swap"');
+@import url('https://fonts.googleapis.com/css2?family=Nova+Round&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Mansalva:wght@400;700&display=swap');
 @import 'tailwindcss';
 @custom-variant dark (&:where(.dark, .dark *));
@@ -15,12 +15,18 @@
   --color-blue-4: #1c6676;
   --color-blue-5: #113c61;
   --color-blue-6: #0d2c47;
+  --color-overlay-light: rgba(255, 255, 255, 0.4);
+  --color-overlay-dark: rgba(17, 24, 39, 0.6);
 }
 
 @layer base {
-  Button,
-  Link {
+  button,
+  link {
     @apply active:shadow-none;
+  }
+
+  button {
+    @apply flex items-center justify-center;
   }
 
   h1,
@@ -47,6 +53,10 @@
     @apply bg-[var(--color-background-light)] dark:bg-[var(--color-background-dark)];
   }
 
+  .color-overlay {
+    @apply bg-[var(--color-overlay-light)] dark:bg-[var(--color-overlay-dark)];
+  }
+
   /** Header Colors */
   .color-header {
     @apply text-black hover:bg-white dark:text-white dark:hover:text-black;
@@ -61,6 +71,11 @@
     @apply bg-gray-200 dark:bg-gray-700;
   }
 
+  /** Settings Colors */
+  .color-dropdown {
+    @apply bg-white dark:bg-gray-900 dark:text-white;
+  }
+
   /** Button Colors */
   .color-primary {
     @apply font-display bg-[var(--color-blue-3)] text-white shadow-[2px_2px_2px_rgba(0,0,0,0.35)] hover:bg-[var(--color-blue-4)] hover:text-white dark:bg-[var(--color-blue-4)] dark:text-white dark:hover:bg-[var(--color-blue-3)];
@@ -68,6 +83,10 @@
 
   .color-disabled {
     @apply bg-white text-black shadow-none hover:bg-white dark:bg-gray-800 dark:text-white dark:hover:bg-gray-800;
+  }
+
+  .header-disabled {
+    @apply text-gray-600;
   }
 
   .color-selected {
@@ -96,8 +115,13 @@
   }
 
   /** Sizes */
+
   .shape-rectangular {
     @apply h-full w-full;
+  }
+
+  .shape-settings {
+    @apply h-10 w-full;
   }
 
   .button-rectangular {
@@ -120,6 +144,10 @@
     @apply w-full max-w-[360px];
   }
 
+  .w-card {
+    @apply w-full max-w-[360px] min-w-[320px];
+  }
+
   .min-card {
     @apply min-h-[320px] min-w-[320px];
   }
@@ -132,9 +160,21 @@
     @apply max-w-[900px];
   }
 
-  /** Paddings, Margins, Gaps */
+  /** Paddings, Margins, Gaps etc. */
+  .centered {
+    @apply flex items-center justify-center;
+  }
+
   .p-big {
     @apply p-8;
+  }
+
+  .gap-tiny {
+    @apply gap-1;
+  }
+
+  .gap-small {
+    @apply gap-2;
   }
 }
 

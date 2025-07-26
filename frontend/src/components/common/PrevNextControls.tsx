@@ -13,7 +13,7 @@ export default function PrevNextControls({
   arrayLength: number;
 }) {
   return (
-    <div className="flex gap-1" role="group" aria-label="Navigace">
+    <div className="gap-tiny flex" role="group" aria-label="Navigace">
       <Button
         name="previous"
         type="button"

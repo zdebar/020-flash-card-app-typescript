@@ -16,8 +16,11 @@ export default function ConfirmModal({
   if (!isVisible) return null;
 
   return (
-    <div className={`max-w-card color-modal absolute ${className}`}>
-      <div className="p-6 text-center">
+    <>
+      {/* Modal */}
+      <div
+        className={`w-card color-disabled absolute z-50 p-6 text-center ${className}`}
+      >
         <h2 className="mb-6 text-lg font-bold">{text}</h2>
         <div className="flex justify-center gap-4">
           <button
@@ -34,6 +37,9 @@ export default function ConfirmModal({
           </button>
         </div>
       </div>
-    </div>
+
+      {/* Overlay */}
+      <div className="bg-opacity-50 fixed inset-0 z-40"></div>
+    </>
   );
 }
