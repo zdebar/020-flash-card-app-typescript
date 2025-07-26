@@ -8,6 +8,7 @@ import {
   getItemsRepository,
   updateUserItemsRepository,
   getItemInfoRepository,
+  resetItemRepository,
 } from "../repository/items.repository.postgres";
 import {
   getScoreRepository,
@@ -60,4 +61,16 @@ export async function getItemInfoService(
   }
 
   return itemInfo;
+}
+
+/**
+ * Updates the user's word progress in the PostgreSQL database and returns the updated score.
+ */
+export async function resetItemService(
+  db: PostgresClient,
+  uid: string,
+  itemID: number
+): Promise<UserScore[]> {
+  await resetItemRepository(db, uid, itemID);
+  return await getScoreRepository(db, uid);
 }

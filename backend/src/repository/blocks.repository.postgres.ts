@@ -62,6 +62,9 @@ export async function getGrammarListRepository(
   }
 }
 
+/**
+ * Resets a specific block for a user, removing all user_items associated with that block.
+ */
 export async function resetBlockRepository(
   db: PostgresClient,
   uid: string,

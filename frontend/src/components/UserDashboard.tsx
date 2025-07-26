@@ -21,18 +21,22 @@ export default function UserDashboard() {
       >
         Přehled
       </ButtonLink>
-
       <div
-        className={`color-card shape-rectangular flex flex-col items-center justify-center pb-2`}
+        className={`color-card shape-rectangular flex flex-col items-center justify-center pb-1`}
       >
         {currLanguage && (
-          <LevelBar
-            learned={currLanguage?.learnedCountByLevel ?? {}}
-            learnedToday={currLanguage?.learnedCountTodayByLevel ?? {}}
-            levels={currLanguage?.itemsCountByLevel ?? {}}
-          />
+          <>
+            <p className="font-Mansalva py-2 pr-2 text-sm">
+              pokrok na posledních 2 úrovních
+            </p>
+            <LevelBar
+              learned={currLanguage?.learnedCountByLevel ?? {}}
+              learnedToday={currLanguage?.learnedCountTodayByLevel ?? {}}
+              levels={currLanguage?.itemsCountByLevel ?? {}}
+            />
+          </>
         )}
-        <p className="font-Mansalva py-2 text-sm">
+        <p className="font-Mansalva py-2 pr-2 text-sm">
           cvičební bloky za posledních 5 dní
         </p>
         {currLanguage &&

@@ -41,12 +41,14 @@ export default function ButtonWithModal({
   return (
     <div className="w-full">
       <Button
-        className={`button-rectangular centered ${className}`}
+        className={`button-rectangular flex items-center justify-center ${className}`}
         onClick={() => setModalVisible(true)}
         disabled={props.disabled || isLoading}
       >
         {isMessage ? (
-          <p className="color-error text-center">{isMessage}</p>
+          <p className="color-notice font-Mansalva w-full text-center">
+            {isMessage}
+          </p>
         ) : (
           <div className="w-full justify-start">{props.children}</div>
         )}

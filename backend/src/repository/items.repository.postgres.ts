@@ -193,3 +193,103 @@ export async function getItemInfoRepository(
     );
   }
 }
+
+/**
+ * Return required items for the user from PostgreSQL database.
+ */
+export async function getUserItemsListRepository(
+  db: PostgresClient,
+  uid: string,
+  languageID: number
+): Promise<Item[]> {
+  try {
+    const numWords: number = config.round;
+
+    const runQuery = async (): Promise<Item[]> => {
+      const query = `
+        WITH user_cte AS (
+          SELECT id AS user_id 
+          FROM users 
+          WHERE uid = $1
+        ),
+        has_info_cte AS (
+          SELECT bi.item_id
+          FROM block_items bi
+          JOIN blocks b ON bi.block_id = b.id
+          WHERE b.category_id = 1
+          AND b.language_id = $2
+        )
+        SELECT
+          i.id,
+          i.czech,
+          i.translation,
+          i.pronunciation,
+          i.audio,
+          COALESCE(ui.progress, 0) AS progress,
+          EXISTS (
+            SELECT 1
+            FROM has_info_cte
+            WHERE has_info_cte.item_id = i.id
+          ) AS "hasContextInfo",
+          EXISTS (
+            SELECT 1
+            FROM has_info_cte
+            WHERE has_info_cte.item_id = i.id AND i.sequence = 1 AND (ui.progress = 0 OR ui.progress IS NULL)
+          ) AS "showContextInfo"
+        FROM items i 
+        JOIN user_items ui ON i.id = ui.item_id AND ui.user_id = (SELECT user_id FROM user_cte)
+        LEFT JOIN block_items bi ON i.id = bi.item_id
+        WHERE bi.item_id IS NULL 
+          AND i.language_id = $2
+        ORDER BY
+          i.sequence ASC;
+      `;
+
+      const res = await withDbClient(db, async (client) => {
+        return await client.query(query, [uid, languageID]);
+      });
+
+      return res.rows;
+    };
+
+    return await runQuery();
+  } catch (error) {
+    throw new Error(
+      `Error in getUserItemsListRepository: ${
+        (error as any).message
+      } | db type: ${typeof db} | uid: ${uid} | languageID: ${languageID}`
+    );
+  }
+}
+
+/**
+ * Resets a specific item for a user, removing it from user_items.
+ */
+export async function resetItemRepository(
+  db: PostgresClient,
+  uid: string,
+  itemID: number
+): Promise<void> {
+  try {
+    const query = `
+      WITH user_cte AS (
+        SELECT id AS user_id 
+        FROM users 
+        WHERE uid = $1
+      )
+      DELETE FROM user_items
+      WHERE user_items.item_id = $2
+        AND user_items.user_id = (SELECT user_id FROM user_cte);
+    `;
+
+    await withDbClient(db, async (client) => {
+      await client.query(query, [uid, itemID]);
+    });
+  } catch (error) {
+    throw new Error(
+      `Error in getGrammarListRepository: ${
+        (error as any).message
+      } | db type: ${typeof db} | uid: ${uid} | itemID: ${itemID}`
+    );
+  }
+}

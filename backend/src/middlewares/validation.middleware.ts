@@ -58,11 +58,11 @@ export const validateItems = [
 
 // Middleware for validating itemID
 export const validateItemID = [
-  param("itemId")
+  param("itemID")
     .isInt({ min: 1 })
     .withMessage(
       (value) =>
-        `Invalid itemId provided: '${value}'. It must be a positive integer.`
+        `Invalid itemID provided: '${value}'. It must be a positive integer.`
     )
     .toInt(),
 ];

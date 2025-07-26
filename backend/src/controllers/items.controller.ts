@@ -9,7 +9,9 @@ import {
   getItemsService,
   patchItemsService,
   getItemInfoService,
+  resetItemService,
 } from "../services/items.service";
+import { getUserItemsListRepository } from "../repository/items.repository.postgres";
 import { validationResult } from "express-validator";
 
 /**
@@ -105,6 +107,72 @@ export async function getInfoController(
     res.status(200).json({
       message: "Item info retrieved successfully.",
       data,
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * Controller function to retrieve user-specific practice words.
+ */
+export async function getUserItemsListController(
+  req: Request,
+  res: Response,
+  next: Function
+): Promise<void> {
+  try {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      throw new Error(`Validation errors: ${JSON.stringify(errors.array())}`);
+    }
+
+    const uid: string = (req as any).user.uid;
+    const languageID: number = parseInt((req as any).params.languageID, 10);
+
+    const data: Item[] = await getUserItemsListRepository(
+      postgresDBPool,
+      uid,
+      languageID
+    );
+
+    res.status(200).json({
+      message: "User words retrieved successfully.",
+      data,
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * Controller function to retrieve user-specific practice words.
+ */
+export async function resetItemController(
+  req: Request,
+  res: Response,
+  next: Function
+): Promise<void> {
+  try {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      throw new Error(`Validation errors: ${JSON.stringify(errors.array())}`);
+    }
+
+    const uid: string = (req as any).user.uid;
+    const itemID: number = parseInt((req as any).params.itemID, 10);
+
+    const score: UserScore[] = await resetItemService(
+      postgresDBPool,
+      uid,
+      itemID
+    );
+
+    res.status(200).json({
+      message: "User words retrieved successfully.",
+      score,
     });
   } catch (err) {
     next(err);

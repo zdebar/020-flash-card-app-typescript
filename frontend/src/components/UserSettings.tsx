@@ -26,7 +26,7 @@ export default function UserSettings() {
   };
 
   return (
-    <div className="max-w-card gap-small flex flex-col">
+    <div className="max-w-card gap-tiny flex flex-col">
       <SettingProperty
         label="Uživatel:"
         value={userInfo?.name}
