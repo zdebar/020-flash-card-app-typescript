@@ -20,9 +20,6 @@
 }
 
 @layer utilities {
-  .test {
-    @apply bg-white text-black shadow-none hover:bg-white dark:bg-gray-800 dark:text-white dark:hover:bg-gray-800;
-  }
 }
 
 @layer base {
@@ -38,10 +35,6 @@
 
   button {
     @apply flex items-center justify-center;
-  }
-
-  button:disabled {
-    @apply bg-amber-400 text-4xl text-amber-200;
   }
 
   h1,
