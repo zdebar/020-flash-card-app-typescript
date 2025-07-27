@@ -22,7 +22,7 @@ export default function ButtonLink({
   if (disabled) {
     return (
       <span
-        className={`${buttonClass} header-disabled pointer-events-none`}
+        className={`${buttonClass} color-header-disabled pointer-events-none`}
         aria-disabled="true"
       >
         {children}

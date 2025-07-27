@@ -15,6 +15,7 @@ export async function getGrammarListController(
 ): Promise<void> {
   try {
     const errors = validationResult(req);
+
     if (!errors.isEmpty()) {
       throw new Error(`Validation errors: ${JSON.stringify(errors.array())}`);
     }

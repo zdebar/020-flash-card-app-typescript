@@ -19,7 +19,7 @@ export default function ConfirmModal({
     <>
       {/* Modal */}
       <div
-        className={`w-card color-disabled fixed top-2/5 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2 transform p-6 text-center ${className}`}
+        className={`w-card color-disabled fixed top-2/5 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2 transform border-2 border-white p-6 text-center ${className}`}
       >
         <h2 className="mb-6 text-lg font-bold">{text}</h2>
         <div className="flex justify-center gap-4">

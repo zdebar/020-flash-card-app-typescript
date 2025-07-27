@@ -20,7 +20,7 @@ import { usePatchOnUnmount } from '../hooks/usePatchOnUnmount';
 import { fetchWithAuthAndParse } from '../utils/auth.utils';
 import { useUser } from '../hooks/useUser';
 import { useArray } from '../hooks/useArray';
-import ContextCard from './ContextCard';
+import ContextInfoCard from './ContextCard';
 import Loading from './common/Loading';
 import { getErrorMessage } from '../utils/error.utils';
 import { alternateDirection } from '../utils/practice.utils';
@@ -188,7 +188,7 @@ export default function PracticeCard() {
     <>
       {/* Main content */}
       {infoVisibility ? (
-        <ContextCard
+        <ContextInfoCard
           itemId={currentItem?.id}
           setVisibility={setInfoVisibility}
         />
@@ -235,12 +235,12 @@ export default function PracticeCard() {
                     aria-label="Nastavit hlasitost"
                     disabled={noAudio}
                   >
+                    <VolumeIcon />
                     <GuideHint
                       visibility={firstOverlay}
                       text="hlasitost"
-                      style={{ left: '-10px' }}
+                      style={{ left: '-10px', top: '3px' }}
                     />
-                    <VolumeIcon />
                   </button>
                   {showVolumeSlider && (
                     <input

@@ -15,29 +15,6 @@ export function saveAudioToUseRef(
 }
 
 /**
- * Plays audio from the useRef. If the audio is not found, it logs an error.
- */
-export function playAudioFromUseRef(
-  audioCache: Map<string, HTMLAudioElement>,
-  audioPath: string | null
-) {
-  if (!audioPath) {
-    return;
-  }
-
-  const audio = audioCache.get(audioPath);
-
-  if (audio) {
-    audio.currentTime = 0;
-    audio.play().catch((error) => {
-      console.error('Error playing audio:', error);
-    });
-  } else {
-    console.error('Audio file not preloaded:', audioPath);
-  }
-}
-
-/**
  * Fetches the audio files for the words and caches them in the browser's cache storage and in provided useRef.
  */
 export async function fetchAndCacheAudioFiles(
@@ -81,7 +58,7 @@ export async function fetchAndCacheAudioFiles(
 }
 
 /**
- * Clears the audio cache in the browser's cache storage.
+ * Clears the audio cache in the browser's cache storage. NOT USED IN PRODUCTION.
  */
 export async function clearAudioCache() {
   await caches.delete('audio-cache');

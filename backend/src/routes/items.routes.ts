@@ -17,11 +17,17 @@ import {
 const itemsRouter = express.Router();
 
 itemsRouter.get(
+  "/:languageID/list",
+  validateLanguageIDParams,
+  getUserItemsListController
+); // sends list of all user_items for the given language
+
+itemsRouter.get(
   "/:languageID/practice",
   validateUID,
   validateLanguageIDParams,
   getItemsController
-); // sends array of items (words) for practice
+); // sends Items[] for practice
 
 itemsRouter.patch(
   "/:languageID/practice",
@@ -30,16 +36,10 @@ itemsRouter.patch(
   validateOnBlockEnd,
   validateItems,
   patchItemsController
-); // updates user items (words), sends user score
+); // updates user_items, sends UserScore
 
-itemsRouter.get("/:itemID/info", validateItemID, getInfoController); // sends info relevant to the given item
+itemsRouter.get("/:itemID/info", validateItemID, getInfoController); // sends item context info
 
-itemsRouter.delete("/:itemID/reset", validateItemID, resetItemController); // resets progres for the given item
-
-itemsRouter.get(
-  "/:languageID/list",
-  validateLanguageIDParams,
-  getUserItemsListController
-); // sends grammar info for the given item
+itemsRouter.delete("/:itemID/reset", validateItemID, resetItemController); // resets progress for the given item
 
 export default itemsRouter;

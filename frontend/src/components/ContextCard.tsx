@@ -4,7 +4,7 @@ import Loading from './common/Loading.js';
 import type { BlockExplanation } from '../../../shared/types/dataTypes.js';
 import InfoCard from './InfoCard.js';
 
-export default function ContextCard({
+export default function ContextInfoCard({
   itemId,
   setVisibility,
 }: {

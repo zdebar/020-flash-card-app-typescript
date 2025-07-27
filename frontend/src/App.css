@@ -19,7 +19,18 @@
   --color-overlay-dark: rgba(17, 24, 39, 0.6);
 }
 
+@layer utilities {
+  .test {
+    @apply bg-white text-black shadow-none hover:bg-white dark:bg-gray-800 dark:text-white dark:hover:bg-gray-800;
+  }
+}
+
 @layer base {
+  html {
+    /* font-size: 0.9375rem; */
+    font-size: 15px; /* 15px is the new base font size */
+  }
+
   button,
   link {
     @apply active:shadow-none;
@@ -27,6 +38,10 @@
 
   button {
     @apply flex items-center justify-center;
+  }
+
+  button:disabled {
+    @apply bg-amber-400 text-4xl text-amber-200;
   }
 
   h1,
@@ -85,7 +100,7 @@
     @apply bg-white text-black shadow-none hover:bg-white dark:bg-gray-800 dark:text-white dark:hover:bg-gray-800;
   }
 
-  .header-disabled {
+  .color-header-disabled {
     @apply text-gray-600;
   }
 
@@ -121,11 +136,11 @@
   }
 
   .shape-settings {
-    @apply h-10 w-full;
+    @apply h-12 w-full;
   }
 
   .button-rectangular {
-    @apply h-13 w-full;
+    @apply h-12 w-full;
   }
 
   .button-round {

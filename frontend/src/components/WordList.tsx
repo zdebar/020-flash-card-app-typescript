@@ -86,7 +86,10 @@ export default function WordSearch() {
               modalMessage={`Opravdu chcete resetovat slovo "${item[displayField]}"?`}
               className="button-rectangular flex h-8 justify-start px-2"
             >
-              {item[displayField]}
+              <div className="flex w-full justify-between px-8">
+                <span>{item.czech}</span>
+                <span>{item.translation}</span>
+              </div>
             </ButtonReset>
           ))}
         </div>

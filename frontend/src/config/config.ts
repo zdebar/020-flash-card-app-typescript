@@ -3,7 +3,6 @@ const config = {
   plusProgress: 1,
   minusProgress: -2,
   skipProgress: 100,
-  blockFillSize: 5,
   colors: [
     'bg-[#6FBBCF]', // 1–5
     'bg-[#2E9AB0]', // 6–10
