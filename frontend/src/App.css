@@ -129,11 +129,11 @@
   }
 
   .shape-settings {
-    @apply h-12 w-full;
+    @apply h-13 w-full;
   }
 
   .button-rectangular {
-    @apply h-12 w-full;
+    @apply h-13 w-full;
   }
 
   .button-round {
