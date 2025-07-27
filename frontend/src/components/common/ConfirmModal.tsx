@@ -1,3 +1,5 @@
+import Button from './Button';
+
 interface ConfirmModalProps {
   isVisible: boolean;
   text?: string;
@@ -23,18 +25,8 @@ export default function ConfirmModal({
       >
         <h2 className="mb-6 text-lg font-bold">{text}</h2>
         <div className="flex justify-center gap-4">
-          <button
-            onClick={onCancel}
-            className="color-primary button-rectangular"
-          >
-            Ne
-          </button>
-          <button
-            onClick={onConfirm}
-            className="color-primary button-rectangular"
-          >
-            Ano
-          </button>
+          <Button onClick={onCancel}>Ne</Button>
+          <Button onClick={onConfirm}>Ano</Button>
         </div>
       </div>
 

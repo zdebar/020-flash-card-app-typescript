@@ -48,13 +48,17 @@ export default function WordSearch() {
       .filter((item) =>
         item[displayField].toLowerCase().startsWith(searchTerm.toLowerCase())
       )
-      .sort((a, b) => a[displayField].length - b[displayField].length)
+      .sort((a, b) => {
+        const lengthDiff = a[displayField].length - b[displayField].length;
+        if (lengthDiff !== 0) return lengthDiff;
+        return a[displayField].localeCompare(b[displayField]);
+      })
       .splice(0, 10); // Limit to 100 items for performance
     setFilteredItems(filtered);
   }, [searchTerm, items, displayField]);
 
   return (
-    <div className="max-w-card gap-tiny flex h-full flex-col">
+    <div className="w-card list h-full">
       {/* Toggle between czech and translation */}
       <DirectionDropdown
         label="Jazyk:"
@@ -64,6 +68,7 @@ export default function WordSearch() {
           { value: 'translation', label: currLanguage.name },
         ]}
         onChange={(value) => setDisplayField(value as 'czech' | 'translation')}
+        className="px-2"
       />
       {/* Search input */}
       <input
@@ -72,23 +77,32 @@ export default function WordSearch() {
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         placeholder="Zadejte slovo..."
-        className="shape-settings color-dropdown"
+        className="h-B color-dropdown w-full px-10"
       />
       {/* Filtered items */}
       {loading ? (
         <Loading text="Načítání..." />
       ) : (
-        <div className="max-w-card gap-tiny flex h-full flex-col overflow-y-auto">
+        <div className="w-card list h-full overflow-y-auto">
           {filteredItems.map((item) => (
             <ButtonReset
               key={item.id}
               apiPath={`/api/items/${item.id}/reset`}
               modalMessage={`Opravdu chcete resetovat slovo "${item[displayField]}"?`}
-              className="button-rectangular flex h-8 justify-start px-2"
+              className="flex h-8 justify-start px-2"
             >
               <div className="flex w-full justify-between px-8">
-                <span>{item.czech}</span>
-                <span>{item.translation}</span>
+                {displayField === 'czech' ? (
+                  <>
+                    <span>{item.czech}</span>
+                    <span>{item.translation}</span>
+                  </>
+                ) : (
+                  <>
+                    <span>{item.translation}</span>
+                    <span>{item.czech}</span>
+                  </>
+                )}
               </div>
             </ButtonReset>
           ))}

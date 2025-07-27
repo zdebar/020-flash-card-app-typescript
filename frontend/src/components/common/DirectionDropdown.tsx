@@ -16,14 +16,14 @@ export default function DirectionDropdown({
   className = '',
 }: DropdownProps) {
   return (
-    <div className={`shape-settings flex items-center ${className}`}>
+    <div className={`h-B centered ${className}`}>
       <Label text={label} />
       <select
         id="direction-dropdown"
         name="direction"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="shape-settings color-dropdown"
+        className="color-background h-full w-full"
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>

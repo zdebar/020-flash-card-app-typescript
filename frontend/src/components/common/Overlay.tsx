@@ -11,7 +11,7 @@ export default function Overlay({ onClose, children }: OverlayProps) {
 
   return (
     <div
-      className="font-display color-overlay fixed inset-0 z-10"
+      className="color-overlay fixed inset-0 z-10"
       role="dialog"
       style={{
         pointerEvents: 'all', // Ensure overlay captures all interactions

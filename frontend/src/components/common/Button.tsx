@@ -2,19 +2,21 @@ import { ButtonHTMLAttributes, ReactNode } from 'react';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
-  buttonColor?: string;
+  disabled?: boolean;
   className?: string;
+  buttonType?: string;
 }
 
 export default function Button({
   children,
-  buttonColor = 'color-primary',
   className = '',
+  disabled = false,
+  buttonType = 'button',
   ...props
 }: ButtonProps) {
   return (
     <button
-      className={`${className} ${props.disabled ? 'color-disabled' : buttonColor}`}
+      className={`${className} ${disabled && 'color-disabled'} ${buttonType}`}
       {...props}
     >
       {children}

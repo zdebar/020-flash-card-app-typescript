@@ -19,24 +19,17 @@ export default function GrammarList() {
   return (
     <>
       {!showExplanation ? (
-        <div className="max-w-card gap-tiny flex h-full flex-col overflow-y-auto">
+        <div className="card overflow-y-auto">
           {array.map((block, idx) => (
             <Button
               key={idx}
-              className="button-rectangular flex h-8 justify-start px-2"
+              className="h-C flex justify-start px-2"
               onClick={() => {
                 setShowExplanation(true);
                 setIndex(idx);
               }}
             >
-              <span
-                style={{
-                  display: 'inline-block',
-                  width: '2.5em',
-                  textAlign: 'right',
-                  marginRight: '0.75em',
-                }}
-              >
+              <span className="mr-2 inline-block w-15 text-right">
                 {block.blockSequence}
               </span>
               {block.blockName}

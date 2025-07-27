@@ -22,14 +22,14 @@ export default function InfoCard({
 }) {
   return (
     <div className="card">
-      <div className="button-rectangular gap-tiny flex">
+      <div className="flex gap-1">
         <ButtonReset
           disabled={!canReset}
           apiPath={`/api/blocks/${block.blockId}`}
           modalMessage="Opravdu chcete restartovat blok? Veškerý pokrok souvisejících položek bude ztracen."
-          className="flex items-center justify-start"
+          className="w-full items-center justify-start"
         >
-          <div className="gap-small flex items-center">
+          <div className="flex gap-2">
             <h2
               style={{
                 display: 'inline-block',
@@ -41,15 +41,12 @@ export default function InfoCard({
             >
               {block.blockSequence}
             </h2>
-            <h2 className="font-display ml-2 font-semibold">
-              {block.blockName}
-            </h2>
+            <h2 className="font-display font-semibold">{block.blockName}</h2>
           </div>
         </ButtonReset>
         <Button
           name="close"
-          type="button"
-          className="button-rectangular w-13 flex-shrink-0 flex-grow-0"
+          className="w-13 flex-shrink-0 flex-grow-0"
           onClick={() => setVisibility(false)}
           aria-label="Zavřít vysvětlení"
         >
@@ -64,20 +61,13 @@ export default function InfoCard({
         ></div>
       </div>
       <div className="flex gap-1" role="group" aria-label="Navigace">
-        <Button
-          name="previous"
-          type="button"
-          onClick={handlePrevious}
-          className="button-rectangular"
-          disabled={index === 0}
-        >
+        <Button name="previous" onClick={handlePrevious} disabled={index === 0}>
           <PreviousIcon />
         </Button>
         <Button
           name="next"
           type="button"
           onClick={handleNext}
-          className="button-rectangular"
           disabled={index === arrayLength - 1}
         >
           <NextIcon />

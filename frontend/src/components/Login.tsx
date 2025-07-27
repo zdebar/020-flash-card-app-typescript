@@ -55,28 +55,24 @@ export default function Login() {
   };
 
   return (
-    <>
+    <div className="card">
       <Button
         onClick={handleDemoLogin}
-        className="button-rectangular max-w-card"
         aria-label="Přihlásit se jako demo uživatel"
         disabled={loading}
       >
         Demo Account
       </Button>
-      <p className="color-error pt-4 text-sm">
-        Google login otevřen pouze pro testery.
-      </p>
+      <p className="notice py-2">Google login otevřen pouze pro testery.</p>
       <Button
         onClick={handleGoogleLogin}
-        className="button-rectangular max-w-card"
         aria-label="Přihlásit se přes Google"
         disabled={loading}
       >
         Google Login
       </Button>
 
-      {error && <p className="mt-2 text-red-500">{error}</p>}
-    </>
+      {error && <p className="error mt-2">{error}</p>}
+    </div>
   );
 }

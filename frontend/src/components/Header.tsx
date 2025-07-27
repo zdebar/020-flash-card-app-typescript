@@ -20,19 +20,19 @@ export default function Header() {
         aria-label="Hlavní navigace"
       >
         <ButtonLink
-          className={`button-round ${getSelectedClass(location.pathname, '/')} color-header`}
+          className={`${getSelectedClass(location.pathname, '/')} `}
           to="/"
           aria-label="Domů"
-          buttonColor="color-header"
+          buttonType="button-header"
         >
           <HomeIcon />
         </ButtonLink>
         <ButtonLink
-          className={`button-round ${getSelectedClass(location.pathname, '/userLanguages')} color-header pb-1 text-2xl font-bold`}
+          className={`${getSelectedClass(location.pathname, '/userLanguages')} pb-1 text-xl font-bold`}
           to="/userLanguages"
           aria-label="Uživatelské jazyky"
           disabled={!userInfo}
-          buttonColor="color-header"
+          buttonType="button-header"
         >
           {config.languages.find((lang) => lang.id === languageID)?.code}
         </ButtonLink>
@@ -43,8 +43,8 @@ export default function Header() {
         aria-label="Uživatelská navigace"
       >
         <ButtonLink
-          className={`button-round ${getSelectedClass(location.pathname, '/userDashboard')}`}
-          buttonColor="color-header"
+          className={`${getSelectedClass(location.pathname, '/userDashboard')}`}
+          buttonType="button-header"
           to="/userDashboard"
           disabled={!userInfo}
           aria-label="Uživatelský dashboard"
@@ -52,9 +52,9 @@ export default function Header() {
           <AcademicCapIcon />
         </ButtonLink>
         <ButtonLink
-          className={`button-round ${getSelectedClass(location.pathname, '/userSettings')}`}
+          className={` ${getSelectedClass(location.pathname, '/userSettings')}`}
           to="/userSettings"
-          buttonColor="color-header"
+          buttonType="button-header"
           disabled={!userInfo}
           aria-label="Nastavení uživatele"
         >

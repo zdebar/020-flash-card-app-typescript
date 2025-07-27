@@ -2,9 +2,9 @@ import { ReactNode } from 'react';
 import { Link, LinkProps } from 'react-router-dom';
 
 interface ButtonLinkProps extends Omit<LinkProps, 'to'> {
-  children?: ReactNode;
+  children: ReactNode;
   disabled?: boolean;
-  buttonColor?: string;
+  buttonType?: string;
   className?: string;
   to: string;
 }
@@ -12,26 +12,23 @@ interface ButtonLinkProps extends Omit<LinkProps, 'to'> {
 export default function ButtonLink({
   children,
   disabled = false,
-  buttonColor = 'color-primary',
+  buttonType = 'button',
   className = '',
   to,
   ...props
 }: ButtonLinkProps) {
-  const buttonClass = `flex items-center justify-center ${className} `;
+  const buttonClass = `${buttonType} centered  ${className} `;
 
   if (disabled) {
     return (
-      <span
-        className={`${buttonClass} color-header-disabled pointer-events-none`}
-        aria-disabled="true"
-      >
+      <button className={`${buttonClass} pointer-events-none`} disabled>
         {children}
-      </span>
+      </button>
     );
   }
 
   return (
-    <Link to={to} className={`${buttonClass} ${buttonColor}`} {...props}>
+    <Link to={to} className={`${buttonClass}`} {...props}>
       {children}
     </Link>
   );

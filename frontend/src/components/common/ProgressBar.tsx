@@ -5,13 +5,11 @@ export default function ProgressBar({
   maxProgress = 100,
   newProgress = 0,
   divisions = 20,
-  width = 'w-40',
 }: {
   progress: number;
   maxProgress?: number;
   newProgress?: number;
   divisions?: number;
-  width?: string;
 }) {
   const color = config.colors;
   const colorProgress = config.colorProgressBg;
@@ -25,7 +23,7 @@ export default function ProgressBar({
   ].slice(0, color.length);
 
   return (
-    <div className={`relative h-2 ${width} border-r-1 dark:border-white`}>
+    <div className={`relative h-2 w-40 border-r-1 dark:border-white`}>
       <div className="flex h-full w-full">
         {divisionArray.map((value, idx) => (
           <div

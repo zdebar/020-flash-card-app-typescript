@@ -27,13 +27,13 @@ export default function LanguageDropdown() {
   }, [selectedLanguage, setLanguageID]);
 
   return (
-    <div className="shape-settings flex items-center">
+    <div className="h-B centered">
       <Label text="Učený jazyk:" />
       <select
         id="language-select"
         value={selectedLanguage}
         onChange={handleLanguageChange}
-        className="shape-settings color-dropdown"
+        className="color-background h-full w-full"
         aria-label="Výběr jazyka"
       >
         {config.languages.map((language) => (

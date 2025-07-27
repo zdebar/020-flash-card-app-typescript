@@ -29,9 +29,7 @@ export default function LevelBar({
                 divisions={20}
               />
               {learnedToday[key] > 0 && (
-                <p className="color-learned-today text-xs font-bold">
-                  +{learnedToday[key]}
-                </p>
+                <p className="text-learned">+{learnedToday[key]}</p>
               )}
             </div>
           );

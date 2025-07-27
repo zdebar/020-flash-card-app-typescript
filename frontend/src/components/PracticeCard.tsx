@@ -204,7 +204,7 @@ export default function PracticeCard() {
           <div className="card">
             {/* Card content with item details */}
             <div
-              className={`color-card relative flex h-full w-full flex-col items-center justify-between px-4 pt-3 pb-2 ${!isAudioDisabled && 'color-highlighted'} `}
+              className={`color-disabled relative flex h-full flex-col items-center justify-between px-4 pt-3 pb-2 ${!isAudioDisabled && 'color-audio'} `}
               onClick={() => {
                 if (!isAudioDisabled) playAudio(currentItem.audio);
               }}
@@ -214,7 +214,7 @@ export default function PracticeCard() {
                 visibility={secondOverlay}
                 text="vyslovte slovíčko několikrát nahlas"
                 style={{
-                  top: '20px',
+                  top: '30px',
                   left: '50%',
                   transform: 'translateX(-50%)',
                 }}
@@ -223,13 +223,16 @@ export default function PracticeCard() {
                 visibility={secondOverlay}
                 text="kliknutím na kartu se znovu přehraje audio "
                 style={{
-                  bottom: '40px',
+                  bottom: '30px',
                   left: '50%',
                   transform: 'translateX(-50%)',
                 }}
               />
-              <div className="flex w-full items-center justify-between">
-                <div className="relative flex pt-1">
+              <div
+                id="top-bar"
+                className="relative flex w-full items-center justify-between"
+              >
+                <div className="flex pt-1">
                   <button
                     onClick={() => setShowVolumeSlider((prev) => !prev)}
                     aria-label="Nastavit hlasitost"
@@ -239,7 +242,7 @@ export default function PracticeCard() {
                     <GuideHint
                       visibility={firstOverlay}
                       text="hlasitost"
-                      style={{ left: '-10px', top: '3px' }}
+                      style={{ left: '-10px', bottom: '-20px' }}
                     />
                   </button>
                   {showVolumeSlider && (
@@ -259,17 +262,16 @@ export default function PracticeCard() {
                     />
                   )}
                 </div>
-                <p className="relative flex w-full justify-end pl-8 text-sm">
+                <p className="text-sm">
                   {index + 1} / {arrayLength}
                   <GuideHint
                     visibility={firstOverlay}
                     text="slovíčka v bloku"
-                    style={{ right: '-10px' }}
+                    style={{ right: '-10px', bottom: '-20px' }}
                   />
                 </p>
               </div>
-
-              <div>
+              <div id="item">
                 <p className="text-center font-bold">
                   {direction || revealed ? currentItem.czech : '\u00A0'}
                 </p>
@@ -284,41 +286,44 @@ export default function PracticeCard() {
                   {revealed ? currentItem?.pronunciation || '\u00A0' : '\u00A0'}
                 </p>
               </div>
-              <div className="flex w-full items-center justify-between">
-                <p className="relative flex w-full justify-start text-sm">
+              <div
+                className="relative flex w-full items-center justify-between"
+                id="bottom-bar"
+              >
+                <p className="text-sm">
                   {currentItem?.progress}
                   <GuideHint
                     visibility={firstOverlay}
                     text="pokrok slovíčka"
-                    style={{ left: '-10px', top: '-55px' }}
+                    style={{ left: '-10px', top: '-20px' }}
                   />
                 </p>
-                <p className="color-error h-5 whitespace-nowrap">
+                <p className="error h-5 whitespace-nowrap">
                   {getErrorMessage(error)}
                 </p>
-                <p className="relative flex w-full justify-end text-sm">
+                <p className="text-sm">
                   {currLanguage?.blockCount[0]} / 100
                   <GuideHint
                     visibility={firstOverlay}
                     text="bloků dnes"
-                    style={{ right: '-10px', top: '-55px' }}
+                    style={{ right: '-10px', top: '-20px' }}
                   />
                 </p>
               </div>
             </div>
 
             {/* Practice Controls */}
-            <div className="flex justify-center gap-1">
+            <div id="practice-controls" className="flex gap-1">
               <Button
                 onClick={() => setInfoVisibility(true)}
                 disabled={!currentItem?.hasContextInfo || !revealed}
-                className="button-rectangular relative flex-1"
+                className="relative"
                 aria-label="Zobrazit informace"
               >
                 <GuideHint
                   visibility={secondOverlay}
                   text="gramatika"
-                  style={{ left: '5px' }}
+                  style={{ left: '5px', bottom: '0px' }}
                 />
                 <InfoIcon />
               </Button>
@@ -327,29 +332,29 @@ export default function PracticeCard() {
                   updateItemArray(config.skipProgress);
                 }}
                 disabled={!revealed}
-                className="button-rectangular relative flex-1"
+                className="relative"
                 aria-label="Přeskočit slovíčko"
               >
                 <GuideHint
                   visibility={secondOverlay}
                   text="přeskočit slovíčko"
-                  style={{ right: '5px' }}
+                  style={{ right: '5px', bottom: '0px' }}
                 />
                 <SkipIcon></SkipIcon>
               </Button>
             </div>
-            <div className="flex w-full justify-between gap-1">
+            <div className="flex gap-1">
               {!revealed ? (
                 <>
                   <Button
                     onClick={() => setHintIndex((prevIndex) => prevIndex + 1)}
-                    className="button-rectangular relative"
+                    className="relative"
                     aria-label="Nápověda"
                   >
                     <GuideHint
                       visibility={firstOverlay}
                       text="nápověda"
-                      style={{ left: '5px' }}
+                      style={{ left: '5px', bottom: '0px' }}
                     />
                     <HintIcon></HintIcon>
                   </Button>
@@ -363,13 +368,13 @@ export default function PracticeCard() {
                         playAudio(currentItem.audio);
                       setHintIndex(0);
                     }}
-                    className="button-rectangular relative"
+                    className="relative"
                     aria-label="Zobrazit odpověď"
                   >
                     <GuideHint
                       visibility={firstOverlay}
                       text="odhalit překlad"
-                      style={{ right: '5px' }}
+                      style={{ right: '5px', bottom: '0px' }}
                     />
                     <EyeIcon></EyeIcon>
                   </Button>
@@ -380,7 +385,7 @@ export default function PracticeCard() {
                     onClick={() => {
                       updateItemArray(config.minusProgress);
                     }}
-                    className="button-rectangular relative"
+                    className="relative"
                     aria-label="Snížit skore"
                   >
                     <GuideHint
@@ -388,6 +393,7 @@ export default function PracticeCard() {
                       text="neznám"
                       style={{
                         left: '5px',
+                        bottom: '0px',
                       }}
                     />
                     <MinusIcon></MinusIcon>
@@ -396,7 +402,7 @@ export default function PracticeCard() {
                     onClick={() => {
                       updateItemArray(config.plusProgress);
                     }}
-                    className="button-rectangular relative"
+                    className="relative"
                     aria-label="Zvýšit skore"
                   >
                     <GuideHint
@@ -404,6 +410,7 @@ export default function PracticeCard() {
                       text="znám"
                       style={{
                         right: '5px',
+                        bottom: '0px',
                       }}
                     />
                     <PlusIcon></PlusIcon>

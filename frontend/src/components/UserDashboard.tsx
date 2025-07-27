@@ -12,23 +12,18 @@ export default function UserDashboard() {
 
   return (
     <div className="card">
-      <ButtonLink to="/practice" className="button-rectangular flex-shrink-0">
+      <ButtonLink to="/practice" className="flex-shrink-0">
         Procvičovat
       </ButtonLink>
-      <ButtonLink
-        to="/userOverview "
-        className="button-rectangular flex-shrink-0"
-      >
+      <ButtonLink to="/userOverview" className="flex-shrink-0">
         Přehled
       </ButtonLink>
       <div
-        className={`color-card shape-rectangular flex flex-col items-center justify-center pb-1`}
+        className={`color-disabled flex h-full flex-col items-center justify-center pb-1`}
       >
         {currLanguage && (
           <>
-            <p className="font-Mansalva py-2 pr-2 text-sm">
-              pokrok na posledních 2 úrovních
-            </p>
+            <p className="note">pokrok na posledních 2 úrovních</p>
             <LevelBar
               learned={currLanguage?.learnedCountByLevel ?? {}}
               learnedToday={currLanguage?.learnedCountTodayByLevel ?? {}}
@@ -36,9 +31,7 @@ export default function UserDashboard() {
             />
           </>
         )}
-        <p className="font-Mansalva py-2 pr-2 text-sm">
-          cvičební bloky za posledních 5 dní
-        </p>
+        <p className="note">cvičební bloky za posledních 5 dní</p>
         {currLanguage &&
           currLanguage.blockCount.map((item, idx) => (
             <div

@@ -26,7 +26,7 @@ export default function UserSettings() {
   };
 
   return (
-    <div className="max-w-card gap-tiny flex flex-col">
+    <div className="card list">
       <SettingProperty
         label="Uživatel:"
         value={userInfo?.name}
@@ -36,7 +36,6 @@ export default function UserSettings() {
       <ButtonReset
         apiPath={`/api/users/language/${languageID}`}
         modalMessage="Opravdu chcete resetovat? Veškerý pokrok bude ztracen."
-        className="justify-center"
       >
         Reset progres
       </ButtonReset>
@@ -45,7 +44,6 @@ export default function UserSettings() {
         onClick={handleLogout}
         successMessage="odhlášení se zdařilo."
         failMessage="odhlášení se nezdařilo."
-        className="justify-center"
       >
         Logout
       </ButtonWithModal>

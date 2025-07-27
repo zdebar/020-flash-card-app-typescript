@@ -14,13 +14,13 @@ export default function ThemeDropdown({ className }: { className?: string }) {
   };
 
   return (
-    <div className={`shape-settings flex items-center ${className}`}>
+    <div className={`h-A centered ${className}`}>
       <Label text="Barevnost:" />
       <select
         id="theme-select"
         value={theme}
         onChange={handleChange}
-        className="color-dropdown shape-settings"
+        className="color-background w-full"
         aria-label="Změna motivu"
       >
         {themes.map((t) => (
