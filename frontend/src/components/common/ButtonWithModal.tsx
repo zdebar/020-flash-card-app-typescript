@@ -48,7 +48,7 @@ export default function ButtonWithModal({
         {isMessage ? (
           <p className="notice w-full text-center">{isMessage}</p>
         ) : (
-          <div>{props.children}</div>
+          <div className="w-full">{props.children}</div>
         )}
       </Button>
       <ConfirmModal

@@ -3,7 +3,11 @@ import { useUser } from '../../hooks/useUser';
 import config from '../../config/config';
 import Label from './Label';
 
-export default function LanguageDropdown() {
+export default function LanguageDropdown({
+  className = '',
+}: {
+  className?: string;
+}) {
   const { setLanguageID } = useUser();
   const [selectedLanguage, setSelectedLanguage] = useState<number>(
     parseInt(
@@ -27,7 +31,7 @@ export default function LanguageDropdown() {
   }, [selectedLanguage, setLanguageID]);
 
   return (
-    <div className="h-B centered">
+    <div className={`h-B centered ${className}`}>
       <Label text="Učený jazyk:" />
       <select
         id="language-select"

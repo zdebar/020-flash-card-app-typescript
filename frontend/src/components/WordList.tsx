@@ -89,9 +89,9 @@ export default function WordSearch() {
               key={item.id}
               apiPath={`/api/items/${item.id}/reset`}
               modalMessage={`Opravdu chcete resetovat slovo "${item[displayField]}"?`}
-              className="flex h-8 justify-start px-2"
+              className="h-8 px-2"
             >
-              <div className="flex w-full justify-between px-8">
+              <div className="flex justify-between px-8 font-sans font-medium">
                 {displayField === 'czech' ? (
                   <>
                     <span>{item.czech}</span>

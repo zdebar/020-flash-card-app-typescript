@@ -28,7 +28,7 @@ export default function ButtonLink({
   }
 
   return (
-    <Link to={to} className={`${buttonClass}`} {...props}>
+    <Link to={to} className={`${buttonClass} `} {...props}>
       {children}
     </Link>
   );

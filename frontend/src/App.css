@@ -21,8 +21,7 @@
 
 @layer base {
   html {
-    /* font-size: 0.9375rem; */
-    font-size: 15px; /* 15px is the new base font size */
+    font-size: 15px;
   }
 
   button,
@@ -48,15 +47,18 @@
 }
 
 @layer utilities {
-  /* Dimensions */
+  /* DIMENSIONS */
+  /* buttons */
   .h-A {
     @apply h-13;
   }
 
+  /* settings fields */
   .h-B {
     @apply h-10;
   }
 
+  /* word and grammar list fields */
   .h-C {
     @apply h-8;
   }
@@ -73,55 +75,46 @@
     @apply flex items-center justify-center;
   }
 
-  /* Colors */
+  /* COLORS */
+  /* site background */
   .color-background {
     @apply bg-[var(--color-background-light)] dark:bg-[var(--color-background-dark)] dark:text-white;
   }
 
+  /* disabled buttons */
   .color-disabled {
     @apply bg-white text-black shadow-none;
     @apply dark:bg-gray-800 dark:text-white dark:hover:bg-gray-800;
   }
 
+  /* card with audio */
   .color-audio {
-    @apply bg-gray-200 dark:bg-gray-700;
+    @apply bg-gray-200 hover:bg-gray-200 dark:bg-gray-700 hover:dark:bg-gray-700;
   }
 
+  /* overlay behind guide tips */
   .color-overlay {
     @apply bg-[var(--color-overlay-light)] dark:bg-[var(--color-overlay-dark)];
   }
 
+  /* selected header icons */
   .color-selected {
     @apply bg-white text-black shadow-none;
   }
 }
 
 @layer components {
-  .notice {
-    @apply font-Mansalva text-[var(--color-blue-6)] dark:text-[var(--color-blue-0)];
-  }
-
-  .error {
-    @apply font-Mansalva font-bold text-red-800 dark:text-red-500;
-  }
-
+  /* rectangular buttons */
   .button {
-    @apply h-13 w-full font-sans;
+    @apply h-13 w-full font-sans font-bold tracking-wide;
     @apply bg-[var(--color-blue-3)] text-white shadow-[2px_2px_2px_rgba(0,0,0,0.35)] hover:bg-[var(--color-blue-4)];
     @apply dark:bg-[var(--color-blue-4)] dark:text-white dark:hover:bg-[var(--color-blue-3)];
   }
 
+  /* round header buttons */
   .button-header {
     @apply text-black hover:bg-white disabled:text-gray-600 dark:text-white dark:hover:text-black;
     @apply h-13 w-13 rounded-full;
-  }
-
-  .note {
-    @apply font-Mansalva py-2 pr-2 text-sm;
-  }
-
-  .text-learned {
-    @apply text-xs font-bold text-black dark:text-[var(--color-background-light)];
   }
 
   .card {
@@ -130,6 +123,24 @@
 
   .list {
     @apply flex flex-col gap-1;
+  }
+
+  /* notes on PracticeCard */
+  .note {
+    @apply font-Mansalva py-2 pr-2 text-sm;
+  }
+
+  .notice {
+    @apply font-Mansalva text-[var(--color-blue-6)] dark:text-[var(--color-blue-0)];
+  }
+
+  .error {
+    @apply font-Mansalva font-bold text-red-800 dark:text-red-500;
+  }
+
+  /* userDashboard new learned number */
+  .text-learned {
+    @apply text-xs font-bold text-black dark:text-[var(--color-background-light)];
   }
 }
 
