@@ -35,9 +35,10 @@ export default function UserSettings() {
       <ThemeDropdown className="px-2" />
       <ButtonReset
         apiPath={`/api/users/language/${languageID}`}
-        modalMessage="Opravdu chcete resetovat? Veškerý pokrok bude ztracen."
+        modalMessage={`Opravdu chcete restartovat jazyk ${languageID} ? Veškerý pokrok bude ztracen.`}
+        disabled={true} // Temporarily disable the button
       >
-        Reset progres
+        Restart
       </ButtonReset>
       <ButtonWithModal
         modalMessage="Opravdu se chcete odhlásit?"

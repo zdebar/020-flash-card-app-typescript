@@ -88,7 +88,7 @@ export default function WordSearch() {
             <ButtonReset
               key={item.id}
               apiPath={`/api/items/${item.id}/reset`}
-              modalMessage={`Opravdu chcete resetovat slovo "${item[displayField]}"?`}
+              modalMessage={`Opravdu chcete resetovat pokrok slova "${item[displayField]}"?`}
               className="h-8 px-2"
             >
               <div className="flex justify-between px-8 font-sans font-medium">

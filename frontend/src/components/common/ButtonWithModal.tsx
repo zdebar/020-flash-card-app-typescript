@@ -23,6 +23,9 @@ export default function ButtonWithModal({
   const [isMessage, setIsMessage] = useState(null as string | null);
 
   const handleOnClick = async () => {
+    if (props.disabled || isLoading) {
+      return;
+    }
     setIsLoading(true);
     try {
       onClick();
@@ -42,7 +45,7 @@ export default function ButtonWithModal({
     <div className="w-full">
       <Button
         className={`${className}`}
-        onClick={() => setModalVisible(true)}
+        onClick={() => !props.disabled && setModalVisible(true)}
         disabled={props.disabled || isLoading}
       >
         {isMessage ? (

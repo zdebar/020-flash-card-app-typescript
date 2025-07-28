@@ -15,6 +15,7 @@
   --color-blue-4: #1c6676;
   --color-blue-5: #113c61;
   --color-blue-6: #0d2c47;
+  --color-blue-6: #062946;
   --color-overlay-light: rgba(255, 255, 255, 0.4);
   --color-overlay-dark: rgba(17, 24, 39, 0.6);
 }
@@ -131,7 +132,7 @@
   }
 
   .notice {
-    @apply font-Mansalva text-[var(--color-blue-6)] dark:text-[var(--color-blue-0)];
+    @apply font-Mansalva text-center text-[var(--color-blue-7)] dark:text-[var(--color-blue-0)];
   }
 
   .error {
