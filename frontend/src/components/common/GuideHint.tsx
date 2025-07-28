@@ -2,17 +2,19 @@ export default function GuideHint({
   visibility,
   text,
   style,
+  className = '',
 }: {
   visibility: boolean;
-  text?: string;
+  text?: string | React.ReactNode;
   style?: React.CSSProperties;
+  className?: string;
 }) {
   return (
     visibility && (
       <p
-        className="font-Mansalva absolute z-20"
+        className={`note absolute z-20 ${className}`}
         style={{
-          whiteSpace: 'nowrap',
+          // whiteSpace: 'nowrap',
           pointerEvents: 'none',
           ...style,
         }}

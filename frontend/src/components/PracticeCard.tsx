@@ -218,6 +218,7 @@ export default function PracticeCard() {
                   left: '50%',
                   transform: 'translateX(-50%)',
                 }}
+                className="w-100 text-center"
               />
               <GuideHint
                 visibility={secondOverlay}
@@ -227,6 +228,7 @@ export default function PracticeCard() {
                   left: '50%',
                   transform: 'translateX(-50%)',
                 }}
+                className="w-100 text-center"
               />
               <div
                 id="top-bar"

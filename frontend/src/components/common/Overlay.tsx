@@ -1,9 +1,10 @@
-interface OverlayProps {
+export default function Overlay({
+  onClose,
+  children,
+}: {
   onClose: () => void;
   children?: React.ReactNode;
-}
-
-export default function Overlay({ onClose, children }: OverlayProps) {
+}) {
   const handleOverlayClick = (event: React.MouseEvent) => {
     event.stopPropagation(); // Prevent clicks from propagating to elements below
     onClose();

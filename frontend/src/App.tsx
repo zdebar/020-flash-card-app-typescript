@@ -29,7 +29,7 @@ export default function App() {
               element={
                 <div className="flex w-full max-w-[480px] flex-col items-center justify-start gap-4 p-4 text-center">
                   <h1>Jazyky jednoduše</h1>
-                  <p className="notice">aplikace v testovacím režimu</p>
+
                   <p>
                     Trénujte až 1000 slovíček či 500 vět za hodinu, a dosáhněte
                     základní znalosti jazyka za zlomek běžného učebního času.
@@ -41,10 +41,11 @@ export default function App() {
                       </ButtonLink>
                     </div>
                   )}
-                  <p>
-                    Rychlé kartičky. Jen poslouchání a mluvení, žádné psaní.
-                    Slovíčka i gramatika v jedné sekvenci. Obojí hned
-                    procvičováno ve větách.
+                  <p className="notice">aplikace v testovacím režimu</p>
+                  <p className="">
+                    Učební kartičky. Poslouchání a mluvení, žádné psaní. Jedna
+                    sekvence slovíček a gramatiky. Procvičování samostatně i ve
+                    větách.
                   </p>
                 </div>
               }

@@ -84,13 +84,14 @@
 
   /* disabled buttons */
   .color-disabled {
-    @apply bg-white text-black shadow-none;
+    @apply bg-gray-100 text-black shadow-none;
     @apply dark:bg-gray-800 dark:text-white dark:hover:bg-gray-800;
   }
 
   /* card with audio */
   .color-audio {
-    @apply bg-gray-200 hover:bg-gray-200 dark:bg-gray-700 hover:dark:bg-gray-700;
+    @apply bg-white shadow-[2px_2px_2px_rgba(0,0,0,0.3)] hover:bg-gray-200;
+    @apply dark:bg-gray-700 hover:dark:bg-gray-700;
   }
 
   /* overlay behind guide tips */
@@ -128,7 +129,7 @@
 
   /* notes on PracticeCard */
   .note {
-    @apply font-Mansalva py-2 pr-2 text-sm;
+    @apply font-Mansalva text-base font-medium;
   }
 
   .notice {
