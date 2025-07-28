@@ -2,7 +2,7 @@ import { useUser } from '../hooks/useUser';
 import ProgressBar from './common/ProgressBar.js';
 import ButtonLink from './common/ButtonLink';
 import LevelBar from './common/LevelBar';
-import { useHelp } from '../hooks/useHelp';
+import { useLocalStorage } from '../hooks/useLocalStorage.js';
 import Overlay from './common/Overlay';
 import GuideHint from './common/GuideHint';
 import Checkbox from './common/Checkbox';
@@ -10,13 +10,8 @@ import { HelpIcon } from './common/Icons';
 
 export default function UserDashboard() {
   const { userScore, languageID } = useUser();
-  const {
-    isHelpVisible,
-    setIsHelpVisible,
-    isSavedTrue,
-    setIsSavedTrue,
-    hideOverlay,
-  } = useHelp('showDashboardHelp');
+  const { isTrue, setIsTrue, isSavedTrue, setIsSavedTrue, hideOverlay } =
+    useLocalStorage('showDashboardHelp');
 
   const currLanguage = userScore?.find(
     (lang) => lang.languageID === languageID
@@ -28,7 +23,7 @@ export default function UserDashboard() {
 
   return (
     <>
-      {isHelpVisible && (
+      {isTrue && (
         <Overlay
           onClose={() => {
             hideOverlay(isSavedTrue);
@@ -39,7 +34,7 @@ export default function UserDashboard() {
         <ButtonLink to="/practice" className="relative flex-shrink-0">
           Procvičovat
           <GuideHint
-            visibility={isHelpVisible}
+            visibility={isTrue}
             text="jednotná sekvence učení slovíček a gramatiky"
             style={{
               top: '30px',
@@ -52,7 +47,7 @@ export default function UserDashboard() {
         <ButtonLink to="/userOverview" className="relative flex-shrink-0">
           Přehled
           <GuideHint
-            visibility={isHelpVisible}
+            visibility={isTrue}
             text={
               <>
                 přehled gramatiky a slovíček
@@ -99,12 +94,12 @@ export default function UserDashboard() {
               bottom: '5px',
               right: '5px',
             }}
-            onClick={() => setIsHelpVisible(true)}
+            onClick={() => setIsTrue(true)}
           >
             <HelpIcon />
           </div>
         </div>
-        {isHelpVisible && (
+        {isTrue && (
           <Checkbox onChange={handleCheckboxChange} checked={!isSavedTrue} />
         )}
       </div>

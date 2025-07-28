@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 
-export function useHelp(key: string) {
+export function useLocalStorage(key: string) {
   const savedVisibility = localStorage.getItem(key) ?? 'true';
 
-  const [isHelpVisible, setIsHelpVisible] = useState(() => {
+  const [isTrue, setIsTrue] = useState(() => {
     return savedVisibility == 'true'; // Default: true
   });
 
@@ -12,20 +12,20 @@ export function useHelp(key: string) {
   });
 
   const hideOverlay = (saveLocal: boolean) => {
-    setIsHelpVisible(false);
+    setIsTrue(false);
     localStorage.setItem(key, String(saveLocal));
   };
 
   useEffect(() => {
-    if (isHelpVisible) {
+    if (isTrue) {
       const storedValue = localStorage.getItem(key) ?? 'true';
       setIsSavedTrue(storedValue == 'true');
     }
-  }, [isHelpVisible, key]);
+  }, [isTrue, key]);
 
   return {
-    isHelpVisible,
-    setIsHelpVisible,
+    isTrue,
+    setIsTrue,
     isSavedTrue,
     setIsSavedTrue,
     hideOverlay,
