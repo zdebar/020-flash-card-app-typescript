@@ -159,7 +159,7 @@ export async function updateUserItemsRepository(
  */
 export async function getItemInfoRepository(
   db: PostgresClient,
-  itemId: number
+  itemID: number
 ): Promise<BlockExplanation[]> {
   try {
     const query = `
@@ -175,7 +175,7 @@ export async function getItemInfoRepository(
     `;
 
     return await withDbClient(db, async (client) => {
-      const result = await client.query(query, [itemId]);
+      const result = await client.query(query, [itemID]);
       return result.rows.map((row) => {
         return {
           blockId: row.id,
@@ -187,9 +187,9 @@ export async function getItemInfoRepository(
     });
   } catch (error) {
     throw new Error(
-      `Error in patchItemInforRepository: ${
+      `Error in getItemInforRepository: ${
         (error as any).message
-      } | db type: ${typeof db} | itemId: ${itemId}`
+      } | db type: ${typeof db} | itemId: ${itemID}`
     );
   }
 }

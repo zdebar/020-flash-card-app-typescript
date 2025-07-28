@@ -2,7 +2,7 @@ import express from "express";
 import {
   getItemsController,
   patchItemsController,
-  getInfoController,
+  getItemInfoController,
   getUserItemsListController,
   resetItemController,
 } from "../controllers/items.controller";
@@ -38,7 +38,7 @@ itemsRouter.patch(
   patchItemsController
 ); // updates user_items, sends UserScore
 
-itemsRouter.get("/:itemID/info", validateItemID, getInfoController); // sends item context info
+itemsRouter.get("/:itemID/info", validateItemID, getItemInfoController); // sends item context info
 
 itemsRouter.delete("/:itemID/reset", validateItemID, resetItemController); // resets progress for the given item
 

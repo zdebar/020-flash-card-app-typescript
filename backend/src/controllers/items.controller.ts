@@ -85,7 +85,7 @@ export async function patchItemsController(
 /**
  * Get context information for a specific item.
  */
-export async function getInfoController(
+export async function getItemInfoController(
   req: Request,
   res: Response,
   next: Function
@@ -97,7 +97,7 @@ export async function getInfoController(
       throw new Error(`Validation errors: ${JSON.stringify(errors.array())}`);
     }
 
-    const itemID: number = parseInt((req as any).params.itemId, 10);
+    const itemID: number = parseInt((req as any).params.itemID, 10);
 
     const data: BlockExplanation[] = await getItemInfoService(
       postgresDBPool,

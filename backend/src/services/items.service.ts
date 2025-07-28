@@ -52,12 +52,12 @@ export async function patchItemsService(
  */
 export async function getItemInfoService(
   db: PostgresClient,
-  itemId: number
+  itemID: number
 ): Promise<BlockExplanation[]> {
-  const itemInfo: BlockExplanation[] = await getItemInfoRepository(db, itemId);
+  const itemInfo: BlockExplanation[] = await getItemInfoRepository(db, itemID);
 
   if (!itemInfo || itemInfo.length === 0) {
-    throw new Error(`No item info found for itemId: ${itemId}`);
+    throw new Error(`No item info found for itemId: ${itemID}`);
   }
 
   return itemInfo;
