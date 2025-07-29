@@ -61,14 +61,12 @@ export default function WordSearch() {
     <div className="w-card list h-full">
       {/* Toggle between czech and translation */}
       <DirectionDropdown
-        label="Jazyk:"
         value={displayField}
         options={[
           { value: 'czech', label: 'Čeština' },
           { value: 'translation', label: currLanguage.name },
         ]}
         onChange={(value) => setDisplayField(value as 'czech' | 'translation')}
-        className="px-2"
       />
       {/* Search input */}
       <input

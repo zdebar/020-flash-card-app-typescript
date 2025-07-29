@@ -1,23 +1,16 @@
-import Label from './Label';
-
-interface DropdownProps {
-  label: string;
-  value: string;
-  options: { value: string; label: string }[];
-  onChange: (value: string) => void;
-  className?: string;
-}
-
 export default function DirectionDropdown({
-  label,
   value,
   options,
   onChange,
   className = '',
-}: DropdownProps) {
+}: {
+  value: string;
+  options: { value: string; label: string }[];
+  onChange: (value: string) => void;
+  className?: string;
+}) {
   return (
     <div className={`h-B centered ${className}`}>
-      <Label text={label} />
       <select
         id="direction-dropdown"
         name="direction"

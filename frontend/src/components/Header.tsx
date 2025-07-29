@@ -1,8 +1,9 @@
-import { UserIcon, HomeIcon, AcademicCapIcon } from './common/Icons';
+import { HomeIcon, AcademicCapIcon } from './common/Icons';
 import { useUser } from '../hooks/useUser';
 import ButtonLink from './common/ButtonLink';
 import { useLocation } from 'react-router-dom';
 import config from '../config/config';
+import UserAvatar from './common/UserAvatar';
 
 export default function Header() {
   const { userInfo, languageID } = useUser();
@@ -58,7 +59,7 @@ export default function Header() {
           disabled={!userInfo}
           aria-label="Nastavení uživatele"
         >
-          <UserIcon />
+          <UserAvatar />
         </ButtonLink>
       </nav>
     </header>

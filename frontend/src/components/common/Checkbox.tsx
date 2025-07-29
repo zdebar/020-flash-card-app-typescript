@@ -3,9 +3,11 @@ import { useState } from 'react';
 export default function Checkbox({
   checked = false,
   onChange,
+  className = '',
 }: {
   checked?: boolean;
   onChange: (checked: boolean) => void;
+  className?: string;
 }) {
   const [isChecked, setIsChecked] = useState(checked);
 
@@ -17,7 +19,7 @@ export default function Checkbox({
 
   return (
     <label
-      className="note absolute z-20 flex items-center gap-2"
+      className={`1note absolute z-20 flex items-center gap-2 ${className}`}
       style={{
         bottom: '5px',
         left: '5px',

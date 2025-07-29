@@ -100,7 +100,11 @@ export default function UserDashboard() {
           </div>
         </div>
         {isTrue && (
-          <Checkbox onChange={handleCheckboxChange} checked={!isSavedTrue} />
+          <Checkbox
+            onChange={handleCheckboxChange}
+            className="pl-1"
+            checked={!isSavedTrue}
+          />
         )}
       </div>
     </>
