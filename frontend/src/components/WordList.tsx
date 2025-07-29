@@ -52,10 +52,12 @@ export default function WordSearch() {
         const lengthDiff = a[displayField].length - b[displayField].length;
         if (lengthDiff !== 0) return lengthDiff;
         return a[displayField].localeCompare(b[displayField]);
-      })
-      .splice(0, 10); // Limit to 100 items for performance
+      });
     setFilteredItems(filtered);
   }, [searchTerm, items, displayField]);
+
+  const visibleItems = filteredItems.slice(0, 10);
+  const remainingCount = filteredItems.length - 10;
 
   return (
     <div className="w-card list h-full">
@@ -82,7 +84,7 @@ export default function WordSearch() {
         <Loading text="Načítání..." />
       ) : (
         <div className="w-card list h-full overflow-y-auto">
-          {filteredItems.map((item) => (
+          {visibleItems.map((item) => (
             <ButtonReset
               key={item.id}
               apiPath={`/api/items/${item.id}/reset`}
@@ -104,6 +106,9 @@ export default function WordSearch() {
               </div>
             </ButtonReset>
           ))}
+          {remainingCount > 0 && (
+            <div className="text-center">... a {remainingCount} dalších</div>
+          )}
         </div>
       )}
     </div>

@@ -19,7 +19,7 @@ export default function ThemeDropdown({ className }: { className?: string }) {
 
   return (
     <div className={`h-B centered ${className}`}>
-      <Label text="Barevnost:" />
+      <Label text="Vzhled:" />
       <select
         id="theme-select"
         value={theme}

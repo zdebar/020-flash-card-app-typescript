@@ -27,7 +27,7 @@ export default function App() {
             <Route
               path="/"
               element={
-                <div className="flex w-full max-w-[450px] flex-col items-center justify-start gap-4 p-4 text-center">
+                <div className="flex w-full max-w-[450px] flex-col items-center justify-start gap-4 px-4 pt-6 text-center">
                   <h1>Jazyky jednoduše</h1>
 
                   <p>

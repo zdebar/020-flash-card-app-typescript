@@ -26,7 +26,7 @@ export default function UserSettings() {
   };
 
   return (
-    <div className="card list">
+    <div className="card list pt-4">
       <SettingProperty
         label="Uživatel:"
         value={userInfo?.name}
