@@ -1,18 +1,11 @@
 import { useUser } from '../../hooks/useUser';
 import { UserIcon } from './Icons';
 
-export default function UserAvatar({
-  imageUrl,
-  name,
-}: {
-  imageUrl?: string;
-  name?: string;
-}) {
+export default function UserAvatar() {
   const { userInfo } = useUser();
 
-  const finalImageUrl = imageUrl ?? userInfo?.picture;
-  const finalName = name ?? userInfo?.name;
-  const initials = finalName ? finalName[0] : null;
+  const finalImageUrl = userInfo?.picture;
+  const initials = userInfo?.name?.[0] ?? null;
 
   return finalImageUrl ? (
     <img src={finalImageUrl} alt="User Avatar" className="h-D rounded-full" />
