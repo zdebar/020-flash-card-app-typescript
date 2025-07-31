@@ -19,19 +19,19 @@ export default function App() {
   const showFooterRoutes = ['/', '/login'];
 
   return (
-    <div className="color-background h-screen">
-      <div className="min-card mx-auto flex h-full max-w-[900px] flex-col">
+    <div className="color-background">
+      <div className="min-card mx-auto flex h-screen max-w-[900px] flex-col justify-between">
         <Header />
-        <div className={`z-1 flex h-full flex-col items-center`}>
+        <div className="flex h-full flex-grow flex-col items-center overflow-y-auto">
           <Routes>
             <Route
               path="/"
               element={
                 <div className="flex w-full max-w-[450px] flex-col items-center justify-start gap-4 px-4 pt-6 text-center">
-                  <h1>Jazyky jednoduše</h1>
+                  <h1>Minidrill</h1>
 
                   <p>
-                    Trénujte až 1000 slovíček či 500 vět za hodinu, a dosáhněte
+                    Trénujte až 200 slovíček či 100 vět za 10 minut, a dosáhněte
                     základní znalosti jazyka za zlomek běžného učebního času.
                   </p>
                   {!userInfo && (
@@ -44,8 +44,8 @@ export default function App() {
                   <p className="notice">aplikace v testovacím režimu</p>
                   <p className="">
                     Učební kartičky. Poslouchání a mluvení, žádné psaní. Jedna
-                    sekvence slovíček a gramatiky. Procvičování samostatně i ve
-                    větách.
+                    sekvence slovíček a gramatiky. Procvičování slovíček
+                    samostatně i ve větách.
                   </p>
                 </div>
               }

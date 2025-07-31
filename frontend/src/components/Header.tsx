@@ -14,7 +14,7 @@ export default function Header() {
   }
 
   return (
-    <header className="header z-2 flex w-full justify-between">
+    <header className="header flex w-full flex-none justify-between">
       <nav
         className="sideheader m-4 flex gap-4"
         role="navigation"
@@ -34,6 +34,7 @@ export default function Header() {
           aria-label="Uživatelské jazyky"
           disabled={!userInfo}
           buttonType="button-header"
+          hidden={true}
         >
           {config.languages.find((lang) => lang.id === languageID)?.code}
         </ButtonLink>

@@ -10,7 +10,7 @@ export default function DirectionDropdown({
   className?: string;
 }) {
   return (
-    <div className={`h-B centered ${className}`}>
+    <div className={`centered ${className}`}>
       <select
         id="direction-dropdown"
         name="direction"

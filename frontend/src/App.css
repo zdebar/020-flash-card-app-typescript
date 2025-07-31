@@ -54,6 +54,10 @@
     @apply h-13;
   }
 
+  .w-A {
+    @apply w-13;
+  }
+
   /* settings fields */
   .h-B {
     @apply h-10;

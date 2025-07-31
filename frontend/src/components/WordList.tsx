@@ -6,6 +6,7 @@ import DirectionDropdown from './common/DirectionDropdown';
 import ButtonReset from './common/ButtonReset';
 import config from '../config/config';
 import Loading from './common/Loading';
+import CloseButton from './common/CloseButton';
 
 export default function WordSearch() {
   const { languageID, userScore } = useUser();
@@ -16,6 +17,7 @@ export default function WordSearch() {
   );
   const [filteredItems, setFilteredItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(10); // State to track how many items are visible
   const currLanguage = config.languages.find((lang) => lang.id === languageID);
 
   if (!currLanguage) {
@@ -56,20 +58,26 @@ export default function WordSearch() {
     setFilteredItems(filtered);
   }, [searchTerm, items, displayField]);
 
-  const visibleItems = filteredItems.slice(0, 10);
-  const remainingCount = filteredItems.length - 10;
+  const visibleItems = filteredItems.slice(0, visibleCount); // Show items up to visibleCount
+  const remainingCount = filteredItems.length - visibleCount; // Calculate remaining items
 
   return (
-    <div className="w-card list h-full">
-      {/* Toggle between czech and translation */}
-      <DirectionDropdown
-        value={displayField}
-        options={[
-          { value: 'czech', label: 'Čeština' },
-          { value: 'translation', label: currLanguage.name },
-        ]}
-        onChange={(value) => setDisplayField(value as 'czech' | 'translation')}
-      />
+    <div className="w-card list z-1 h-full flex-1">
+      <div className="h-A flex justify-between gap-1">
+        {/* Toggle between czech and translation */}
+        <DirectionDropdown
+          value={displayField}
+          options={[
+            { value: 'czech', label: 'Čeština' },
+            { value: 'translation', label: currLanguage.name },
+          ]}
+          onChange={(value) =>
+            setDisplayField(value as 'czech' | 'translation')
+          }
+          className="w-full pt-1"
+        />
+        <CloseButton toLink="/userOverview" className="h-A w-A" />
+      </div>
       {/* Search input */}
       <input
         id="search"
@@ -77,7 +85,7 @@ export default function WordSearch() {
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         placeholder="Zadejte slovo..."
-        className="h-B color-dropdown w-full px-10"
+        className="h-A color-dropdown w-full px-10"
       />
       {/* Filtered items */}
       {loading ? (
@@ -88,7 +96,7 @@ export default function WordSearch() {
             <ButtonReset
               key={item.id}
               apiPath={`/api/items/${item.id}/reset`}
-              modalMessage={`Opravdu chcete resetovat pokrok slova "${item[displayField]}"?`}
+              modalMessage={`Opravdu chcete resetovat pokrok slova "${item.czech}" - "${item.translation}"?`}
               className="h-8 px-2"
             >
               <div className="flex justify-between px-8 font-sans font-medium">
@@ -107,7 +115,12 @@ export default function WordSearch() {
             </ButtonReset>
           ))}
           {remainingCount > 0 && (
-            <div className="text-center">... a {remainingCount} dalších</div>
+            <button
+              onClick={() => setVisibleCount((prev) => prev + 10)}
+              className="mt-2 w-full text-center text-[var(--color-blue-3)] hover:underline"
+            >
+              ... a {remainingCount} dalších
+            </button>
           )}
         </div>
       )}

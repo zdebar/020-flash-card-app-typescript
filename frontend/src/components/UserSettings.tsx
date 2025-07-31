@@ -2,13 +2,12 @@ import { useNavigate } from 'react-router-dom';
 import { useUser } from '../hooks/useUser';
 import { getAuth, signOut } from 'firebase/auth';
 import ThemeDropdown from './common/ThemeDropdown';
-import ButtonReset from './common/ButtonReset';
+
 import ButtonWithModal from './common/ButtonWithModal';
 import SettingProperty from './common/SettingProperty';
 
 export default function UserSettings() {
-  const { setUserInfo, setUserScore, setLoading, userInfo, languageID } =
-    useUser();
+  const { setUserInfo, setUserScore, setLoading, userInfo } = useUser();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -33,13 +32,6 @@ export default function UserSettings() {
         className="px-2"
       />
       <ThemeDropdown className="px-2" />
-      <ButtonReset
-        apiPath={`/api/users/language/${languageID}`}
-        modalMessage={`Opravdu chcete restartovat jazyk ${languageID} ? Veškerý pokrok bude ztracen.`}
-        disabled={true} // Temporarily disable the button
-      >
-        Restart
-      </ButtonReset>
       <ButtonWithModal
         modalMessage="Opravdu se chcete odhlásit?"
         onClick={handleLogout}
