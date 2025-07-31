@@ -24,7 +24,6 @@ export default function WordList() {
   const [showExplanation, setShowExplanation] = useState(false);
 
   const currLanguage = config.languages.find((lang) => lang.id === languageID);
-  console.log(index);
 
   if (!currLanguage) {
     throw new Error(`Language with ID ${languageID} not found in config.`);

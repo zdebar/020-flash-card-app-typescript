@@ -1,14 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import Button from './common/Button';
-import {
-  InfoIcon,
-  SkipIcon,
-  HintIcon,
-  EyeIcon,
-  PlusIcon,
-  MinusIcon,
-  VolumeIcon,
-} from './common/Icons';
+import { InfoIcon, SkipIcon, HintIcon, EyeIcon } from './common/Icons';
 import config from '../config/config';
 import { useAudioManager } from '../hooks/useAudioManager';
 import {
@@ -26,6 +18,8 @@ import { getErrorMessage } from '../utils/error.utils';
 import { alternateDirection } from '../utils/practice.utils';
 import Overlay from './common/Overlay';
 import GuideHint from './common/GuideHint';
+import VolumeSlider from './common/VolumeSlider';
+import PlusMinus from './common/PlusMinus';
 
 export default function PracticeCard() {
   const { userScore, setUserScore, languageID } = useUser();
@@ -54,8 +48,6 @@ export default function PracticeCard() {
   const [hintIndex, setHintIndex] = useState(0);
   const [infoVisibility, setInfoVisibility] = useState(false);
   const [error, setError] = useState<PracticeError | null>(null);
-  const [showVolumeSlider, setShowVolumeSlider] = useState(false);
-  const [volume, setVolumeState] = useState(1);
   const [activeOverlay, setActiveOverlay] = useState<string | null>('first');
 
   const direction = alternateDirection(currentItem?.progress);
@@ -181,13 +173,6 @@ export default function PracticeCard() {
     }
   }, [currentItem, audioError, playAudio]);
 
-  // Handle volume change
-  const handleVolumeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newVolume = parseFloat(event.target.value);
-    setVolumeState(newVolume);
-    setVolume(newVolume);
-  };
-
   if (!arrayLength)
     return <Loading text="Nic k procvičování. Zkuste to znovu později." />;
 
@@ -243,36 +228,10 @@ export default function PracticeCard() {
                 id="top-bar"
                 className="relative flex w-full items-center justify-between"
               >
-                <div className="flex pt-1">
-                  <button
-                    onClick={() => setShowVolumeSlider((prev) => !prev)}
-                    aria-label="Nastavit hlasitost"
-                    disabled={noAudio}
-                  >
-                    <VolumeIcon />
-                    <GuideHint
-                      visibility={firstOverlay}
-                      text="hlasitost"
-                      style={{ left: '-10px', bottom: '-20px' }}
-                    />
-                  </button>
-                  {showVolumeSlider && (
-                    <input
-                      type="range"
-                      min="0"
-                      max="1"
-                      step="0.01"
-                      value={volume}
-                      onChange={handleVolumeChange}
-                      className="ml-2 w-24"
-                      autoFocus
-                      aria-valuenow={volume}
-                      aria-valuemin={0}
-                      aria-valuemax={1}
-                      disabled={noAudio}
-                    />
-                  )}
-                </div>
+                <VolumeSlider
+                  setVolume={setVolume}
+                  helpVisibility={firstOverlay}
+                />
                 <p className="text-sm">
                   {index + 1} / {arrayLength}
                   <GuideHint
@@ -391,42 +350,11 @@ export default function PracticeCard() {
                   </Button>
                 </>
               ) : (
-                <>
-                  <Button
-                    onClick={() => {
-                      updateItemArray(config.minusProgress);
-                    }}
-                    className="relative"
-                    aria-label="Snížit skore"
-                  >
-                    <GuideHint
-                      visibility={secondOverlay}
-                      text="neznám"
-                      style={{
-                        left: '5px',
-                        bottom: '0px',
-                      }}
-                    />
-                    <MinusIcon></MinusIcon>
-                  </Button>
-                  <Button
-                    onClick={() => {
-                      updateItemArray(config.plusProgress);
-                    }}
-                    className="relative"
-                    aria-label="Zvýšit skore"
-                  >
-                    <GuideHint
-                      visibility={secondOverlay}
-                      text="znám"
-                      style={{
-                        right: '5px',
-                        bottom: '0px',
-                      }}
-                    />
-                    <PlusIcon></PlusIcon>
-                  </Button>
-                </>
+                <PlusMinus
+                  onPlus={() => updateItemArray(config.plusProgress)}
+                  onMinus={() => updateItemArray(config.minusProgress)}
+                  helpVisibility={secondOverlay}
+                />
               )}
             </div>
           </div>

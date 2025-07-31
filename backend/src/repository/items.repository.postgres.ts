@@ -2,11 +2,7 @@ import { PostgresClient } from "../types/dataTypes";
 import { getNextAt, getLearnedAt, getMasteredAt } from "../utils/update.utils";
 import { withDbClient } from "../utils/database.utils";
 import config from "../config/config";
-import {
-  UserScore,
-  Item,
-  BlockExplanation,
-} from "../../../shared/types/dataTypes";
+import { Item, BlockExplanation } from "../../../shared/types/dataTypes";
 
 /**
  * Return required items for the user from PostgreSQL database.

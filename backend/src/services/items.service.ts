@@ -9,6 +9,7 @@ import {
   updateUserItemsRepository,
   getItemInfoRepository,
   resetItemRepository,
+  getUserItemsListRepository,
 } from "../repository/items.repository.postgres";
 import {
   getScoreRepository,
@@ -27,6 +28,18 @@ export async function getItemsService(
 ): Promise<Item[]> {
   const words: Item[] = await getItemsRepository(db, uid, languageID);
   sortItemsByProgress(words);
+  return addAudioPathsToWords(words);
+}
+
+/**
+ * Gets a list of words for a given user and language ID from the database.
+ */
+export async function getUserItemsListService(
+  db: PostgresClient,
+  uid: string,
+  languageID: number
+): Promise<Item[]> {
+  const words: Item[] = await getUserItemsListRepository(db, uid, languageID);
   return addAudioPathsToWords(words);
 }
 

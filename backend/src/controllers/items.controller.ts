@@ -11,7 +11,7 @@ import {
   getItemInfoService,
   resetItemService,
 } from "../services/items.service";
-import { getUserItemsListRepository } from "../repository/items.repository.postgres";
+import { getUserItemsListService } from "../services/items.service";
 import { validationResult } from "express-validator";
 
 /**
@@ -131,7 +131,7 @@ export async function getUserItemsListController(
     const uid: string = (req as any).user.uid;
     const languageID: number = parseInt((req as any).params.languageID, 10);
 
-    const data: Item[] = await getUserItemsListRepository(
+    const data: Item[] = await getUserItemsListService(
       postgresDBPool,
       uid,
       languageID

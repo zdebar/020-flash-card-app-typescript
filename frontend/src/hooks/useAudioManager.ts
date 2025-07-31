@@ -10,8 +10,6 @@ export function useAudioManager(wordArray: Item[]) {
   const [audioReload, setAudioReload] = useState(false);
   const [audioError, setAudioError] = useState(false);
 
-  console.log('useAudioManager initialized with wordArray:', wordArray);
-
   useEffect(() => {
     const cacheAudio = async () => {
       try {
