@@ -24,15 +24,8 @@ import PlusMinus from './common/PlusMinus';
 export default function PracticeCard() {
   const { userScore, setUserScore, languageID } = useUser();
   const apiPath = `/api/items/${languageID}/practice`;
-  const {
-    array,
-    index,
-    nextIndex,
-    arrayLength,
-    setReload,
-    currentItem,
-    loading,
-  } = useArray<Item>(apiPath, 'GET');
+  const { array, index, nextIndex, arrayLength, setReload, currentItem } =
+    useArray<Item>(apiPath, 'GET');
   const {
     playAudio,
     setVolume,
@@ -176,8 +169,6 @@ export default function PracticeCard() {
   if (!arrayLength)
     return <Loading text="Nic k procvičování. Zkuste to znovu později." />;
 
-  if (loading) return <Loading />;
-
   return (
     <>
       {/* Main content */}
@@ -272,7 +263,7 @@ export default function PracticeCard() {
                   {getErrorMessage(error)}
                 </p>
                 <p className="text-sm">
-                  {currLanguage?.blockCount[0]} / 100
+                  {currLanguage?.blockCount[0]} / {config.dailyBlocks}
                   <GuideHint
                     visibility={firstOverlay}
                     text="bloků dnes"

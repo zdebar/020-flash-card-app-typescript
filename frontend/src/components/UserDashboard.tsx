@@ -7,6 +7,7 @@ import Overlay from './common/Overlay';
 import GuideHint from './common/GuideHint';
 import Checkbox from './common/Checkbox';
 import { HelpIcon } from './common/Icons';
+import config from '../config/config.js';
 
 export default function UserDashboard() {
   const { userScore, languageID } = useUser();
@@ -84,7 +85,7 @@ export default function UserDashboard() {
                 className="flex w-60 items-center justify-start gap-2"
               >
                 <p className="w-8 text-right text-xs">{item}</p>
-                <ProgressBar progress={item} />
+                <ProgressBar progress={item} maxProgress={config.dailyBlocks} />
               </div>
             ))}
 

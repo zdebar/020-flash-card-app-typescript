@@ -61,13 +61,9 @@ export default function WordCard({
           <CloseIcon />
         </Button>
       </div>
-      <div className="color-disabled h-full pt-3">
-        <VolumeSlider
-          setVolume={setVolume}
-          helpVisibility={false}
-          className="px-6 pb-2"
-        />
-        <div className="grid grid-cols-2 items-start justify-start gap-0 overflow-y-auto px-6 py-4">
+      <div className="color-disabled flex h-full flex-col justify-between px-6 py-4 pt-3">
+        <VolumeSlider setVolume={setVolume} helpVisibility={false} />
+        <div className="grid grid-cols-2 items-start justify-start gap-0 overflow-y-auto">
           <p>česky</p>
           <p>{item?.czech}</p>
           {config.languages.find((lang) => lang.id === languageID)?.adverb}
@@ -76,7 +72,6 @@ export default function WordCard({
           <p>{item?.pronunciation}</p>
           <p>progress</p>
           <p>{item?.progress}</p>
-          <p>audio</p>
         </div>
         <p className="error h-5 whitespace-nowrap">{getErrorMessage(error)}</p>
       </div>

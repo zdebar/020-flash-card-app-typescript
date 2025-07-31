@@ -6,7 +6,7 @@ export default function Overlay({
   children?: React.ReactNode;
 }) {
   const handleOverlayClick = (event: React.MouseEvent) => {
-    event.stopPropagation(); // Prevent clicks from propagating to elements below
+    event.stopPropagation();
     onClose();
   };
 
@@ -15,14 +15,14 @@ export default function Overlay({
       className="color-overlay fixed inset-0 z-10"
       role="dialog"
       style={{
-        pointerEvents: 'all', // Ensure overlay captures all interactions
+        pointerEvents: 'all',
       }}
       aria-modal="true"
       onClick={handleOverlayClick}
     >
       <div
         className="mx-auto max-w-md"
-        onClick={(event) => event.stopPropagation()} // Prevent clicks inside the overlay from closing it
+        onClick={(event) => event.stopPropagation()}
       >
         {children}
       </div>
