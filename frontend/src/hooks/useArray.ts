@@ -6,7 +6,8 @@ export function useArray<T>(apiPath: string, method: string = 'POST') {
   const [array, setArray] = useState<T[]>([]);
   const [index, setIndex] = useState(0);
   const [reload, setReload] = useState(true);
-  const { loading } = useUser();
+  const [loading, setLoading] = useState(false);
+  const { userLoading } = useUser();
 
   function wrapIndex(newIndex: number) {
     if (array.length === 0) return 0;
@@ -23,10 +24,11 @@ export function useArray<T>(apiPath: string, method: string = 'POST') {
 
   useEffect(() => {
     // data should be fetched / on mount, on reload state
-    if (loading || !reload) return;
+    if (userLoading || !reload) return;
 
     const fetchData = async () => {
       try {
+        setLoading(true);
         const response = await fetchWithAuthAndParse<{
           data: T[] | null;
         }>(apiPath, {
@@ -40,9 +42,10 @@ export function useArray<T>(apiPath: string, method: string = 'POST') {
       }
       setIndex(0);
       setReload(false);
+      setLoading(false);
     };
     fetchData();
-  }, [loading, apiPath, reload, method]);
+  }, [userLoading, apiPath, reload, method]);
 
   return {
     array,
@@ -51,6 +54,7 @@ export function useArray<T>(apiPath: string, method: string = 'POST') {
     setIndex,
     nextIndex,
     prevIndex,
+    loading,
     currentItem: array[index],
     arrayLength: array.length,
     reload,

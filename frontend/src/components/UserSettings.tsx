@@ -7,7 +7,7 @@ import ButtonWithModal from './common/ButtonWithModal';
 import SettingProperty from './common/SettingProperty';
 
 export default function UserSettings() {
-  const { setUserInfo, setUserScore, setLoading, userInfo } = useUser();
+  const { setUserInfo, setUserScore, setUserLoading, userInfo } = useUser();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -17,7 +17,7 @@ export default function UserSettings() {
       await signOut(auth);
       setUserInfo(null);
       setUserScore(null);
-      setLoading(false);
+      setUserLoading(false);
       navigate('/');
     } catch (error) {
       console.error('Error during logout:', error);

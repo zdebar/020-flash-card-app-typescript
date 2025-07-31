@@ -10,7 +10,7 @@ import {
 import Button from './common/Button';
 
 export default function Login() {
-  const { setLoading } = useUser();
+  const { setUserLoading } = useUser();
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLocalLoading] = useState(false);
@@ -20,7 +20,7 @@ export default function Login() {
     const provider = new GoogleAuthProvider();
 
     try {
-      setLoading(true);
+      setUserLoading(true);
       setLocalLoading(true);
       setError(null);
       await signInWithPopup(auth, provider);
@@ -29,7 +29,7 @@ export default function Login() {
       setError('Přihlášení přes Google selhalo.');
       console.error('Google login failed:', error);
     } finally {
-      setLoading(false);
+      setUserLoading(false);
       setLocalLoading(false);
     }
   };
@@ -40,7 +40,7 @@ export default function Login() {
     const demoPassword = 'password123';
 
     try {
-      setLoading(true);
+      setUserLoading(true);
       setLocalLoading(true);
       setError(null);
       await signInWithEmailAndPassword(auth, demoEmail, demoPassword);
@@ -49,7 +49,7 @@ export default function Login() {
       setError('Demo login failed.');
       console.error('Demo login failed:', error);
     } finally {
-      setLoading(false);
+      setUserLoading(false);
       setLocalLoading(false);
     }
   };

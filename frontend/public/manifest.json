@@ -21,18 +21,6 @@
   "display": "standalone",
   "display_override": ["window-controls-overlay"],
   "start_url": "/",
-  "screenshots": [
-    {
-      "src": "/screenshot-wide.png",
-      "sizes": "995x560",
-      "type": "image/png"
-    },
-    {
-      "src": "/screenshot-mobile.png",
-      "sizes": "560x995",
-      "type": "image/png"
-    }
-  ],
   "protocol_handlers": [
     {
       "protocol": "web+flashcards",

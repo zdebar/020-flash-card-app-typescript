@@ -107,11 +107,11 @@ export function UserProvider({ children }: { children: ReactNode }) {
         userInfo,
         userScore,
         languageID,
-        loading,
+        userLoading: loading,
         setUserInfo,
         setLanguageID,
         setUserScore,
-        setLoading,
+        setUserLoading: setLoading,
         chooseTheme,
       }}
     >

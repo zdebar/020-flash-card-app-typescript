@@ -11,14 +11,14 @@ export interface ButtonResetProps
 
 export default function ButtonReset({ apiPath, ...props }: ButtonResetProps) {
   const { setUserScore } = useUser();
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleReset = async () => {
-    if (props.disabled || isLoading) {
+    if (props.disabled || loading) {
       return;
     }
 
-    setIsLoading(true);
+    setLoading(true);
 
     try {
       const response = await fetchWithAuthAndParse<{
@@ -33,14 +33,14 @@ export default function ButtonReset({ apiPath, ...props }: ButtonResetProps) {
         throw new Error(`Reset failed: ${apiPath}`);
       }
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
   return (
     <ButtonWithModal
       modalMessage={props.modalMessage}
-      disabled={props.disabled || isLoading}
+      disabled={props.disabled || loading}
       className={props.className}
       onClick={handleReset}
       successMessage="reset se zdařil"

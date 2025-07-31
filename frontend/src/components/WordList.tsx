@@ -7,10 +7,11 @@ import config from '../config/config';
 import CloseButton from './common/CloseButton';
 import { useArray } from '../hooks/useArray';
 import WordCard from './common/WordCard';
+import Loading from './common/Loading';
 
 export default function WordList() {
   const { languageID } = useUser();
-  const { array, index, setIndex } = useArray<Item>(
+  const { array, index, setIndex, arrayLength, loading } = useArray<Item>(
     `/api/items/${languageID}/list`,
     'GET'
   );
@@ -45,6 +46,9 @@ export default function WordList() {
 
   const visibleItems = filteredItems.slice(0, visibleCount);
   const remainingCount = filteredItems.length - visibleCount;
+
+  if (!arrayLength) return <Loading text="Žádná učená slovíčka!" />;
+  if (loading) return <Loading />;
 
   return (
     <div className="w-card list z-1 h-full flex-1">

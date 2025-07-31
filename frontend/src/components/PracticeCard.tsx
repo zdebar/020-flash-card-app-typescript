@@ -30,8 +30,15 @@ import GuideHint from './common/GuideHint';
 export default function PracticeCard() {
   const { userScore, setUserScore, languageID } = useUser();
   const apiPath = `/api/items/${languageID}/practice`;
-  const { array, index, nextIndex, arrayLength, setReload, currentItem } =
-    useArray<Item>(apiPath, 'GET');
+  const {
+    array,
+    index,
+    nextIndex,
+    arrayLength,
+    setReload,
+    currentItem,
+    loading,
+  } = useArray<Item>(apiPath, 'GET');
   const {
     playAudio,
     setVolume,
@@ -183,6 +190,8 @@ export default function PracticeCard() {
 
   if (!arrayLength)
     return <Loading text="Nic k procvičování. Zkuste to znovu později." />;
+
+  if (loading) return <Loading />;
 
   return (
     <>

@@ -8,12 +8,12 @@ import {
 export interface UserContextType {
   userInfo: UserInfo | null;
   userScore: UserScore[] | null;
-  loading: boolean;
+  userLoading: boolean;
   languageID: number;
   theme: UserTheme;
   setUserInfo: (user: UserInfo | null) => void;
   setUserScore: (score: UserScore[] | null) => void;
-  setLoading: (loading: boolean) => void;
+  setUserLoading: (loading: boolean) => void;
   setLanguageID: (languageID: number) => void;
   chooseTheme: (theme: UserTheme) => void;
 }
