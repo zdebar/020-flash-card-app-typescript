@@ -1,31 +1,44 @@
 import { useEffect, useState, useCallback } from 'react';
-import Button from './common/Button';
-import { InfoIcon, SkipIcon, HintIcon, EyeIcon } from './common/Icons';
+import {
+  InfoIcon,
+  SkipIcon,
+  HintIcon,
+  EyeIcon,
+  PlusIcon,
+  MinusIcon,
+} from './common/Icons';
 import config from '../config/config';
 import { useAudioManager } from '../hooks/useAudioManager';
-import {
-  PracticeError,
-  UserScore,
-  Item,
-} from '../../../shared/types/dataTypes';
-import { usePatchOnUnmount } from '../hooks/usePatchOnUnmount';
-import { fetchWithAuthAndParse } from '../utils/auth.utils';
+import { PracticeError } from '../../../shared/types/dataTypes';
 import { useUser } from '../hooks/useUser';
-import { useArray } from '../hooks/useArray';
 import ContextInfoCard from './ContextCard';
 import Loading from './common/Loading';
 import { getErrorMessage } from '../utils/error.utils';
-import { alternateDirection } from '../utils/practice.utils';
 import Overlay from './common/Overlay';
 import GuideHint from './common/GuideHint';
 import VolumeSlider from './common/VolumeSlider';
-import PlusMinus from './common/PlusMinus';
+
+import { useItemArray } from '../hooks/useItemArray';
+import ButtonWithHelp from './common/ButtonWithHelp';
 
 export default function PracticeCard() {
-  const { userScore, setUserScore, languageID } = useUser();
+  const { userScore, languageID } = useUser();
   const apiPath = `/api/items/${languageID}/practice`;
-  const { array, index, nextIndex, arrayLength, setReload, currentItem } =
-    useArray<Item>(apiPath, 'GET');
+
+  const {
+    array,
+    index,
+    nextIndex,
+    arrayLength,
+    setReload,
+    currentItem,
+    direction,
+    showContextInfo,
+    userProgress,
+    setUserProgress,
+    patchItems,
+  } = useItemArray(apiPath);
+
   const {
     playAudio,
     setVolume,
@@ -36,67 +49,30 @@ export default function PracticeCard() {
     setAudioError,
   } = useAudioManager(array);
 
-  const [userProgress, setUserProgress] = useState<number[]>([]);
   const [revealed, setRevealed] = useState(false);
   const [hintIndex, setHintIndex] = useState(0);
   const [infoVisibility, setInfoVisibility] = useState(false);
   const [error, setError] = useState<PracticeError | null>(null);
   const [activeOverlay, setActiveOverlay] = useState<string | null>('first');
 
-  const direction = alternateDirection(currentItem?.progress);
   const isAudioDisabled = (direction && !revealed) || !currentItem?.audio;
   const noAudio = error === PracticeError.NoAudio;
   const firstOverlay = activeOverlay === 'first';
   const secondOverlay = activeOverlay === 'second';
+
   const currLanguage = userScore?.find(
     (lang) => lang.languageID === languageID
   );
 
   // Show Info by default if the item has showContextInfo set to true
   useEffect(() => {
-    if (currentItem?.showContextInfo === true) {
-      setInfoVisibility(true);
-    }
-  }, [currentItem]);
+    setInfoVisibility(showContextInfo);
+  }, [showContextInfo, currentItem]);
 
   // Reset audio error for new item
   useEffect(() => {
     setAudioError(false);
   }, [setAudioError, currentItem]);
-
-  // Sending user progress to the server
-  const patchItems = useCallback(
-    async (onBlockEnd: boolean, updatedProgress: number[]) => {
-      const updatedArray = array
-        .filter((_, idx) => idx < updatedProgress.length)
-        .map((item, idx) => ({
-          ...item,
-          progress: updatedProgress[idx],
-        }));
-
-      if (updatedArray.length === 0) return;
-      setUserProgress([]);
-
-      try {
-        const response = await fetchWithAuthAndParse<{
-          score: UserScore[] | null;
-        }>(apiPath, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            items: updatedArray,
-            onBlockEnd,
-          }),
-        });
-
-        const newUserScore = response?.score || null;
-        setUserScore(newUserScore);
-      } catch (error) {
-        console.error('Error posting words:', error);
-      }
-    },
-    [apiPath, setUserScore, array]
-  );
 
   // Update userProgress, if end of array reached, patch items
   const updateItemArray = useCallback(
@@ -131,6 +107,7 @@ export default function PracticeCard() {
       setAudioReload,
       stopAudio,
       userProgress,
+      setUserProgress,
     ]
   );
 
@@ -140,9 +117,6 @@ export default function PracticeCard() {
       setTimeout(() => playAudio(currentItem.audio!), 100);
     }
   }, [currentItem, playAudio, audioReload, direction, firstOverlay]);
-
-  // Patch items on unmount
-  usePatchOnUnmount(patchItems, userProgress);
 
   // Error setter
   useEffect(() => {
@@ -275,51 +249,36 @@ export default function PracticeCard() {
 
             {/* Practice Controls */}
             <div id="practice-controls" className="flex gap-1">
-              <Button
+              <ButtonWithHelp
                 onClick={() => setInfoVisibility(true)}
                 disabled={!currentItem?.hasContextInfo || !revealed}
-                className="relative"
-                aria-label="Zobrazit informace"
-              >
-                <GuideHint
-                  visibility={secondOverlay}
-                  text="gramatika"
-                  style={{ left: '5px', bottom: '0px' }}
-                />
-                <InfoIcon />
-              </Button>
-              <Button
+                helpVisibility={secondOverlay}
+                helpText="zobrazit informace"
+                style={{ left: '5px', bottom: '0px' }}
+                icon={<InfoIcon />}
+              />
+              <ButtonWithHelp
                 onClick={() => {
                   updateItemArray(config.skipProgress);
                 }}
                 disabled={!revealed}
-                className="relative"
-                aria-label="Přeskočit slovíčko"
-              >
-                <GuideHint
-                  visibility={secondOverlay}
-                  text="přeskočit slovíčko"
-                  style={{ right: '5px', bottom: '0px' }}
-                />
-                <SkipIcon></SkipIcon>
-              </Button>
+                helpVisibility={secondOverlay}
+                helpText="přeskočit slovíčko"
+                style={{ right: '5px', bottom: '0px' }}
+                icon={<SkipIcon />}
+              />
             </div>
             <div className="flex gap-1">
               {!revealed ? (
                 <>
-                  <Button
+                  <ButtonWithHelp
                     onClick={() => setHintIndex((prevIndex) => prevIndex + 1)}
-                    className="relative"
-                    aria-label="Nápověda"
-                  >
-                    <GuideHint
-                      visibility={firstOverlay}
-                      text="nápověda"
-                      style={{ left: '5px', bottom: '0px' }}
-                    />
-                    <HintIcon></HintIcon>
-                  </Button>
-                  <Button
+                    helpVisibility={firstOverlay}
+                    helpText="nápověda"
+                    style={{ left: '5px', bottom: '0px' }}
+                    icon={<HintIcon />}
+                  />
+                  <ButtonWithHelp
                     onClick={() => {
                       setRevealed(true);
                       if (activeOverlay === 'beforeSecond') {
@@ -329,23 +288,35 @@ export default function PracticeCard() {
                         playAudio(currentItem.audio);
                       setHintIndex(0);
                     }}
-                    className="relative"
-                    aria-label="Zobrazit odpověď"
-                  >
-                    <GuideHint
-                      visibility={firstOverlay}
-                      text="odhalit překlad"
-                      style={{ right: '5px', bottom: '0px' }}
-                    />
-                    <EyeIcon></EyeIcon>
-                  </Button>
+                    helpVisibility={firstOverlay}
+                    helpText="odhalit překlad"
+                    style={{ right: '5px', bottom: '0px' }}
+                    icon={<EyeIcon />}
+                  />
                 </>
               ) : (
-                <PlusMinus
-                  onPlus={() => updateItemArray(config.plusProgress)}
-                  onMinus={() => updateItemArray(config.minusProgress)}
-                  helpVisibility={secondOverlay}
-                />
+                <>
+                  <ButtonWithHelp
+                    onClick={() => updateItemArray(config.minusProgress)}
+                    helpVisibility={secondOverlay}
+                    helpText="neznám"
+                    style={{
+                      left: '5px',
+                      bottom: '0px',
+                    }}
+                    icon={<MinusIcon />}
+                  />
+                  <ButtonWithHelp
+                    onClick={() => updateItemArray(config.plusProgress)}
+                    helpVisibility={secondOverlay}
+                    helpText="znám"
+                    style={{
+                      right: '5px',
+                      bottom: '0px',
+                    }}
+                    icon={<PlusIcon />}
+                  />
+                </>
               )}
             </div>
           </div>

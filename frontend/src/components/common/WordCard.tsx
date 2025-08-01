@@ -50,7 +50,10 @@ export default function WordCard({
           modalMessage="Opravdu chcete restartovat progress slovíčka?"
           className="w-full"
         >
-          <h2 className="font-display font-semibold">Restartovat progress</h2>
+          <h2 className="font-display font-semibold">
+            <span className="pr-4">Progress</span>
+            {item?.progress}
+          </h2>
         </ButtonReset>
         <Button
           name="close"
@@ -70,8 +73,12 @@ export default function WordCard({
           <p>{item?.translation}</p>
           <p>výslovnost</p>
           <p>{item?.pronunciation}</p>
-          <p>progress</p>
-          <p>{item?.progress}</p>
+          <p>datum příště</p>
+          <p>{item?.nextDate}</p>
+          <p>datum naučení</p>
+          <p>{item?.learnedDate}</p>
+          <p>datum dokončení</p>
+          <p>{item?.masteredDate}</p>
         </div>
         <p className="error h-5 whitespace-nowrap">{getErrorMessage(error)}</p>
       </div>

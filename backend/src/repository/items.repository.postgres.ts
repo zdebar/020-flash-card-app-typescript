@@ -35,6 +35,9 @@ export async function getItemsRepository(
           i.translation,
           i.pronunciation,
           i.audio,
+          ui.next_at AS "nextDate",
+          ui.learned_at AS "learnedDate",
+          ui.mastered_at AS "masteredDate",
           COALESCE(ui.progress, 0) AS progress,
           EXISTS (
             SELECT 1
@@ -221,6 +224,9 @@ export async function getUserItemsListRepository(
           i.translation,
           i.pronunciation,
           i.audio,
+          ui.next_at AS "nextDate",
+          ui.learned_at AS "learnedDate",
+          ui.mastered_at AS "masteredDate",
           COALESCE(ui.progress, 0) AS progress,
           EXISTS (
             SELECT 1

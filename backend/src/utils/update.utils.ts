@@ -4,9 +4,11 @@ import { Item } from "../../../shared/types/dataTypes";
 /**
  * Returns the next review date based on the progress and SRS intervals.
  */
-export function getNextAt(progress: number): string {
+export function getNextAt(progress: number): string | null {
   try {
-    const interval = config.SRS[progress] || 0;
+    const interval = config.SRS[progress];
+    if (interval === undefined) return null;
+
     const randomFactor =
       1 + (Math.random() * 2 * config.srsRandomness - config.srsRandomness);
     const randomizedInterval = Math.round(interval * randomFactor);
@@ -75,4 +77,37 @@ export function addAudioPathsToWords(words: Item[]): Item[] {
     ...word,
     audio: addAudioPath(word.audio),
   }));
+}
+
+/**
+ * Converts an ISO date string to a shorter format (YYYY-MM-DD).
+ * @param isoDate - The ISO date string to format.
+ * @returns The formatted date string.
+ */
+export function formatDateShort(isoDate: string): string {
+  try {
+    return new Date(isoDate).toISOString().split("T")[0];
+  } catch (error) {
+    throw new Error(
+      `Error in formatDateShort: ${
+        (error as any).message
+      } | isoDate: ${isoDate}`
+    );
+  }
+}
+
+/**
+ * Updates the dates (nextDate, learnedDate, masteredDate) for a list of items in place.
+ * @param items - Array of Item objects.
+ */
+export function updateDatesForItems(items: Item[]): void {
+  items.forEach((item) => {
+    item.nextDate = item.nextDate ? formatDateShort(item.nextDate) : null;
+    item.learnedDate = item.learnedDate
+      ? formatDateShort(item.learnedDate)
+      : null;
+    item.masteredDate = item.masteredDate
+      ? formatDateShort(item.masteredDate)
+      : null;
+  });
 }

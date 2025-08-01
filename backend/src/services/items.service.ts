@@ -15,7 +15,10 @@ import {
   getScoreRepository,
   updateUserScoreRepository,
 } from "../repository/user.repository.postgres";
-import { addAudioPathsToWords } from "../utils/update.utils";
+import {
+  addAudioPathsToWords,
+  updateDatesForItems,
+} from "../utils/update.utils";
 import sortItemsByProgress from "../utils/items.utils";
 
 /**
@@ -40,6 +43,8 @@ export async function getUserItemsListService(
   languageID: number
 ): Promise<Item[]> {
   const words: Item[] = await getUserItemsListRepository(db, uid, languageID);
+  updateDatesForItems(words);
+  console.log(words[0]);
   return addAudioPathsToWords(words);
 }
 
