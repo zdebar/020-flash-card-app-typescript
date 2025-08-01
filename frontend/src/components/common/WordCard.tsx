@@ -51,7 +51,7 @@ export default function WordCard({
           className="w-full"
         >
           <h2 className="font-display font-semibold">
-            <span className="pr-4">Progress</span>
+            <span className="pr-4">progress</span>
             {item?.progress}
           </h2>
         </ButtonReset>

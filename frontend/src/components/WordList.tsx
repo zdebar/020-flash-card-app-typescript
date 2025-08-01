@@ -93,7 +93,7 @@ export default function WordList() {
                   }
                 }}
               >
-                <div className="flex w-full justify-between px-8 font-sans font-medium">
+                <div className="h-C flex w-full flex-none items-center justify-between px-8 font-sans font-medium">
                   {displayField === 'czech' ? (
                     <>
                       <span>{item.czech}</span>
