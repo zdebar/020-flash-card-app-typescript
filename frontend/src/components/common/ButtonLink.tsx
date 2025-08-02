@@ -12,7 +12,7 @@ interface ButtonLinkProps extends Omit<LinkProps, 'to'> {
 export default function ButtonLink({
   children,
   disabled = false,
-  buttonType = 'button',
+  buttonType = 'button-rectangular',
   className = '',
   to,
   ...props

@@ -11,7 +11,7 @@ export default function Button({
   children,
   className = '',
   disabled = false,
-  buttonType = 'button',
+  buttonType = 'button-rectangular',
   ...props
 }: ButtonProps) {
   return (

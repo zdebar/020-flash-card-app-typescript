@@ -53,7 +53,7 @@ export default function InfoCard({
           <CloseIcon />
         </Button>
       </div>
-      <div className="color-disabled h-full overflow-y-auto px-6 py-4">
+      <div className="color-disabled h-full overflow-y-auto p-4">
         <div
           dangerouslySetInnerHTML={{
             __html: block.blockExplanation,

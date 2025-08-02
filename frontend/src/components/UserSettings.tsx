@@ -25,13 +25,9 @@ export default function UserSettings() {
   };
 
   return (
-    <div className="card list pt-4">
-      <SettingProperty
-        label="Uživatel:"
-        value={userInfo?.name}
-        className="px-2"
-      />
-      <ThemeDropdown className="px-2" />
+    <div className="card list px-2 pt-4">
+      <SettingProperty label="Uživatel:" value={userInfo?.name} />
+      <ThemeDropdown />
       <ButtonWithModal
         modalMessage="Opravdu se chcete odhlásit?"
         onClick={handleLogout}

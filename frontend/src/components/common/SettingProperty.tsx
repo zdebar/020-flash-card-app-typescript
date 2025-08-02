@@ -12,7 +12,7 @@ export default function SettingProperty({
   className = '',
 }: SettingPropertyProps) {
   return (
-    <div className={`h-B flex items-center ${className}`}>
+    <div className={`h-A flex items-center ${className}`}>
       <Label text={label} /> <p>{value}</p>
     </div>
   );

@@ -92,6 +92,15 @@ export function useAudioManager(wordArray: Item[]) {
     volumeRef.current = Math.min(Math.max(volume, 0), 1);
   }, []);
 
+  const tryAudio = useCallback((audioPath: string | null): boolean => {
+    if (audioPath && audioCacheRef.current.has(audioPath)) {
+      return true;
+    } else {
+      console.warn(`Audio file not found in cache: ${audioPath}`);
+      return false;
+    }
+  }, []);
+
   return {
     playAudio,
     stopAudio,
@@ -103,5 +112,6 @@ export function useAudioManager(wordArray: Item[]) {
     setAudioReload,
     audioError,
     setAudioError,
+    tryAudio,
   };
 }

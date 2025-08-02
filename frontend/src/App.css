@@ -115,7 +115,7 @@
 
 @layer components {
   /* rectangular buttons */
-  .button {
+  .button-rectangular {
     @apply h-13 w-full font-sans font-bold tracking-wide;
     @apply bg-[var(--color-blue-3)] text-white shadow-[2px_2px_2px_rgba(0,0,0,0.35)] hover:bg-[var(--color-blue-4)];
     @apply dark:bg-[var(--color-blue-4)] dark:text-white dark:hover:bg-[var(--color-blue-3)];

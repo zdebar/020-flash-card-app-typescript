@@ -44,7 +44,6 @@ export async function getUserItemsListService(
 ): Promise<Item[]> {
   const words: Item[] = await getUserItemsListRepository(db, uid, languageID);
   updateDatesForItems(words);
-  console.log(words[0]);
   return addAudioPathsToWords(words);
 }
 

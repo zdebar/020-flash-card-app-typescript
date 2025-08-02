@@ -8,7 +8,7 @@ import PracticeCard from './components/PracticeCard';
 import UserSettings from './components/UserSettings';
 import UserDashboard from './components/UserDashboard';
 import GrammarList from './components/GrammarlList';
-import Footer from './components/Footer';
+import Footer from './components/common/Footer.js';
 import UserLanguages from './components/UserLanguages';
 import UserOverview from './components/UserOverview';
 import WordList from './components/WordList';

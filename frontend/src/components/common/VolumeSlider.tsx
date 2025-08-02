@@ -2,15 +2,18 @@ import { useState } from 'react';
 import { VolumeIcon } from './Icons';
 import GuideHint from './GuideHint';
 
+type VolumeSliderProps = {
+  setVolume: (volume: number) => void;
+  helpVisibility?: boolean;
+  className?: string;
+} & React.HTMLAttributes<HTMLDivElement>;
+
 export default function VolumeSlider({
   setVolume,
   helpVisibility = false,
   className = '',
-}: {
-  setVolume: (volume: number) => void;
-  helpVisibility?: boolean;
-  className?: string;
-}) {
+  ...props
+}: VolumeSliderProps) {
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
   const [volume, setLocalVolume] = useState(0.5);
   const noAudio = false;
@@ -25,6 +28,7 @@ export default function VolumeSlider({
     <div
       className={`flex pt-1 ${className}`}
       onClick={(event) => event.stopPropagation()}
+      {...props}
     >
       <button
         onClick={() => setShowVolumeSlider((prev) => !prev)}

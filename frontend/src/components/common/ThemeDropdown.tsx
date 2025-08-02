@@ -18,13 +18,13 @@ export default function ThemeDropdown({ className }: { className?: string }) {
   };
 
   return (
-    <div className={`h-B centered ${className}`}>
+    <div className={`h-A centered ${className}`}>
       <Label text="Vzhled:" />
       <select
         id="theme-select"
         value={theme}
         onChange={handleChange}
-        className="color-background w-full"
+        className="color-disabled h-A w-full"
         aria-label="Změna motivu"
       >
         {themeOptions.map((option) => (
