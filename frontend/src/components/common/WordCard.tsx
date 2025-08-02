@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from 'react';
-import { CloseIcon, AudioIcon, HelpIcon } from './Icons.js';
+import { CloseIcon, AudioIcon } from './Icons.js';
 import Button from './Button.js';
 import { Item, PracticeError } from '../../../../shared/types/dataTypes.js';
 import ButtonReset from './ButtonReset.js';
@@ -9,9 +9,8 @@ import { useAudioManager } from '../../hooks/useAudioManager.js';
 import VolumeSlider from './VolumeSlider.js';
 import { useEffect, useState } from 'react';
 import { getErrorMessage } from '../../utils/error.utils';
-import { useLocalStorage } from '../../hooks/useLocalStorage.js';
-import Checkbox from './Checkbox.js';
-import Overlay from './Overlay.js';
+import HelpOverlay from './HelpOverlay.js';
+import GuideHint from './GuideHint.js';
 
 export default function WordCard({
   item,
@@ -28,12 +27,7 @@ export default function WordCard({
   const { playAudio, setVolume, setAudioError, tryAudio, audioError } =
     useAudioManager([item]);
   const [error, setError] = useState<PracticeError | null>(null);
-  const { isTrue, setIsTrue, isSavedTrue, setIsSavedTrue, hideOverlay } =
-    useLocalStorage('showWordCardHelp');
-
-  const handleCheckboxChange = (checked: boolean) => {
-    setIsSavedTrue(!checked);
-  };
+  const [isHelpVisible, setIsHelpVisible] = useState(false);
 
   // Reset audio error for new item
   useEffect(() => {
@@ -59,14 +53,11 @@ export default function WordCard({
   }, [item, audioError, tryAudio]);
 
   return (
-    <div className="card">
-      {isTrue && (
-        <Overlay
-          onClose={() => {
-            hideOverlay(isSavedTrue);
-          }}
-        />
-      )}
+    <div className="card relative">
+      <HelpOverlay
+        name="showWordCardHelp"
+        setIsHelpVisible={setIsHelpVisible}
+      />
       <div className="flex gap-1">
         <ButtonReset
           disabled={!canReset}
@@ -74,19 +65,35 @@ export default function WordCard({
           modalMessage="Opravdu chcete restartovat progress slovíčka?"
           className="w-full"
         >
-          <h2 className="font-display font-normal">
+          <h2 className="font-display relative font-normal">
             <span className="pr-4">progress</span>
             {item?.progress}
           </h2>
+          <GuideHint
+            visibility={isHelpVisible}
+            text={'restartovat progress slovíčka'}
+            style={{
+              top: '30px',
+              left: '5px',
+            }}
+          />
         </ButtonReset>
-
         <Button
           onClick={() => {
             playAudio(item.audio);
           }}
-          className="h-A w-A flex-none"
+          className="h-A w-A relative flex-none"
         >
           <AudioIcon />
+          <GuideHint
+            visibility={isHelpVisible}
+            text={'přehrát audio'}
+            style={{
+              top: '30px',
+              left: '5px',
+            }}
+            className="text-left"
+          />
         </Button>
         <Button
           name="close"
@@ -97,7 +104,6 @@ export default function WordCard({
           <CloseIcon />
         </Button>
       </div>
-
       <div className="color-disabled relative flex h-full flex-col justify-between px-4 py-12">
         <VolumeSlider
           setVolume={setVolume}
@@ -124,23 +130,6 @@ export default function WordCard({
           <p>{item?.masteredDate}</p>
         </div>
         <p className="error h-5 whitespace-nowrap">{getErrorMessage(error)}</p>
-        <div
-          className="absolute flex-shrink-0"
-          style={{
-            bottom: '5px',
-            right: '5px',
-          }}
-          onClick={() => setIsTrue(true)}
-        >
-          <HelpIcon />
-        </div>
-        {isTrue && (
-          <Checkbox
-            onChange={handleCheckboxChange}
-            className="pl-1"
-            checked={!isSavedTrue}
-          />
-        )}
       </div>
     </div>
   );

@@ -3,6 +3,10 @@ import { CloseIcon, NextIcon, PreviousIcon } from './common/Icons';
 import Button from './common/Button';
 import type { BlockExplanation } from '../../../shared/types/dataTypes';
 import ButtonReset from './common/ButtonReset';
+import HelpOverlay from './common/HelpOverlay';
+import { useState } from 'react';
+import GuideHint from './common/GuideHint';
+
 export default function InfoCard({
   block,
   setVisibility,
@@ -20,8 +24,14 @@ export default function InfoCard({
   arrayLength: number;
   canReset?: boolean;
 }) {
+  const [isHelpVisible, setIsHelpVisible] = useState(false);
+
   return (
-    <div className="card">
+    <div className="card relative">
+      <HelpOverlay
+        name="showInfoCardHelp"
+        setIsHelpVisible={setIsHelpVisible}
+      />
       <div className="flex gap-1">
         <ButtonReset
           disabled={!canReset}
@@ -43,6 +53,14 @@ export default function InfoCard({
             </h2>
             <h2 className="font-display font-semibold">{block.blockName}</h2>
           </div>
+          <GuideHint
+            visibility={isHelpVisible}
+            text={'restartovat progress'}
+            style={{
+              top: '30px',
+              left: '5px',
+            }}
+          />
         </ButtonReset>
         <Button
           name="close"

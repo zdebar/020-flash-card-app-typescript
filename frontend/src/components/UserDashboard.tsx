@@ -2,40 +2,30 @@ import { useUser } from '../hooks/useUser';
 import ProgressBar from './common/ProgressBar.js';
 import ButtonLink from './common/ButtonLink';
 import LevelBar from './common/LevelBar';
-import { useLocalStorage } from '../hooks/useLocalStorage.js';
-import Overlay from './common/Overlay';
+import { useState } from 'react';
 import GuideHint from './common/GuideHint';
-import Checkbox from './common/Checkbox';
-import { HelpIcon } from './common/Icons';
 import config from '../config/config.js';
+import HelpOverlay from './common/HelpOverlay';
 
 export default function UserDashboard() {
   const { userScore, languageID } = useUser();
-  const { isTrue, setIsTrue, isSavedTrue, setIsSavedTrue, hideOverlay } =
-    useLocalStorage('showDashboardHelp');
+  const [isHelpVisible, setIsHelpVisible] = useState(false);
 
   const currLanguage = userScore?.find(
     (lang) => lang.languageID === languageID
   );
 
-  const handleCheckboxChange = (checked: boolean) => {
-    setIsSavedTrue(!checked);
-  };
-
   return (
     <>
-      {isTrue && (
-        <Overlay
-          onClose={() => {
-            hideOverlay(isSavedTrue);
-          }}
-        />
-      )}
       <div className="card relative">
+        <HelpOverlay
+          name="showDashboardHelp"
+          setIsHelpVisible={setIsHelpVisible}
+        />
         <ButtonLink to="/practice" className="relative flex-shrink-0">
           Procvičovat
           <GuideHint
-            visibility={isTrue}
+            visibility={isHelpVisible}
             text="jednotná sekvence učení slovíček a gramatiky"
             style={{
               top: '30px',
@@ -48,7 +38,7 @@ export default function UserDashboard() {
         <ButtonLink to="/userOverview" className="relative flex-shrink-0">
           Přehled
           <GuideHint
-            visibility={isTrue}
+            visibility={isHelpVisible}
             text={
               <>
                 přehled gramatiky a slovíček
@@ -88,25 +78,7 @@ export default function UserDashboard() {
                 <ProgressBar progress={item} maxProgress={config.dailyBlocks} />
               </div>
             ))}
-
-          <div
-            className="absolute flex-shrink-0"
-            style={{
-              bottom: '5px',
-              right: '5px',
-            }}
-            onClick={() => setIsTrue(true)}
-          >
-            <HelpIcon />
-          </div>
         </div>
-        {isTrue && (
-          <Checkbox
-            onChange={handleCheckboxChange}
-            className="pl-1"
-            checked={!isSavedTrue}
-          />
-        )}
       </div>
     </>
   );
