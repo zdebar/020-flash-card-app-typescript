@@ -111,7 +111,7 @@ export default function WordList() {
             {remainingCount > 0 && (
               <button
                 onClick={() => setVisibleCount((prev) => prev + 10)}
-                className="mt-2 w-full text-center text-[var(--color-blue-3)] hover:underline"
+                className="mt-2 w-full text-center hover:underline"
               >
                 ... a {remainingCount} dalších
               </button>

@@ -1,7 +1,13 @@
-interface LabelProps {
+export default function Label({
+  text,
+  className,
+}: {
   text: string;
-}
-
-export default function Label({ text }: LabelProps) {
-  return <p className="inline-block w-25 flex-shrink-0">{text}</p>;
+  className?: string;
+}) {
+  return (
+    <p className={`inline-block w-25 flex-shrink-0 pl-2 ${className}`}>
+      {text}
+    </p>
+  );
 }

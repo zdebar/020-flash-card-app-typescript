@@ -27,11 +27,7 @@ export default function InfoCard({
   const [isHelpVisible, setIsHelpVisible] = useState(false);
 
   return (
-    <div className="card relative">
-      <HelpOverlay
-        name="showInfoCardHelp"
-        setIsHelpVisible={setIsHelpVisible}
-      />
+    <div className="card">
       <div className="flex gap-1">
         <ButtonReset
           disabled={!canReset}
@@ -71,12 +67,16 @@ export default function InfoCard({
           <CloseIcon />
         </Button>
       </div>
-      <div className="color-disabled h-full overflow-y-auto p-4">
+      <div className="color-disabled relative h-full overflow-y-auto p-4">
         <div
           dangerouslySetInnerHTML={{
             __html: block.blockExplanation,
           }}
         ></div>
+        <HelpOverlay
+          name="showInfoCardHelp"
+          setIsHelpVisible={setIsHelpVisible}
+        />
       </div>
       <div className="flex gap-1" role="group" aria-label="Navigace">
         <Button name="previous" onClick={handlePrevious} disabled={index === 0}>

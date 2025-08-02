@@ -6,7 +6,7 @@ import TopBar from './common/TopBar';
 export default function UserOverview() {
   const { languageID } = useUser();
   return (
-    <div className="card list">
+    <div className="w-card list">
       <TopBar text="Přehled" toLink="/userDashboard" />
       <ButtonLink to="/wordList">Slovíčka</ButtonLink>
       <ButtonLink to="/grammarList">Gramatika</ButtonLink>

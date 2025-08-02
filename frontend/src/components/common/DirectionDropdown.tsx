@@ -16,7 +16,7 @@ export default function DirectionDropdown({
         name="direction"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="color-disabled h-A mb-1 h-full w-full pl-2"
+        className="color-disabled h-A mb-1 h-full w-full pl-9"
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>
