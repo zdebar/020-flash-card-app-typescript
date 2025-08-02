@@ -1,9 +1,9 @@
-import { HomeIcon, AcademicCapIcon } from './common/Icons';
-import { useUser } from '../hooks/useUser';
-import ButtonLink from './common/ButtonLink';
+import { HomeIcon, AcademicCapIcon } from './Icons.js';
+import { useUser } from '../../hooks/useUser.js';
+import ButtonLink from './ButtonLink.js';
 import { useLocation } from 'react-router-dom';
-import config from '../config/config';
-import UserAvatar from './common/UserAvatar';
+import config from '../../config/config.js';
+import UserAvatar from './UserAvatar.js';
 
 export default function Header() {
   const { userInfo, languageID } = useUser();

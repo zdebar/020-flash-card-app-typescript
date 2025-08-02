@@ -11,7 +11,7 @@ import config from '../config/config';
 import { useAudioManager } from '../hooks/useAudioManager';
 import { PracticeError } from '../../../shared/types/dataTypes';
 import { useUser } from '../hooks/useUser';
-import ContextInfoCard from './ContextCard';
+import ContextInfoCard from './common/ContextInfoCard.js';
 import Loading from './common/Loading';
 import { getErrorMessage } from '../utils/error.utils';
 import Overlay from './common/Overlay';

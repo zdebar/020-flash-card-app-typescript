@@ -2,7 +2,7 @@ import './App.css';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { useUser } from './hooks/useUser';
 import ButtonLink from './components/common/ButtonLink';
-import Header from './components/Header';
+import Header from './components/common/Header.js';
 import Login from './components/Login';
 import PracticeCard from './components/PracticeCard';
 import UserSettings from './components/UserSettings';
