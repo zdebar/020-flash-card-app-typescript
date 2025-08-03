@@ -16,12 +16,12 @@ export default function UserDashboard() {
   );
 
   return (
-    <>
-      <div className="card relative">
-        <HelpOverlay
-          name="showDashboardHelp"
-          setIsHelpVisible={setIsHelpVisible}
-        />
+    <div className="help-overlay">
+      <HelpOverlay
+        name="showDashboardHelp"
+        setIsHelpVisible={setIsHelpVisible}
+      />
+      <div className="card">
         <ButtonLink to="/practice" className="relative flex-shrink-0">
           Procvičovat
           <GuideHint
@@ -80,6 +80,6 @@ export default function UserDashboard() {
             ))}
         </div>
       </div>
-    </>
+    </div>
   );
 }

@@ -50,9 +50,9 @@ export default function WordList() {
   if (loading) return <Loading />;
 
   return (
-    <div className="w-card list z-1 h-full flex-1">
+    <>
       {!showExplanation ? (
-        <>
+        <div className="w-card list z-1 h-full flex-1">
           <div className="h-A flex justify-between gap-1">
             {/* Toggle between czech and translation */}
             <DirectionDropdown
@@ -117,7 +117,7 @@ export default function WordList() {
               </button>
             )}
           </div>
-        </>
+        </div>
       ) : (
         <WordCard
           item={array[index]}
@@ -126,6 +126,6 @@ export default function WordList() {
           resetPath={`/api/items/${index}/reset`}
         />
       )}
-    </div>
+    </>
   );
 }

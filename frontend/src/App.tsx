@@ -22,7 +22,7 @@ export default function App() {
     <div className="color-background">
       <div className="mx-auto flex h-screen max-w-[900px] flex-col justify-between">
         <Header />
-        <div className="relative flex flex-grow flex-col items-center overflow-y-auto">
+        <div className="relative flex h-full flex-grow flex-col items-center overflow-y-auto">
           <Routes>
             <Route
               path="/"
