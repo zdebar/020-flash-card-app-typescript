@@ -27,7 +27,7 @@ export default function InfoCard({
   const [isHelpVisible, setIsHelpVisible] = useState(false);
 
   return (
-    <div className="card">
+    <div className="card relative">
       <div className="flex gap-1">
         <ButtonReset
           disabled={!canReset}
