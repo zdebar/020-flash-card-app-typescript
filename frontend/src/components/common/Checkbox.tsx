@@ -19,7 +19,7 @@ export default function Checkbox({
 
   return (
     <label
-      className={`1note absolute z-20 flex items-center gap-2 ${className}`}
+      className={`note absolute z-20 flex items-center gap-2 ${className}`}
       style={{
         bottom: '5px',
         left: '5px',
@@ -35,7 +35,7 @@ export default function Checkbox({
           height: '16px',
         }}
       />
-      Skrýt příště
+      Skrýt
     </label>
   );
 }

@@ -131,6 +131,10 @@
     @apply flex h-full max-h-[360px] min-h-[320px] w-full max-w-[360px] min-w-[320px] flex-col justify-start gap-1;
   }
 
+  .help-overlay {
+    @apply relative flex flex-col items-center justify-start;
+  }
+
   .list {
     @apply flex flex-col gap-1;
   }
@@ -165,6 +169,13 @@
   .app {
     justify-content: center;
   }
+
+  .help-overlay {
+    height: 100%;
+    max-height: 360px;
+    width: 100%;
+    max-width: 640px;
+  }
 }
 
 @media (max-height: 420px) and (max-width: 640px) {
@@ -177,6 +188,13 @@
 @media (min-height: 421px) {
   .header {
     position: relative;
+  }
+
+  .help-overlay {
+    height: 100%;
+    max-height: 400px;
+    width: 100%;
+    max-width: 360px;
   }
 }
 

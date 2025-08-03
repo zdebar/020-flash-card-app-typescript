@@ -143,7 +143,19 @@ export default function PracticeCard() {
     return <Loading text="Nic k procvičování. Zkuste to znovu později." />;
 
   return (
-    <>
+    <div className="help-overlay">
+      {!revealed && (
+        <HelpOverlay
+          name="showPracticeCardFirstHelp"
+          setIsHelpVisible={setIsFirstVisible}
+        />
+      )}
+      {revealed && (
+        <HelpOverlay
+          name="showPracticeCardSecondHelp"
+          setIsHelpVisible={setIsSecondVisible}
+        />
+      )}
       {/* Main content */}
       {infoVisibility ? (
         <ContextInfoCard
@@ -161,18 +173,6 @@ export default function PracticeCard() {
               }}
               aria-label="Přehrát audio"
             >
-              {!revealed && (
-                <HelpOverlay
-                  name="showPracticeCardFirstHelp"
-                  setIsHelpVisible={setIsFirstVisible}
-                />
-              )}
-              {revealed && (
-                <HelpOverlay
-                  name="showPracticeCardFirstHelp"
-                  setIsHelpVisible={setIsSecondVisible}
-                />
-              )}
               <GuideHint
                 visibility={isSecondVisible}
                 text="vyslovte slovíčko několikrát nahlas"
@@ -326,6 +326,6 @@ export default function PracticeCard() {
           </div>
         </>
       )}
-    </>
+    </div>
   );
 }
