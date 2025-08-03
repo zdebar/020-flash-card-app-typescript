@@ -14,10 +14,9 @@ import { useUser } from '../hooks/useUser';
 import ContextInfoCard from './common/ContextInfoCard.js';
 import Loading from './common/Loading';
 import { getErrorMessage } from '../utils/error.utils';
-import Overlay from './common/Overlay';
 import GuideHint from './common/GuideHint';
 import VolumeSlider from './common/VolumeSlider';
-
+import HelpOverlay from './common/HelpOverlay';
 import { useItemArray } from '../hooks/useItemArray';
 import ButtonWithHelp from './common/ButtonWithHelp';
 
@@ -54,11 +53,11 @@ export default function PracticeCard() {
   const [infoVisibility, setInfoVisibility] = useState(false);
   const [error, setError] = useState<PracticeError | null>(null);
   const [activeOverlay, setActiveOverlay] = useState<string | null>('first');
+  const [isFirstVisible, setIsFirstVisible] = useState(false);
+  const [isSecondVisible, setIsSecondVisible] = useState(false);
 
   const isAudioDisabled = (direction && !revealed) || !currentItem?.audio;
   const noAudio = error === PracticeError.NoAudio;
-  const firstOverlay = activeOverlay === 'first';
-  const secondOverlay = activeOverlay === 'second';
 
   const currLanguage = userScore?.find(
     (lang) => lang.languageID === languageID
@@ -113,10 +112,10 @@ export default function PracticeCard() {
 
   // Set direction based on current item progress, play audio if needed
   useEffect(() => {
-    if (!direction && currentItem?.audio && !audioReload && !firstOverlay) {
+    if (!direction && currentItem?.audio && !audioReload && !isFirstVisible) {
       setTimeout(() => playAudio(currentItem.audio!), 100);
     }
-  }, [currentItem, playAudio, audioReload, direction, firstOverlay]);
+  }, [currentItem, playAudio, audioReload, direction, isFirstVisible]);
 
   // Error setter
   useEffect(() => {
@@ -153,13 +152,6 @@ export default function PracticeCard() {
         />
       ) : (
         <>
-          {/* First Overlay */}
-          {firstOverlay && (
-            <Overlay onClose={() => setActiveOverlay('beforeSecond')} />
-          )}
-
-          {/* Second Overlay */}
-          {secondOverlay && <Overlay onClose={() => setActiveOverlay(null)} />}
           <div className="card">
             {/* Card content with item details */}
             <div
@@ -169,8 +161,20 @@ export default function PracticeCard() {
               }}
               aria-label="Přehrát audio"
             >
+              {!revealed && (
+                <HelpOverlay
+                  name="showPracticeCardFirstHelp"
+                  setIsHelpVisible={setIsFirstVisible}
+                />
+              )}
+              {revealed && (
+                <HelpOverlay
+                  name="showPracticeCardFirstHelp"
+                  setIsHelpVisible={setIsSecondVisible}
+                />
+              )}
               <GuideHint
-                visibility={secondOverlay}
+                visibility={isSecondVisible}
                 text="vyslovte slovíčko několikrát nahlas"
                 style={{
                   top: '30px',
@@ -180,7 +184,7 @@ export default function PracticeCard() {
                 className="w-100 text-center"
               />
               <GuideHint
-                visibility={secondOverlay}
+                visibility={isSecondVisible}
                 text="kliknutím na kartu se znovu přehraje audio "
                 style={{
                   bottom: '30px',
@@ -195,12 +199,12 @@ export default function PracticeCard() {
               >
                 <VolumeSlider
                   setVolume={setVolume}
-                  helpVisibility={firstOverlay}
+                  helpVisibility={isFirstVisible}
                 />
                 <p className="text-sm">
                   {index + 1} / {arrayLength}
                   <GuideHint
-                    visibility={firstOverlay}
+                    visibility={isFirstVisible}
                     text="slovíčka v bloku"
                     style={{ right: '-10px', bottom: '-20px' }}
                   />
@@ -228,7 +232,7 @@ export default function PracticeCard() {
                 <p className="text-sm">
                   {currentItem?.progress}
                   <GuideHint
-                    visibility={firstOverlay}
+                    visibility={isFirstVisible}
                     text="pokrok slovíčka"
                     style={{ left: '-10px', top: '-20px' }}
                   />
@@ -239,7 +243,7 @@ export default function PracticeCard() {
                 <p className="text-sm">
                   {currLanguage?.blockCount[0]} / {config.dailyBlocks}
                   <GuideHint
-                    visibility={firstOverlay}
+                    visibility={isFirstVisible}
                     text="bloků dnes"
                     style={{ right: '-10px', top: '-20px' }}
                   />
@@ -252,8 +256,8 @@ export default function PracticeCard() {
               <ButtonWithHelp
                 onClick={() => setInfoVisibility(true)}
                 disabled={!currentItem?.hasContextInfo || !revealed}
-                helpVisibility={secondOverlay}
-                helpText="zobrazit informace"
+                helpVisibility={isSecondVisible}
+                helpText="gramatika"
                 style={{ left: '5px', bottom: '0px' }}
                 icon={<InfoIcon />}
               />
@@ -262,8 +266,8 @@ export default function PracticeCard() {
                   updateItemArray(config.skipProgress);
                 }}
                 disabled={!revealed}
-                helpVisibility={secondOverlay}
-                helpText="přeskočit slovíčko"
+                helpVisibility={isSecondVisible}
+                helpText="už více neopakovat"
                 style={{ right: '5px', bottom: '0px' }}
                 icon={<SkipIcon />}
               />
@@ -273,7 +277,7 @@ export default function PracticeCard() {
                 <>
                   <ButtonWithHelp
                     onClick={() => setHintIndex((prevIndex) => prevIndex + 1)}
-                    helpVisibility={firstOverlay}
+                    helpVisibility={isFirstVisible}
                     helpText="nápověda"
                     style={{ left: '5px', bottom: '0px' }}
                     icon={<HintIcon />}
@@ -288,7 +292,7 @@ export default function PracticeCard() {
                         playAudio(currentItem.audio);
                       setHintIndex(0);
                     }}
-                    helpVisibility={firstOverlay}
+                    helpVisibility={isFirstVisible}
                     helpText="odhalit překlad"
                     style={{ right: '5px', bottom: '0px' }}
                     icon={<EyeIcon />}
@@ -298,7 +302,7 @@ export default function PracticeCard() {
                 <>
                   <ButtonWithHelp
                     onClick={() => updateItemArray(config.minusProgress)}
-                    helpVisibility={secondOverlay}
+                    helpVisibility={isSecondVisible}
                     helpText="neznám"
                     style={{
                       left: '5px',
@@ -308,7 +312,7 @@ export default function PracticeCard() {
                   />
                   <ButtonWithHelp
                     onClick={() => updateItemArray(config.plusProgress)}
-                    helpVisibility={secondOverlay}
+                    helpVisibility={isSecondVisible}
                     helpText="znám"
                     style={{
                       right: '5px',

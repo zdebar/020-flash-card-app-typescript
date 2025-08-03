@@ -20,9 +20,9 @@ export default function App() {
 
   return (
     <div className="color-background">
-      <div className="min-card mx-auto flex h-screen max-w-[900px] flex-col justify-between">
+      <div className="mx-auto flex h-screen max-w-[900px] flex-col justify-between">
         <Header />
-        <div className="flex h-full flex-grow flex-col items-center overflow-y-auto">
+        <div className="relative flex flex-grow flex-col items-center overflow-y-auto">
           <Routes>
             <Route
               path="/"
