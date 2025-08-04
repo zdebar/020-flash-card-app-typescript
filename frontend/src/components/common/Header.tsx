@@ -14,7 +14,7 @@ export default function Header() {
   }
 
   return (
-    <header className="header z-5 flex w-full flex-none justify-between">
+    <header className="header z-20 flex w-full flex-none justify-between">
       <nav
         className="sideheader m-4 flex gap-4"
         role="navigation"

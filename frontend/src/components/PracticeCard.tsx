@@ -119,7 +119,7 @@ export default function PracticeCard() {
 
   // Error setter
   useEffect(() => {
-    if (!currentItem?.audio || audioError) {
+    if ((currentItem && !currentItem?.audio) || audioError) {
       setError(PracticeError.NoAudio);
     } else {
       setError(null);

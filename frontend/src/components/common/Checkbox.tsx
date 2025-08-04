@@ -19,7 +19,7 @@ export default function Checkbox({
 
   return (
     <label
-      className={`note absolute z-20 flex items-center gap-2 ${className}`}
+      className={`note reverse-order absolute z-20 flex items-center gap-2 ${className}`}
       style={{
         bottom: '5px',
         left: '5px',

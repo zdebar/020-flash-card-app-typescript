@@ -28,11 +28,12 @@ export default function App() {
               path="/"
               element={
                 <div className="flex w-full max-w-[450px] flex-col items-center justify-start gap-4 px-4 pt-6 text-center">
-                  <h1>Minidrill</h1>
+                  <h1>Minidril</h1>
 
                   <p>
-                    Trénujte až 200 slovíček či 100 vět za 10 minut, a dosáhněte
-                    základní znalosti jazyka za zlomek běžného učebního času.
+                    Trénujte 400 slovíček či 200 vět za 20 minut denně, a
+                    dosáhněte základní znalosti jazyka za zlomek běžného
+                    učebního času.
                   </p>
                   {!userInfo && (
                     <div className="w-card">
@@ -43,8 +44,8 @@ export default function App() {
                   )}
                   <p className="notice">aplikace v testovacím režimu</p>
                   <p className="">
-                    Učební kartičky. Poslouchání a mluvení, žádné psaní. Jedna
-                    sekvence slovíček a gramatiky. Procvičování slovíček
+                    Rychlý dril. Učební kartičky. Poslouchání a mluvení, žádné
+                    psaní. Sekvence slovíček a gramatiky. Procvičování
                     samostatně i ve větách.
                   </p>
                 </div>

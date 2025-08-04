@@ -7,9 +7,14 @@ import { useState } from 'react';
 export interface ButtonResetProps
   extends Omit<ButtonWithModalProps, 'onClick'> {
   apiPath: string;
+  onReset?: () => void;
 }
 
-export default function ButtonReset({ apiPath, ...props }: ButtonResetProps) {
+export default function ButtonReset({
+  apiPath,
+  onReset,
+  ...props
+}: ButtonResetProps) {
   const { setUserScore } = useUser();
   const [loading, setLoading] = useState(false);
 
@@ -29,6 +34,7 @@ export default function ButtonReset({ apiPath, ...props }: ButtonResetProps) {
 
       if (response) {
         setUserScore(response?.score || null);
+        onReset?.();
       } else {
         throw new Error(`Reset failed: ${apiPath}`);
       }

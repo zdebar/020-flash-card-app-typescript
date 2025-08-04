@@ -109,7 +109,7 @@ export async function getScoreRepository(
       ),
       days_cte AS (
         SELECT generate_series(
-          CURRENT_DATE - INTERVAL '4 days',
+          CURRENT_DATE - INTERVAL '3 days',
           CURRENT_DATE,
           INTERVAL '1 day'
         )::date AS day

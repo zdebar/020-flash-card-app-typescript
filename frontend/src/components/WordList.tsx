@@ -123,7 +123,6 @@ export default function WordList() {
           item={array[index]}
           setVisibility={setShowExplanation}
           canReset={true}
-          resetPath={`/api/items/${index}/reset`}
         />
       )}
     </>

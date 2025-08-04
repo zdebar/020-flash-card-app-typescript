@@ -16,12 +16,10 @@ export default function WordCard({
   item,
   setVisibility,
   canReset = false,
-  resetPath = '',
 }: {
   item: Item;
   setVisibility: Dispatch<SetStateAction<boolean>>;
   canReset?: boolean;
-  resetPath?: string;
 }) {
   const { languageID } = useUser();
   const { playAudio, setVolume, setAudioError, tryAudio, audioError } =
@@ -62,9 +60,12 @@ export default function WordCard({
         <div className="flex gap-1">
           <ButtonReset
             disabled={!canReset}
-            apiPath={resetPath}
+            apiPath={`/api/items/${item?.id}/reset`}
             modalMessage="Opravdu chcete restartovat progress slovíčka?"
             className="relative w-full"
+            onReset={() => {
+              item.progress = 0;
+            }}
           >
             <h2 className="font-display font-normal">
               <span className="pr-4">progress</span>
@@ -88,7 +89,7 @@ export default function WordCard({
             <AudioIcon />
             <GuideHint
               visibility={isHelpVisible}
-              text={'přehrát audio'}
+              text={'audio'}
               style={{
                 top: '30px',
                 left: '5px',

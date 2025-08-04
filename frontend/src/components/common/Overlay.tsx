@@ -12,7 +12,7 @@ export default function Overlay({
 
   return (
     <div
-      className="color-overlay fixed inset-0 z-10"
+      className="color-overlay fixed inset-0 z-5"
       role="dialog"
       style={{
         pointerEvents: 'all',

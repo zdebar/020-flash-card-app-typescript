@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS users (
   name TEXT, -- user name
   email TEXT, -- user email
   created_at TIMESTAMPTZ DEFAULT NOW()
+  daily_goal INTEGER DEFAULT 50, -- daily learning goal in blocks
 );
 
 CREATE TABLE IF NOT EXISTS parts_of_speech (

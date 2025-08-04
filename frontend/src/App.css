@@ -156,6 +156,14 @@
   .text-learned {
     @apply text-xs font-bold text-black dark:text-[var(--color-background-light)];
   }
+
+  .header {
+    @apply relative;
+  }
+
+  .help-overlay {
+    @apply h-full max-h-[400px] w-full max-w-[360px];
+  }
 }
 
 @media (max-height: 420px) {
@@ -165,16 +173,22 @@
     left: 0;
     height: 0;
   }
+}
 
-  .app {
-    justify-content: center;
-  }
-
+@media (max-height: 480px) {
   .help-overlay {
     height: 100%;
     max-height: 360px;
     width: 100%;
-    max-width: 640px;
+    max-width: 520px;
+  }
+
+  .help-icon {
+    padding-right: 45px;
+  }
+
+  .reverse-order {
+    flex-direction: row-reverse;
   }
 }
 
@@ -182,19 +196,6 @@
   .sideheader {
     flex-direction: column;
     height: 150px;
-  }
-}
-
-@media (min-height: 421px) {
-  .header {
-    position: relative;
-  }
-
-  .help-overlay {
-    height: 100%;
-    max-height: 398px;
-    width: 100%;
-    max-width: 360px;
   }
 }
 

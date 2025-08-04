@@ -59,7 +59,7 @@ export default function UserDashboard() {
         >
           {currLanguage && (
             <>
-              <p className="note">pokrok na posledních 2 úrovních</p>
+              <p className="note">pokrok na posledních 4 úrovních</p>
               <LevelBar
                 learned={currLanguage?.learnedCountByLevel ?? {}}
                 learnedToday={currLanguage?.learnedCountTodayByLevel ?? {}}
@@ -67,7 +67,7 @@ export default function UserDashboard() {
               />
             </>
           )}
-          <p className="note">cvičební bloky za posledních 5 dní</p>
+          <p className="note">cvičební bloky za poslední 4 dny</p>
           {currLanguage &&
             currLanguage.blockCount.map((item, idx) => (
               <div

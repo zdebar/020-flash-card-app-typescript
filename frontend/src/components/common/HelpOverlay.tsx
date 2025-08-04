@@ -32,7 +32,7 @@ export default function HelpOverlay({
         />
       )}
       <div
-        className="absolute z-10"
+        className="help-icon absolute z-10"
         style={{
           bottom: '5px',
           right: '5px',

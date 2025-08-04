@@ -14,7 +14,6 @@ export default function GuideHint({
       <p
         className={`note absolute z-20 ${className}`}
         style={{
-          // whiteSpace: 'nowrap',
           pointerEvents: 'none',
           ...style,
         }}
