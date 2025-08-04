@@ -24,7 +24,7 @@ export default function GrammarList() {
           {loading ? (
             <Loading />
           ) : (
-            <div className="overflow-y-auto">
+            <div className="list overflow-y-auto">
               {array.map((block, idx) => (
                 <Button
                   key={idx}
