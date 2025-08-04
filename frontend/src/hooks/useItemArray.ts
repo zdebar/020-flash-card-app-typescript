@@ -20,6 +20,7 @@ export function useItemArray(apiPath: string) {
     arrayLength,
     reload,
     setReload,
+    loading,
   } = useArray<Item>(apiPath, 'GET');
 
   const direction = alternateDirection(currentItem?.progress);
@@ -78,5 +79,6 @@ export function useItemArray(apiPath: string) {
     userProgress,
     setUserProgress,
     patchItems,
+    loading,
   };
 }

@@ -45,8 +45,8 @@ export default function App() {
                   <p className="notice">aplikace v testovacím režimu</p>
                   <p className="">
                     Rychlý dril. Učební kartičky. Poslouchání a mluvení, žádné
-                    psaní. Sekvence slovíček a gramatiky. Procvičování
-                    samostatně i ve větách.
+                    psaní. Procvičování samostatných slovíček i gramatiky ve
+                    větách.
                   </p>
                 </div>
               }

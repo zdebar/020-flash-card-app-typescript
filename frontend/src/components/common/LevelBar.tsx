@@ -26,7 +26,6 @@ export default function LevelBar({
                 progress={learned[key]}
                 maxProgress={levels[key]}
                 newProgress={learnedToday[key]}
-                divisions={20}
               />
               {learnedToday[key] > 0 && (
                 <p className="text-learned">+{learnedToday[key]}</p>

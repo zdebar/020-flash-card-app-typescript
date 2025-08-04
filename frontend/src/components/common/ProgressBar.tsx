@@ -23,7 +23,7 @@ export default function ProgressBar({
   ].slice(0, color.length);
 
   return (
-    <div className={`relative h-2 w-40 border-r-1 dark:border-white`}>
+    <div className={`relative z-4 h-2 w-40 border-r-1 dark:border-white`}>
       <div className="flex h-full w-full">
         {divisionArray.map((value, idx) => (
           <div
@@ -37,7 +37,7 @@ export default function ProgressBar({
       </div>
 
       <div
-        className={`absolute top-0 h-full ${colorProgress}`}
+        className={`absolute top-0 z-0 h-full ${colorProgress}`}
         style={{
           width: `${newProgressPercentage}%`,
           left: `${progressPercentage}%`,
@@ -47,7 +47,7 @@ export default function ProgressBar({
         return (
           <div
             key={idx}
-            className={`absolute top-0 z-10 h-full border-l-1`}
+            className={`absolute top-0 z-4 h-full border-l-1`}
             style={{ left: `${(idx * 100) / divisions}%` }}
           ></div>
         );

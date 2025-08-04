@@ -8,6 +8,8 @@
   --font-Mansalva: 'Mansalva', 'sans';
   --color-background-light: #f7b740;
   --color-background-dark: #111827;
+  --color-yellow-0: #f8c87a;
+  --color-yellow-1: #fac369;
   --color-blue-0: #87d5e8;
   --color-blue-1: #6fbbcf;
   --color-blue-2: #2e9ab0;
@@ -15,7 +17,7 @@
   --color-blue-4: #1c6676;
   --color-blue-5: #113c61;
   --color-blue-6: #0d2c47;
-  --color-blue-6: #062946;
+  --color-blue-7: #062946;
   --color-overlay-light: rgba(255, 255, 255, 0.4);
   --color-overlay-dark: rgba(17, 24, 39, 0.6);
 }
@@ -92,13 +94,13 @@
 
   /* disabled buttons */
   .color-disabled {
-    @apply bg-gray-100 text-black shadow-none;
+    @apply bg-[var(--color-yellow-1)] text-black shadow-none;
     @apply dark:bg-gray-800 dark:text-white dark:hover:bg-gray-800;
   }
 
   /* card with audio */
   .color-audio {
-    @apply bg-white shadow-[2px_2px_2px_rgba(0,0,0,0.3)] hover:bg-gray-200;
+    @apply bg-gray-100 shadow-[2px_2px_2px_rgba(0,0,0,0.3)] hover:bg-white;
     @apply dark:bg-gray-700 hover:dark:bg-gray-700;
   }
 
@@ -117,7 +119,7 @@
   /* rectangular buttons */
   .button-rectangular {
     @apply h-13 w-full font-sans font-bold tracking-wide;
-    @apply bg-[var(--color-blue-3)] text-white shadow-[2px_2px_2px_rgba(0,0,0,0.35)] hover:bg-[var(--color-blue-4)];
+    @apply bg-[var(--color-blue-4)] text-white shadow-[2px_2px_2px_rgba(0,0,0,0.35)] hover:bg-[var(--color-blue-2)];
     @apply dark:bg-[var(--color-blue-4)] dark:text-white dark:hover:bg-[var(--color-blue-3)];
   }
 
@@ -166,7 +168,7 @@
   }
 }
 
-@media (max-height: 420px) {
+@media (max-height: 460px) {
   .header {
     position: fixed;
     top: 0;
@@ -175,7 +177,7 @@
   }
 }
 
-@media (max-height: 480px) {
+@media (max-height: 400px) {
   .help-overlay {
     height: 100%;
     max-height: 360px;
@@ -192,7 +194,7 @@
   }
 }
 
-@media (max-height: 420px) and (max-width: 640px) {
+@media (max-height: 460px) and (max-width: 640px) {
   .sideheader {
     flex-direction: column;
     height: 150px;

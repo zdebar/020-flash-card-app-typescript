@@ -36,6 +36,7 @@ export default function PracticeCard() {
     userProgress,
     setUserProgress,
     patchItems,
+    loading,
   } = useItemArray(apiPath);
 
   const {
@@ -139,7 +140,7 @@ export default function PracticeCard() {
     }
   }, [currentItem, audioError, playAudio]);
 
-  if (!arrayLength)
+  if (!arrayLength && !loading)
     return <Loading text="Nic k procvičování. Zkuste to znovu později." />;
 
   return (
@@ -202,7 +203,7 @@ export default function PracticeCard() {
                   helpVisibility={isFirstVisible}
                 />
                 <p className="text-sm">
-                  {index + 1} / {arrayLength}
+                  {index + 1} / {arrayLength || 10}
                   <GuideHint
                     visibility={isFirstVisible}
                     text="slovíčka v bloku"

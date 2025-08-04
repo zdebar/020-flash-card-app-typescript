@@ -13,14 +13,14 @@ export default function GrammarList() {
     useArray<BlockExplanation>(`/api/blocks/${languageID}`, 'GET');
   const [showExplanation, setShowExplanation] = useState(false);
 
-  if (!arrayLength)
-    return <Loading text="Není odemčena žádná lekce gramatiky" />;
-
   return (
     <>
       {!showExplanation ? (
         <div className="w-card list">
           <TopBar text="Gramatika" toLink="/userOverview" />
+          {!arrayLength && !loading && (
+            <Loading text="Není odemčena žádná lekce gramatiky" timeDelay={0} />
+          )}
           {loading ? (
             <Loading />
           ) : (

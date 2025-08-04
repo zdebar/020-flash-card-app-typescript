@@ -67,10 +67,8 @@ export default function WordCard({
               item.progress = 0;
             }}
           >
-            <h2 className="font-display font-normal">
-              <span className="pr-4">progress</span>
-              {item?.progress}
-            </h2>
+            <span className="pr-4">progress</span>
+            {item?.progress}
             <GuideHint
               visibility={isHelpVisible}
               text={'restartovat progress slovíčka'}
