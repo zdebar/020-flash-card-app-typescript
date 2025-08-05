@@ -17,6 +17,7 @@ export default function Button({
   return (
     <button
       className={`${className} ${disabled && 'color-disabled'} ${buttonType}`}
+      disabled={disabled}
       {...props}
     >
       {children}
