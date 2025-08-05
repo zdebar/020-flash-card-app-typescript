@@ -179,20 +179,16 @@ export default function PracticeCard() {
                 text="vyslovte slovíčko několikrát nahlas"
                 style={{
                   top: '30px',
-                  left: '50%',
-                  transform: 'translateX(-50%)',
                 }}
-                className="w-100 text-center"
+                className="w-80 text-center"
               />
               <GuideHint
                 visibility={isSecondVisible}
                 text="kliknutím na kartu se znovu přehraje audio "
                 style={{
                   bottom: '30px',
-                  left: '50%',
-                  transform: 'translateX(-50%)',
                 }}
-                className="w-100 text-center"
+                className="w-80 text-center"
               />
               <div
                 id="top-bar"

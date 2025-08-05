@@ -20,6 +20,7 @@
   --color-blue-7: #062946;
   --color-overlay-light: rgba(255, 255, 255, 0.4);
   --color-overlay-dark: rgba(17, 24, 39, 0.6);
+  --color-green-0: #33691e;
 }
 
 @layer base {
@@ -72,6 +73,10 @@
 
   .h-D {
     @apply h-11;
+  }
+
+  .w-D {
+    @apply w-11;
   }
 
   .min-card {
@@ -164,7 +169,7 @@
   }
 
   .help-overlay {
-    @apply h-full max-h-[400px] w-full max-w-[360px];
+    @apply h-full max-h-[395px] w-full max-w-[360px];
   }
 }
 
@@ -177,7 +182,7 @@
   }
 }
 
-@media (max-height: 400px) {
+@media (max-height: 395px) {
   .help-overlay {
     height: 100%;
     max-height: 360px;

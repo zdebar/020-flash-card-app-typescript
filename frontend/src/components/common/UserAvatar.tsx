@@ -10,8 +10,11 @@ export default function UserAvatar() {
   return finalImageUrl ? (
     <img src={finalImageUrl} alt="User Avatar" className="h-D rounded-full" />
   ) : initials ? (
-    <div className="h-D flex items-center justify-center rounded-full text-3xl">
-      <span className="text-3xl font-bold">{initials}</span>
+    <div
+      className="h-D w-D flex items-center justify-center rounded-full bg-[var(--color-green-0)]"
+      style={{ paddingBottom: '1.5px', paddingLeft: '2px' }}
+    >
+      <span className="text-2xl dark:text-white">{initials}</span>
     </div>
   ) : (
     <UserIcon />

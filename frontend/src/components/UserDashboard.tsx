@@ -26,13 +26,11 @@ export default function UserDashboard() {
           Procvičovat
           <GuideHint
             visibility={isHelpVisible}
-            text="jednotná sekvence učení slovíček a gramatiky"
+            text="učení slovíček a gramatiky"
             style={{
               top: '30px',
-              left: '50%',
-              transform: 'translateX(-50%)',
             }}
-            className="w-100 text-center"
+            className="w-80 text-center"
           />
         </ButtonLink>
         <ButtonLink to="/userOverview" className="relative flex-shrink-0">
@@ -48,10 +46,8 @@ export default function UserDashboard() {
             }
             style={{
               top: '30px',
-              left: '50%',
-              transform: 'translateX(-50%)',
             }}
-            className="w-100 text-center"
+            className="w-80 text-center"
           />
         </ButtonLink>
         <div
