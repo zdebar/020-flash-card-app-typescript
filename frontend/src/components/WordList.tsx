@@ -113,7 +113,7 @@ export default function WordList() {
                 onClick={() => setVisibleCount((prev) => prev + 10)}
                 className="mt-2 w-full text-center hover:underline"
               >
-                ... a {remainingCount} dalších
+                ... a {remainingCount} další
               </button>
             )}
           </div>
