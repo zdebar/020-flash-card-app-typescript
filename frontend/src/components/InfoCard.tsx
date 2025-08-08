@@ -65,11 +65,19 @@ export default function InfoCard({
           </ButtonReset>
           <Button
             name="close"
-            className="w-13 flex-shrink-0 flex-grow-0"
+            className="relative w-13 flex-shrink-0 flex-grow-0"
             onClick={() => setVisibility(false)}
             aria-label="Zavřít vysvětlení"
           >
             <CloseIcon />
+            <GuideHint
+              visibility={isHelpVisible}
+              text={'zpět'}
+              style={{
+                top: '30px',
+                left: '5px',
+              }}
+            />
           </Button>
         </div>
         <div className="color-disabled relative h-full overflow-y-auto p-4">

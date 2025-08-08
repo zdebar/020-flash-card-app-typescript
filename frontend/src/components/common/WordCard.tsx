@@ -97,11 +97,19 @@ export default function WordCard({
           </Button>
           <Button
             name="close"
-            className="w-13 flex-shrink-0 flex-grow-0"
+            className="relative w-13 flex-shrink-0 flex-grow-0"
             onClick={() => setVisibility(false)}
             aria-label="Zavřít vysvětlení"
           >
             <CloseIcon />
+            <GuideHint
+              visibility={isHelpVisible}
+              text={'zpět'}
+              style={{
+                top: '30px',
+                left: '5px',
+              }}
+            />
           </Button>
         </div>
         <div className="color-disabled relative flex h-full flex-col justify-between px-4 py-12">
