@@ -53,7 +53,6 @@ export default function PracticeCard() {
   const [hintIndex, setHintIndex] = useState(0);
   const [infoVisibility, setInfoVisibility] = useState(false);
   const [error, setError] = useState<PracticeError | null>(null);
-  const [activeOverlay, setActiveOverlay] = useState<string | null>('first');
   const [isFirstVisible, setIsFirstVisible] = useState(false);
   const [isSecondVisible, setIsSecondVisible] = useState(false);
 
@@ -282,9 +281,6 @@ export default function PracticeCard() {
                   <ButtonWithHelp
                     onClick={() => {
                       setRevealed(true);
-                      if (activeOverlay === 'beforeSecond') {
-                        setActiveOverlay('second');
-                      }
                       if (direction && currentItem?.audio)
                         playAudio(currentItem.audio);
                       setHintIndex(0);
