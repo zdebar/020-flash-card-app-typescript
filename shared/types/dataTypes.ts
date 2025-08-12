@@ -5,7 +5,7 @@ export interface Item {
   translation: string;
   pronunciation: string | null;
   audio: string | null;
-  progress: number;
+  progress: number; // Startign from 0
   hasContextInfo: boolean;
   showContextInfo: boolean;
   nextDate: string | null;
@@ -32,10 +32,10 @@ export interface UserInfo {
 export interface UserScore {
   languageID: number;
   languageName: string;
-  blockCount: number[];
+  blockCount: Record<string, number>; // { "2025-08-12": 12, "2025-08-11": 10, ... }
   itemsCountByLevel: Record<string, number>; // all items by level
-  learnedCountTodayByLevel: Record<string, number>; // items with progress > 5 by level
-  learnedCountByLevel: Record<string, number>; // items with progress > 5 by level
+  learnedCountTodayByLevel: Record<string, number>; // items with progress > config.learnedProgress by level
+  learnedCountByLevel: Record<string, number>; // items with progress > config.learnedProgress by level
 }
 
 export class UserError extends Error {

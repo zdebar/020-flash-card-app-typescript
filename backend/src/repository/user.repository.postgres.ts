@@ -117,7 +117,7 @@ export async function getScoreRepository(
       blocks_cte as ( 
         SELECT 
           l.id as language_id,
-          ARRAY_AGG(COALESCE(us.count, 0) ORDER BY d.day DESC) AS count
+          json_object_agg(d.day::text, COALESCE(us.count, 0)) AS count
         FROM 
           languages l
         CROSS JOIN 

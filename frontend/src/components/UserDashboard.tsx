@@ -65,15 +65,21 @@ export default function UserDashboard() {
           )}
           <p className="note">cvičební bloky za poslední 4 dny</p>
           {currLanguage &&
-            currLanguage.blockCount.map((item, idx) => (
-              <div
-                key={idx}
-                className="flex w-60 items-center justify-start gap-2"
-              >
-                <p className="w-8 text-right text-xs">{item}</p>
-                <ProgressBar progress={item} maxProgress={config.dailyBlocks} />
-              </div>
-            ))}
+            Object.entries(currLanguage.blockCount)
+              .sort(([a], [b]) => b.localeCompare(a))
+              .slice(0, 4)
+              .map(([date, count]) => (
+                <div
+                  key={date}
+                  className="flex w-60 items-center justify-start gap-2"
+                >
+                  <p className="w-8 text-right text-xs">{count}</p>
+                  <ProgressBar
+                    progress={count}
+                    maxProgress={config.dailyBlocks}
+                  />
+                </div>
+              ))}
         </div>
       </div>
     </div>

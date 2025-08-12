@@ -12,7 +12,6 @@ const config = {
   colorProgressBg: 'bg-[#f7b740]',
   colorProgressText: 'text-[#f7b740]',
   dailyBlocks: 40,
-  levelSort: ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'],
   defaultLanguageID: 1,
   languages: [
     { id: 1, name: 'Angličtina', adverb: 'anglicky', code: 'en' },

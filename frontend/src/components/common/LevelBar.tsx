@@ -1,5 +1,4 @@
 import ProgressBar from './ProgressBar';
-import config from '../../config/config';
 
 export default function LevelBar({
   learned,
@@ -10,13 +9,10 @@ export default function LevelBar({
   learnedToday: Record<string, number>;
   levels: Record<string, number>;
 }) {
-  const levelSort = config.levelSort;
-
   return (
     <div className="w-60 flex-col">
       {Object.keys(learned)
         .filter((key) => key !== 'none')
-        .sort((a, b) => levelSort.indexOf(a) - levelSort.indexOf(b))
         .slice(-4) // Limit to last two levels in learning
         .map((key) => {
           return (
