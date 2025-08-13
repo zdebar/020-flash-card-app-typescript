@@ -55,9 +55,9 @@ export function getMasteredAt(progress: number): string | null {
 }
 
 /**
- * Adds an audio file path to a word object based on the language ID.
+ * Adds an audio file suffix (.opus) to a word object.
  */
-export function addAudioPath(audio: string | null): string | null {
+export function addOpusSuffix(audio: string | null): string | null {
   try {
     return audio ? `${audio}.opus` : null;
   } catch (error) {
@@ -69,13 +69,13 @@ export function addAudioPath(audio: string | null): string | null {
 
 /**
  * Adds audio paths to a list of words.
- * @param words - Array of Item objects.
+ * @param items - Array of Item objects.
  * @returns Array of Item objects with updated audio paths.
  */
-export function addAudioPathsToWords(words: Item[]): Item[] {
-  return words.map((word) => ({
-    ...word,
-    audio: addAudioPath(word.audio),
+export function addAudioSuffixToItems(items: Item[]): Item[] {
+  return items.map((item) => ({
+    ...item,
+    audio: addOpusSuffix(item.audio),
   }));
 }
 
@@ -97,10 +97,10 @@ export function formatDateShort(isoDate: string): string {
 }
 
 /**
- * Updates the dates (nextDate, learnedDate, masteredDate) for a list of items in place.
+ * Converts Array of Items ISO date string to a shorter format (YYYY-MM-DD).
  * @param items - Array of Item objects.
  */
-export function updateDatesForItems(items: Item[]): void {
+export function formatDatesShort(items: Item[]): void {
   items.forEach((item) => {
     item.nextDate = item.nextDate ? formatDateShort(item.nextDate) : null;
     item.learnedDate = item.learnedDate

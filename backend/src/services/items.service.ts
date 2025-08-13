@@ -15,10 +15,7 @@ import {
   getScoreRepository,
   updateUserScoreRepository,
 } from "../repository/user.repository.postgres";
-import {
-  addAudioPathsToWords,
-  updateDatesForItems,
-} from "../utils/update.utils";
+import { addAudioSuffixToItems, formatDatesShort } from "../utils/update.utils";
 import sortItemsByProgress from "../utils/items.utils";
 
 /**
@@ -31,7 +28,7 @@ export async function getItemsService(
 ): Promise<Item[]> {
   const words: Item[] = await getItemsRepository(db, uid, languageID);
   sortItemsByProgress(words);
-  return addAudioPathsToWords(words);
+  return addAudioSuffixToItems(words);
 }
 
 /**
@@ -43,8 +40,8 @@ export async function getUserItemsListService(
   languageID: number
 ): Promise<Item[]> {
   const words: Item[] = await getUserItemsListRepository(db, uid, languageID);
-  updateDatesForItems(words);
-  return addAudioPathsToWords(words);
+  formatDatesShort(words);
+  return addAudioSuffixToItems(words);
 }
 
 /**
