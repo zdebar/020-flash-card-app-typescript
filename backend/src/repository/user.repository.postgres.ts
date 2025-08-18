@@ -45,9 +45,11 @@ export async function resetUserLanguageRepository(
           SELECT id AS user_id FROM users WHERE uid = $1
         )
         DELETE FROM user_items
-        USING items, user_cte
+        USING items, block_items, blocks, user_cte
         WHERE user_items.item_id = items.id
-          AND items.language_id = $2
+          AND items.id = block_items.item_id
+          AND block_items.block_id = blocks.id
+          AND blocks.language_id = $2
           AND user_items.user_id = user_cte.user_id;
         `,
         [uid, languageID]
@@ -86,7 +88,7 @@ export async function updateUserScoreRepository(
     });
   } catch (error) {
     throw new Error(
-      `Error in updateUserItemsRepository: ${
+      `Error in updateUserScoreRepository: ${
         (error as any).message
       } | db type: ${typeof db} | uid: ${uid} | languageID: ${languageID}`
     );
@@ -131,27 +133,27 @@ export async function getScoreRepository(
           l.id
       ),
       items_count_cte AS (
-        SELECT l.id as language_id,
+        SELECT b.language_id as language_id,
               COALESCE(cl.level, 'none') AS level_id, 
               COUNT(*) AS itemsCount
         FROM items i
         LEFT JOIN levels cl ON i.level_id = cl.id
-        JOIN languages l
-          ON l.id = i.language_id
-        GROUP BY l.id, COALESCE(cl.level, 'none')
+        JOIN block_items bi ON i.id = bi.item_id
+        JOIN blocks b ON bi.block_id = b.id
+        GROUP BY b.language_id, COALESCE(cl.level, 'none')
       ),
       learned_counts_cte AS (
-        SELECT l.id as language_id,
+        SELECT b.language_id as language_id,
               COALESCE(cl.level, 'none') AS level_id, 
               COUNT(*) FILTER (WHERE ui.learned_at IS NOT NULL AND DATE(ui.learned_at AT TIME ZONE 'UTC') = CURRENT_DATE) AS learnedCountTodayByLevel,
               COUNT(*) FILTER (WHERE ui.learned_at IS NOT NULL AND DATE(ui.learned_at AT TIME ZONE 'UTC') != CURRENT_DATE) AS learnedCountByLevel
         FROM user_items ui
         JOIN items i ON ui.item_id = i.id
         LEFT JOIN levels cl ON i.level_id = cl.id
-        JOIN languages l
-          ON l.id = i.language_id
+        JOIN block_items bi ON i.id = bi.item_id
+        JOIN blocks b ON bi.block_id = b.id
         WHERE ui.user_id = (SELECT user_id FROM user_cte)
-        GROUP BY l.id, COALESCE(cl.level, 'none')
+        GROUP BY b.language_id, COALESCE(cl.level, 'none')
       )
       SELECT 
         l.id AS "languageID",

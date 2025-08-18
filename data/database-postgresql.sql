@@ -38,11 +38,9 @@ CREATE TABLE IF NOT EXISTS items (
   audio TEXT, -- audio file name, without extension
   level_id INTEGER, -- CEFR level (A1, A2, B1, B2, C1, C2) -- NEW
   part_id INTEGER, -- part of speech id
-  language_id INTEGER, -- language id
   sequence INTEGER CHECK (item_order >= 0), -- learning order of words; INTEGER for words, NULL for grammar
   FOREIGN KEY (level_id) REFERENCES cefr_levels(id) ON DELETE SET NULL, -- NEW
   FOREIGN KEY (part_id) REFERENCES parts_of_speech(id) ON DELETE SET NULL,
-  FOREIGN KEY (language_id) REFERENCES languages(id) ON DELETE SET NULL;
 );
 
 CREATE TABLE IF NOT EXISTS blocks (

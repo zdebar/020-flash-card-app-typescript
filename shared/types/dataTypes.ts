@@ -8,9 +8,9 @@ export interface Item {
   progress: number; // Startign from 0
   hasContextInfo: boolean;
   showContextInfo: boolean;
-  nextDate: string | null;
-  learnedDate: string | null;
-  masteredDate: string | null;
+  nextDate?: string | null;
+  learnedDate?: string | null;
+  masteredDate?: string | null;
 }
 
 export interface BlockExplanation {

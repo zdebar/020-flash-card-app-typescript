@@ -76,15 +76,11 @@ export async function resetBlockRepository(
         SELECT id AS user_id 
         FROM users 
         WHERE uid = $1
-      ),
-      block_items_cte AS (
-        SELECT bi.item_id
-        FROM block_items bi
-        WHERE bi.block_id = $2
       )
       DELETE FROM user_items
-      USING block_items_cte, user_cte
-      WHERE user_items.item_id = block_items_cte.item_id
+      USING block_items, user_cte
+      WHERE user_items.item_id = block_items.item_id
+        AND block_items.block_id = $2
         AND user_items.user_id = user_cte.user_id;
     `;
 
@@ -93,7 +89,7 @@ export async function resetBlockRepository(
     });
   } catch (error) {
     throw new Error(
-      `Error in getGrammarListRepository: ${
+      `Error in resetBlockRepository: ${
         (error as any).message
       } | db type: ${typeof db} | uid: ${uid} | blockID: ${blockID}`
     );

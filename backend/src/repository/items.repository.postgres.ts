@@ -26,8 +26,9 @@ export async function getItemsRepository(
           SELECT bi.item_id
           FROM block_items bi
           JOIN blocks b ON bi.block_id = b.id
-          WHERE b.category_id = 1
-          AND b.language_id = $2
+          WHERE b.category_id IN (1,2)
+            AND b.note_id IS NOT NULL
+            AND b.language_id = $2
         )
         SELECT
           i.id,
@@ -35,9 +36,6 @@ export async function getItemsRepository(
           i.translation,
           i.pronunciation,
           i.audio,
-          ui.next_at AS "nextDate",
-          ui.learned_at AS "learnedDate",
-          ui.mastered_at AS "masteredDate",
           COALESCE(ui.progress, 0) AS progress,
           EXISTS (
             SELECT 1
@@ -55,10 +53,10 @@ export async function getItemsRepository(
         LEFT JOIN blocks b ON bi.block_id = b.id 
         WHERE ui.mastered_at IS NULL
           AND (ui.next_at IS NULL OR ui.next_at < NOW())
-          AND (b.category_id IN (0, 1) OR b.category_id IS NULL)
-          AND i.language_id = $2
-          AND (b.language_id IS NULL OR b.language_id = $2)
+          AND b.category_id IN (1,2,4) 
+          AND b.language_id = $2
         ORDER BY
+          (CASE WHEN b.category_id IN (1,2) AND ui.next_at IS NULL THEN 1 ELSE 0 END) DESC,
           ui.next_at ASC NULLS LAST,
           COALESCE(b.sequence, i.sequence) ASC NULLS LAST,
           i.sequence ASC NULLS LAST,
@@ -166,9 +164,10 @@ export async function getItemInfoRepository(
         b.id,
         b.sequence,
         b.name,
-        b.explanation
+        n.note
       FROM blocks b
       JOIN block_items bi ON b.id = bi.block_id
+      JOIN notes n ON b.note_id = n.id
       WHERE bi.item_id = $1
         AND b.category_id = 1;
     `;
@@ -180,7 +179,7 @@ export async function getItemInfoRepository(
           blockId: row.id,
           blockSequence: row.sequence,
           blockName: row.name,
-          blockExplanation: row.explanation,
+          blockExplanation: row.note,
         };
       });
     });
@@ -207,16 +206,15 @@ export async function getUserItemsListRepository(
     const runQuery = async (): Promise<Item[]> => {
       const query = `
         WITH user_cte AS (
-          SELECT id AS user_id 
-          FROM users 
-          WHERE uid = $1
+          SELECT id AS user_id FROM users WHERE uid = $1
         ),
         has_info_cte AS (
           SELECT bi.item_id
           FROM block_items bi
           JOIN blocks b ON bi.block_id = b.id
-          WHERE b.category_id = 1
-          AND b.language_id = $2
+          WHERE b.category_id IN (1,2)
+            AND b.note_id IS NOT NULL
+            AND b.language_id = $2
         )
         SELECT
           i.id,
@@ -233,16 +231,13 @@ export async function getUserItemsListRepository(
             FROM has_info_cte
             WHERE has_info_cte.item_id = i.id
           ) AS "hasContextInfo",
-          EXISTS (
-            SELECT 1
-            FROM has_info_cte
-            WHERE has_info_cte.item_id = i.id AND i.sequence = 1 AND (ui.progress = 0 OR ui.progress IS NULL)
-          ) AS "showContextInfo"
+          FALSE AS "showContextInfo"
         FROM items i 
         JOIN user_items ui ON i.id = ui.item_id AND ui.user_id = (SELECT user_id FROM user_cte)
         LEFT JOIN block_items bi ON i.id = bi.item_id
-        WHERE bi.item_id IS NULL 
-          AND i.language_id = $2
+        LEFT JOIN blocks b ON bi.block_id = b.id
+        WHERE b.category_id = 4
+          AND b.language_id = $2
         ORDER BY
           i.sequence ASC;
       `;
@@ -275,9 +270,7 @@ export async function resetItemRepository(
   try {
     const query = `
       WITH user_cte AS (
-        SELECT id AS user_id 
-        FROM users 
-        WHERE uid = $1
+        SELECT id AS user_id FROM users WHERE uid = $1
       )
       DELETE FROM user_items
       WHERE user_items.item_id = $2
@@ -289,7 +282,7 @@ export async function resetItemRepository(
     });
   } catch (error) {
     throw new Error(
-      `Error in getGrammarListRepository: ${
+      `Error in resetItemRepository: ${
         (error as any).message
       } | db type: ${typeof db} | uid: ${uid} | itemID: ${itemID}`
     );

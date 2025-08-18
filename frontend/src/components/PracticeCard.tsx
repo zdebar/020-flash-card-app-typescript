@@ -58,10 +58,11 @@ export default function PracticeCard() {
 
   const isAudioDisabled = (direction && !revealed) || !currentItem?.audio;
   const noAudio = error === PracticeError.NoAudio;
-
   const currLanguage = userScore?.find(
     (lang) => lang.languageID === languageID
   );
+  const today = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
+  const todayBlockCount = currLanguage?.blockCount?.[today];
 
   // Show Info by default if the item has showContextInfo set to true
   useEffect(() => {
@@ -237,7 +238,7 @@ export default function PracticeCard() {
                   {getErrorMessage(error)}
                 </p>
                 <p className="text-sm">
-                  {currLanguage?.blockCount[0]} / {config.dailyBlocks}
+                  {todayBlockCount} / {config.dailyBlocks}
                   <GuideHint
                     visibility={isFirstVisible}
                     text="bloků dnes"
