@@ -44,14 +44,14 @@ export default function ButtonWithModal({
   return (
     <div className="w-full">
       <Button
-        className={`${className}`}
         onClick={() => !props.disabled && setModalVisible(true)}
         disabled={props.disabled || isLoading}
+        className={`${className} w-full`}
       >
         {isMessage ? (
-          <p className="notice w-full text-center">{isMessage}</p>
+          <p className={`notice w-full text-center`}>{isMessage}</p>
         ) : (
-          <div className="w-full">{props.children}</div>
+          <>{props.children}</>
         )}
       </Button>
       <ConfirmModal

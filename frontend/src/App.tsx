@@ -8,6 +8,7 @@ import PracticeCard from './components/PracticeCard';
 import UserSettings from './components/UserSettings';
 import UserDashboard from './components/UserDashboard';
 import GrammarList from './components/GrammarlList';
+import GrammarPracticeList from './components/GrammarPracticeCard';
 import Footer from './components/common/Footer.js';
 import UserLanguages from './components/UserLanguages';
 import UserOverview from './components/UserOverview';
@@ -58,6 +59,10 @@ export default function App() {
             <Route path="/userLanguages" element={<UserLanguages />} />
             <Route path="/userOverview" element={<UserOverview />} />
             <Route path="/grammarList" element={<GrammarList />} />
+            <Route
+              path="/grammarPracticeList"
+              element={<GrammarPracticeList />}
+            />
             <Route path="/wordList" element={<WordList />} />
           </Routes>
         </div>

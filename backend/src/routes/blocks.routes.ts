@@ -1,6 +1,7 @@
 import express from "express";
 import {
   getGrammarListController,
+  getGrammarPracticeListController,
   resetBlockController,
 } from "../controllers/blocks.controller";
 import {
@@ -12,11 +13,18 @@ import {
 const itemsRouter = express.Router();
 
 itemsRouter.get(
-  "/:languageID",
+  "/grammar/:languageID",
   validateUID,
   validateLanguageIDParams,
   getGrammarListController
 ); // sends list of grammar blocks
+
+itemsRouter.get(
+  "/practice/:languageID",
+  validateUID,
+  validateLanguageIDParams,
+  getGrammarPracticeListController
+); // sends list of grammar practice blocks
 
 itemsRouter.delete(
   "/:blockID",

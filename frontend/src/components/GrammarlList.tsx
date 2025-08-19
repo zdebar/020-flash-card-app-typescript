@@ -10,7 +10,7 @@ import TopBar from './common/TopBar';
 export default function GrammarList() {
   const { languageID } = useUser();
   const { array, index, setIndex, nextIndex, prevIndex, arrayLength, loading } =
-    useArray<BlockExplanation>(`/api/blocks/${languageID}`, 'GET');
+    useArray<BlockExplanation>(`/api/blocks/grammar/${languageID}`, 'GET');
   const [showExplanation, setShowExplanation] = useState(false);
 
   return (

@@ -10,6 +10,7 @@ export default function UserOverview() {
       <TopBar text="Přehled" toLink="/userDashboard" />
       <ButtonLink to="/wordList">Slovíčka</ButtonLink>
       <ButtonLink to="/grammarList">Gramatika</ButtonLink>
+      <ButtonLink to="/grammarPracticeList">Gramatická cvičení</ButtonLink>
       <ButtonReset
         apiPath={`/api/users/language/${languageID}`}
         modalMessage={`Opravdu chcete restartovat jazyk ${languageID} ? Veškerý pokrok bude ztracen.`}

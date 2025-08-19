@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from 'react';
-import { CloseIcon, AudioIcon } from './Icons.js';
+import { CloseIcon, AudioIcon, RestartIcon } from './Icons.js';
 import Button from './Button.js';
 import { Item, PracticeError } from '../../../../shared/types/dataTypes.js';
 import ButtonReset from './ButtonReset.js';
@@ -62,19 +62,19 @@ export default function WordCard({
             disabled={!canReset}
             apiPath={`/api/items/${item?.id}/reset`}
             modalMessage="Opravdu chcete restartovat progress slovíčka?"
-            className="relative w-full"
+            className="relative flex w-full items-center justify-center"
             onReset={() => {
               item.progress = 0;
             }}
           >
-            <span className="pr-4">progress</span>
-            {item?.progress}
+            <RestartIcon />
             <GuideHint
               visibility={isHelpVisible}
               text={'restartovat progress slovíčka'}
               style={{
-                top: '30px',
+                top: '17px',
                 left: '5px',
+                width: '30px',
               }}
             />
           </ButtonReset>
@@ -82,7 +82,7 @@ export default function WordCard({
             onClick={() => {
               playAudio(item.audio);
             }}
-            className="h-A w-A relative flex-none"
+            className="h-A relative w-full"
           >
             <AudioIcon />
             <GuideHint
@@ -133,8 +133,10 @@ export default function WordCard({
             <p>{item?.nextDate}</p>
             <p>datum naučení</p>
             <p>{item?.learnedDate}</p>
-            <p>datum dokončení</p>
+            <p className="pb-4">datum dokončení</p>
             <p>{item?.masteredDate}</p>
+            <p>progress</p>
+            <p>{item?.progress}</p>
           </div>
           <p className="error h-5 whitespace-nowrap">
             {getErrorMessage(error)}

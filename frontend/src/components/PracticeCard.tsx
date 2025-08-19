@@ -184,7 +184,7 @@ export default function PracticeCard() {
               />
               <GuideHint
                 visibility={isSecondVisible}
-                text="kliknutím na kartu se znovu přehraje audio "
+                text="kliknutím na kartu se přehraje audio "
                 style={{
                   bottom: '30px',
                 }}

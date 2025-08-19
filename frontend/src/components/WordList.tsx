@@ -8,6 +8,7 @@ import CloseButton from './common/CloseButton';
 import { useArray } from '../hooks/useArray';
 import WordCard from './common/WordCard';
 import Loading from './common/Loading';
+import { getMoreText } from '../utils/text.utils';
 
 export default function WordList() {
   const { languageID } = useUser();
@@ -113,7 +114,7 @@ export default function WordList() {
                 onClick={() => setVisibleCount((prev) => prev + 10)}
                 className="mt-2 w-full text-center hover:underline"
               >
-                ... a {remainingCount} další
+                ... a {remainingCount + ' ' + getMoreText(remainingCount)}
               </button>
             )}
           </div>
