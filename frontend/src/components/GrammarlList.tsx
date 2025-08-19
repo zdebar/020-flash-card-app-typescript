@@ -9,8 +9,16 @@ import TopBar from './common/TopBar';
 
 export default function GrammarList() {
   const { languageID } = useUser();
-  const { array, index, setIndex, nextIndex, prevIndex, arrayLength, loading } =
-    useArray<BlockExplanation>(`/api/blocks/grammar/${languageID}`, 'GET');
+  const {
+    array,
+    index,
+    setIndex,
+    nextIndex,
+    prevIndex,
+    setArray,
+    arrayLength,
+    loading,
+  } = useArray<BlockExplanation>(`/api/blocks/grammar/${languageID}`, 'GET');
   const [showExplanation, setShowExplanation] = useState(false);
 
   return (
@@ -52,6 +60,10 @@ export default function GrammarList() {
           index={index}
           arrayLength={arrayLength}
           canReset={true}
+          onReset={() => {
+            setShowExplanation(false);
+            setArray((prev) => prev.filter((_, i) => i !== index));
+          }}
         />
       )}
     </>

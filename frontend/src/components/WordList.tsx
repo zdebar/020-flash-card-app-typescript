@@ -12,10 +12,8 @@ import { getMoreText } from '../utils/text.utils';
 
 export default function WordList() {
   const { languageID } = useUser();
-  const { array, index, setIndex, arrayLength, loading } = useArray<Item>(
-    `/api/items/${languageID}/list`,
-    'GET'
-  );
+  const { array, index, setIndex, setArray, arrayLength, loading } =
+    useArray<Item>(`/api/items/${languageID}/list`, 'GET');
   const [searchTerm, setSearchTerm] = useState('');
   const [displayField, setDisplayField] = useState<'czech' | 'translation'>(
     'czech'
@@ -124,6 +122,10 @@ export default function WordList() {
           item={array[index]}
           setVisibility={setShowExplanation}
           canReset={true}
+          onReset={() => {
+            setShowExplanation(false);
+            setArray((prev) => prev.filter((_, i) => i !== index));
+          }}
         />
       )}
     </>

@@ -85,8 +85,6 @@ CREATE TABLE IF NOT EXISTS block_items (
   PRIMARY KEY (block_id, item_id)
 );
 
-
-
 -- Create indexes
 CREATE UNIQUE INDEX user_items_user_id_item_id_idx ON user_items(user_id, item_id);
 CREATE INDEX idx_blocks_category_id ON blocks(category_id); 

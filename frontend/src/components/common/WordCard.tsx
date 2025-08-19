@@ -16,10 +16,12 @@ export default function WordCard({
   item,
   setVisibility,
   canReset = false,
+  onReset,
 }: {
   item: Item;
   setVisibility: Dispatch<SetStateAction<boolean>>;
   canReset?: boolean;
+  onReset?: () => void;
 }) {
   const { languageID } = useUser();
   const { playAudio, setVolume, setAudioError, tryAudio, audioError } =
@@ -63,9 +65,7 @@ export default function WordCard({
             apiPath={`/api/items/${item?.id}/reset`}
             modalMessage="Opravdu chcete restartovat progress slovíčka?"
             className="relative flex w-full items-center justify-center"
-            onReset={() => {
-              item.progress = 0;
-            }}
+            onReset={onReset}
           >
             <RestartIcon />
             <GuideHint

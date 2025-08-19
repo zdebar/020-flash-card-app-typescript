@@ -15,6 +15,7 @@ export default function InfoCard({
   index,
   arrayLength,
   canReset = false,
+  onReset,
 }: {
   block: BlockExplanation;
   setVisibility: Dispatch<SetStateAction<boolean>>;
@@ -23,6 +24,7 @@ export default function InfoCard({
   index: number;
   arrayLength: number;
   canReset?: boolean;
+  onReset?: () => void;
 }) {
   const [isHelpVisible, setIsHelpVisible] = useState(false);
 
@@ -39,6 +41,7 @@ export default function InfoCard({
             apiPath={`/api/blocks/${block.blockId}`}
             modalMessage="Opravdu chcete restartovat blok? Veškerý pokrok souvisejících položek bude ztracen."
             className="w-full items-center justify-start"
+            onReset={onReset}
           >
             <div className="flex gap-2">
               <h2
