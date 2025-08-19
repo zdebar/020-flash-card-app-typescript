@@ -7,7 +7,7 @@ import TopBar from './common/TopBar';
 
 export default function GrammarPracticeList() {
   const { languageID } = useUser();
-  const { array, arrayLength, loading } = useArray<BlockExplanation>(
+  const { array, arrayLength, loading, setArray } = useArray<BlockExplanation>(
     `/api/blocks/practice/${languageID}`,
     'GET'
   );
@@ -25,10 +25,15 @@ export default function GrammarPracticeList() {
           {array.map((block, idx) => (
             <ButtonReset
               key={idx}
-              disabled={false} // Temporarily disable the button
+              disabled={false}
               apiPath={`/api/blocks/${block.blockId}`}
               modalMessage="Opravdu chcete restartovat blok? Veškerý pokrok souvisejících položek bude ztracen."
               className="h-C flex justify-start px-2"
+              onReset={() => {
+                setArray((prev) =>
+                  prev.filter((b) => b.blockId !== block.blockId)
+                );
+              }}
             >
               <span className="mr-2 inline-block w-15 text-right">
                 {block.blockSequence}

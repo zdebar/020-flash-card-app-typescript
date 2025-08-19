@@ -37,7 +37,7 @@ export default function ButtonWithModal({
       setTimeout(() => {
         setIsMessage(null);
         setIsLoading(false);
-      }, 2000);
+      }, 1000);
     }
   };
 
