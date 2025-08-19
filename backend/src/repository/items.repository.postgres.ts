@@ -7,7 +7,7 @@ import { Item, BlockExplanation } from "../../../shared/types/dataTypes";
 /**
  * Return required items for the user from PostgreSQL database.
  */
-export async function getItemsRepository(
+export async function getUserItemsRepository(
   db: PostgresClient,
   uid: string,
   languageID: number
@@ -45,7 +45,7 @@ export async function getItemsRepository(
           EXISTS (
             SELECT 1
             FROM has_info_cte
-            WHERE has_info_cte.item_id = i.id AND i.sequence = 1 AND (ui.progress = 0 OR ui.progress IS NULL)
+            WHERE has_info_cte.item_id = i.id AND i.sequence = 1 AND ui.progress IS NULL
           ) AS "showContextInfo"
         FROM items i 
         LEFT JOIN user_items ui ON i.id = ui.item_id AND ui.user_id = (SELECT user_id FROM user_cte)
@@ -74,9 +74,78 @@ export async function getItemsRepository(
     return await runQuery();
   } catch (error) {
     throw new Error(
-      `Error in getItemsRepository: ${
+      `Error in getUserItemsRepository: ${
         (error as any).message
       } | db type: ${typeof db} | uid: ${uid} | languageID: ${languageID}`
+    );
+  }
+}
+
+/**
+ * Return required items for the user from PostgreSQL database.
+ */
+export async function getUserBlockRepository(
+  db: PostgresClient,
+  uid: string,
+  blockID: number
+): Promise<Item[]> {
+  try {
+    const numWords: number = config.round;
+
+    const runQuery = async (): Promise<Item[]> => {
+      const query = `
+        WITH user_cte AS (
+          SELECT id AS user_id 
+          FROM users 
+          WHERE uid = $1
+        ),
+        has_info_cte AS (
+          SELECT bi.item_id
+          FROM block_items bi
+          JOIN blocks b ON bi.block_id = b.id
+          WHERE b.category_id IN (1,2)
+            AND b.note_id IS NOT NULL
+            AND b.language_id = $2
+        )
+        SELECT
+          i.id,
+          i.czech,
+          i.translation,
+          i.pronunciation,
+          i.audio,
+          COALESCE(ui.progress, 0) AS progress,
+          EXISTS (
+            SELECT 1
+            FROM has_info_cte
+            WHERE has_info_cte.item_id = i.id
+          ) AS "hasContextInfo",
+          EXISTS (
+            SELECT 1
+            FROM has_info_cte
+            WHERE has_info_cte.item_id = i.id AND i.sequence = 1 AND ui.progress IS NULL
+          ) AS "showContextInfo"
+        FROM items i 
+        LEFT JOIN user_items ui ON i.id = ui.item_id AND ui.user_id = (SELECT user_id FROM user_cte)
+        LEFT JOIN block_items bi ON i.id = bi.item_id
+        LEFT JOIN blocks b ON bi.block_id = b.id 
+        WHERE b.id = $2
+        ORDER BY i.sequence ASC NULLS LAST
+        LIMIT $3;
+      `;
+
+      const res = await withDbClient(db, async (client) => {
+        return await client.query(query, [uid, blockID, numWords]);
+      });
+
+      return res.rows;
+    };
+
+    return await runQuery();
+  } catch (error) {
+    throw new Error(
+      `Error in getBlockItemsRepository: ${
+        (error as any).message
+      } | db type: ${typeof db} | uid: ${uid} | blockID: ${blockID}`
     );
   }
 }

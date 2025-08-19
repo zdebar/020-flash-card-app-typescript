@@ -5,11 +5,12 @@ import {
   BlockExplanation,
 } from "../../../shared/types/dataTypes";
 import {
-  getItemsRepository,
+  getUserItemsRepository,
   updateUserItemsRepository,
   getItemInfoRepository,
   resetItemRepository,
   getUserItemsListRepository,
+  getUserBlockRepository,
 } from "../repository/items.repository.postgres";
 import {
   getScoreRepository,
@@ -26,8 +27,14 @@ export async function getItemsService(
   uid: string,
   languageID: number
 ): Promise<Item[]> {
-  const words: Item[] = await getItemsRepository(db, uid, languageID);
-  sortItemsByProgress(words);
+  let words: Item[] = await getUserItemsRepository(db, uid, languageID);
+
+  if (words.some((item) => item.showContextInfo === true)) {
+    words = await getUserBlockRepository(db, uid, 0);
+  } else {
+    sortItemsByProgress(words);
+  }
+
   return addAudioSuffixToItems(words);
 }
 
