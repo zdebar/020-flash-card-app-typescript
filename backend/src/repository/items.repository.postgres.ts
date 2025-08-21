@@ -23,23 +23,38 @@ export async function getPracticeBlockRepository(
           SELECT COUNT(*) AS learned_count
           FROM user_items ui
           JOIN items i ON ui.item_id = i.id
-          JOIN block_items bi ON i.id = bi.item_id
-          JOIN blocks b ON bi.block_id = b.id
+          JOIN blocks b ON i.block_id = b.id
           WHERE b.category_id = 4
             AND b.language_id = $2
             AND ui.user_id = (SELECT user_id FROM user_cte)
             AND ui.learned_at IS NOT NULL
         ),
-        block_to_learn_cte as (
-          SELECT b.id AS block_id, ub.progress
+        block_to_learn_cte as ( 
+          SELECT b.id AS block_id, ub.progress AS block_progress
           FROM blocks b
           LEFT JOIN user_blocks ub ON b.id = ub.block_id AND ub.user_id = (SELECT user_id FROM user_cte)
-          JOIN categories c ON c.id = b.category_id AND b.category_id in (1,2) AND b.language_id = $2
           WHERE ub.finished_at IS NULL
             AND (ub.next_at IS NULL OR ub.next_at < NOW())
             AND b.sequence <= (SELECT learned_count FROM learned_count_cte)
+            AND b.language_id = $2
+            AND b.category_id IN (1, 2)
           ORDER BY ub.next_at ASC NULLS LAST, b."sequence"
           LIMIT 1
+        ),
+        has_info_cte AS (
+          SELECT i.id
+          FROM items i
+          JOIN blocks b ON i.block_id = b.id
+          WHERE b.language_id = $2
+            AND b.note_id IS NOT NULL
+
+          UNION
+
+          SELECT bi.item_id AS id
+          FROM block_items bi
+          JOIN blocks b ON bi.block_id = b.id
+          WHERE b.language_id = $2
+            AND b.note_id IS NOT NULL
         )
         SELECT
           i.id,
@@ -47,13 +62,16 @@ export async function getPracticeBlockRepository(
           i.translation,
           i.pronunciation,
           i.audio,
-          COALESCE((select progress from block_to_learn_cte), 0) AS progress,
-          b.note_id IS NOT NULL AS "hasContextInfo",
+          COALESCE((select block_progress from block_to_learn_cte), 0) AS progress,          
+          EXISTS ( 
+            SELECT 1
+            FROM has_info_cte
+            WHERE has_info_cte.id = i.id
+          ) AS "hasContextInfo",
           (b.note_id IS NOT NULL and i.sequence = 1) AS "showContextInfo",
           b.id AS "blockId"
         FROM items i
-        JOIN block_items bi ON bi.item_id = i.id 
-        JOIN blocks b ON b.id = bi.block_id AND b.id = (SELECT block_id FROM block_to_learn_cte)
+        JOIN blocks b ON b.id = i.block_id AND b.id = (SELECT block_id FROM block_to_learn_cte)
       `;
 
       const res = await withDbClient(db, async (client) => {
@@ -86,18 +104,25 @@ export async function getPracticeItemsRepository(
 
     const runQuery = async (): Promise<Item[]> => {
       const query = `
-        WITH user_cte AS (
+        WITH user_cte AS ( 
           SELECT id AS user_id 
           FROM users 
           WHERE uid = $1
         ),
-        has_info_cte AS (
-          SELECT bi.item_id
+        has_info_cte AS ( 
+          SELECT i.id
+          FROM items i
+          JOIN blocks b ON i.block_id = b.id
+          WHERE b.language_id = $2
+            AND b.note_id IS NOT NULL
+
+          UNION
+
+          SELECT bi.item_id AS id
           FROM block_items bi
           JOIN blocks b ON bi.block_id = b.id
-          WHERE b.category_id IN (1,2)
+          WHERE b.language_id = $2
             AND b.note_id IS NOT NULL
-            AND b.language_id = $2
         )
         SELECT
           i.id,
@@ -106,20 +131,15 @@ export async function getPracticeItemsRepository(
           i.pronunciation,
           i.audio,
           COALESCE(ui.progress, 0) AS progress,
-          EXISTS (
+          EXISTS ( 
             SELECT 1
             FROM has_info_cte
-            WHERE has_info_cte.item_id = i.id
+            WHERE has_info_cte.id = i.id
           ) AS "hasContextInfo",
-          EXISTS (
-            SELECT 1
-            FROM has_info_cte
-            WHERE has_info_cte.item_id = i.id AND i.sequence = 1 AND ui.progress IS NULL
-          ) AS "showContextInfo"
+          FALSE AS "showContextInfo" 
         FROM items i 
         LEFT JOIN user_items ui ON i.id = ui.item_id AND ui.user_id = (SELECT user_id FROM user_cte)
-        LEFT JOIN block_items bi ON i.id = bi.item_id 
-        JOIN blocks b ON b.id = bi.block_id AND b.category_id in (1,2,4)
+        JOIN blocks b ON b.id = i.block_id 
         WHERE ui.mastered_at IS NULL
           AND (ui.next_at IS NULL OR ui.next_at < NOW())
           AND (b.category_id = 4 OR ui.progress is not null)
@@ -271,10 +291,20 @@ export async function getItemInfoRepository(
         b.name AS blockName,
         n.note AS blockExplanation
       FROM blocks b
+      JOIN notes n ON b.note_id = n.id
+      WHERE b.id = $1
+
+      UNION
+
+      SELECT 
+        b.id AS blockId,
+        b.sequence AS blockSequence,
+        b.name AS blockName,
+        n.note AS blockExplanation
+      FROM blocks b
       JOIN block_items bi ON b.id = bi.block_id
       JOIN notes n ON b.note_id = n.id
-      WHERE bi.item_id = $1
-        AND b.category_id = 1;
+      WHERE b.id = $1
     `;
 
     const res = await withDbClient(db, async (client) => {
@@ -284,7 +314,7 @@ export async function getItemInfoRepository(
     return res.rows;
   } catch (error) {
     throw new Error(
-      `Error in getItemInforRepository: ${
+      `Error in getItemInfoRepository: ${
         (error as any).message
       } | db type: ${typeof db} | itemId: ${itemId}`
     );
@@ -311,9 +341,8 @@ export async function getUserItemsListRepository(
           SELECT bi.item_id
           FROM block_items bi
           JOIN blocks b ON bi.block_id = b.id
-          WHERE b.category_id IN (1,2)
+          WHERE b.language_id = $2
             AND b.note_id IS NOT NULL
-            AND b.language_id = $2
         )
         SELECT
           i.id,
@@ -333,8 +362,7 @@ export async function getUserItemsListRepository(
           FALSE AS "showContextInfo"
         FROM items i 
         JOIN user_items ui ON i.id = ui.item_id AND ui.user_id = (SELECT user_id FROM user_cte)
-        LEFT JOIN block_items bi ON i.id = bi.item_id
-        LEFT JOIN blocks b ON bi.block_id = b.id
+        JOIN blocks b ON i.block_id = b.id
         WHERE b.category_id = 4
           AND b.language_id = $2
         ORDER BY

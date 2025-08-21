@@ -63,15 +63,17 @@ export async function patchPracticeController(
     }
 
     const uid: string = (req as any).user.uid;
-    const { items, onBlockEnd }: { items: Item[]; onBlockEnd: boolean } =
-      req.body;
+    const {
+      items,
+      onPracticeBlockEnd,
+    }: { items: Item[]; onPracticeBlockEnd: boolean } = req.body;
     const languageId: number = parseInt((req as any).params.languageId, 10);
 
     const score: UserScore[] = await updateUserPracticeService(
       postgresDBPool,
       uid,
       items,
-      onBlockEnd,
+      onPracticeBlockEnd,
       languageId
     );
 

@@ -13,11 +13,12 @@ English learning app focused on maximum repetition per given practice time. By u
 
 The app provides continuous practice of vocabulary and grammar with flashcards.
 
-## Database Principles
+## Database
 
 **Basic tables:**
 
-- `users`
+- `users` - identifies user, link firebase uid with databaser users.id
+- `user_score` - to
 - `items` — vocabulary items or grammar items
 - `blocks` — blocks with linked notes
   - Blocks of category 1 and 2 should be the same size as `backend/config.round` (10), but this is not a necessity

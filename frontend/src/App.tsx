@@ -29,7 +29,7 @@ export default function App() {
               path="/"
               element={
                 <div className="flex w-full max-w-[450px] flex-col items-center justify-start gap-4 px-4 pt-6 text-center">
-                  <h1>Minidril</h1>
+                  <h1>Angličtina</h1>
 
                   <p>
                     Trénujte 400 slovíček či 200 vět za 20 minut denně, a
@@ -45,7 +45,7 @@ export default function App() {
                   )}
                   <p className="notice">aplikace v testovacím režimu</p>
                   <p className="">
-                    Rychlý dril. Učební kartičky. Poslouchání a mluvení, žádné
+                    Učební kartičky. Rychlý dril. Poslouchání a mluvení, žádné
                     psaní. Procvičování samostatných slovíček i gramatiky ve
                     větách.
                   </p>

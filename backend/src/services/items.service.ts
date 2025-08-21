@@ -15,7 +15,7 @@ import {
 } from "../repository/items.repository.postgres";
 import {
   getScoreRepository,
-  updateUserScoreRepository,
+  updateUserPracticeBlocksRepository,
 } from "../repository/user.repository.postgres";
 import { addAudioSuffixToItems, formatDatesShort } from "../utils/update.utils";
 import sortItemsEvenOdd from "../utils/items.utils";
@@ -60,7 +60,7 @@ export async function updateUserPracticeService(
   db: PostgresClient,
   uid: string,
   items: Item[],
-  onRoundEnd: boolean,
+  onPracticeBlockEnd: boolean,
   languageId: number
 ): Promise<UserScore[]> {
   const blockId = items[0]?.blockId;
@@ -108,8 +108,8 @@ export async function updateUserPracticeService(
     );
   }
 
-  if (onRoundEnd) {
-    await updateUserScoreRepository(db, uid, languageId);
+  if (onPracticeBlockEnd) {
+    await updateUserPracticeBlocksRepository(db, uid, languageId);
   }
 
   return await getScoreRepository(db, uid);

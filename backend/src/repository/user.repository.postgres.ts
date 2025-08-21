@@ -70,7 +70,7 @@ export async function resetUserLanguageRepository(
  * @param uid
  * @param languageId
  */
-export async function updateUserScoreRepository(
+export async function updateUserPracticeBlocksRepository(
   db: PostgresClient,
   uid: string,
   languageId: number
