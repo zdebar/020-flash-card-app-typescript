@@ -11,9 +11,9 @@ import Loading from './common/Loading';
 import { getMoreText } from '../utils/text.utils';
 
 export default function WordList() {
-  const { languageID } = useUser();
+  const { languageId } = useUser();
   const { array, index, setIndex, setArray, arrayLength, loading } =
-    useArray<Item>(`/api/items/${languageID}/list`, 'GET');
+    useArray<Item>(`/api/items/${languageId}/list`, 'GET');
   const [searchTerm, setSearchTerm] = useState('');
   const [displayField, setDisplayField] = useState<'czech' | 'translation'>(
     'czech'
@@ -22,10 +22,10 @@ export default function WordList() {
   const [visibleCount, setVisibleCount] = useState(10);
   const [showExplanation, setShowExplanation] = useState(false);
 
-  const currLanguage = config.languages.find((lang) => lang.id === languageID);
+  const currLanguage = config.languages.find((lang) => lang.id === languageId);
 
   if (!currLanguage) {
-    throw new Error(`Language with ID ${languageID} not found in config.`);
+    throw new Error(`Language with ID ${languageId} not found in config.`);
   }
 
   // Filter items based on search term

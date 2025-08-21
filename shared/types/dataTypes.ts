@@ -1,8 +1,4 @@
 // Data types
-export interface Practice {
-  isBlocke: boolean;
-  items: Item[];
-}
 export interface Item {
   id: number;
   czech: string;
@@ -15,6 +11,7 @@ export interface Item {
   nextDate?: string | null;
   learnedDate?: string | null;
   masteredDate?: string | null;
+  blockId?: number | null;
 }
 
 export interface BlockExplanation {
@@ -34,7 +31,7 @@ export interface UserInfo {
 }
 
 export interface UserScore {
-  languageID: number;
+  languageId: number;
   languageName: string;
   blockCount: Record<string, number>; // { "2025-08-12": 12, "2025-08-11": 10, ... }
   itemsCountByLevel: Record<string, number>; // all items by level

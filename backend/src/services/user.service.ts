@@ -23,8 +23,8 @@ export async function getUserService(
 export async function resetUserLanguageService(
   db: PostgresClient,
   uid: string,
-  languageID: number
+  languageId: number
 ): Promise<UserScore[]> {
-  await resetUserLanguageRepository(db, uid, languageID);
+  await resetUserLanguageRepository(db, uid, languageId);
   return await getScoreRepository(db, uid);
 }

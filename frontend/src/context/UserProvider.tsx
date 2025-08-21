@@ -10,7 +10,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [userScore, setUserScore] = useState<UserScore[] | null>(null);
   const [loading, setLoading] = useState(true);
-  const [languageID, setLanguageID] = useState<number>(
+  const [languageId, setLanguageID] = useState<number>(
     parseInt(localStorage.getItem('selectedLanguageID') || '1', 10)
   );
   const [theme, setTheme] = useState<UserTheme>('system');
@@ -106,7 +106,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
         theme,
         userInfo,
         userScore,
-        languageID,
+        languageId,
         userLoading: loading,
         setUserInfo,
         setLanguageID,

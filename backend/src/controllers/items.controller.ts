@@ -6,18 +6,18 @@ import {
   BlockExplanation,
 } from "../../../shared/types/dataTypes";
 import {
-  getItemsService,
-  patchItemsService,
+  getPracticeItemsService,
+  updateUserPracticeService,
   getItemInfoService,
   resetItemService,
 } from "../services/items.service";
-import { getUserItemsListService } from "../services/items.service";
+import { getItemsListService } from "../services/items.service";
 import { validationResult } from "express-validator";
 
 /**
  * Controller function to retrieve user-specific practice words.
  */
-export async function getItemsController(
+export async function getPracticeController(
   req: Request,
   res: Response,
   next: Function
@@ -30,9 +30,13 @@ export async function getItemsController(
     }
 
     const uid: string = (req as any).user.uid;
-    const languageID: number = parseInt((req as any).params.languageID, 10);
+    const languageId: number = parseInt((req as any).params.languageId, 10);
 
-    const data: Item[] = await getItemsService(postgresDBPool, uid, languageID);
+    const data: Item[] = await getPracticeItemsService(
+      postgresDBPool,
+      uid,
+      languageId
+    );
 
     res.status(200).json({
       message: "User words retrieved successfully.",
@@ -46,7 +50,7 @@ export async function getItemsController(
 /**
  * Updates practice user_items progress. Sends back the updated score.
  */
-export async function patchItemsController(
+export async function patchPracticeController(
   req: Request,
   res: Response,
   next: Function
@@ -59,18 +63,16 @@ export async function patchItemsController(
     }
 
     const uid: string = (req as any).user.uid;
-    const {
-      items,
-      onBlockEnd,
-    }: { items: Item[]; onBlockEnd: boolean; languageID: number } = req.body;
-    const languageID: number = parseInt((req as any).params.languageID, 10);
+    const { items, onBlockEnd }: { items: Item[]; onBlockEnd: boolean } =
+      req.body;
+    const languageId: number = parseInt((req as any).params.languageId, 10);
 
-    const score: UserScore[] = await patchItemsService(
+    const score: UserScore[] = await updateUserPracticeService(
       postgresDBPool,
       uid,
       items,
       onBlockEnd,
-      languageID
+      languageId
     );
 
     res.status(200).json({
@@ -97,11 +99,11 @@ export async function getItemInfoController(
       throw new Error(`Validation errors: ${JSON.stringify(errors.array())}`);
     }
 
-    const itemID: number = parseInt((req as any).params.itemID, 10);
+    const itemId: number = parseInt((req as any).params.itemId, 10);
 
     const data: BlockExplanation[] = await getItemInfoService(
       postgresDBPool,
-      itemID
+      itemId
     );
 
     res.status(200).json({
@@ -129,12 +131,12 @@ export async function getUserItemsListController(
     }
 
     const uid: string = (req as any).user.uid;
-    const languageID: number = parseInt((req as any).params.languageID, 10);
+    const languageId: number = parseInt((req as any).params.languageId, 10);
 
-    const data: Item[] = await getUserItemsListService(
+    const data: Item[] = await getItemsListService(
       postgresDBPool,
       uid,
-      languageID
+      languageId
     );
 
     res.status(200).json({
@@ -162,12 +164,12 @@ export async function resetItemController(
     }
 
     const uid: string = (req as any).user.uid;
-    const itemID: number = parseInt((req as any).params.itemID, 10);
+    const itemId: number = parseInt((req as any).params.itemId, 10);
 
     const score: UserScore[] = await resetItemService(
       postgresDBPool,
       uid,
-      itemID
+      itemId
     );
 
     res.status(200).json({

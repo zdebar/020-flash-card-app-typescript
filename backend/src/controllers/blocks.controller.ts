@@ -24,12 +24,12 @@ export async function getGrammarListController(
     }
 
     const uid: string = (req as any).user.uid;
-    const languageID: number = parseInt((req as any).params.languageID, 10);
+    const languageId: number = parseInt((req as any).params.languageId, 10);
 
     const data: BlockExplanation[] = await getGrammarListRepository(
       postgresDBPool,
       uid,
-      languageID
+      languageId
     );
 
     res.status(200).json({
@@ -57,12 +57,12 @@ export async function getGrammarPracticeListController(
     }
 
     const uid: string = (req as any).user.uid;
-    const languageID: number = parseInt((req as any).params.languageID, 10);
+    const languageId: number = parseInt((req as any).params.languageId, 10);
 
     const data: BlockExplanation[] = await getGrammarPracticeListRepository(
       postgresDBPool,
       uid,
-      languageID
+      languageId
     );
 
     res.status(200).json({
@@ -90,12 +90,12 @@ export async function resetBlockController(
     }
 
     const uid: string = (req as any).user.uid;
-    const blockID: number = parseInt((req as any).params.blockID, 10);
+    const blockId: number = parseInt((req as any).params.blockId, 10);
 
     const score: UserScore[] = await resetBlockService(
       postgresDBPool,
       uid,
-      blockID
+      blockId
     );
 
     res.status(200).json({

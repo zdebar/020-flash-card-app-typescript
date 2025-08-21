@@ -6,13 +6,13 @@ import { BlockExplanation } from "../../../shared/types/dataTypes";
  * Provides a list of unlocked grammar blocks for a specific user and language.
  * @param db
  * @param uid
- * @param languageID
+ * @param languageId
  * @returns
  */
 export async function getGrammarListRepository(
   db: PostgresClient,
   uid: string,
-  languageID: number
+  languageId: number
 ): Promise<BlockExplanation[]> {
   try {
     const query = `
@@ -46,7 +46,7 @@ export async function getGrammarListRepository(
     `;
 
     return await withDbClient(db, async (client) => {
-      const result = await client.query(query, [uid, languageID]);
+      const result = await client.query(query, [uid, languageId]);
       return result.rows.map((row) => ({
         blockId: row.id,
         blockSequence: row.sequence,
@@ -58,7 +58,7 @@ export async function getGrammarListRepository(
     throw new Error(
       `Error in getGrammarListRepository: ${
         (error as any).message
-      } | db type: ${typeof db} | uid: ${uid} | languageID: ${languageID}`
+      } | db type: ${typeof db} | uid: ${uid} | languageId: ${languageId}`
     );
   }
 }
@@ -67,13 +67,13 @@ export async function getGrammarListRepository(
  * Provides a list of unlocked grammar practice blocks for a specific user and language.
  * @param db
  * @param uid
- * @param languageID
+ * @param languageId
  * @returns
  */
 export async function getGrammarPracticeListRepository(
   db: PostgresClient,
   uid: string,
-  languageID: number
+  languageId: number
 ): Promise<BlockExplanation[]> {
   try {
     const query = `
@@ -107,7 +107,7 @@ export async function getGrammarPracticeListRepository(
     `;
 
     return await withDbClient(db, async (client) => {
-      const result = await client.query(query, [uid, languageID]);
+      const result = await client.query(query, [uid, languageId]);
       return result.rows.map((row) => ({
         blockId: row.id,
         blockSequence: row.sequence,
@@ -119,7 +119,7 @@ export async function getGrammarPracticeListRepository(
     throw new Error(
       `Error in getGrammarPracticeListRepository: ${
         (error as any).message
-      } | db type: ${typeof db} | uid: ${uid} | languageID: ${languageID}`
+      } | db type: ${typeof db} | uid: ${uid} | languageId: ${languageId}`
     );
   }
 }
@@ -130,7 +130,7 @@ export async function getGrammarPracticeListRepository(
 export async function resetBlockRepository(
   db: PostgresClient,
   uid: string,
-  blockID: number
+  blockId: number
 ): Promise<void> {
   try {
     const query = `
@@ -147,13 +147,13 @@ export async function resetBlockRepository(
     `;
 
     await withDbClient(db, async (client) => {
-      await client.query(query, [uid, blockID]);
+      await client.query(query, [uid, blockId]);
     });
   } catch (error) {
     throw new Error(
       `Error in resetBlockRepository: ${
         (error as any).message
-      } | db type: ${typeof db} | uid: ${uid} | blockID: ${blockID}`
+      } | db type: ${typeof db} | uid: ${uid} | blockId: ${blockId}`
     );
   }
 }

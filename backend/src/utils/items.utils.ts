@@ -1,6 +1,6 @@
 import { Item } from "../../../shared/types/dataTypes";
 
-export default function sortItemsByProgress(items: Item[]): Item[] {
+export default function sortItemsEvenOdd(items: Item[]): Item[] {
   try {
     // Sorts items even first, then odd items. Stable sort by original index.
     return items

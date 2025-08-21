@@ -12,7 +12,7 @@ const usersRouter = express.Router();
 
 usersRouter.get("/", validateUID, getUserController); // sends user settings, user score
 usersRouter.delete(
-  "/language/:languageID",
+  "/language/:languageId",
   validateUID,
   validateLanguageIDParams,
   resetUserLanguageController

@@ -35,7 +35,7 @@ export async function insertUserRepository(
 export async function resetUserLanguageRepository(
   db: PostgresClient,
   uid: string,
-  languageID: number
+  languageId: number
 ): Promise<void> {
   try {
     await withDbClient(db, async (client) => {
@@ -52,14 +52,14 @@ export async function resetUserLanguageRepository(
           AND blocks.language_id = $2
           AND user_items.user_id = user_cte.user_id;
         `,
-        [uid, languageID]
+        [uid, languageId]
       );
     });
   } catch (error) {
     throw new Error(
       `Error in resetUserLanguageRepository: ${
         (error as any).message
-      } | db type: ${typeof db} | uid: ${uid} | languageID: ${languageID}`
+      } | db type: ${typeof db} | uid: ${uid} | languageId: ${languageId}`
     );
   }
 }
@@ -68,12 +68,12 @@ export async function resetUserLanguageRepository(
  * Updates the user's score in a PostgreSQL database.
  * @param db
  * @param uid
- * @param languageID
+ * @param languageId
  */
 export async function updateUserScoreRepository(
   db: PostgresClient,
   uid: string,
-  languageID: number
+  languageId: number
 ): Promise<void> {
   try {
     const query = `
@@ -84,13 +84,13 @@ export async function updateUserScoreRepository(
     `;
 
     await withDbClient(db, async (client) => {
-      await client.query(query, [uid, languageID]);
+      await client.query(query, [uid, languageId]);
     });
   } catch (error) {
     throw new Error(
       `Error in updateUserScoreRepository: ${
         (error as any).message
-      } | db type: ${typeof db} | uid: ${uid} | languageID: ${languageID}`
+      } | db type: ${typeof db} | uid: ${uid} | languageId: ${languageId}`
     );
   }
 }
@@ -156,7 +156,7 @@ export async function getScoreRepository(
         GROUP BY b.language_id, COALESCE(cl.level, 'none')
       )
       SELECT 
-        l.id AS "languageID",
+        l.id AS "languageId",
         l.name AS "languageName",
         (SELECT count FROM blocks_cte WHERE blocks_cte.language_id = l.id) AS "blockCount",
         JSON_OBJECT_AGG(COALESCE(ic.level_id, 'none'), COALESCE(ic.itemsCount, 0)) AS "itemsCountByLevel", 
@@ -172,7 +172,7 @@ export async function getScoreRepository(
       const result = await client.query(query, [uid]);
 
       return result.rows.map((row) => ({
-        languageID: row.languageID,
+        languageId: row.languageId,
         languageName: row.languageName,
         blockCount: row.blockCount,
         itemsCountByLevel: row.itemsCountByLevel,

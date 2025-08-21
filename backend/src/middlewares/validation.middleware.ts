@@ -2,21 +2,21 @@ import { body, param, validationResult } from "express-validator";
 
 // Middleware for sanitizing input
 export const validateLanguageIDBody = [
-  body("languageID")
+  body("languageId")
     .isInt({ min: 1 })
     .withMessage(
       (value) =>
-        `Invalid languageID provided: '${value}'. It must be a positive integer.`
+        `Invalid languageId provided: '${value}'. It must be a positive integer.`
     )
     .toInt(),
 ];
 
 export const validateLanguageIDParams = [
-  param("languageID")
+  param("languageId")
     .isInt({ min: 1 })
     .withMessage(
       (value) =>
-        `Invalid languageID provided: '${value}'. It must be a positive integer.`
+        `Invalid languageId provided: '${value}'. It must be a positive integer.`
     )
     .toInt(),
 ];
@@ -56,24 +56,24 @@ export const validateItems = [
     ),
 ];
 
-// Middleware for validating itemID
+// Middleware for validating itemId
 export const validateItemID = [
-  param("itemID")
+  param("itemId")
     .isInt({ min: 1 })
     .withMessage(
       (value) =>
-        `Invalid itemID provided: '${value}'. It must be a positive integer.`
+        `Invalid itemId provided: '${value}'. It must be a positive integer.`
     )
     .toInt(),
 ];
 
-// Middleware for validating blockID
+// Middleware for validating blockId
 export const validateBlockID = [
-  param("blockID")
+  param("blockId")
     .isInt({ min: 1 })
     .withMessage(
       (value) =>
-        `Invalid blockID provided: '${value}'. It must be a positive integer.`
+        `Invalid blockId provided: '${value}'. It must be a positive integer.`
     )
     .toInt(),
 ];

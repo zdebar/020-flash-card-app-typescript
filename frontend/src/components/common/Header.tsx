@@ -6,7 +6,7 @@ import config from '../../config/config.js';
 import UserAvatar from './UserAvatar.js';
 
 export default function Header() {
-  const { userInfo, languageID } = useUser();
+  const { userInfo, languageId } = useUser();
   const location = useLocation();
 
   function getSelectedClass(pathname: string, targetPath: string): string {
@@ -36,7 +36,7 @@ export default function Header() {
           buttonType="button-header"
           hidden={true}
         >
-          {config.languages.find((lang) => lang.id === languageID)?.code}
+          {config.languages.find((lang) => lang.id === languageId)?.code}
         </ButtonLink>
       </nav>
       <nav

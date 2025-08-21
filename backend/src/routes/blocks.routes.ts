@@ -13,21 +13,21 @@ import {
 const itemsRouter = express.Router();
 
 itemsRouter.get(
-  "/grammar/:languageID",
+  "/grammar/:languageId",
   validateUID,
   validateLanguageIDParams,
   getGrammarListController
 ); // sends list of grammar blocks
 
 itemsRouter.get(
-  "/practice/:languageID",
+  "/practice/:languageId",
   validateUID,
   validateLanguageIDParams,
   getGrammarPracticeListController
 ); // sends list of grammar practice blocks
 
 itemsRouter.delete(
-  "/:blockID",
+  "/:blockId",
   validateUID,
   validateBlockID,
   resetBlockController

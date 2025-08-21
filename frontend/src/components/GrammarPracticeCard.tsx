@@ -6,9 +6,9 @@ import { useUser } from '../hooks/useUser';
 import TopBar from './common/TopBar';
 
 export default function GrammarPracticeList() {
-  const { languageID } = useUser();
+  const { languageId } = useUser();
   const { array, arrayLength, loading, setArray } = useArray<BlockExplanation>(
-    `/api/blocks/practice/${languageID}`,
+    `/api/blocks/practice/${languageId}`,
     'GET'
   );
 

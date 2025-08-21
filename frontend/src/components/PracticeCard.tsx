@@ -21,8 +21,8 @@ import { useItemArray } from '../hooks/useItemArray';
 import ButtonWithHelp from './common/ButtonWithHelp';
 
 export default function PracticeCard() {
-  const { userScore, languageID } = useUser();
-  const apiPath = `/api/items/${languageID}/practice`;
+  const { userScore, languageId } = useUser();
+  const apiPath = `/api/items/${languageId}/practice`;
 
   const {
     array,
@@ -59,7 +59,7 @@ export default function PracticeCard() {
   const isAudioDisabled = (direction && !revealed) || !currentItem?.audio;
   const noAudio = error === PracticeError.NoAudio;
   const currLanguage = userScore?.find(
-    (lang) => lang.languageID === languageID
+    (lang) => lang.languageId === languageId
   );
   const today = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
   const todayBlockCount = currLanguage?.blockCount?.[today];

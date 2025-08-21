@@ -23,7 +23,7 @@ export default function WordCard({
   canReset?: boolean;
   onReset?: () => void;
 }) {
-  const { languageID } = useUser();
+  const { languageId } = useUser();
   const { playAudio, setVolume, setAudioError, tryAudio, audioError } =
     useAudioManager([item]);
   const [error, setError] = useState<PracticeError | null>(null);
@@ -125,7 +125,7 @@ export default function WordCard({
           <div className="grid grid-cols-2 items-start justify-start gap-0 overflow-y-auto">
             <p>česky</p>
             <p>{item?.czech}</p>
-            {config.languages.find((lang) => lang.id === languageID)?.adverb}
+            {config.languages.find((lang) => lang.id === languageId)?.adverb}
             <p>{item?.translation}</p>
             <p className="pb-4">výslovnost</p>
             <p>{item?.pronunciation}</p>

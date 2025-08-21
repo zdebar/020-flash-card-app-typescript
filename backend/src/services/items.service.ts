@@ -5,48 +5,50 @@ import {
   BlockExplanation,
 } from "../../../shared/types/dataTypes";
 import {
-  getUserItemsRepository,
+  getPracticeItemsRepository,
   updateUserItemsRepository,
   getItemInfoRepository,
   resetItemRepository,
   getUserItemsListRepository,
-  getUserBlockRepository,
+  getPracticeBlockRepository,
+  updateUserBlockRepository,
 } from "../repository/items.repository.postgres";
 import {
   getScoreRepository,
   updateUserScoreRepository,
 } from "../repository/user.repository.postgres";
 import { addAudioSuffixToItems, formatDatesShort } from "../utils/update.utils";
-import sortItemsByProgress from "../utils/items.utils";
+import sortItemsEvenOdd from "../utils/items.utils";
+import { getNextAt, getDateAt } from "../utils/update.utils";
+import config from "../config/config";
 
 /**
- * Gets a list of words for a given user and language ID from the database.
+ * Gets practice items for a given user and language ID from the database.
  */
-export async function getItemsService(
+export async function getPracticeItemsService(
   db: PostgresClient,
   uid: string,
-  languageID: number
+  languageId: number
 ): Promise<Item[]> {
-  let words: Item[] = await getUserItemsRepository(db, uid, languageID);
+  let items: Item[] = await getPracticeBlockRepository(db, uid, languageId);
 
-  if (words.some((item) => item.showContextInfo === true)) {
-    words = await getUserBlockRepository(db, uid, 0);
-  } else {
-    sortItemsByProgress(words);
+  if (items.length === 0) {
+    items = await getPracticeItemsRepository(db, uid, languageId);
+    sortItemsEvenOdd(items);
   }
 
-  return addAudioSuffixToItems(words);
+  return addAudioSuffixToItems(items);
 }
 
 /**
  * Gets a list of words for a given user and language ID from the database.
  */
-export async function getUserItemsListService(
+export async function getItemsListService(
   db: PostgresClient,
   uid: string,
-  languageID: number
+  languageId: number
 ): Promise<Item[]> {
-  const words: Item[] = await getUserItemsListRepository(db, uid, languageID);
+  const words: Item[] = await getUserItemsListRepository(db, uid, languageId);
   formatDatesShort(words);
   return addAudioSuffixToItems(words);
 }
@@ -54,17 +56,62 @@ export async function getUserItemsListService(
 /**
  * Updates the user's word progress in the PostgreSQL database and returns the updated score.
  */
-export async function patchItemsService(
+export async function updateUserPracticeService(
   db: PostgresClient,
   uid: string,
   items: Item[],
-  onBlockEnd: boolean,
-  languageID: number
+  onRoundEnd: boolean,
+  languageId: number
 ): Promise<UserScore[]> {
-  await updateUserItemsRepository(db, uid, items);
-  if (onBlockEnd) {
-    await updateUserScoreRepository(db, uid, languageID);
+  const blockId = items[0]?.blockId;
+  let finishedAt = null;
+
+  if (blockId) {
+    const progress =
+      items.length > 0 ? Math.min(...items.map((item) => item.progress)) : 0;
+    const nextAt = getNextAt(progress);
+    finishedAt = getDateAt(progress, config.finishedProgress);
+
+    console.log(
+      `Updating block ${blockId} with progress ${progress}, nextAt ${nextAt}, finishedAt ${finishedAt}`
+    );
+
+    await updateUserBlockRepository(
+      db,
+      uid,
+      blockId,
+      progress,
+      nextAt,
+      finishedAt
+    );
   }
+
+  if (!blockId || finishedAt) {
+    const itemIds = items.map((item) => item.id);
+    const progresses = items.map((item) => item.progress);
+    const nextAt = items.map((item) => getNextAt(item.progress));
+    const learnedAt = items.map((item) =>
+      getDateAt(item.progress, config.learnedProgress)
+    );
+    const masteredAt = items.map((item) =>
+      getDateAt(item.progress, config.SRS.length)
+    );
+
+    await updateUserItemsRepository(
+      db,
+      uid,
+      itemIds,
+      progresses,
+      nextAt,
+      learnedAt,
+      masteredAt
+    );
+  }
+
+  if (onRoundEnd) {
+    await updateUserScoreRepository(db, uid, languageId);
+  }
+
   return await getScoreRepository(db, uid);
 }
 
@@ -73,12 +120,12 @@ export async function patchItemsService(
  */
 export async function getItemInfoService(
   db: PostgresClient,
-  itemID: number
+  itemId: number
 ): Promise<BlockExplanation[]> {
-  const itemInfo: BlockExplanation[] = await getItemInfoRepository(db, itemID);
+  const itemInfo: BlockExplanation[] = await getItemInfoRepository(db, itemId);
 
   if (!itemInfo || itemInfo.length === 0) {
-    throw new Error(`No item info found for itemId: ${itemID}`);
+    throw new Error(`No item info found for itemId: ${itemId}`);
   }
 
   return itemInfo;
@@ -90,8 +137,8 @@ export async function getItemInfoService(
 export async function resetItemService(
   db: PostgresClient,
   uid: string,
-  itemID: number
+  itemId: number
 ): Promise<UserScore[]> {
-  await resetItemRepository(db, uid, itemID);
+  await resetItemRepository(db, uid, itemId);
   return await getScoreRepository(db, uid);
 }

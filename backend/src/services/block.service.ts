@@ -9,8 +9,8 @@ import { resetBlockRepository } from "../repository/blocks.repository.postgres";
 export async function resetBlockService(
   db: PostgresClient,
   uid: string,
-  blockID: number
+  blockId: number
 ): Promise<UserScore[]> {
-  await resetBlockRepository(db, uid, blockID);
+  await resetBlockRepository(db, uid, blockId);
   return await getScoreRepository(db, uid);
 }

@@ -23,33 +23,17 @@ export function getNextAt(progress: number): string | null {
 /**
  * Returns the learnedAt date if the progress is equal to the learnedAt threshold.
  */
-export function getLearnedAt(progress: number): string | null {
+export function getDateAt(progress: number, threshold: number): string | null {
   try {
-    if (progress >= config.learnedProgress) {
+    if (progress >= threshold) {
       return new Date(Date.now()).toISOString();
     }
     return null;
   } catch (error) {
     throw new Error(
-      `Error in getLearnedAt: ${(error as any).message} | progress: ${progress}`
-    );
-  }
-}
-
-/**
- * Returns the mastered date if the progress is equal to the masteredAt threshold.
- */
-export function getMasteredAt(progress: number): string | null {
-  try {
-    if (progress >= config.SRS.length) {
-      return new Date(Date.now()).toISOString();
-    }
-    return null;
-  } catch (error) {
-    throw new Error(
-      `Error in getMasteredAt: ${
+      `Error in getDateAt: ${
         (error as any).message
-      } | progress: ${progress}`
+      } | progress: ${progress} | threshold: ${threshold}`
     );
   }
 }

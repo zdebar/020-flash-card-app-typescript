@@ -8,7 +8,7 @@ import { useUser } from '../hooks/useUser';
 import TopBar from './common/TopBar';
 
 export default function GrammarList() {
-  const { languageID } = useUser();
+  const { languageId } = useUser();
   const {
     array,
     index,
@@ -18,7 +18,7 @@ export default function GrammarList() {
     setArray,
     arrayLength,
     loading,
-  } = useArray<BlockExplanation>(`/api/blocks/grammar/${languageID}`, 'GET');
+  } = useArray<BlockExplanation>(`/api/blocks/grammar/${languageId}`, 'GET');
   const [showExplanation, setShowExplanation] = useState(false);
 
   return (

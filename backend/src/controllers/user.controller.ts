@@ -55,12 +55,12 @@ export async function resetUserLanguageController(
     }
 
     const { uid } = (req as any).user;
-    const languageID: number = parseInt((req as any).params.languageID, 10);
+    const languageId: number = parseInt((req as any).params.languageId, 10);
 
     const score: UserScore[] = await resetUserLanguageService(
       postgresDBPool,
       uid,
-      languageID
+      languageId
     );
 
     res.status(200).json({

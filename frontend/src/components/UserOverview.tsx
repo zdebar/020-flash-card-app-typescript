@@ -4,7 +4,7 @@ import { useUser } from '../hooks/useUser';
 import TopBar from './common/TopBar';
 
 export default function UserOverview() {
-  const { languageID } = useUser();
+  const { languageId } = useUser();
   return (
     <div className="w-card list">
       <TopBar text="Přehled" toLink="/userDashboard" />
@@ -12,8 +12,8 @@ export default function UserOverview() {
       <ButtonLink to="/grammarList">Gramatika</ButtonLink>
       <ButtonLink to="/grammarPracticeList">Gramatická cvičení</ButtonLink>
       <ButtonReset
-        apiPath={`/api/users/language/${languageID}`}
-        modalMessage={`Opravdu chcete restartovat jazyk ${languageID} ? Veškerý pokrok bude ztracen.`}
+        apiPath={`/api/users/language/${languageId}`}
+        modalMessage={`Opravdu chcete restartovat jazyk ${languageId} ? Veškerý pokrok bude ztracen.`}
         disabled={true} // Temporarily disable the button
       >
         Restart

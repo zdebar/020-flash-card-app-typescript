@@ -8,11 +8,11 @@ import config from '../config/config.js';
 import HelpOverlay from './common/HelpOverlay';
 
 export default function UserDashboard() {
-  const { userScore, languageID } = useUser();
+  const { userScore, languageId } = useUser();
   const [isHelpVisible, setIsHelpVisible] = useState(false);
 
   const currLanguage = userScore?.find(
-    (lang) => lang.languageID === languageID
+    (lang) => lang.languageId === languageId
   );
 
   return (

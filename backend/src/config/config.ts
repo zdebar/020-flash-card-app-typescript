@@ -34,6 +34,7 @@ const config = {
   ],
   srsRandomness: 0.1, // Randomness of SRS algorithm 0.1 (10%); uniform distribution; to ensure that words are not repeated in blocks, but are mixed out
   learnedProgress: 5, // Progress value for a word to be considered learned
+  finishedProgress: 0, // Progress value for a word to be considered finished
 
   JWT_SECRET:
     process.env.NODE_ENV === "test" ? "test-password" : process.env.JWT_SECRET,

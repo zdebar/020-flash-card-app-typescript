@@ -1,7 +1,7 @@
 import express from "express";
 import {
-  getItemsController,
-  patchItemsController,
+  getPracticeController,
+  patchPracticeController,
   getItemInfoController,
   getUserItemsListController,
   resetItemController,
@@ -17,29 +17,29 @@ import {
 const itemsRouter = express.Router();
 
 itemsRouter.get(
-  "/:languageID/list",
+  "/:languageId/list",
   validateLanguageIDParams,
   getUserItemsListController
 ); // sends list of all user_items for the given language
 
 itemsRouter.get(
-  "/:languageID/practice",
+  "/:languageId/practice",
   validateUID,
   validateLanguageIDParams,
-  getItemsController
+  getPracticeController
 ); // sends Items[] for practice
 
 itemsRouter.patch(
-  "/:languageID/practice",
+  "/:languageId/practice",
   validateUID,
   validateLanguageIDParams,
   validateOnBlockEnd,
   validateItems,
-  patchItemsController
+  patchPracticeController
 ); // updates user_items, sends UserScore
 
-itemsRouter.get("/:itemID/info", validateItemID, getItemInfoController); // sends item context info
+itemsRouter.get("/:itemId/info", validateItemID, getItemInfoController); // sends item context info
 
-itemsRouter.delete("/:itemID/reset", validateItemID, resetItemController); // resets progress for the given item
+itemsRouter.delete("/:itemId/reset", validateItemID, resetItemController); // resets progress for the given item
 
 export default itemsRouter;
