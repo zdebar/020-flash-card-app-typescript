@@ -2,5 +2,7 @@
 test.ts
 test.sql
 archive/
-data/
+data/german
+data/english
+data/spanish
 

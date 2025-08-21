@@ -1,4 +1,8 @@
 // Data types
+export interface Practice {
+  isBlocke: boolean;
+  items: Item[];
+}
 export interface Item {
   id: number;
   czech: string;
