@@ -1,11 +1,11 @@
 import { Dispatch, SetStateAction } from 'react';
-import { CloseIcon, NextIcon, PreviousIcon } from './common/Icons';
-import Button from './common/Button';
-import type { BlockExplanation } from '../../../shared/types/dataTypes';
-import ButtonReset from './common/ButtonReset';
-import HelpOverlay from './common/HelpOverlay';
+import { CloseIcon, NextIcon, PreviousIcon } from './Icons.js';
+import Button from './Button.js';
+import type { BlockExplanation } from '../../../../shared/types/dataTypes.js';
+import ButtonReset from './ButtonReset.js';
+import HelpOverlay from './HelpOverlay.js';
 import { useState } from 'react';
-import GuideHint from './common/GuideHint';
+import GuideHint from './GuideHint.js';
 
 export default function InfoCard({
   block,
@@ -40,7 +40,7 @@ export default function InfoCard({
             disabled={!canReset}
             apiPath={`/api/blocks/${block.blockId}`}
             modalMessage="Opravdu chcete restartovat blok? Veškerý pokrok souvisejících položek bude ztracen."
-            className="w-full items-center justify-start"
+            className="relative w-full items-center justify-start"
             onReset={onReset}
           >
             <div className="flex gap-2">

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { BlockExplanation } from '../../../shared/types/dataTypes';
 import Loading from './common/Loading';
 import Button from './common/Button';
-import InfoCard from './InfoCard';
+import InfoCard from './common/InfoCard.js';
 import { useArray } from '../hooks/useArray';
 import { useUser } from '../hooks/useUser';
 import TopBar from './common/TopBar';

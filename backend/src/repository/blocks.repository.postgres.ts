@@ -12,7 +12,8 @@ import { BlockExplanation } from "../../../shared/types/dataTypes";
 export async function getGrammarListRepository(
   db: PostgresClient,
   uid: string,
-  languageId: number
+  languageId: number,
+  categoryId: number
 ): Promise<BlockExplanation[]> {
   try {
     const query = `
@@ -20,106 +21,30 @@ export async function getGrammarListRepository(
         SELECT id AS user_id 
         FROM users 
         WHERE uid = $1
-      ),
-      user_items_cte AS (
-        SELECT ui.item_id
-        FROM user_items ui
-        WHERE ui.user_id = (SELECT user_id FROM user_cte)
-      ),
-      block_items_cte AS (
-        SELECT bi.block_id
-        FROM block_items bi
-        JOIN items i ON i.id = bi.item_id
-        WHERE bi.item_id IN (SELECT item_id FROM user_items_cte)
       )
       SELECT 
-        b.id,
-        b.sequence,
-        b.name,
-        n.note 
+        b.id AS "blockId",
+        b.sequence AS "blockSequence",
+        b.name AS "blockName",
+        n.note AS "blockExplanation" 
       FROM blocks b
+      JOIN user_blocks ub ON b.id = ub.block_id
       JOIN notes n ON b.note_id = n.id
-      WHERE b.id IN (SELECT block_id FROM block_items_cte)
-        AND b.category_id = 1
-        AND b.language_id = $2
+      WHERE b.language_id = $2
+        AND b.category_id = $3
       ORDER BY b.sequence;
     `;
 
-    return await withDbClient(db, async (client) => {
-      const result = await client.query(query, [uid, languageId]);
-      return result.rows.map((row) => ({
-        blockId: row.id,
-        blockSequence: row.sequence,
-        blockName: row.name,
-        blockExplanation: row.note,
-      }));
+    const res = await withDbClient(db, async (client) => {
+      return await client.query(query, [uid, languageId, categoryId]);
     });
+
+    return res.rows;
   } catch (error) {
     throw new Error(
       `Error in getGrammarListRepository: ${
         (error as any).message
-      } | db type: ${typeof db} | uid: ${uid} | languageId: ${languageId}`
-    );
-  }
-}
-
-/**
- * Provides a list of unlocked grammar practice blocks for a specific user and language.
- * @param db
- * @param uid
- * @param languageId
- * @returns
- */
-export async function getGrammarPracticeListRepository(
-  db: PostgresClient,
-  uid: string,
-  languageId: number
-): Promise<BlockExplanation[]> {
-  try {
-    const query = `
-      WITH user_cte AS (
-        SELECT id AS user_id 
-        FROM users 
-        WHERE uid = $1
-      ),
-      user_items_cte AS (
-        SELECT ui.item_id
-        FROM user_items ui
-        WHERE ui.user_id = (SELECT user_id FROM user_cte)
-      ),
-      block_items_cte AS (
-        SELECT bi.block_id
-        FROM block_items bi
-        JOIN items i ON i.id = bi.item_id
-        WHERE bi.item_id IN (SELECT item_id FROM user_items_cte)
-      )
-      SELECT 
-        b.id,
-        b.sequence,
-        b.name,
-        n.note 
-      FROM blocks b
-      JOIN notes n ON b.note_id = n.id
-      WHERE b.id IN (SELECT block_id FROM block_items_cte)
-        AND b.category_id = 2
-        AND b.language_id = $2
-      ORDER BY b.sequence;
-    `;
-
-    return await withDbClient(db, async (client) => {
-      const result = await client.query(query, [uid, languageId]);
-      return result.rows.map((row) => ({
-        blockId: row.id,
-        blockSequence: row.sequence,
-        blockName: row.name,
-        blockExplanation: row.note,
-      }));
-    });
-  } catch (error) {
-    throw new Error(
-      `Error in getGrammarPracticeListRepository: ${
-        (error as any).message
-      } | db type: ${typeof db} | uid: ${uid} | languageId: ${languageId}`
+      } | db type: ${typeof db} | uid: ${uid} | languageId: ${languageId} | categoryId: ${categoryId}`
     );
   }
 }
@@ -144,6 +69,9 @@ export async function resetBlockRepository(
       WHERE user_items.item_id = block_items.item_id
         AND block_items.block_id = $2
         AND user_items.user_id = user_cte.user_id;
+
+      DELETE FROM user_blocks
+      WHERE block_id = $2 AND user_id = (SELECT user_id FROM user_cte);
     `;
 
     await withDbClient(db, async (client) => {

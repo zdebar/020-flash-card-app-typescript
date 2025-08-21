@@ -1,10 +1,7 @@
 import { Request, Response } from "express";
 import { postgresDBPool } from "../config/database.config.postgres";
 import { BlockExplanation, UserScore } from "../../../shared/types/dataTypes";
-import {
-  getGrammarListRepository,
-  getGrammarPracticeListRepository,
-} from "../repository/blocks.repository.postgres";
+import { getGrammarListRepository } from "../repository/blocks.repository.postgres";
 import { validationResult } from "express-validator";
 import { resetBlockService } from "../services/block.service";
 
@@ -29,7 +26,8 @@ export async function getGrammarListController(
     const data: BlockExplanation[] = await getGrammarListRepository(
       postgresDBPool,
       uid,
-      languageId
+      languageId,
+      1 // categoryId == 1 for intiaal grammar blocks
     );
 
     res.status(200).json({
@@ -59,10 +57,11 @@ export async function getGrammarPracticeListController(
     const uid: string = (req as any).user.uid;
     const languageId: number = parseInt((req as any).params.languageId, 10);
 
-    const data: BlockExplanation[] = await getGrammarPracticeListRepository(
+    const data: BlockExplanation[] = await getGrammarListRepository(
       postgresDBPool,
       uid,
-      languageId
+      languageId,
+      2 // categoryId == 2 for grammar practice blocks
     );
 
     res.status(200).json({

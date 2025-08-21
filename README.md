@@ -18,12 +18,18 @@ The app provides continuous practice of vocabulary and grammar with flashcards.
 **Basic tables:**
 
 - `users` - identifies user, link firebase uid with databaser users.id
-- `user_score` - to
+- `user_score` - to save daily practice blocks
 - `items` — vocabulary items or grammar items
+- `user_items` - saves user item's progress
 - `blocks` — blocks with linked notes
   - Blocks of category 1 and 2 should be the same size as `backend/config.round` (10), but this is not a necessity
+- `block_items` - connects items to helper blocks N:N, primary blocks are linked directly with items.block_id 1:N
+- `user_blocks` - saves user block's progress, block is meant to go together only first time
 - `notes` — grammar explanation
+- `languages` - to identify different target languages
+- `levels` - sorting items and grammar blocks into different levels, so purpose is to provide user feedback of overall progress
 - `categories` — categories of blocks grouping; every item should belong only to one of 1, 2, or 4 groups
+- `parts_of_speech` - to distinquish verbs, nouns etc.
 
 **Category meanings:**
 

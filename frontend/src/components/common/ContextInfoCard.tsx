@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction } from 'react';
 import { useArray } from '../../hooks/useArray.js';
 import Loading from './Loading.js';
 import type { BlockExplanation } from '../../../../shared/types/dataTypes.js';
-import InfoCard from '../InfoCard.js';
+import InfoCard from './InfoCard.js';
 
 export default function ContextInfoCard({
   itemId,
