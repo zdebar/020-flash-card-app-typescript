@@ -36,7 +36,7 @@ export interface UserScore {
   blockCount: Record<string, number>; // { "2025-08-12": 12, "2025-08-11": 10, ... }
   itemsCountByLevel: Record<string, number>; // all items by level
   learnedCountTodayByLevel: Record<string, number>; // items with progress > config.learnedProgress by level
-  learnedCountByLevel: Record<string, number>; // items with progress > config.learnedProgress by level
+  learnedCountNotTodayByLevel: Record<string, number>; // items with progress > config.learnedProgress by level
 }
 
 export class UserError extends Error {

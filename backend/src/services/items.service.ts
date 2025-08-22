@@ -15,7 +15,7 @@ import {
 } from "../repository/items.repository.postgres";
 import {
   getScoreRepository,
-  updateUserPracticeBlocksRepository,
+  updateUserScoreRepository,
 } from "../repository/user.repository.postgres";
 import { addAudioSuffixToItems, formatDatesShort } from "../utils/update.utils";
 import sortItemsEvenOdd from "../utils/items.utils";
@@ -109,7 +109,7 @@ export async function updateUserPracticeService(
   }
 
   if (onPracticeBlockEnd) {
-    await updateUserPracticeBlocksRepository(db, uid, languageId);
+    await updateUserScoreRepository(db, uid, languageId);
   }
 
   return await getScoreRepository(db, uid);

@@ -28,7 +28,7 @@ export function useItemArray(apiPath: string) {
 
   // Sending user progress to the server
   const patchItems = useCallback(
-    async (onBlockEnd: boolean, updatedProgress: number[]) => {
+    async (onPracticeBlockEnd: boolean, updatedProgress: number[]) => {
       const updatedArray = array
         .filter((_, idx) => idx < updatedProgress.length)
         .map((item, idx) => ({
@@ -47,7 +47,7 @@ export function useItemArray(apiPath: string) {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             items: updatedArray,
-            onBlockEnd,
+            onPracticeBlockEnd,
           }),
         });
 

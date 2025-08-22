@@ -1,0 +1,17 @@
+ALTER TABLE items
+DROP FOREIGN KEY IF EXISTS items_level_id_fkey;
+
+ALTER TABLE items
+DROP COLUMN level_id;
+
+ALTER TABLE blocks
+ADD COLUMN level_id INTEGER DEFAULT NULL;
+
+ALTER TABLE blocks
+ADD FOREIGN KEY (level_id) REFERENCES cefr_levels(id) ON DELETE SET NULL;
+
+UPDATE items SET block_id = 1001 WHERE sequence BETWEEN 1 AND 100;
+UPDATE items SET block_id = 1001 WHERE sequence BETWEEN 101 AND 200;
+UPDATE items SET block_id = 1003 WHERE sequence BETWEEN 201 AND 300;
+UPDATE items SET block_id = 1004 WHERE sequence BETWEEN 301 AND 400;
+UPDATE items SET block_id = 1005 WHERE sequence BETWEEN 401 AND 500;

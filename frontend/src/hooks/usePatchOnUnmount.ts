@@ -1,7 +1,10 @@
 import { useEffect, useRef } from 'react';
 
 export function usePatchOnUnmount(
-  patchFn: (onBlockEnd: boolean, newProgress: number[]) => Promise<void>,
+  patchFn: (
+    onPracticeBlockEnd: boolean,
+    newProgress: number[]
+  ) => Promise<void>,
   updatedProgress: number[]
 ) {
   const patchRef = useRef(patchFn);

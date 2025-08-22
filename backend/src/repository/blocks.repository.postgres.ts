@@ -3,7 +3,7 @@ import { withDbClient } from "../utils/database.utils";
 import { BlockExplanation } from "../../../shared/types/dataTypes";
 
 /**
- * Provides a list of unlocked grammar blocks for a specific user and language.
+ * Provides a list of unlocked grammar blocks for a specific user, languageId, categoryId.
  * @param db
  * @param uid
  * @param languageId
@@ -71,7 +71,8 @@ export async function resetBlockRepository(
         AND user_items.user_id = user_cte.user_id;
 
       DELETE FROM user_blocks
-      WHERE block_id = $2 AND user_id = (SELECT user_id FROM user_cte);
+      WHERE block_id = $2 
+        AND user_id = (SELECT user_id FROM user_cte);
     `;
 
     await withDbClient(db, async (client) => {

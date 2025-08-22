@@ -38,6 +38,7 @@ export async function getPracticeBlockRepository(
             AND b.sequence <= (SELECT learned_count FROM learned_count_cte)
             AND b.language_id = $2
             AND b.category_id IN (1, 2)
+            AMD b.level_id IS NOT NULL
           ORDER BY ub.next_at ASC NULLS LAST, b."sequence"
           LIMIT 1
         ),
@@ -84,7 +85,7 @@ export async function getPracticeBlockRepository(
     return await runQuery();
   } catch (error) {
     throw new Error(
-      `Error in getUserBlockRepository: ${
+      `Error in getPracticeBlockRepository: ${
         (error as any).message
       } | db type: ${typeof db} | uid: ${uid} | languageId: ${languageId}`
     );
@@ -144,9 +145,11 @@ export async function getPracticeItemsRepository(
           AND (ui.next_at IS NULL OR ui.next_at < NOW())
           AND (b.category_id = 4 OR ui.progress is not null)
           AND b.language_id = $2
+          AND b.level_id IS NOT NULL
         ORDER BY
           ui.next_at ASC NULLS LAST,
           COALESCE(b.sequence, i.sequence) ASC NULLS LAST,
+          b.level_id ASC NULLS LAST,
           i.sequence ASC NULLS LAST
         LIMIT $3;
       `;
@@ -161,7 +164,7 @@ export async function getPracticeItemsRepository(
     return await runQuery();
   } catch (error) {
     throw new Error(
-      `Error in getUserItemsRepository: ${
+      `Error in getPracticeItemsRepository: ${
         (error as any).message
       } | db type: ${typeof db} | uid: ${uid} | languageId: ${languageId}`
     );

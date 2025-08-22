@@ -34,12 +34,13 @@ export const validateUID = [
   }),
 ];
 
-// Middleware for validating onBlockEnd
+// Middleware for validating onPracticeBlockEnd
 export const validateOnBlockEnd = [
-  body("onBlockEnd")
+  body("onPracticeBlockEnd")
     .isBoolean()
     .withMessage(
-      (value) => `Invalid onBlockEnd value: '${value}'. It must be a boolean.`
+      (value) =>
+        `Invalid onPracticeBlockEnd value: '${value}'. It must be a boolean.`
     ),
 ];
 
