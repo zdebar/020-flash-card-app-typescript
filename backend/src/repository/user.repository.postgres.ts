@@ -103,7 +103,7 @@ export async function updateUserScoreRepository(
 /**
  * Gets count of learned words, and next grammar practice date from PostgreSQL database.
  */
-export async function getScoreRepository(
+export async function getUserScoreRepository(
   db: PostgresClient,
   uid: string
 ): Promise<UserScore[]> {

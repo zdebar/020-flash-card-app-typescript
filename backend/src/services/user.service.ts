@@ -1,6 +1,6 @@
 import { PostgresClient } from "../types/dataTypes";
 import { UserScore } from "../../../shared/types/dataTypes";
-import { getScoreRepository } from "../repository/user.repository.postgres";
+import { getUserScoreRepository } from "../repository/user.repository.postgres";
 import {
   insertUserRepository,
   resetUserLanguageRepository,
@@ -14,7 +14,7 @@ export async function getUserService(
   uid: string
 ): Promise<UserScore[]> {
   await insertUserRepository(db, uid);
-  return await getScoreRepository(db, uid);
+  return await getUserScoreRepository(db, uid);
 }
 
 /**
@@ -26,5 +26,5 @@ export async function resetUserLanguageService(
   languageId: number
 ): Promise<UserScore[]> {
   await resetUserLanguageRepository(db, uid, languageId);
-  return await getScoreRepository(db, uid);
+  return await getUserScoreRepository(db, uid);
 }

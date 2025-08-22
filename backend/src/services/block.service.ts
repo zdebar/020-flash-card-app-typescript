@@ -1,6 +1,6 @@
 import { PostgresClient } from "../types/dataTypes";
 import { UserScore } from "../../../shared/types/dataTypes";
-import { getScoreRepository } from "../repository/user.repository.postgres";
+import { getUserScoreRepository } from "../repository/user.repository.postgres";
 import { resetBlockRepository } from "../repository/blocks.repository.postgres";
 
 /**
@@ -12,5 +12,5 @@ export async function resetBlockService(
   blockId: number
 ): Promise<UserScore[]> {
   await resetBlockRepository(db, uid, blockId);
-  return await getScoreRepository(db, uid);
+  return await getUserScoreRepository(db, uid);
 }

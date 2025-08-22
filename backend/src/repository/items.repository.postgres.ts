@@ -38,7 +38,7 @@ export async function getPracticeBlockRepository(
             AND b.sequence <= (SELECT learned_count FROM learned_count_cte)
             AND b.language_id = $2
             AND b.category_id IN (1, 2)
-            AMD b.level_id IS NOT NULL
+            AND b.level_id IS NOT NULL
           ORDER BY ub.next_at ASC NULLS LAST, b."sequence"
           LIMIT 1
         ),

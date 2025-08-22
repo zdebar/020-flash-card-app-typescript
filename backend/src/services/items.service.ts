@@ -14,7 +14,7 @@ import {
   updateUserBlockRepository,
 } from "../repository/items.repository.postgres";
 import {
-  getScoreRepository,
+  getUserScoreRepository,
   updateUserScoreRepository,
 } from "../repository/user.repository.postgres";
 import { addAudioSuffixToItems, formatDatesShort } from "../utils/update.utils";
@@ -112,7 +112,7 @@ export async function updateUserPracticeService(
     await updateUserScoreRepository(db, uid, languageId);
   }
 
-  return await getScoreRepository(db, uid);
+  return await getUserScoreRepository(db, uid);
 }
 
 /**
@@ -140,5 +140,5 @@ export async function resetItemService(
   itemId: number
 ): Promise<UserScore[]> {
   await resetItemRepository(db, uid, itemId);
-  return await getScoreRepository(db, uid);
+  return await getUserScoreRepository(db, uid);
 }
