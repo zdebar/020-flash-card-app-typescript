@@ -48,6 +48,11 @@
   h1 {
     @apply font-display pb-8 text-3xl font-bold text-black dark:text-white;
   }
+
+  select,
+  input {
+    @apply focus:outline-none active:outline-none;
+  }
 }
 
 @layer utilities {

@@ -25,7 +25,7 @@ export default function UserSettings() {
   };
 
   return (
-    <div className="w-card list pt-4">
+    <div className="w-card list">
       <SettingProperty label="Uživatel:" value={userInfo?.name} />
       <ThemeDropdown />
       <ButtonWithModal

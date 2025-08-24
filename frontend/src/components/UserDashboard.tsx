@@ -55,7 +55,7 @@ export default function UserDashboard() {
         >
           {currLanguage && (
             <>
-              <p className="note">pokrok na posledních 4 úrovních</p>
+              <p className="note">pokrok na úrovních ( + dnes)</p>
               <LevelBar
                 learned={currLanguage?.learnedCountNotTodayByLevel ?? {}}
                 learnedToday={currLanguage?.learnedCountTodayByLevel ?? {}}

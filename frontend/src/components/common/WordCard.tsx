@@ -72,7 +72,7 @@ export default function WordCard({
               visibility={isHelpVisible}
               text={'restartovat progress slovíčka'}
               style={{
-                top: '17px',
+                top: '5px',
                 left: '5px',
                 width: '30px',
               }}
