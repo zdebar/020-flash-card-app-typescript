@@ -264,7 +264,7 @@ export default function PracticeCard() {
                 }}
                 disabled={!revealed}
                 helpVisibility={isSecondVisible}
-                helpText="už více neopakovat"
+                helpText="dokončit slovíčko, už nebude více opakováno"
                 style={{ right: '5px', bottom: '0px' }}
                 icon={<SkipIcon />}
               />

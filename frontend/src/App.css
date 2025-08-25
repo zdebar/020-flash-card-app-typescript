@@ -8,7 +8,7 @@
   --font-Mansalva: 'Mansalva', 'sans';
   --color-background-light: #f7b740;
   --color-background-dark: #111827;
-  --color-yellow-0: #f8c87a;
+  --color-yellow-0: #f8c05d;
   --color-yellow-1: #fac369;
   --color-blue-0: #87d5e8;
   --color-blue-1: #6fbbcf;
@@ -99,18 +99,18 @@
   /* COLORS */
   /* site background */
   .color-background {
-    @apply bg-[var(--color-background-light)] dark:bg-[var(--color-background-dark)] dark:text-white;
+    @apply bg-white dark:bg-[var(--color-background-dark)] dark:text-white;
   }
 
   /* disabled buttons */
   .color-disabled {
-    @apply bg-[var(--color-yellow-1)] text-black shadow-none;
+    @apply bg-gray-200 text-black shadow-none;
     @apply dark:bg-gray-800 dark:text-white dark:hover:bg-gray-800;
   }
 
   /* card with audio */
   .color-audio {
-    @apply bg-gray-100 shadow-[2px_2px_2px_rgba(0,0,0,0.3)] hover:bg-white;
+    @apply bg-[var(--color-background-light)] shadow-[2px_2px_2px_rgba(0,0,0,0.3)] hover:bg-[var(--color-yellow-1)] active:shadow-none;
     @apply dark:bg-gray-700 hover:dark:bg-gray-700;
   }
 
@@ -129,7 +129,7 @@
   /* rectangular buttons */
   .button-rectangular {
     @apply h-13 w-full font-sans font-bold tracking-wide;
-    @apply bg-[var(--color-blue-4)] text-white shadow-[2px_2px_2px_rgba(0,0,0,0.35)] hover:bg-[var(--color-blue-2)];
+    @apply bg-[var(--color-blue-4)] text-white shadow-[2px_2px_2px_rgba(0,0,0,0.35)] hover:bg-[var(--color-blue-2)] active:shadow-none;
     @apply dark:bg-[var(--color-blue-4)] dark:text-white dark:hover:bg-[var(--color-blue-2)];
   }
 

@@ -112,17 +112,17 @@ export default function WordCard({
             />
           </Button>
         </div>
-        <div className="color-disabled relative flex h-full flex-col justify-between px-4 py-12">
+        <div className="color-disabled relative flex h-full flex-col justify-between pt-12 pl-4">
           <VolumeSlider
             setVolume={setVolume}
             helpVisibility={false}
             style={{
-              top: '5px',
-              left: '10px',
+              top: '15px',
+              left: '15px',
             }}
             className="absolute"
           />
-          <div className="grid grid-cols-2 items-start justify-start gap-0 overflow-y-auto">
+          <div className="grid grid-cols-2 items-start justify-start gap-0 overflow-y-auto pt-8">
             <p>česky</p>
             <p>{item?.czech}</p>
             {config.languages.find((lang) => lang.id === languageId)?.adverb}
@@ -130,13 +130,11 @@ export default function WordCard({
             <p className="pb-4">výslovnost</p>
             <p>{item?.pronunciation}</p>
             <p>datum příště</p>
-            <p>{item?.nextDate}</p>
+            <p>{item?.nextDate || 'neprocvičováno'}</p>
             <p>datum naučení</p>
-            <p>{item?.learnedDate}</p>
+            <p>{item?.learnedDate || 'nenaučeno'}</p>
             <p className="pb-4">datum dokončení</p>
-            <p>{item?.masteredDate}</p>
-            <p>progress</p>
-            <p>{item?.progress}</p>
+            <p>{item?.masteredDate || 'nedokončeno'}</p>
           </div>
           <p className="error h-5 whitespace-nowrap">
             {getErrorMessage(error)}
