@@ -1,6 +1,7 @@
 import { PostgresClient } from "../types/dataTypes";
 import { withDbClient } from "../utils/database.utils";
 import { BlockExplanation } from "../../../shared/types/dataTypes";
+import { formatRepositoryError } from "../utils/error.utils";
 
 /**
  * Provides a list of unlocked grammar blocks for a specific user, languageId, categoryId.
@@ -42,9 +43,12 @@ export async function getGrammarListRepository(
     return res.rows;
   } catch (error) {
     throw new Error(
-      `Error in getGrammarListRepository: ${
-        (error as any).message
-      } | db type: ${typeof db} | uid: ${uid} | languageId: ${languageId} | categoryId: ${categoryId}`
+      formatRepositoryError(error, "getGrammarListRepository", {
+        dbType: typeof db,
+        uid,
+        languageId,
+        categoryId,
+      })
     );
   }
 }
@@ -80,9 +84,11 @@ export async function resetBlockRepository(
     });
   } catch (error) {
     throw new Error(
-      `Error in resetBlockRepository: ${
-        (error as any).message
-      } | db type: ${typeof db} | uid: ${uid} | blockId: ${blockId}`
+      formatRepositoryError(error, "resetBlockRepository", {
+        dbType: typeof db,
+        uid,
+        blockId,
+      })
     );
   }
 }

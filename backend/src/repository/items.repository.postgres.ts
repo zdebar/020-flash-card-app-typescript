@@ -2,6 +2,7 @@ import { PostgresClient } from "../types/dataTypes";
 import { withDbClient } from "../utils/database.utils";
 import config from "../config/config";
 import { Item, BlockExplanation } from "../../../shared/types/dataTypes";
+import { formatRepositoryError } from "../utils/error.utils";
 
 /**
  * Returns practice items from latest block for a user from PostgreSQL database.
@@ -85,9 +86,11 @@ export async function getPracticeBlockRepository(
     return await runQuery();
   } catch (error) {
     throw new Error(
-      `Error in getPracticeBlockRepository: ${
-        (error as any).message
-      } | db type: ${typeof db} | uid: ${uid} | languageId: ${languageId}`
+      formatRepositoryError(error, "getPracticeBlockRepository", {
+        dbType: typeof db,
+        uid,
+        languageId,
+      })
     );
   }
 }
@@ -164,9 +167,11 @@ export async function getPracticeItemsRepository(
     return await runQuery();
   } catch (error) {
     throw new Error(
-      `Error in getPracticeItemsRepository: ${
-        (error as any).message
-      } | db type: ${typeof db} | uid: ${uid} | languageId: ${languageId}`
+      formatRepositoryError(error, "getPracticeItemsRepository", {
+        dbType: typeof db,
+        uid,
+        languageId,
+      })
     );
   }
 }
@@ -204,9 +209,14 @@ export async function updateUserBlockRepository(
     });
   } catch (error) {
     throw new Error(
-      `Error in updateUserBlockRepository: ${
-        (error as any).message
-      } | db type: ${typeof db} | uid: ${uid} | block: ${blockId} | progress: ${progress} | nextAt: ${nextAt} | finishedAt: ${finishedAt}`
+      formatRepositoryError(error, "updateUserBlockRepository", {
+        dbType: typeof db,
+        uid,
+        blockId,
+        progress,
+        nextAt,
+        finishedAt,
+      })
     );
   }
 }
@@ -219,9 +229,9 @@ export async function updateUserItemsRepository(
   uid: string,
   itemIds: number[],
   progresses: number[],
-  nextAt: (string | null)[],
-  learnedAt: (string | null)[],
-  masteredAt: (string | null)[]
+  nextAts: (string | null)[],
+  learnedAts: (string | null)[],
+  masteredAts: (string | null)[]
 ): Promise<void> {
   try {
     const query = `
@@ -265,16 +275,22 @@ export async function updateUserItemsRepository(
         END;
       `;
 
-    const values = [uid, itemIds, progresses, nextAt, learnedAt, masteredAt];
+    const values = [uid, itemIds, progresses, nextAts, learnedAts, masteredAts];
 
     await withDbClient(db, async (client) => {
       await client.query(query, values);
     });
   } catch (error) {
     throw new Error(
-      `Error in updateUserItemsRepository: ${
-        (error as any).message
-      } | db type: ${typeof db} | uid: ${uid} | itemIds: ${itemIds} | progresses: ${progresses} | nextAt: ${nextAt} | learnedAt: ${learnedAt} | masteredAt: ${masteredAt}`
+      formatRepositoryError(error, "updateUserItemsRepository", {
+        dbType: typeof db,
+        uid,
+        itemIds,
+        progresses,
+        nextAt: nextAts,
+        learnedAt: learnedAts,
+        masteredAt: masteredAts,
+      })
     );
   }
 }
@@ -317,9 +333,10 @@ export async function getItemInfoRepository(
     return res.rows;
   } catch (error) {
     throw new Error(
-      `Error in getItemInfoRepository: ${
-        (error as any).message
-      } | db type: ${typeof db} | itemId: ${itemId}`
+      formatRepositoryError(error, "getItemsInfoRepository", {
+        dbType: typeof db,
+        itemId,
+      })
     );
   }
 }
@@ -382,9 +399,11 @@ export async function getUserItemsListRepository(
     return await runQuery();
   } catch (error) {
     throw new Error(
-      `Error in getUserItemsListRepository: ${
-        (error as any).message
-      } | db type: ${typeof db} | uid: ${uid} | languageId: ${languageId}`
+      formatRepositoryError(error, "getUserItemsListRepository", {
+        dbType: typeof db,
+        uid,
+        languageId,
+      })
     );
   }
 }
@@ -412,9 +431,11 @@ export async function resetItemRepository(
     });
   } catch (error) {
     throw new Error(
-      `Error in resetItemRepository: ${
-        (error as any).message
-      } | db type: ${typeof db} | uid: ${uid} | itemId: ${itemId}`
+      formatRepositoryError(error, "resetItemRepository", {
+        dbType: typeof db,
+        uid,
+        itemId,
+      })
     );
   }
 }

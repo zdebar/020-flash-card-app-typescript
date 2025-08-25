@@ -1,16 +1,10 @@
-export function formatError(
+export function formatRepositoryError(
   error: unknown,
   functionName: string,
   params: Record<string, any>
 ) {
   const paramStr = Object.entries(params)
-    .map(([k, v]) => `${k}: ${JSON.stringify(v)}`)
+    .map(([k, v]) => `${k}: ${v}`)
     .join(", ");
-  const stack =
-    error instanceof Error && error.stack
-      ? error.stack.split("\n")[1]?.trim()
-      : "";
-  return `Error in ${functionName}(${paramStr}): ${
-    (error as any).message
-  } | ${stack}`;
+  return `Error in ${functionName}(${paramStr}): ${(error as any).message}`;
 }

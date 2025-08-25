@@ -1,6 +1,7 @@
 import { PostgresClient } from "../types/dataTypes";
 import { UserScore } from "../../../shared/types/dataTypes";
 import { withDbClient } from "../utils/database.utils";
+import { formatRepositoryError } from "../utils/error.utils";
 
 /**
  * Finds User by userUid. Creates a new user if not found.
@@ -21,9 +22,10 @@ export async function insertUserRepository(
     });
   } catch (error) {
     throw new Error(
-      `Error in insertUserRepository: ${
-        (error as any).message
-      } | db type: ${typeof db} | uid: ${uid} `
+      formatRepositoryError(error, "insertUserRepository", {
+        dbType: typeof db,
+        uid,
+      })
     );
   }
 }
@@ -62,9 +64,11 @@ export async function resetUserLanguageRepository(
     });
   } catch (error) {
     throw new Error(
-      `Error in resetUserLanguageRepository: ${
-        (error as any).message
-      } | db type: ${typeof db} | uid: ${uid} | languageId: ${languageId}`
+      formatRepositoryError(error, "resetUserLanguageRepository", {
+        dbType: typeof db,
+        uid,
+        languageId,
+      })
     );
   }
 }
@@ -93,9 +97,11 @@ export async function updateUserScoreRepository(
     });
   } catch (error) {
     throw new Error(
-      `Error in updateUserScoreRepository: ${
-        (error as any).message
-      } | db type: ${typeof db} | uid: ${uid} | languageId: ${languageId}`
+      formatRepositoryError(error, "updateUserScoreRepository", {
+        dbType: typeof db,
+        uid,
+        languageId,
+      })
     );
   }
 }
@@ -180,9 +186,10 @@ export async function getUserScoreRepository(
     return res.rows;
   } catch (error) {
     throw new Error(
-      `Error in getScoreRepository: ${
-        (error as any).message
-      } | db type: ${typeof db} | uid: ${uid}`
+      formatRepositoryError(error, "getUserScoreRepository", {
+        dbType: typeof db,
+        uid,
+      })
     );
   }
 }
