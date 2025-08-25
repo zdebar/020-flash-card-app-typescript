@@ -14,7 +14,6 @@ export default function UserOverview() {
       <ButtonReset
         apiPath={`/api/users/language/${languageId}`}
         modalMessage={`Opravdu chcete restartovat jazyk ${languageId} ? Veškerý pokrok bude ztracen.`}
-        disabled={true} // Temporarily disable the button
       >
         Restart
       </ButtonReset>
