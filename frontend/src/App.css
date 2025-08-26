@@ -123,6 +123,27 @@
   .color-selected {
     @apply bg-white text-black shadow-none;
   }
+
+  /* progress bar */
+  .color-bar-1 {
+    @apply bg-[#6FBBCF];
+  }
+
+  .color-bar-2 {
+    @apply bg-[#2E9AB0];
+  }
+
+  .color-bar-3 {
+    @apply bg-[#257F92];
+  }
+
+  .color-bar-4 {
+    @apply bg-[#1C6676];
+  }
+
+  .color-progress {
+    @apply bg-[var(--color-blue-6)] dark:bg-[var(--color-background-light)];
+  }
 }
 
 @layer components {
@@ -166,7 +187,7 @@
 
   /* userDashboard new learned number */
   .text-learned {
-    @apply text-xs font-bold text-black dark:text-[var(--color-background-light)];
+    @apply text-xs font-bold text-[var(--color-blue-7)] dark:text-[var(--color-background-light)];
   }
 
   .header {
