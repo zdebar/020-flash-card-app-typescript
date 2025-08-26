@@ -1,1 +1,0 @@
-ALTER TABLE cefr_levels RENAME TO levels;

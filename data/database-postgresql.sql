@@ -27,7 +27,13 @@ CREATE TABLE IF NOT EXISTS levels ( -- Common European Framework of Reference fo
 CREATE TABLE IF NOT EXISTS categories (
   id SERIAL PRIMARY KEY,
   category_name TEXT NOT NULL UNIQUE,
-  category_explanation TEXT
+  category_explanation TEXT 
+);
+
+CREATE TABLE IF NOT EXISTS notes (
+  id SERIAL PRIMARY KEY,
+  "name" TEXT NOT NULL UNIQUE,
+  note TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS items (
@@ -51,9 +57,11 @@ CREATE TABLE IF NOT EXISTS blocks (
   category_id INTEGER, 
   language_id INTEGER, -- language id
   level_id INTEGER, -- CEFR level id
+  note_id INTEGER,
   FOREIGN KEY (level_id) REFERENCES levels(id) ON DELETE SET NULL,
   FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL,
-  FOREIGN KEY (language_id) REFERENCES languages(id) ON DELETE SET NULL;
+  FOREIGN KEY (language_id) REFERENCES languages(id) ON DELETE SET NULL,
+  FOREIGN KEY (note_id) REFERENCES notes(id) ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS user_items (
@@ -67,6 +75,18 @@ CREATE TABLE IF NOT EXISTS user_items (
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
   FOREIGN KEY (item_id) REFERENCES items(id) ON DELETE CASCADE,
   PRIMARY KEY (user_id, item_id)
+);
+
+CREATE TABLE IF NOT EXISTS user_blocks (
+    user_id INTEGER NOT NULL,
+    block_id INTEGER NOT NULL,
+    progress INTEGER DEFAULT 0 CHECK (progress >= 0),
+    started_at TIMESTAMPTZ DEFAULT NOW(), 
+    next_at TIMESTAMPTZ,
+    finished_at TIMESTAMPTZ,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (block_id) REFERENCES blocks(id) ON DELETE CASCADE,
+    PRIMARY KEY (user_id, block_id)
 );
 
 CREATE TABLE IF NOT EXISTS user_score (
