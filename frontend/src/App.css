@@ -99,18 +99,18 @@
   /* COLORS */
   /* site background */
   .color-background {
-    @apply bg-white dark:bg-[var(--color-background-dark)] dark:text-white;
+    @apply bg-[var(--color-background-light)] dark:bg-[var(--color-background-dark)] dark:text-white;
   }
 
   /* disabled buttons */
   .color-disabled {
-    @apply bg-gray-200 text-black shadow-none;
+    @apply bg-[var(--color-yellow-1)] text-black shadow-none;
     @apply dark:bg-gray-800 dark:text-white dark:hover:bg-gray-800;
   }
 
   /* card with audio */
   .color-audio {
-    @apply bg-[var(--color-background-light)] shadow-[2px_2px_2px_rgba(0,0,0,0.3)] hover:bg-[var(--color-yellow-1)] active:shadow-none;
+    @apply bg-white shadow-[2px_2px_2px_rgba(0,0,0,0.3)] hover:bg-gray-200 active:shadow-none;
     @apply dark:bg-gray-700 hover:dark:bg-gray-700;
   }
 
@@ -157,7 +157,7 @@
   }
 
   .notice {
-    @apply font-Mansalva text-center text-[var(--color-blue-7)] dark:text-[var(--color-blue-0)];
+    @apply font-Mansalva text-center text-white dark:text-[var(--color-blue-0)];
   }
 
   .error {

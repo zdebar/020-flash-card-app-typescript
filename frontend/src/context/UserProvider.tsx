@@ -18,34 +18,28 @@ export function UserProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
+        if (auth.currentUser) {
+          const { uid, email, displayName, photoURL } = auth.currentUser;
+          setUserInfo({
+            uid,
+            email,
+            name: displayName || 'Demo User',
+            picture: photoURL || null,
+          });
+        }
+        setLoading(false);
+
         try {
-          setLoading(true);
           const data = await fetchWithAuthAndParse<{
             userScore: UserScore[] | null;
           }>(`/api/users`);
-
-          const userScore = data?.userScore || null;
-
-          if (auth.currentUser) {
-            const { uid, email, displayName, photoURL } = auth.currentUser;
-            setUserInfo({
-              uid,
-              email,
-              name: displayName || 'Demo User',
-              picture: photoURL || null,
-            });
-          }
-
-          setUserScore(userScore);
+          setUserScore(data?.userScore || null);
         } catch (error) {
           console.error('Error fetching user preferences:', error);
-        } finally {
-          setLoading(false);
         }
       } else {
         setUserInfo(null);
         setUserScore(null);
-
         setLoading(false);
       }
     });
