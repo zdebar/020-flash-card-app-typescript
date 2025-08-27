@@ -209,7 +209,7 @@ export default function PracticeCard() {
               </div>
               <div id="item">
                 <p className="text-center font-bold">
-                  {direction || revealed ? currentItem.czech : '\u00A0'}
+                  {direction || revealed ? currentItem?.czech : '\u00A0'}
                 </p>
                 <p className="text-center">
                   {revealed || (noAudio && !direction)
