@@ -40,18 +40,22 @@ export async function resetUserLanguageRepository(
   languageId: number
 ): Promise<void> {
   try {
-    const query = `
+    const deleteUserItemsQuery = `
       WITH user_cte AS (
         SELECT id AS user_id FROM users WHERE uid = $1
       )
       DELETE FROM user_items ui
-      USING items i, block_items bi, blocks b, user_cte uc
+      USING items i, blocks b, user_cte uc
       WHERE ui.item_id = i.id
-        AND i.id = bi.item_id
-        AND bi.block_id = b.id
+        AND i.block_id = b.id
         AND b.language_id = $2
         AND ui.user_id = uc.user_id;
+    `;
 
+    const deleteUserBlocksQuery = `
+      WITH user_cte AS (
+        SELECT id AS user_id FROM users WHERE uid = $1
+      )
       DELETE FROM user_blocks ub
       USING blocks b, user_cte uc
       WHERE ub.block_id = b.id
@@ -60,7 +64,10 @@ export async function resetUserLanguageRepository(
     `;
 
     await withDbClient(db, async (client) => {
-      await client.query(query, [uid, languageId]);
+      await client.query("BEGIN");
+      await client.query(deleteUserItemsQuery, [uid, languageId]);
+      await client.query(deleteUserBlocksQuery, [uid, languageId]);
+      await client.query("COMMIT");
     });
   } catch (error) {
     throw new Error(

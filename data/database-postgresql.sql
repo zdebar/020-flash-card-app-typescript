@@ -5,8 +5,7 @@ CREATE TABLE IF NOT EXISTS users (
   name TEXT, -- user name
   email TEXT, -- user email
   created_at TIMESTAMPTZ DEFAULT NOW()
-  daily_goal INTEGER DEFAULT 50, -- daily learning goal in blocks
-);
+  );
 
 CREATE TABLE IF NOT EXISTS parts_of_speech (
   id SERIAL PRIMARY KEY,
@@ -44,7 +43,7 @@ CREATE TABLE IF NOT EXISTS items (
   audio TEXT, -- audio file name, without extension
   part_id INTEGER, -- part of speech id
   block_id INTEGER, -- block id for primary grouping items
-  sequence INTEGER CHECK (item_order >= 0), -- learning order of words; INTEGER for words, NULL for grammar
+  sequence INTEGER CHECK (sequence >= 0), -- learning order of words; INTEGER for words, NULL for grammar
   FOREIGN KEY (part_id) REFERENCES parts_of_speech(id) ON DELETE SET NULL,
   FOREIGN KEY (block_id) REFERENCES blocks(id) ON DELETE SET NULL,
 );

@@ -421,9 +421,9 @@ export async function resetItemRepository(
       WITH user_cte AS (
         SELECT id AS user_id FROM users WHERE uid = $1
       )
-      DELETE FROM user_items
-      WHERE user_items.item_id = $2
-        AND user_items.user_id = (SELECT user_id FROM user_cte);
+      DELETE FROM user_items ui
+      WHERE ui.item_id = $2
+        AND ui.user_id = (SELECT user_id FROM user_cte);
     `;
 
     await withDbClient(db, async (client) => {

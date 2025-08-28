@@ -62,25 +62,35 @@ export async function resetBlockRepository(
   blockId: number
 ): Promise<void> {
   try {
-    const query = `
+    const deleteUserItemsQuery = `
       WITH user_cte AS (
         SELECT id AS user_id 
         FROM users 
         WHERE uid = $1
       )
-      DELETE FROM user_items
-      USING block_items, user_cte
-      WHERE user_items.item_id = block_items.item_id
-        AND block_items.block_id = $2
-        AND user_items.user_id = user_cte.user_id;
+      DELETE FROM user_items ui
+      USING items i, user_cte uc
+      WHERE ui.item_id = i.id
+        AND i.block_id = $2
+        AND ui.user_id = uc.user_id;
+    `;
 
+    const deleteUserBlocksQuery = `
+      WITH user_cte AS (
+        SELECT id AS user_id 
+        FROM users 
+        WHERE uid = $1
+      )
       DELETE FROM user_blocks
       WHERE block_id = $2 
         AND user_id = (SELECT user_id FROM user_cte);
     `;
 
     await withDbClient(db, async (client) => {
-      await client.query(query, [uid, blockId]);
+      await client.query("BEGIN");
+      await client.query(deleteUserItemsQuery, [uid, blockId]);
+      await client.query(deleteUserBlocksQuery, [uid, blockId]);
+      await client.query("COMMIT");
     });
   } catch (error) {
     throw new Error(
