@@ -104,13 +104,13 @@
 
   /* disabled buttons */
   .color-disabled {
-    @apply bg-[var(--color-yellow-1)] text-black shadow-none;
+    @apply bg-gray-100 text-black shadow-none;
     @apply dark:bg-gray-800 dark:text-white dark:hover:bg-gray-800;
   }
 
   /* card with audio */
   .color-audio {
-    @apply bg-white shadow-[2px_2px_2px_rgba(0,0,0,0.3)] hover:bg-gray-200 active:shadow-none;
+    @apply bg-gray-50 shadow-[2px_2px_2px_rgba(0,0,0,0.3)] hover:bg-white active:shadow-none;
     @apply dark:bg-gray-700 hover:dark:bg-gray-700;
   }
 
