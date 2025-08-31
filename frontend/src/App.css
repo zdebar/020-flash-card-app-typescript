@@ -10,9 +10,9 @@
   --color-yellow-0: #f8c05d;
   --color-yellow-1: #fac369;
   --color-yellow-2: #f7b740;
-  --color-yellow-3: #e6a01e;
+  --color-yellow-3: #f7b945;
   --color-yellow-4: #f9c85e;
-  --color-yellow-5: #fad27a;
+  --color-yellow-5: #faca64;
   --color-blue-0: #87d5e8;
   --color-blue-1: #6fbbcf;
   --color-blue-2: #2e9ab0;
@@ -121,7 +121,7 @@
 
   /* disabled buttons */
   .color-disabled {
-    @apply bg-gray-100 text-black shadow-none;
+    @apply bg-[var(--color-yellow-4)] text-black shadow-none;
     @apply dark:bg-gray-800 dark:text-white dark:hover:bg-gray-800;
   }
 
