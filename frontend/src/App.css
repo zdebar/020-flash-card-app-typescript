@@ -7,24 +7,25 @@
   --font-display: 'Nova Round', 'sans';
   --font-Mansalva: 'Mansalva', 'sans';
   --color-background-dark: #111827;
-  --color-yellow-0: #f8c05d;
-  --color-yellow-1: #fac369;
-  --color-yellow-2: #f7b740;
-  --color-yellow-3: #f7b945;
-  --color-yellow-4: #f9c85e;
-  --color-yellow-5: #faca64;
-  --color-blue-0: #87d5e8;
-  --color-blue-1: #6fbbcf;
-  --color-blue-2: #2e9ab0;
-  --color-blue-3: #257f92;
-  --color-blue-4: #1c6676;
-  --color-blue-5: #113c61;
-  --color-blue-6: #0d2c47;
-  --color-blue-7: #062946;
-  --color-blue-8: #a98749;
-  --color-overlay-light: rgba(255, 255, 255, 0.4);
-  --color-overlay-dark: rgba(17, 24, 39, 0.6);
-  --color-green-0: #33691e;
+  --color-yellow-2: #f7b740; /* background 1/2, dark:learned today  */
+  --color-yellow-3: #f7b945; /* learned today */
+  --color-yellow-4: #f9c85e; /* background 2/2, dark:button disabled */
+  --color-blue-0: #87d5e8; /* dark:notice */
+  --color-blue-2: #2e9ab0; /* button hover */
+  --color-blue-4: #1c6676; /* button normal */
+  --color-overlay-light: rgba(
+    255,
+    255,
+    255,
+    0.4
+  ); /* overlay behind guide tips */
+  --color-overlay-dark: rgba(
+    17,
+    24,
+    39,
+    0.6
+  ); /* overlay behind guide tips dark */
+  --color-green-0: #33691e; /* default avatar background */
 }
 
 @layer base {
@@ -167,8 +168,8 @@
   /* rectangular buttons */
   .button-rectangular {
     @apply h-13 w-full font-sans font-bold tracking-wide;
-    @apply bg-[var(--color-blue-4)] text-white shadow-[2px_2px_2px_rgba(0,0,0,0.35)] hover:bg-[var(--color-blue-2)] active:shadow-none;
-    @apply dark:bg-[var(--color-blue-4)] dark:text-white dark:hover:bg-[var(--color-blue-2)];
+    @apply shadow-[2px_2px_2px_rgba(0,0,0,0.35)]active:shadow-none bg-[var(--color-blue-4)] text-white;
+    @apply dark:text-white;
   }
 
   /* round header buttons */
