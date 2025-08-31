@@ -34,7 +34,7 @@ export default function ProgressBar({
       </div>
 
       <div
-        className={`color-progress absolute top-0 z-0 h-full`}
+        className={`color-today absolute top-0 z-0 h-full`}
         style={{
           width: `${newProgressPercentage}%`,
           left: `${progressPercentage}%`,

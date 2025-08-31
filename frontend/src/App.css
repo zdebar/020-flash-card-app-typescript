@@ -6,10 +6,13 @@
 @theme {
   --font-display: 'Nova Round', 'sans';
   --font-Mansalva: 'Mansalva', 'sans';
-  --color-background-light: #f7b740;
   --color-background-dark: #111827;
   --color-yellow-0: #f8c05d;
   --color-yellow-1: #fac369;
+  --color-yellow-2: #f7b740;
+  --color-yellow-3: #e6a01e;
+  --color-yellow-4: #f9c85e;
+  --color-yellow-5: #fad27a;
   --color-blue-0: #87d5e8;
   --color-blue-1: #6fbbcf;
   --color-blue-2: #2e9ab0;
@@ -18,6 +21,7 @@
   --color-blue-5: #113c61;
   --color-blue-6: #0d2c47;
   --color-blue-7: #062946;
+  --color-blue-8: #a98749;
   --color-overlay-light: rgba(255, 255, 255, 0.4);
   --color-overlay-dark: rgba(17, 24, 39, 0.6);
   --color-green-0: #33691e;
@@ -99,7 +103,20 @@
   /* COLORS */
   /* site background */
   .color-background {
-    @apply bg-[var(--color-background-light)] dark:bg-[var(--color-background-dark)] dark:text-white;
+    @apply text-black dark:text-white;
+    background: linear-gradient(
+      167.5deg,
+      var(--color-yellow-2) 20%,
+      var(--color-yellow-4) 80%
+    );
+  }
+
+  .dark .color-background {
+    background: linear-gradient(
+      167.5deg,
+      var(--color-background-dark) 20%,
+      #232b3a 80%
+    );
   }
 
   /* disabled buttons */
@@ -110,8 +127,8 @@
 
   /* card with audio */
   .color-audio {
-    @apply bg-gray-50 shadow-[2px_2px_2px_rgba(0,0,0,0.3)] hover:bg-white active:shadow-none;
-    @apply dark:bg-gray-700 hover:dark:bg-gray-700;
+    @apply bg-white shadow-[2px_2px_2px_rgba(0,0,0,0.3)] hover:bg-gray-100 active:shadow-none;
+    @apply dark:bg-gray-700 hover:dark:bg-gray-600;
   }
 
   /* overlay behind guide tips */
@@ -141,8 +158,8 @@
     @apply bg-[#1C6676];
   }
 
-  .color-progress {
-    @apply bg-[var(--color-blue-6)] dark:bg-[var(--color-background-light)];
+  .color-today {
+    @apply bg-[var(--color-yellow-3)] dark:bg-[var(--color-yellow-2)];
   }
 }
 
@@ -186,8 +203,8 @@
   }
 
   /* userDashboard new learned number */
-  .text-learned {
-    @apply text-xs font-bold text-[var(--color-blue-7)] dark:text-[var(--color-background-light)];
+  .text-today {
+    @apply text-xs font-bold text-[var(--color-yellow-3)] dark:text-[var(--color-yellow-2)];
   }
 
   .header {

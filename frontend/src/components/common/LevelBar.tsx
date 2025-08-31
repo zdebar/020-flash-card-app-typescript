@@ -24,7 +24,7 @@ export default function LevelBar({
                 newProgress={learnedToday[key]}
               />
               {learnedToday[key] > 0 && (
-                <p className="text-learned">+{learnedToday[key]}</p>
+                <p className="text-today">+{learnedToday[key]}</p>
               )}
             </div>
           );
