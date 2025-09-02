@@ -120,6 +120,15 @@
     );
   }
 
+  /* default buttons */
+  .color-default {
+    @apply bg-[var(--color-blue-4)] text-white shadow-[2px_2px_2px_rgba(0,0,0,0.35)] hover:bg-[var(--color-blue-2)] active:shadow-none;
+  }
+
+  .color-header {
+    @apply text-black hover:bg-white disabled:text-gray-600 dark:text-white dark:hover:text-black;
+  }
+
   /* disabled buttons */
   .color-disabled {
     @apply bg-white text-black shadow-none;
@@ -168,13 +177,10 @@
   /* rectangular buttons */
   .button-rectangular {
     @apply h-13 w-full font-sans font-bold tracking-wide;
-    @apply bg-[var(--color-blue-4)] text-white shadow-[2px_2px_2px_rgba(0,0,0,0.35)] active:shadow-none;
-    @apply dark:text-white;
   }
 
   /* round header buttons */
   .button-header {
-    @apply text-black hover:bg-white disabled:text-gray-600 dark:text-white dark:hover:text-black;
     @apply h-13 w-13 rounded-full;
   }
 

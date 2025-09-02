@@ -27,7 +27,7 @@ export default function UserAvatar() {
   ) : initials ? (
     <div
       className="h-D w-D flex items-center justify-center rounded-full bg-[var(--color-green-0)]"
-      style={{ paddingBottom: '1.5px', paddingLeft: '2px' }}
+      style={{ paddingBottom: '1.5px' }}
     >
       <span className="text-2xl text-white">{initials}</span>
     </div>

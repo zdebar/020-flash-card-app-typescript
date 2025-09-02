@@ -5,6 +5,7 @@ interface ButtonLinkProps extends Omit<LinkProps, 'to'> {
   children: ReactNode;
   disabled?: boolean;
   buttonType?: string;
+  buttonColor?: string;
   className?: string;
   to: string;
 }
@@ -13,6 +14,7 @@ export default function ButtonLink({
   children,
   disabled = false,
   buttonType = 'button-rectangular',
+  buttonColor = 'color-default',
   className = '',
   to,
   ...props
@@ -21,14 +23,17 @@ export default function ButtonLink({
 
   if (disabled) {
     return (
-      <button className={`${buttonClass} pointer-events-none`} disabled>
+      <button
+        className={`${buttonClass} color-disable pointer-events-none`}
+        disabled
+      >
         {children}
       </button>
     );
   }
 
   return (
-    <Link to={to} className={`${buttonClass} `} {...props}>
+    <Link to={to} className={`${buttonClass} ${buttonColor}`} {...props}>
       {children}
     </Link>
   );

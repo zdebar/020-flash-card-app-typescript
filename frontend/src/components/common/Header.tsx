@@ -25,6 +25,7 @@ export default function Header() {
           to="/"
           aria-label="Domů"
           buttonType="button-header"
+          buttonColor="color-header"
         >
           <HomeIcon />
         </ButtonLink>
@@ -34,6 +35,7 @@ export default function Header() {
           aria-label="Uživatelské jazyky"
           disabled={!userInfo}
           buttonType="button-header"
+          buttonColor="color-header"
           hidden={true}
         >
           {config.languages.find((lang) => lang.id === languageId)?.code}
@@ -47,6 +49,7 @@ export default function Header() {
         <ButtonLink
           className={`${getSelectedClass(location.pathname, '/userDashboard')}`}
           buttonType="button-header"
+          buttonColor="color-header"
           to="/userDashboard"
           disabled={!userInfo}
           aria-label="Uživatelský dashboard"
@@ -57,6 +60,7 @@ export default function Header() {
           className={` ${getSelectedClass(location.pathname, '/userSettings')}`}
           to="/userSettings"
           buttonType="button-header"
+          buttonColor="color-header"
           disabled={!userInfo}
           aria-label="Nastavení uživatele"
         >

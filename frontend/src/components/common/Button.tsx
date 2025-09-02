@@ -5,6 +5,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   disabled?: boolean;
   className?: string;
   buttonType?: string;
+  buttonColor?: string;
 }
 
 export default function Button({
@@ -12,11 +13,12 @@ export default function Button({
   className = '',
   disabled = false,
   buttonType = 'button-rectangular',
+  buttonColor = 'color-default',
   ...props
 }: ButtonProps) {
   return (
     <button
-      className={`${className} ${disabled && 'color-disabled'} ${buttonType}`}
+      className={`${className} ${buttonType} ${disabled ? 'color-disabled' : buttonColor} `}
       disabled={disabled}
       {...props}
     >
