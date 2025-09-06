@@ -104,20 +104,7 @@
   /* COLORS */
   /* site background */
   .color-background {
-    @apply text-black dark:text-white;
-    background: linear-gradient(
-      167.5deg,
-      var(--color-yellow-2) 20%,
-      var(--color-yellow-4) 80%
-    );
-  }
-
-  .dark .color-background {
-    background: linear-gradient(
-      167.5deg,
-      var(--color-background-dark) 20%,
-      #232b3a 80%
-    );
+    @apply bg-[var(--color-yellow-2)] text-black dark:bg-[var(--color-background-dark)] dark:text-white;
   }
 
   /* default buttons */
