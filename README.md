@@ -8,6 +8,18 @@ English learning app focused on maximum repetition per given practice time. By u
 
 - **Frontend:** React, Tailwind CSS, Vite
 - **Backend:** Node.js, Express.js, PostgreSQL
+- **Mobile:** Expo, SQLite, React Native
+
+## Documentation
+
+branching strategy
+feat(auth): add JWT login
+feat - feature
+fix
+chore - project setup and organization
+docs - changes to documentatino
+refactor
+test - adding test
 
 ## Basic Principles
 
@@ -51,3 +63,5 @@ Items sorting is a key part of logic. Vocabulary `items.sequence` provides basic
 
 - Already practiced items
 - New items by block or item sequence
+
+\*\*
