@@ -52,7 +52,8 @@ Join our community of developers creating universal apps.
 References
 expo
 expo-sqlite -- sqlite database
-expo-audio -- for handling audio files
+expo-audio -- for playing audio files
+expo-file-system -- for handling disk files
 
 Audio Files
 in assets folder

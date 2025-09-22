@@ -1,4 +1,3 @@
-import { supabase } from "../config/supabase.config";
 import { Item } from "../../shared/types/dataTypes";
 
 /**
