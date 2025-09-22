@@ -48,3 +48,24 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+References
+expo
+expo-sqlite -- sqlite database
+expo-audio -- for handling audio files
+
+Audio Files
+in assets folder
+max AAB (Android App Bundle) for Google Play is 150MB
+-- for more Play Asset Delivery or Play Feature Delivery
+
+Updates
+manual update
+automatice update -- when enabled in Play Store Settings
+
+updating through Google Play
+expo updates (over-the-air updates) OTA - JS only updates
+
+recommnedations:
+Expo OTA Updates for small, frequent updates (bux fixes, UI changes)
+Update new files
