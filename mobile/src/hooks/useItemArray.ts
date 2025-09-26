@@ -1,10 +1,10 @@
-import { useState, useCallback } from 'react';
-import { fetchWithAuthAndParse } from '../utils/auth.utils';
-import { useArray } from './useArray';
-import { alternateDirection } from '../utils/practice.utils';
-import { Item, UserScore } from '../../../shared/types/dataTypes';
-import { useUser } from './useUser';
-import { usePatchOnUnmount } from './usePatchOnUnmount';
+import { useState, useCallback } from "react";
+import { fetchWithAuthAndParse } from "../utils/auth.utils";
+import { useArray } from "./useArray";
+import { getDirection } from "../utils/practice.utils";
+import { Item, UserScore } from "../../../shared/types/dataTypes";
+import { useUser } from "./useUser";
+import { usePatchOnUnmount } from "./usePatchOnUnmount";
 
 export function useItemArray(apiPath: string) {
   const [userProgress, setUserProgress] = useState<number[]>([]);
@@ -21,9 +21,9 @@ export function useItemArray(apiPath: string) {
     reload,
     setReload,
     loading,
-  } = useArray<Item>(apiPath, 'GET');
+  } = useArray<Item>(apiPath, "GET");
 
-  const direction = alternateDirection(currentItem?.progress);
+  const direction = getDirection(currentItem?.progress);
   const showContextInfo = currentItem?.showContextInfo === true;
 
   // Sending user progress to the server
@@ -43,8 +43,8 @@ export function useItemArray(apiPath: string) {
         const response = await fetchWithAuthAndParse<{
           score: UserScore[] | null;
         }>(apiPath, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             items: updatedArray,
             onPracticeBlockEnd,
@@ -54,7 +54,7 @@ export function useItemArray(apiPath: string) {
         const newUserScore = response?.score || null;
         setUserScore(newUserScore);
       } catch (error) {
-        console.error('Error posting words:', error);
+        console.error("Error posting words:", error);
       }
     },
     [apiPath, setUserScore, array]

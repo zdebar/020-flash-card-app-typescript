@@ -1,5 +1,5 @@
 /**
- * Utility functions for text manipulation.
+ * Provides the correct Czech word for "more" based on the count.
  * @param count
  * @returns
  */
