@@ -15,6 +15,17 @@ CREATE TABLE IF NOT EXISTS notes (
   note TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS blocks (
+  id INTEGER PRIMARY KEY, 
+  "name" TEXT NOT NULL UNIQUE, 
+  "sequence" INTEGER CHECK ("sequence" >= 0),
+  category TEXT NOT NULL CHECK (category IN ('grammar explanation', 'grammar practice', 'vocabulary')),
+  level_id INTEGER,
+  note_id INTEGER,
+  FOREIGN KEY (level_id) REFERENCES levels(id) ON DELETE SET NULL,
+  FOREIGN KEY (note_id) REFERENCES notes(id) ON DELETE SET NULL
+);
+
 CREATE TABLE IF NOT EXISTS items (
   id INTEGER PRIMARY KEY,
   czech TEXT NOT NULL, 
@@ -26,16 +37,7 @@ CREATE TABLE IF NOT EXISTS items (
   FOREIGN KEY (block_id) REFERENCES blocks(id) ON DELETE SET NULL
 );
 
-CREATE TABLE IF NOT EXISTS blocks (
-  id INTEGER PRIMARY KEY, 
-  "name" TEXT NOT NULL UNIQUE, 
-  "sequence" INTEGER CHECK ("sequence" >= 0),
-  category TEXT NOT NULL CHECK (category IN ('grammar explanation', 'grammar practice', 'vocabulary')),
-  level_id INTEGER,
-  note_id INTEGER,
-  FOREIGN KEY (level_id) REFERENCES levels(id) ON DELETE SET NULL,
-  FOREIGN KEY (note_id) REFERENCES notes(id) ON DELETE SET NULL
-);
+
 
 CREATE TABLE IF NOT EXISTS user_items (
   user_id INTEGER NOT NULL,
