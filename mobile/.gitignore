@@ -44,3 +44,6 @@ app-example
 
 # audio packages
 /assets/audio
+
+# archive
+/archive
