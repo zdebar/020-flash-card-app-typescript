@@ -40,12 +40,15 @@
         }
       ],
       "expo-sqlite",
-      "expo-audio"
+      "expo-audio",
+      "expo-asset"
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
     },
-    "assetBundlePatterns": ["assets/audio/*"]
+    "assetBundlePatterns": [
+      "assets/audio/*"
+    ]
   }
 }

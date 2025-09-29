@@ -1,9 +1,9 @@
-import { PostgresClient } from "../types/dataTypes";
 import {
   UserScore,
   Item,
   BlockExplanation,
 } from "../../../shared/types/dataTypes";
+import { SQLiteDatabase } from "expo-sqlite";
 import {
   getPracticeItemsRepository,
   updateUserItemsRepository,
@@ -17,7 +17,7 @@ import {
   getUserScoreRepository,
   updateUserScoreRepository,
 } from "../repository/user.repository.postgres";
-import { addAudioSuffixToItems, formatDatesShort } from "../utils/update.utils";
+import { addAudioSuffixToItems } from "../utils/update.utils";
 import sortItemsEvenOdd from "../utils/items.utils";
 import { getNextAt, getDateAt } from "../utils/update.utils";
 import config from "../config/config";
@@ -26,14 +26,13 @@ import config from "../config/config";
  * Gets practice items for a given user and language ID from the database.
  */
 export async function getPracticeItemsService(
-  db: PostgresClient,
-  uid: string,
-  languageId: number
+  db: SQLiteDatabase,
+  uid: string
 ): Promise<Item[]> {
-  let items: Item[] = await getPracticeBlockRepository(db, uid, languageId);
+  let items: Item[] = await getPracticeBlockItemsRepository(db, uid);
 
   if (items.length === 0) {
-    items = await getPracticeItemsRepository(db, uid, languageId);
+    items = await getPracticeItemsRepository(db, uid);
     sortItemsEvenOdd(items);
   }
 
@@ -43,13 +42,11 @@ export async function getPracticeItemsService(
 /**
  * Gets a list of words for a given user and language ID from the database.
  */
-export async function getItemsListService(
-  db: PostgresClient,
-  uid: string,
-  languageId: number
+export async function getUserItemsListService(
+  db: SQLiteDatabase,
+  uid: string
 ): Promise<Item[]> {
-  const words: Item[] = await getUserItemsListRepository(db, uid, languageId);
-  formatDatesShort(words);
+  const words: Item[] = await getUserItemsListRepository(db, uid);
   return addAudioSuffixToItems(words);
 }
 
@@ -57,11 +54,10 @@ export async function getItemsListService(
  * Updates the user's word progress in the PostgreSQL database and returns the updated score.
  */
 export async function updateUserPracticeService(
-  db: PostgresClient,
+  db: SQLiteDatabase,
   uid: string,
   items: Item[],
-  onPracticeBlockEnd: boolean,
-  languageId: number
+  onPracticeBlockEnd: boolean
 ): Promise<UserScore[]> {
   const blockId = items[0]?.blockId;
   let finishedAt = null;
@@ -119,7 +115,7 @@ export async function updateUserPracticeService(
  * Gets ItemInfo for given item ID from the database.
  */
 export async function getItemInfoService(
-  db: PostgresClient,
+  db: SQLiteDatabase,
   itemId: number
 ): Promise<BlockExplanation[]> {
   const itemInfo: BlockExplanation[] = await getItemInfoRepository(db, itemId);
@@ -135,7 +131,7 @@ export async function getItemInfoService(
  * Updates the user's word progress in the PostgreSQL database and returns the updated score.
  */
 export async function resetItemService(
-  db: PostgresClient,
+  db: SQLiteDatabase,
   uid: string,
   itemId: number
 ): Promise<UserScore[]> {
