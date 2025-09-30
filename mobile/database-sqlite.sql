@@ -6,37 +6,29 @@ CREATE TABLE IF NOT EXISTS users (
   created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS levels ( -- linked to 10 blocks (100 items)
-  id INTEGER PRIMARY KEY,
-  "name" TEXT NOT NULL UNIQUE
-);
-
-CREATE TABLE IF NOT EXISTS grammar ( -- linked to multiple blocks
+CREATE TABLE IF NOT EXISTS grammar (
   id INTEGER PRIMARY KEY,
   "name" TEXT NOT NULL UNIQUE, 
-  note TEXT NOT NULL
+  note TEXT NOT NULL 
 );
 
-CREATE TABLE IF NOT EXISTS blocks ( -- linked to 10 items (vocabulary or grammar)
-  id INTEGER PRIMARY KEY, 
-  "name" TEXT NOT NULL UNIQUE, 
-  "sequence" INTEGER CHECK ("sequence" >= 0), 
-  category TEXT NOT NULL CHECK (category IN ('grammar explanation', 'grammar practice', 'vocabulary')),
-  level_id INTEGER,
-  grammar_id INTEGER, -- null is for vocabulary blocks
-  FOREIGN KEY (level_id) REFERENCES levels(id) ON DELETE SET NULL,
-  FOREIGN KEY (grammar_id) REFERENCES grammar(id) ON DELETE SET NULL
-);
-
-CREATE TABLE IF NOT EXISTS items (
+CREATE TABLE IF NOT EXISTS items (  
   id INTEGER PRIMARY KEY,
   czech TEXT NOT NULL, 
-  translation TEXT NOT NULL, 
+  english TEXT NOT NULL, 
   pronunciation TEXT, -- IPA phonetic transcription
   audio TEXT, -- audio file name, without extension
-  block_id INTEGER, 
-  "sequence" INTEGER CHECK ("sequence" >= 0), 
+  "sequence" INTEGER CHECK ("sequence" >= 0), -- item's order inside the block
+  block_id INTEGER NOT NULL,
   FOREIGN KEY (block_id) REFERENCES blocks(id) ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS blocks (
+  id INTEGER PRIMARY KEY,
+  "name" TEXT NOT NULL UNIQUE, 
+  "sequence" INTEGER CHECK ("sequence" >= 0),
+  grammar_id INTEGER, -- null means vocabulary item
+  FOREIGN KEY (grammar_id) REFERENCES grammar(id) ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS user_items (

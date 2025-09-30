@@ -1,72 +1,116 @@
-# Welcome to your Expo app 👋
+# Zdeněk Barth's English Learning App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+## Description
 
-## Get started
+A personal English learning app designed with simplicity similar to ANKI, but with a prebuilt English learning progression. Originally tested as a web app, it is now being converted to mobile using Expo.
 
-1. Install dependencies
+I believe many features in existing English learning apps can hinder progress. When learners are presented with options, they often choose what feels easiest, like games or reading. However, the most critical aspects of learning any language are **listening** and **speaking**. This app focuses on hard, effective methods to help users progress faster.
 
-   ```bash
-   npm install
-   ```
+Development and user testing of the web version provided insights into what works and what doesn’t. The mobile version will be significantly simplified and polished, focusing only on features that are proven to be effective.
 
-2. Start the app
+### Goals of the App:
 
-   ```bash
-   npx expo start
-   ```
+1. **Maximize Practice Density**  
+   Drill as many practice attempts as possible within a given time. This is best achieved with flashcards and a continuous sequence of items without interruptions.
+2. **Alternating Practice in Both Directions**  
+   Listening and speaking are the most important parts of language learning. Flashcards alternate between two directions:
 
-In the output, you'll find options to open the app in a
+   - Listening to English and translating to Czech.
+   - Reading Czech and translating to English.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+3. **Spaced Repetition System (SRS)**  
+   With dense practice repetition, each item is repeated at least five times on the first day.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+4. **User Feedback**
 
-## Get a fresh project
+   - **Daily Practice Count:** Encourages users to start practicing. The recommended minimum is 400 items or approximately 20 minutes.
+   - **Progression Levels:** Items are organized into levels of 100 items to provide granular progress feedback.
 
-When you're ready, run:
+5. **Flexible Practice Duration**  
+   While there is a recommended minimum, the practice sequence is continuous. Users can practice for as long as they want, even for 10 hours straight.
 
-```bash
-npm run reset-project
-```
+6. **Contextual Learning**  
+   Vocabulary is first learned independently and then reinforced in sentence contexts.
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+---
 
-## Learn more
+## Prerequisites
 
-To learn more about developing your project with Expo, look at the following resources:
+To run the app, you need the following:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+- **Expo**
+- **React Native**
+- **Native Wind**
+- **expo-sqlite**
+- **expo-audio**
+- **expo-file-system**
+- **uid**
 
-## Join the community
+---
 
-Join our community of developers creating universal apps.
+## Database
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+### Database Structure
 
-References
-expo
-expo-sqlite -- sqlite database
-expo-audio -- for playing audio files
-expo-file-system -- for handling disk files
+The app uses an SQLite database to store user progress, vocabulary, and grammar data. Below is a high-level overview of the database structure:
 
-Audio Files
-in assets folder
-max AAB (Android App Bundle) for Google Play is 150MB
--- for more Play Asset Delivery or Play Feature Delivery
+- **users**: Stores user information.
+- **items**: Stores practice items (vocabulary and grammar sentences).
+- **blocks**: Groups items into vocabulary or grammar group. Recommended size is 10 items.
+- **grammar**: Stores grammar explanations.
+- **user_items**: Tracks user progress for individual items.
+- **user_score**: Tracks daily practice scores for users.
 
-Updates
-manual update
-automatice update -- when enabled in Play Store Settings
+For detailed table definitions and column explanations, see the `database-sqlite.sql` file.
 
-updating through Google Play
-expo updates (over-the-air updates) OTA - JS only updates
+### Data Structure
 
-recommnedations:
-Expo OTA Updates for small, frequent updates (bux fixes, UI changes)
-Update new files
+Each item represents a single vocabulary word or a sentence for practicing grammar. Items are sequenced starting from 1, with 1 being the learning start point.
+
+---
+
+## Git Guidelines
+
+### Branching Strategies
+
+- **master**: Production branch  
+  ├── **v0.9.0**: Development branch
+
+### Commit Message Standard
+
+Format: `<type>: <description>`
+
+#### Commit Types:
+
+- **feat**: New feature
+- **fix**: Bug fix
+- **docs**: Documentation updates
+- **style**: UI or design changes
+- **refactor**: Code refactoring
+- **chore**: Dependency or installation updates
+- **test**: Adding or updating tests
+- **perf**: Performance optimizations
+- **ios**: iOS-specific changes
+- **android**: Android-specific changes
+
+---
+
+## Possible Future Development
+
+### v0.10.0
+
+- Push notifications
+- Audio pause functionality
+
+### v0.11.0
+
+- Synchronization
+- Authentication and online sync database
+
+### v0.12.0
+
+- Support for multiple learned languages
+
+### v0.13.0
+
+- Support for multiple source languages
