@@ -1,21 +1,3 @@
-import dotenv from "dotenv";
-import path from "path";
-import { validateEnvVariables } from "../utils/validate.utils";
-
-// Only load .env file in non-production environments
-if (process.env.NODE_ENV !== "production") {
-  dotenv.config({ path: path.resolve(__dirname, "../../.env") });
-}
-validateEnvVariables([
-  "LOGGER_LEVEL",
-  "NODE_ENV",
-  "DB_HOST",
-  "DB_PORT",
-  "DB_USER",
-  "DB_PASSWORD",
-  "DB_NAME",
-]);
-
 const config = {
   round: 10, // The size of repetition block
   SRS: [
